@@ -2,7 +2,15 @@
 layout: default
 ---
 
-### Hello!
+# Trailblazer
+
+[Stack]
+
+Trailblazer gives you a high-level architecture for web applications. Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
+
+By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
+
+Controllers and models end up as lean endpoints for HTTP dispatching and persistence. A polymorphic architecture designed to handle many different contexts helps to minimize code to handle various roles and edge cases.
 
 ## Gems
 
@@ -14,7 +22,7 @@ Trailblazer is an integrated collection of gems. The gems itself are completely 
 
 <div class="box">
   <div class="description">
-    Cells provide view models to encapuslate parts of your views into classes. A view model is an object-oriented partial and doesn't know anything about the controller or the rendering view.
+    Cells provide view models to encapsulate parts of your views into classes. A view model is an object-oriented partial and doesn't know anything about the controller or the rendering view.
   </div>
 
   <div class="example">
