@@ -10,7 +10,9 @@ Trailblazer gives you a high-level architecture for web applications. Logic that
 
 By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
 
-Controllers and models end up as lean endpoints for HTTP dispatching and persistence. A polymorphic architecture designed to handle many different contexts helps to minimize code to handle various roles and edge cases.
+![](images/Trb-Stack.png)
+
+Controllers and models end up as lean endpoints for HTTP dispatching and persistence. A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts helps to minimize code to handle various user roles and edge cases.
 
 ## Gems
 
@@ -64,7 +66,7 @@ By #{author_link}
 
 ## Reform
 
-## Representable
+## [Representable](gems/representable)
 
 ## Roar
 
