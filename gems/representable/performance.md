@@ -31,6 +31,23 @@ end
 
 Inserting the module on the top-level representer via `feature Representable::Cached` will activate caching for all representers in the graph.
 
+[speedup when rendering/parsing]
+
+## Reusing the top-level Representer
+
+It is also possible to cache the top-level representer and reuse it, e.g. for multiple requests. Once the decorator has been initialized, it can be reused using `#update!`.
+
+{% highlight ruby %}
+decorator = AlbumRepresenter.new(album)
+
+decorator.to_json # first request.
+
+decorator.update!(album) # second request.
+decorator.to_json
+{% endhighlight %}
+
+Since the decorator and its bindings are stateless, you only need to update the represented object. When rendering or parsing, all changing runtime data is then passed the the respective sub-systems using method arguments. No state is held.
+
 ## Pitfalls
 
 Using `Cached` currently hooks into the `Deserializer:#prepare` method. If you use `:prepare` to instantiate different representers per iteration, you might have problems with caching. I'll update this soon.
