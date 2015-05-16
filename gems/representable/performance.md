@@ -35,7 +35,9 @@ Inserting the module on the top-level representer via `feature Representable::Ca
 
 ## Reusing the top-level Representer
 
-It is also possible to cache the top-level representer and reuse it, e.g. for multiple requests. Once the decorator has been initialized, it can be reused using `#update!`.
+It is also possible to cache the top-level representer and reuse it, e.g. for multiple requests. Of course, doing so is your job. However, once the decorator has been initialized the first time, it can be reused using `#update!`. Again, doing so is up to you.
+
+[roar-rails support]
 
 {% highlight ruby %}
 decorator = AlbumRepresenter.new(album)
