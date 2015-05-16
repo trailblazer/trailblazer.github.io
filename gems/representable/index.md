@@ -17,3 +17,4 @@ But it's also very helpful as a generic data transformer. ...
 In case you're looking towards implementing a REST API, check out [Roar](/gems/roar) first, which adds hypermedia semantics, media formats and more to Representable
 
 Pages: [Performance](performance.html)
+Pages: [Architecture](architecture.html)
