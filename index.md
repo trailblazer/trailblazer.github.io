@@ -64,7 +64,7 @@ By #{author_link}
 
 ## Operation
 
-## Reform
+## [Reform](gems/reform)
 
 ## [Representable](gems/representable)
 
