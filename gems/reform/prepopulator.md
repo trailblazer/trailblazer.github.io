@@ -1,0 +1,78 @@
+---
+layout: default
+permalink: /gems/reform/prepopulator.html
+---
+
+# Reform: Pre-Populating
+
+Prepopulating is helpful when you want to fill out fields or add nested forms before rendering.
+
+
+## Configuration
+
+You can use the `:prepopulator` option on every property or collection.
+
+{% highlight ruby %}
+class AlbumForm < Reform::Form
+  property :title, prepopulator: ->(model, options) { self.title = options[:def_title] }
+
+  property :artist, prepopulator: ->(model, options) { self.artist = Artist.new } do
+    property :name
+  end
+end
+{% endhighlight %}
+
+Prepopulators have the following signature:
+
+{% highlight ruby %}
+->(model, options)
+{% endhighlight %}
+
+* `model` is the currently populated form field. This can be a string or a nested form. Note that this usually will be `nil`, since it's not prepopulated, yet.
+* `options` are the user options from the `prepopulate!` call.
+
+
+## Invoking
+
+Prepopulating must be invoked manually.
+
+{% highlight ruby %}
+form.prepopulate!
+{% endhighlight %}
+
+Options may be passed. They will be available in the `:prepopulator` blocks.
+
+{% highlight ruby %}
+form.prepopulate!(def_title: "Roxanne")
+{% endhighlight %}
+
+This call will be applied to the entire nested form graph recursively _after_ the currently traversed form's prepopulators were run.
+
+
+## Execution
+
+The blocks are run in form instance context, meaning you have access to all possible data you might need.
+
+Note that you have to assign the pre-populated values to the form by using setters. The form will automatically create nested forms for you.
+
+This is especially cool when populating collections.
+
+{% highlight ruby %}
+property :songs,
+  prepopulator: ->(model, options) { self.songs.insert(songs.size, Song.new) if songs.size < 3 } do
+{% endhighlight %}
+
+This will always add an empty song form to the nested `songs` collection until three songs are attached. You can use the `Twin::Collection` API when adding, changing or deleting items from a collection. (# TODO: add link)
+
+
+## Overriding
+
+You don't have to use the `:prepopulator` option. Instead, you can simply override `#prepopulate!` itself.
+
+{% highlight ruby %}
+class AlbumForm < Reform::Form
+  def prepopulate!(options)
+    self.title = "Roxanne"
+    self.artist = Artist.new(name: "The Police")
+  end
+{% endhighlight %}
