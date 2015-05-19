@@ -7,3 +7,5 @@ permalink: /gems/reform/
 
 
 Pages: [Populators](populators.html)
+
+Pages: [Nested Forms](nested_forms.html)
