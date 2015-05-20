@@ -14,9 +14,9 @@ You can use the `:prepopulator` option on every property or collection.
 
 {% highlight ruby %}
 class AlbumForm < Reform::Form
-  property :title, prepopulator: ->(model, options) { self.title = options[:def_title] }
+  property :title, prepopulator: ->(options) { self.title = options.user_options[:def_title] }
 
-  property :artist, prepopulator: ->(model, options) { self.artist = Artist.new } do
+  property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
     property :name
   end
 end
@@ -25,11 +25,10 @@ end
 Prepopulators have the following signature:
 
 {% highlight ruby %}
-->(model, options)
+->(options)
 {% endhighlight %}
 
-* `model` is the currently populated form field. This can be a string or a nested form. Note that this usually will be `nil`, since it's not prepopulated, yet.
-* `options` are the user options from the `prepopulate!` call.
+* `options` is an Options instance. Interesting to you might mostly be `options.user_options`, which are the user options from the `prepopulate!` call.
 
 
 ## Invoking
@@ -59,7 +58,7 @@ This is especially cool when populating collections.
 
 {% highlight ruby %}
 property :songs,
-  prepopulator: ->(model, options) { self.songs.insert(songs.size, Song.new) if songs.size < 3 } do
+  prepopulator: ->(*) { self.songs << Song.new if songs.size < 3 } do
 {% endhighlight %}
 
 This will always add an empty song form to the nested `songs` collection until three songs are attached. You can use the `Twin::Collection` API when adding, changing or deleting items from a collection. (# TODO: add link)
