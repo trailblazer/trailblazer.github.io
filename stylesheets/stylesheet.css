@@ -307,6 +307,11 @@ Full-Width Styles
   text-shadow: #111 0px 0px 10px;
 }
 
+#train {
+  margin-bottom: 49px;
+
+}
+
 #project_tagline {
   color: #fff;
   font-size: 24px;
