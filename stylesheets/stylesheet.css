@@ -158,6 +158,11 @@ p img {
   border: none;
 }
 
+p img.left {
+  margin-right: 24px;
+  float: left;
+}
+
 pre, code {
   width: 100%;
   color: #222;

@@ -4,13 +4,14 @@ layout: default
 
 # Trailblazer
 
-[Stack]
+Trailblazer gives you a high-level architecture for web applications.
 
-Trailblazer gives you a high-level architecture for web applications. Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
+Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
+
+![](images/Trb-Stack.png){: .left }
 
 By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
 
-![](images/Trb-Stack.png)
 
 Controllers and models end up as lean endpoints for HTTP dispatching and persistence. A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts helps to minimize code to handle various user roles and edge cases.
 
