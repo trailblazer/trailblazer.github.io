@@ -3,10 +3,9 @@ layout: default
 permalink: /gems/reform/prepopulator.html
 ---
 
-# Reform: Pre-Populating
+# Pre-Populating
 
-Prepopulating is helpful when you want to fill out fields or add nested forms before rendering.
-
+Prepopulating is helpful when you want to fill out fields (aka. _defaults_) or add nested forms before rendering.
 
 ## Configuration
 
@@ -74,4 +73,20 @@ class AlbumForm < Reform::Form
     self.title = "Roxanne"
     self.artist = Artist.new(name: "The Police")
   end
+{% endhighlight %}
+
+
+# Defaults
+
+There's different alternatives for setting a default value for a formerly empty field.
+
+1. Use `:prepopulator` as [described here](#configuration). Don't forget to call `prepopulate!` before rendering the form.
+2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder), for validation and when syncing.
+
+{% highlight ruby %}
+property :title
+
+def title
+  super or "Unnamed"
+end
 {% endhighlight %}

@@ -52,11 +52,12 @@ body {
   box-sizing: border-box;
   color:#373737;
   background: #212121;
-  font-size: 16px;
+  font-size: 18px;
   font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
 
 h1, h2, h3, h4, h5, h6 {
   margin: 10px 0;
@@ -157,13 +158,18 @@ p img {
   border: none;
 }
 
+p img.left {
+  margin-right: 24px;
+  float: left;
+}
+
 pre, code {
   width: 100%;
   color: #222;
   background-color: #fff;
 
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  font-size: 14px;
+  font-size: 13px;
 
   border-radius: 2px;
   -moz-border-radius: 2px;
@@ -266,7 +272,7 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 640px;
+  max-width: 720px;
   padding: 20px 10px;
   margin: 0 auto;
 }
