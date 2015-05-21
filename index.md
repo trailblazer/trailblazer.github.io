@@ -75,7 +75,7 @@ By #{author_link}
 ## The Book
 
 <a href="https://leanpub.com/trailblazer">
-![](images/book.jpg)
+![](images/3dbuch-freigestellt.png)
 </a>
 
 Yes, there's a book! It is about 60% finished and will get another 150 pages, making it 300 pages full of wisdom about Trailblazer and all the gems.
