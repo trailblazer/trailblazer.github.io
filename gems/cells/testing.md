@@ -25,6 +25,7 @@ it "renders" do
 end
 {% endhighlight %}
 
+
 ## MiniTest, Test::Unit
 
 In case you're _not_ using Rspec, derive your tests from `Cell::TestCase`.
@@ -38,6 +39,19 @@ end
 {% endhighlight %}
 
 You can also include `Cell::Testing` into an arbitrary test class if you're not happy with `Cell::TestCase`.
+
+
+## Rspec
+
+Rspec works out of the box. You can use the `#cell` and `#concept` builders in your specs.
+
+{% highlight ruby %}
+describe SongCell, type: :cell do
+  subject { cell(:song, Song.new).call(:show) }
+
+  it { expect(subject).to have_content "Song#show" }
+end
+{% endhighlight %}
 
 ## Capybara Support
 
