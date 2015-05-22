@@ -21,7 +21,7 @@ Trailblazer is an integrated collection of gems. The gems itself are completely 
 
 [a grid is what we need here]
 
-### [Cells](https://github.com/apotonick/cells)
+### [Cells](/gems/cells)
 
 <div class="box">
   <div class="description">
@@ -64,6 +64,12 @@ By #{author_link}
 
 
 ## [Operation](gems/operation)
+
+An operation is the central concept of Trailblazer. It contains all business logic for one use case in your application.
+
+Operation acts as an orchestrating object that benefits from internal policies, form object, models and more.
+
+Contract: central schema. infer representer (serialization and parsing docs). data structure. whitelist of what to process.
 
 ## [Reform](gems/reform)
 
