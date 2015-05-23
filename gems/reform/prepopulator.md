@@ -15,16 +15,23 @@ You can use the `:prepopulator` option on every property or collection.
 class AlbumForm < Reform::Form
   property :title, prepopulator: ->(options) { self.title = options.user_options[:def_title] }
 
-  property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
+  property :artist, prepopulator: prepopulate_artist! do
     property :name
+  end
+
+private
+  def prepopulate_artist!(options)
+    self.artist = Artist.new
   end
 end
 {% endhighlight %}
 
+As `:prepopulator` option, you can pass lambdas or symbols which will resolve to instance methods.
+
 Prepopulators have the following signature:
 
 {% highlight ruby %}
-->(options)
+(options)
 {% endhighlight %}
 
 * `options` is an Options instance. Interesting to you might mostly be `options.user_options`, which are the user options from the `prepopulate!` call.
@@ -49,9 +56,9 @@ This call will be applied to the entire nested form graph recursively _after_ th
 
 ## Execution
 
-The blocks are run in form instance context, meaning you have access to all possible data you might need.
+The blocks are run in form instance context, meaning you have access to all possible data you might need. With a symbol, the same-named method will be called on the form instance, too.
 
-Note that you have to assign the pre-populated values to the form by using setters. The form will automatically create nested forms for you.
+Note that you have to assign the pre-populated values to the form by using setters. In turn, the form will automatically create nested forms for you.
 
 This is especially cool when populating collections.
 
