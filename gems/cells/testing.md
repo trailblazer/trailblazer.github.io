@@ -17,11 +17,21 @@ module Testing
 end
 {% endhighlight %}
 
-This will give you the cell instance. It's your job to invoke a state using `#call`.
+Calling the two helpers does exactly the same it does in a controller or a view.
+
+Usually, this will give you the cell instance. It's your job to invoke a state using `#call`.
 
 {% highlight ruby %}
-it "renders" do
+it "renders cell" do
   cell(:song, @song).call #=> HTML / Capybara::Node::Simple
+end
+{% endhighlight %}
+
+However, when invoked with `:collection`, it will render the cell collection for you. In that case, `#cell`/`#concept` will return a string of markup.
+
+{% highlight ruby %}
+it "renders collection" do
+  cell(:song, collection: [@song, @song]) #=> HTML
 end
 {% endhighlight %}
 
