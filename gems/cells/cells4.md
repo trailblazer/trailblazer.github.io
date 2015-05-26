@@ -20,14 +20,14 @@ Everything related to `#capture` will cause problems - check [this as an example
 
 1. As a first step, try this and see if it helps.
 
-    {% highlight ruby %}
-    class SongCell < Cell::ViewModel
-      include ActionView::Helpers::FormHelper
-      include Cell::Erb # include Erb _after_ AV helpers.
+{% highlight ruby %}
+class SongCell < Cell::ViewModel
+  include ActionView::Helpers::FormHelper
+  include Cell::Erb # include Erb _after_ AV helpers.
 
-      # ..
-    end
-    {% endhighlight %}
+  # ..
+end
+{% endhighlight %}
 
 The same goes for HAML cells, by including `Cell::Haml`.
 
