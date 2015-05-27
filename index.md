@@ -17,7 +17,9 @@ Controllers and models end up as lean endpoints for HTTP dispatching and persist
 
 ## Gems
 
-Trailblazer is an integrated collection of gems. The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
+Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
+
+The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
 
 [a grid is what we need here]
 
