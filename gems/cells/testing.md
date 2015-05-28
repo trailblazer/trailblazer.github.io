@@ -50,6 +50,17 @@ end
 
 You can also include `Cell::Testing` into an arbitrary test class if you're not happy with `Cell::TestCase`.
 
+### Optional Controller
+
+If your cells have a controller dependency, you can set it using `::controller`.
+
+{% highlight ruby %}
+class SongCellTest < Cell::TestCase
+  controller SongsController
+{% endhighlight %}
+
+This will provide a testable controller via `#controller`, which is automatically used in `Testing#concept` and `Testing#cell`.
+
 
 ## Rspec
 
@@ -62,6 +73,17 @@ describe SongCell, type: :cell do
   it { expect(subject).to have_content "Song#show" }
 end
 {% endhighlight %}
+
+### Optional Controller
+
+If your cells have a controller dependency, you can set it using `::controller`.
+
+{% highlight ruby %}
+describe SongCell do
+  controller SongsController
+{% endhighlight %}
+
+This will provide a testable controller via `#controller`.
 
 ## Capybara Support
 
