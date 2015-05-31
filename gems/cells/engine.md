@@ -6,6 +6,8 @@ layout: default
 
 You can bundle cells into Rails engines and maximize a clean, component architecture by making your view models easily distributable and overridable.
 
+This pretty much works out-of-the-box, you write cells and push them into an engine. The only thing differing is that engine cells have to set their `view_paths` manually to point to the gem directory.
+
 ## View Paths
 
 Each engine cell has to set its `view_paths`.
