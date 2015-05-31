@@ -46,3 +46,7 @@ Likewise, you have to reference the cell's CSS files in `app/assets/application.
  *= require comment
  */
 {% endhighlight %}
+
+### Assets Troubleshooting
+
+The Asset Pipeline is a complex system. If your assets are not compiled, start debugging in [Cells' railtie](https://github.com/apotonick/cells/blob/master/lib/cell/railtie.rb) and uncomment the `puts` in the `cells.update_asset_paths` initializer to see what directories get added.
