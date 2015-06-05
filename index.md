@@ -23,7 +23,7 @@ The gems itself are completely self-contained, minimalistic and solve just one p
 
 [a grid is what we need here]
 
-### [Cells](/gems/cells)
+## [Cells](/gems/cells)
 
 <div class="box">
   <div class="description">
