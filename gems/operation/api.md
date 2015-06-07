@@ -17,3 +17,16 @@ Get the form object.
 {% highlight ruby %}
 form = Thing::Create.present(params).contract
 {% endhighlight %}
+
+
+## Validate
+
+validate(params) do
+  # .. valid
+end
+
+if validate(params)
+  # .. valid
+else
+  # ..
+end
