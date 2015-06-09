@@ -42,7 +42,7 @@ end
 
 ## Render problems
 
-You might have to include cells' template gem into your **application's** `Gemfile`. This will properly register the cell template handler with Tilt. Sorry for that.
+You might have to include cells' template gem into your **application's** `Gemfile`. This will properly require the extension.
 
 {% highlight ruby %}
 # application Gemfile
