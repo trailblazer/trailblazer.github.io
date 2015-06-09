@@ -13,7 +13,7 @@ You can use the `:prepopulator` option on every property or collection.
 
 {% highlight ruby %}
 class AlbumForm < Reform::Form
-  property :title, prepopulator: ->(options) { self.title = options.user_options[:def_title] }
+  property :title, prepopulator: ->(options) { self.title = options[:def_title] }
 
   property :artist, prepopulator: prepopulate_artist! do
     property :name
@@ -34,7 +34,7 @@ Prepopulators have the following signature:
 (options)
 {% endhighlight %}
 
-* `options` is an Options instance. Interesting to you might mostly be `options.user_options`, which are the user options from the `prepopulate!` call.
+* `options` are the arguments passed to the `prepopulate!` call.
 
 
 ## Invoking
