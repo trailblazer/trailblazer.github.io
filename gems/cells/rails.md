@@ -47,6 +47,18 @@ Likewise, you have to reference the cell's CSS files in `app/assets/application.
  */
 {% endhighlight %}
 
-### Assets Troubleshooting
+## Assets Troubleshooting
 
 The Asset Pipeline is a complex system. If your assets are not compiled, start debugging in [Cells' railtie](https://github.com/apotonick/cells/blob/master/lib/cell/railtie.rb) and uncomment the `puts` in the `cells.update_asset_paths` initializer to see what directories get added.
+
+Cell classes need to be loaded when precompiling assets! Make sure your `application.rb` contains the following setting (per default, this is turned _on_).
+
+{% highlight ruby %}
+config.assets.initialize_on_precompile = true
+{% endhighlight %}
+
+You need to compile assets using this command, which is [explained here](http://stackoverflow.com/a/12167790/465070).
+
+{% highlight ruby %}
+rake assets:precompile:all RAILS_ENV=development RAILS_GROUPS=assets
+{% endhighlight %}
