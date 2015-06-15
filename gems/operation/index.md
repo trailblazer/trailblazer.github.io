@@ -12,3 +12,4 @@ Operations decouple the business logic from the actual framework and from the pe
 Abstraction via Twin (for view, BL, representers)
 
 Pages: [API](api.html)
+Pages: [Collection](collection.html)
