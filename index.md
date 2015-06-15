@@ -15,6 +15,178 @@ By applying encapsulation and good OOP, Trailblazer maximizes reusability of com
 
 Controllers and models end up as lean endpoints for HTTP dispatching and persistence. A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts helps to minimize code to handle various user roles and edge cases.
 
+
+<div class="row">
+  <h3>Controller</h3>
+
+  <div class="box">
+    <div class="description">
+      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+
+      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+    </div>
+  </div>
+
+  <div class="code-box">
+    {% highlight ruby %}
+class CommentsController < ApplicationController
+  def new
+    form Comment::Update
+  end
+
+  def create
+    run Comment::Update do |op|
+      return redirect_to comments_path(op.model)
+    end
+
+    render :new
+  end
+    {% endhighlight %}
+  </div>
+</div>
+
+
+
+<div class="row">
+    <div class="box">
+    {% highlight ruby %}
+class Comment < ActiveRecord::Base
+  has_many   :users
+  belongs_to :thing
+
+  scope :recent -> { limit(10) }
+end
+    {% endhighlight %}
+  </div>
+
+
+  <div class="code-box">
+    <h3>Model</h3>
+
+    <div class="description">
+      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
+
+      <p>That's right: No callbacks, no validations, no business logic in models. </p>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <h3>Operation</h3>
+
+  <div class="box">
+    <div class="description">
+      <p>Operations contain business logic per action. This is where your domain code sits: Validation, callbacks and application code sits here.</p>
+
+      <p></p>
+    </div>
+  </div>
+
+  <div class="code-box">
+    {% highlight ruby %}
+class Comment::Create < Trailblazer::Operation
+  contract do
+    property :body
+    validates :body, length: {maximum: 160}
+  end
+
+  def process(params)
+    if validate(params)
+
+    else
+
+    end
+  end
+end
+    {% endhighlight %}
+  </div>
+</div>
+
+
+
+<div class="row">
+    <div class="code-box">
+    {% highlight ruby %}
+contract do
+  property :body
+  validates :body, length: {maximum: 160}
+
+  property :author do
+    property :email
+    validates :email, email: true
+  end
+end
+    {% endhighlight %}
+  </div>
+
+
+  <div class="box">
+    <h3>Forms</h3>
+
+    <div class="description">
+      <p>Every operation contains a form object.</p>
+      <p>This is a plain Reform class and allows all features you know from the popular form gem.</p>
+      <p>Forms can also be rendered.</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row">
+  <h3>Callback</h3>
+
+  <div class="box">
+    <div class="description">
+      <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
+      <p>They can be configured in a separate Callback class.</p>
+      <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
+    </div>
+  </div>
+
+  <div class="code-box">
+    {% highlight ruby %}
+callback do
+  on_create :notify_owner!
+
+  property :author do
+    on_add :reset_authorship!
+  end
+end
+    {% endhighlight %}
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="code-box">
+    {% highlight ruby %}
+policy do
+  user.admin? or not post.published?
+end
+    {% endhighlight %}
+  </div>
+
+
+  <div class="box">
+    <h3>Policy</h3>
+
+    <div class="description">
+      <p>Policies allow authentication on a global or fine-granular level.</p>
+      <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
+    </div>
+  </div>
+</div>
+
+<h3>View Model</h3>
+<h3>Representer</h3>
+<h3>Polymorphism</h3>
+
+
+## File Layout
+
 ## Gems
 
 Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.

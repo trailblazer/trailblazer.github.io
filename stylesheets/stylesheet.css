@@ -367,6 +367,28 @@ Full-Width Styles
   background: #212121;
 }
 
+/* TODO: absolute pixels, also for mobile! */
+.code-box {
+  width: 55%;
+  float: left;
+  /*display: inline;*/
+}
+
+.box {
+  width: 45%;
+}
+
+.box {
+  float: left;
+}
+
+.row {
+  clear: left;
+  width: 100%;
+  /*display: inline;*/
+}
+
+
 
 
 /*******************************************************************************
