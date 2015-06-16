@@ -122,7 +122,7 @@ end
 
 
   <div class="right-text">
-    <h3>Forms</h3>
+    <h3>Form</h3>
 
     <div class="description">
       <p>Every operation contains a form object. </p>
