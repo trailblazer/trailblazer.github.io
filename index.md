@@ -77,9 +77,9 @@ end
 
   <div class="box">
     <div class="description">
-      <p>Operations contain business logic per action. This is where your domain code sits: Validation, callbacks and application code sits here.</p>
-
-      <p></p>
+      <p>Per public action, there's one operation orchestrating the business logic.</p>
+      <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
+      <p>Operations are the only place to write to persistence via models.</p>
     </div>
   </div>
 
