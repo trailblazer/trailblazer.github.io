@@ -400,13 +400,13 @@ Full-Width Styles
   width: 100%;
   margin-bottom: 20px;
 }
-  .row:before, .row:after {
-    content: " ";
-    display: table;
-  }
-  .row:after {
-    clear: both;
-  }
+.row:before, .row:after {
+  content: " ";
+  display: table;
+}
+.row:after {
+  clear: both;
+}
 
 
 
