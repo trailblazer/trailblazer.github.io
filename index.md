@@ -375,11 +375,18 @@ All gems are documented here.
 
 ## The Book
 
-<a href="https://leanpub.com/trailblazer">
-![](images/3dbuch-freigestellt.png)
-</a>
+<div class="row">
+  <div class="box">
+    <a href="https://leanpub.com/trailblazer">
+    <img src="images/3dbuch-freigestellt.png" />
+    </a>
+  </div>
 
-Yes, there's a book! It is about 70% finished and will get another 150 pages, making it 300 pages full of wisdom about Trailblazer and all the gems.
+  <div class="right-text">
+    <p>Yes, there's a book!</p>
+    <p>Written by the busy creator of Trailblazer, it is about 70% finished and will get another 150 pages, making it 300 pages full of wisdom about Trailblazer and all the gems.</p>
 
-If you want to learn about this project and if you feel like supporting Open-Source, please [buy it](https://leanpub.com/trailblazer).
+    <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
+  </div>
+</div>
 
