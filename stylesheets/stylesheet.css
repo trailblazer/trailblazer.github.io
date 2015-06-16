@@ -374,19 +374,39 @@ Full-Width Styles
   /*display: inline;*/
 }
 
-.box {
-  width: 45%;
+.right-text {
 }
 
+.left-code {
+  padding-top: 60px;
+  float: left;
+  padding-right: 30px;
+  width: 40%;
+}
+.left-code-50 {
+  width: 50%;
+  padding-top: 60px;
+  float: left;
+  padding-right: 30px;
+}
 .box {
+  width: 45%;
   float: left;
 }
 
 .row {
-  clear: left;
+  margin: 0 auto;
+  max-width: 62.5em;
   width: 100%;
-  /*display: inline;*/
+  margin-bottom: 20px;
 }
+  .row:before, .row:after {
+    content: " ";
+    display: table;
+  }
+  .row:after {
+    clear: both;
+  }
 
 
 
