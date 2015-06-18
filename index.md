@@ -54,7 +54,7 @@ class Comment < ActiveRecord::Base
   has_many   :users
   belongs_to :thing
 
-  scope :recent -> { limit(10) }
+  scope :recent, -> { limit(10) }
 end
     {% endhighlight %}
   </div>
