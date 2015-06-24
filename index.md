@@ -392,5 +392,5 @@ All gems are documented here.
 
 ## Testimonials
 
-* _"At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."_ **Igor Pstyga, Shop Hers Inc.**
+* _"At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."_ -- **Igor Pstyga, Shop Hers Inc.**
 
