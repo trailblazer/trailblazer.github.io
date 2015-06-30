@@ -82,3 +82,59 @@ end
 {% endhighlight %}
 
 The signature is `validate(params, model, contract_class)`.
+
+
+## Marking Operation as Invalid
+
+Sometimes you don't need a form object but still want the validity behavior of an operation.
+
+```ruby
+def process(params)
+  return invalid! unless params[:id]
+
+  Comment.find(params[:id]).destroy
+  self
+end
+```
+
+`#invalid!` returns `self` per default but accepts any result.
+
+
+## Rendering Operation's Form
+
+You have access to an operation's form using `::present`.
+
+```ruby
+Comment::Create.present(params)
+```
+
+This will run the operation's `#process` method _without_ the validate block and return the contract.
+
+
+## Additional Model Setup
+
+Override `Operation#setup_model(params)` to add nested objects that can be infered from `params` or are static.
+
+This is called right after `#model!`.
+
+## Validation Errors
+
+You can access the contracts `Errors` object via `Operation#errors`.
+
+## ActiveModel Semantics
+
+When using `Reform::Form::ActiveModel` (which is used automatically in a Rails environment to make form builders work) you need to invoke `model Comment` in the contract. This can be inferred automatically from the operation by including `CRUD::ActiveModel`.
+
+```ruby
+class Create < Trailblazer::Operation
+  include CRUD
+  include CRUD::ActiveModel
+
+  model Comment
+
+  contract do # no need to call ::model, here.
+    property :text
+  end
+```
+
+If you want that in all CRUD operations, check out [how you can include](https://github.com/apotonick/gemgem-trbrb/blob/chapter-5/config/initializers/trailblazer.rb#L26) it automatically.
