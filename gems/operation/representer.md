@@ -63,6 +63,15 @@ Song::Create.(song: '{"title": "Fury"}').to_json
 
 In `to_json`, the operation's contract will be passed to the representer and rendered using the representer.
 
+## Manual Representer
+
+You can set your own representer class if you don't want it to be inferred.
+
+{% highlight ruby %}
+class Create < Trailblazer::Operation
+  self.representer_class = SongRepresenter
+{% endhighlight %}
+
 ## Responder
 
 The `Operation::Responder` module uses `Representer` and allows using an operation instance directly with Rails responders.
