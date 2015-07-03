@@ -16,4 +16,3 @@ Pages: [Collection](collection.html)
 Pages: [Callback](callback.html)
 Pages: [Controller](controller.html)
 Pages: [representer](representer.html)
->>>>>>> f12f2b80976c6fff4edec26455b861b20ce86d54
