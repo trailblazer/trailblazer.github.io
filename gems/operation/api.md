@@ -35,7 +35,26 @@ class Comment < ActiveRecord::Base
 end
 {% endhighlight %}
 
+
+
 ## Model Setup
+
+This is the flow in `setup!`. You can override any method here and customize the setup process.
+
+{% highlight ruby %}
+setup_params!(*params)
+@model = model!(*params)
+setup_model!(*params)
+{% endhighlight %}
+
+The `setup_params!` method is meant to change the incoming `params` hash the way you need it.
+
+Override `#model!` if you need to create, find, compose or accumulate model(s). The return value will be the operations `@model`.
+
+Override `Operation#setup_model(params)` to add nested objects that can be infered from `params` or are static.
+
+Read also: [CRUD](crud.html)
+
 
 ## Validate
 
@@ -110,12 +129,6 @@ Comment::Create.present(params)
 
 This will run the operation's `#process` method _without_ the validate block and return the contract.
 
-
-## Additional Model Setup
-
-Override `Operation#setup_model(params)` to add nested objects that can be infered from `params` or are static.
-
-This is called right after `#model!`.
 
 ## Validation Errors
 
