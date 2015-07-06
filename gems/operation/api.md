@@ -4,6 +4,22 @@ layout: default
 
 # Operation API
 
+## Call Style
+Note how this can easily be used for test factories.
+
+```ruby
+let(:comment) { Comment::Create.(valid_comment_params).model }
+```
+
+Using operations as test factories is a fundamental concept of Trailblazer to remove buggy redundancy in tests and manual factories.
+
+
+
+
+
+
+
+
 ## The `params` Hash
 
 Wherever `params` is referenced, think of an input hash in terms of the `params` hash in a controller.
