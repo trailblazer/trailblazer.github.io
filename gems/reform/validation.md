@@ -4,6 +4,46 @@ layout: default
 
 # Validation
 
+Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `Lotus::Validations`.
+
+Reform will at some point drop ActiveModel-support in favor of a clean, fast, maintainable, and simple validations implementation as found in [lotus-validations](https://github.com/lotus/lotus-validations).
+
+
+## ActiveModel
+
+In Rails environments, the AM support will be automatically loaded.
+
+You need to include `Reform::Form::ActiveModel::Validations` either into a particular form class, or simply into `Reform::Form` and make it available for all subclasses.
+
+{% highlight ruby %}
+require "reform/form/active_model/validations"
+
+Reform::Form.class_eval do
+  include Reform::Form::ActiveModel::Validations
+end
+{% endhighlight %}
+
+
+## Lotus
+
+To use Lotus validations (recommended).
+
+{% highlight ruby %}
+require "reform/form/lotus"
+
+Reform::Form.class_eval do
+  include Reform::Form::Lotus
+end
+{% endhighlight %}
+
+Put this into an initializer or on top of your script.
+
+If you forget doing so, the following exception will remind you.
+
+<pre>
+`validates': [Reform] Please include either Reform::Form::ActiveModel::Validations or Reform::Form::Lotus in your form class. (RuntimeError)
+</pre>
+
 ## Uniqueness Validation
 
 Both ActiveRecord and Mongoid modules will support "native" uniqueness support where the validation is basically delegated to the "real" model class. This happens when you use `validates_uniqueness_of` and will respect options like `:scope`, etc.
