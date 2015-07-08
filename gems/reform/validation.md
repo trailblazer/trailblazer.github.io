@@ -13,7 +13,7 @@ Reform will at some point drop ActiveModel-support in favor of a clean, fast, ma
 
 In Rails environments, the AM support will be automatically loaded.
 
-You need to include `Reform::Form::ActiveModel::Validations` either into a particular form class, or simply into `Reform::Form` and make it available for all subclasses.
+In other frameworks, you need to include `Reform::Form::ActiveModel::Validations` either into a particular form class, or simply into `Reform::Form` and make it available for all subclasses.
 
 {% highlight ruby %}
 require "reform/form/active_model/validations"
