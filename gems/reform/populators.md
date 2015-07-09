@@ -25,7 +25,7 @@ A problem with populators can be an uninitialized `collection` property.
 
 {% highlight ruby %}
 class AlbumForm < Reform::Form
-  collection :songs, populate_if_emtpy: Song do
+  collection :songs, populate_if_empty: Song do
     property :title
   end
 end
