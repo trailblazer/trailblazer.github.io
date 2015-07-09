@@ -464,3 +464,47 @@ Small Device Styles
   }
 
 }
+
+
+
+
+.nav-docs .nav-docs-section {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #eee;
+  padding: 12px 0;
+}
+
+.nav-docs {
+
+
+}
+
+.nav-docs h3 {
+  font-family: Arial;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.nav-docs a.active {
+  color: #cc7a6f;
+}
+.nav-docs a {
+  color: #666;
+  display: block;
+  text-decoration: none;
+}
+
+/*a {
+  color: #c05b4d;
+
+}*/
+
+.nav-docs li {
+  line-height: 16px;
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.nav-docs ul {
+  list-style: none;
+}
