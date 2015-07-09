@@ -67,8 +67,9 @@ property :songs,
   prepopulator: ->(*) { self.songs << Song.new if songs.size < 3 } do
 {% endhighlight %}
 
-This will always add an empty song form to the nested `songs` collection until three songs are attached. You can use the `Twin::Collection` API when adding, changing or deleting items from a collection. (# TODO: add link)
+This will always add an empty song form to the nested `songs` collection until three songs are attached. You can use the `Twin::Collection` [API](/gems/disposable/collection.html) when adding, changing or deleting items from a collection.
 
+Note that when calling `#prepopulate!`, your `:prepopulate` code for all existing forms in the graph will _be executed_ . It is up to you to add checks if you need that.
 
 ## Overriding
 
@@ -88,7 +89,7 @@ class AlbumForm < Reform::Form
 There's different alternatives for setting a default value for a formerly empty field.
 
 1. Use `:prepopulator` as [described here](#configuration). Don't forget to call `prepopulate!` before rendering the form.
-2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder), for validation and when syncing.
+2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in `#validate`.
 
 {% highlight ruby %}
 property :title
