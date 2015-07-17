@@ -8,6 +8,12 @@ layout: default
 # Operation API
 
 ## Call Style
+::run
+::call
+::reject
+
+
+
 Note how this can easily be used for test factories.
 
 ```ruby
