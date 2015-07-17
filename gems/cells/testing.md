@@ -23,7 +23,7 @@ Usually, this will give you the cell instance. It's your job to invoke a state u
 
 {% highlight ruby %}
 it "renders cell" do
-  cell(:song, @song).call #=> HTML / Capybara::Node::Simple
+  cell(:song, @song).() #=> HTML / Capybara::Node::Simple
 end
 {% endhighlight %}
 
@@ -43,7 +43,7 @@ In case you're _not_ using Rspec, derive your tests from `Cell::TestCase`.
 {% highlight ruby %}
 class SongCellTest < Cell::TestCase
   it "renders" do
-    cell(:song, @song).call.must_have_selector "b"
+    cell(:song, @song).().must_have_selector "b"
   end
 end
 {% endhighlight %}
@@ -68,7 +68,7 @@ Rspec works out of the box. You can use the `#cell` and `#concept` builders in y
 
 {% highlight ruby %}
 describe SongCell, type: :cell do
-  subject { cell(:song, Song.new).call(:show) }
+  subject { cell(:song, Song.new).(:show) }
 
   it { expect(subject).to have_content "Song#show" }
 end
@@ -92,13 +92,13 @@ Per default, Capybara support is enabled in `Cell::TestCase` when the Capybara g
 The only extension is that the result of `Cell#call` is wrapped into a `Capybara::Node::Simple` instance, which allows to call matchers on the result.
 
 {% highlight ruby %}
-cell(:song, @song).call.must_have_selector "b" # example for MiniTest::Spec.
+cell(:song, @song).().must_have_selector "b" # example for MiniTest::Spec.
 {% endhighlight %}
 
 In case you need access to the actual markup string, use `#to_s`. Note that this is a Cells-specific extension.
 
 {% highlight ruby %}
-cell(:song, @song).call.to_s.must_match "by SNFU" # example for MiniTest::Spec.
+cell(:song, @song).().to_s.must_match "by SNFU" # example for MiniTest::Spec.
 {% endhighlight %}
 
 You can disable Capybara for Cells even when the gem is loaded.
