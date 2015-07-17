@@ -2,6 +2,9 @@
 layout: default
 ---
 
+
+
+
 # Operation API
 
 ## Call Style
@@ -52,6 +55,15 @@ end
 {% endhighlight %}
 
 
+Callstack
+
+# run
+#   setup
+#   process
+#     contract
+#     validate
+
+## Contract
 
 ## Model Setup
 
