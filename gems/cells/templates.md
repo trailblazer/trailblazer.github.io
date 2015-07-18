@@ -6,6 +6,25 @@ layout: default
 
 Cells supports various template engines.
 
+We provide support for Haml, Erb, and Slim. You can also write [your own](#your-own) template engine.
+
+In a non-Rails environment, you need to include the respective module into your cells, so it knows what template to find.
+
+{% highlight ruby %}
+class SongCell < Cell::ViewModel
+  include Cell::Erb
+  # include Cell::Haml
+  # include Cell::Slim
+{% endhighlight %}
+
+Note that you can only include _one engine per class_. This is due to problems with helpers in Rails and the way they have to be fixed in combination with Cells.
+
+### Multiple Template Engines in Rails
+
+When including more than one engine in your Gemfile in Rails, the last one wins. Since each gem includes itself into `Cell::ViewModel`, unfortunately there can only be one global engine.
+
+Currently, there's no clean way but to disable automatic inclusion from each gem (not yet implemented) and then include template modules into your application cells manually.
+
 # ERB
 
 # Haml
