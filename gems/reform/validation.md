@@ -73,3 +73,21 @@ end
 {% endhighlight %}
 
 This will only validate the uniqueness of `title`. Other options are not supported, yet. Feel free to [help us here](https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb)!
+
+## Confirm Validation
+
+Likewise, the `confirm: true` validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.
+
+Instead, use your own virtual fields.
+
+```ruby
+class SignInForm < Reform::Form
+  property :password, virtual: true
+  property :password_confirmation, virtual: true
+
+  validate :passwork_ok? do
+    errors.add(:password, "Password mismatch") if password != password_confirmation
+  end
+```
+
+This is discussed in the _Authentication_ chapter of the [Trailblazer book](https://leanpub.com/trailblazer).
