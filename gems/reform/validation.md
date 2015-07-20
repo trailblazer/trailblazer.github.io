@@ -80,7 +80,7 @@ Likewise, the `confirm: true` validation from ActiveResource is considered dange
 
 Instead, use your own virtual fields.
 
-```ruby
+{% highlight ruby %}
 class SignInForm < Reform::Form
   property :password, virtual: true
   property :password_confirmation, virtual: true
@@ -88,6 +88,6 @@ class SignInForm < Reform::Form
   validate :passwork_ok? do
     errors.add(:password, "Password mismatch") if password != password_confirmation
   end
-```
+{% endhighlight %}
 
 This is discussed in the _Authentication_ chapter of the [Trailblazer book](https://leanpub.com/trailblazer).
