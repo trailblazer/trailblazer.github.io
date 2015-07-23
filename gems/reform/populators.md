@@ -44,7 +44,7 @@ You can also create the object yourself and leverage data from the traversed fra
 {% highlight ruby %}
 class AlbumForm < Reform::Form
   property :songs, populate_if_empty: ->(fragment, options) {
-    Song.where(name: fragment["name"]) or User.new } do
+    Song.find_by(name: fragment["name"]) or User.new } do
 {% endhighlight %}
 
 The result from this block will be automatically added to the form graph.
@@ -58,7 +58,7 @@ class AlbumForm < Reform::Form
   end
 
   def populate_songs!(fragment, options)
-    Song.where(name: fragment["name"]) or User.new
+    Song.find_by(name: fragment["name"]) or User.new
   end
 {% endhighlight %}
 
@@ -93,7 +93,7 @@ This naturally works for single properties, too.
 {% highlight ruby %}
 property :artist,
   populator: ->(fragment, options) {
-    artist ? artist : self.artist = Artist.where(id: fragment["id"])
+    artist ? artist : self.artist = Artist.find_by(id: fragment["id"])
   }
 {% endhighlight %}
 
