@@ -79,7 +79,7 @@ The result of the block will automatically assigned to the property or collectio
 
 ## The :populator Option
 
-While the `:populate_if_empty` option is only called when no matching form was found for the input, the `:populator` option is always invoked and gives you maximum power for population.
+While the `:populate_if_empty` option is only called when no matching form was found for the input, the `:populator` option is always invoked and gives you maximum flexibility for population.
 
 Please do _not_ use both `:prepopulate_if_empty` and `:populator` for the same property.
 
