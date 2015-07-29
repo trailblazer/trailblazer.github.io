@@ -3,9 +3,15 @@ layout: default
 permalink: /gems/reform/prepopulator.html
 ---
 
-# Pre-Populating
+# Prepopulating
 
-Prepopulating is helpful when you want to fill out fields (aka. _defaults_) or add nested forms before rendering.
+Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in `validate`.
+
+[Prepopulating](/gems/reform/prepopulator.html) is helpful when you want to fill out fields (aka. _defaults_) or add nested forms before rendering.
+
+[Populating](/gems/reform/populators.html) is invoked in `validate` and will add nested forms depending on the incoming hash.
+
+This page explains prepopulation used to prepare the form for rendering.
 
 ## Configuration
 
@@ -13,43 +19,62 @@ You can use the `:prepopulator` option on every property or collection.
 
 {% highlight ruby %}
 class AlbumForm < Reform::Form
-  property :title, prepopulator: ->(options) { self.title = options[:def_title] }
-
-  property :artist, prepopulator: prepopulate_artist! do
+  property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
     property :name
   end
+{% endhighlight %}
 
-private
-  def prepopulate_artist!(options)
-    self.artist = Artist.new
-  end
+The option value can be a lambda or an instance method name.
+
+In the block/method, you have access to the form API and can invoke any kind of logic to prepopulate your form. Note you need to assign models for nested form using their writers.
+
+
+## Invocation
+
+Prepopulation must be invoked manually.
+
+{% highlight ruby %}
+form = AlbumForm.new(Album.new)
+form.artist #=> nil
+
+form.prepopulate!
+
+form.artist #=> <nested ArtistForm @model=<Artist ..>>
+{% endhighlight %}
+
+This explicit call must happen before the form gets rendered. For instance, in Trailblazer, this happens in the controller action.
+
+
+## Prepopulate is not Populate
+
+`:populator` and `:populate_if_empty` will be run automatically in `validate`. Do not call `prepopulate!` before `validate` if you use the populator options. This will usually result in "more" nested forms being added as you wanted (unless you know what you're doing).
+
+Prepopulators are a concept designed to **prepare a form for rendering**, whereas populators are meant to **set up the form in `validate`** when the input hash is deserialized.
+
+This is explained in the _Nested Forms_ chapter of the Trailblazer book. Please read it first if you have trouble understanding this, and then open an issue.
+
+## Options
+
+Options may be passed. They will be available in the `:prepopulator` block.
+
+{% highlight ruby %}
+class AlbumForm < Reform::Form
+  property :title, prepopulator: ->(options) { self.title = options[:def_title] }
 end
 {% endhighlight %}
 
-As `:prepopulator` option, you can pass lambdas or symbols which will resolve to instance methods.
-
-Prepopulators have the following signature:
+You can then pass arbitrary arguments to `prepopulate!`.
 
 {% highlight ruby %}
-(options)
-{% endhighlight %}
+form.title #=> nil
 
-* `options` are the arguments passed to the `prepopulate!` call.
-
-
-## Invoking
-
-Prepopulating must be invoked manually.
-
-{% highlight ruby %}
-form.prepopulate!
-{% endhighlight %}
-
-Options may be passed. They will be available in the `:prepopulator` blocks.
-
-{% highlight ruby %}
 form.prepopulate!(def_title: "Roxanne")
+
+form.title #=> "Roxanne"
 {% endhighlight %}
+
+The arguments passed to the `prepopulate!` call will be passed straight to the block/method.
+
 
 This call will be applied to the entire nested form graph recursively _after_ the currently traversed form's prepopulators were run.
 

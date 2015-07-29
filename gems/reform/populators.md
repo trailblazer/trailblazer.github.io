@@ -3,9 +3,19 @@ layout: default
 permalink: /gems/reform/populators.html
 ---
 
-# Reform: Populators
+# Populating
+
+Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in `validate`.
+
+[Prepopulating](/gems/reform/prepopulator.html) is helpful when you want to fill out fields (aka. _defaults_) or add nested forms before rendering.
+
+[Populating](/gems/reform/populators.html) is invoked in `validate` and will add nested forms depending on the incoming hash.
+
+This page discusses the latter.
 
 [Populators are discussed in detail in the chapters _Nested Forms_ and _Mastering Forms_ of the Trailblazer book.]
+
+## Populators
 
 In `#validate`, Reform per default will try to match nested hashes to nested forms. In other words, Reform thinks that the form object graph is already matching 1-to-1 to the incoming params hash.
 
@@ -25,7 +35,7 @@ form.validate(songs: [{name: "The Tempest"}, {name: "Nevermore"}])
 
 Intuitively, you will expect Reform to create an additional song with the name "Nevermore". However, this is not how it works. Without configuration, Reform has no idea how to assign the second `:songs` fragment to the form and will raise an exception.
 
-## Populate_if_empty
+## The :populate_if_empty Option
 
 To let the form create a new model wrapped by a nested form for you use `:populate_if_empty`.
 
@@ -66,6 +76,22 @@ class AlbumForm < Reform::Form
 ### Signature
 
 The result of the block will automatically assigned to the property or collection for you. Note that you can't use the twin API in here. If you want to do fancy stuff, use `:populator`.
+
+## The :populator Option
+
+While the `:populate_if_empty` option is only called when no matching form was found for the input, the `:populator` option is always invoked and gives you maximum power for population.
+
+```ruby
+class AlbumForm < Reform::Form
+  collection :songs,
+    populator: lambda { |fragment, collection, index, options|
+      # collection = options.binding.get # we don't need this anymore as this comes in for free!
+      (item = collection[index]) ? item : collection.insert(index, Song.new) } do
+
+    property :title
+  end
+```
+
 
 ## Populating by ID
 
