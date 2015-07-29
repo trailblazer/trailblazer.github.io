@@ -73,7 +73,7 @@ class AlbumForm < Reform::Form
 {% endhighlight %}
 
 
-### Signature
+Arguments are the currently processed hash `fragment` and `options`.
 
 The result of the block will automatically assigned to the property or collection for you. Note that you can't use the twin API in here. If you want to do fancy stuff, use `:populator`.
 
@@ -81,17 +81,51 @@ The result of the block will automatically assigned to the property or collectio
 
 While the `:populate_if_empty` option is only called when no matching form was found for the input, the `:populator` option is always invoked and gives you maximum power for population.
 
-```ruby
+Please do _not_ use both `:prepopulate_if_empty` and `:populator` for the same property.
+
+## Populator for Collections
+
+A `:populator` for collections is executed for every collection fragment in the incoming hash.
+
+{% highlight ruby %}
 class AlbumForm < Reform::Form
   collection :songs,
     populator: lambda { |fragment, collection, index, options|
-      # collection = options.binding.get # we don't need this anymore as this comes in for free!
       (item = collection[index]) ? item : collection.insert(index, Song.new) } do
 
     property :title
   end
-```
+{% endhighlight %}
 
+The `:populator` option accepts blocks and instance method names.
+
+The signature is as follows.
+
+* `fragment` is the fragment of the incoming hash that matches the processed nested form.
+* `collection` is the nested form collection (manually available via `form.songs`).
+* `index` will be the index of the currently processed fragment.
+* `options`
+
+Note that you manually have to check whether or not a nested form is already available (by index or ID) and then need to add it using the form API writers.
+
+Another requirement is that per block invocation, the nested form has to be returned from the block. This is important for further processing of the incoming hash when values are mapped to properties by Reform (e.g. `title`).
+
+## Populator for Single Properties
+
+Naturally, a single property `:populator` is only called once.
+
+{% highlight ruby %}
+class AlbumForm < Reform::Form
+  property :composer, populator: lambda { |fragment, model, options|
+      model || self.composer= Artist.new } do
+
+    property :name
+  end
+{% endhighlight %}
+
+The signature here is identical to collections, except that the `index` argument is missing for obvious reasons.
+
+Again, a requirement is that the nested form has to be returned from the block.
 
 ## Populating by ID
 
