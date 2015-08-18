@@ -15,6 +15,7 @@ Pages: [Validation](validation.html)
 
 Pages: [Debugging](debugging.html)
 Pages: [Rails](rails.html)
+Pages: [Upgrading Guide](upgrading-guide.html)
 
 
 ## Workflow
