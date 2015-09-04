@@ -4,6 +4,58 @@ layout: default
 
 # Builder
 
+Different contexts like _"admin user"_ vs. _"signed in"_ can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
+
+The easiest way is to use normal inheritance for context-specific operations.
+
+{% highlight ruby %}
+class Thing::Create < Trailblazer::Operation
+  # generic code, contracts, etc.
+
+  class SignedIn < self
+    # specific code
+  end
+end
+{% endhighlight %}
+
+A `builds` block allows to let the operation class take care of the instantiation process.
+
+{% highlight ruby %}
+class Thing::Create < Trailblazer::Operation
+  builds -> (params) do
+    return SignedIn if params[:current_user]
+  end
+{% endhighlight %}
+
+When running the top-level operation, the builder will instantiate the correct subclass according to the `params` environment.
+
+{% highlight ruby %}
+op = Thing::Create.(current_user: admin)
+op.class #=> Thing::Create::SignedIn
+{% endhighlight %}
+
+If the `builds` block doesn't return a constant, the original constant will be used for instantiation. In our example, this would resolve to `Thing::Create`.
+
+## Shared Builders
+
+`builds` blocks are _not inherited_. You can copy them to other classes, though.
+
+{% highlight ruby %}
+class Thing::Update < Trailblazer::Operation
+  self.builds_class = Create.build_class
+{% endhighlight %}
+
+Be careful about constant resolving here: the block you copied has to have runtime evaluation of constants.
+
+{% highlight ruby %}
+class Thing::Create < Trailblazer::Operation
+  builds -> (params) do
+    return self::SignedIn if # ...
+  end
+{% endhighlight %}
+
+Now, the block can safely be copied to other classes where `SignedIn` will be resolved in the new context.
+
 ## Resolver
 
 A resolver allows you to use both the operation model and the policy in the builder.
