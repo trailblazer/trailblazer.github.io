@@ -7,11 +7,11 @@ permalink: /gems/operation/
 
 An operation is a service object.
 
-It embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
+Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
 
-Note that operation is not a monolithic god object, but a composition of many. It is up to you to include features like polices, representers or callbacks.
+Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
-Every public function in your application is implemented as an operation. Ideally, you don't access models directly anymore, only via the respective operation.
+Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to include features like policis, representers or callbacks.
 
 ## API
 
@@ -62,6 +62,8 @@ end
 op = Comment::Create.(id: 1)
 op.model #=> <Comment id: 1>
 {% endhighlight %}
+
+Since every public function in your application is implemented as an operation, you don't access models directly anymore on the outside.
 
 ## Contract
 
