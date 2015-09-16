@@ -88,3 +88,5 @@ class Thing::Create < Trailblazer::Operation
     Thing.find_by(slug: params[:slug])
   end
 {% endhighlight %}
+
+Do _not_ include `CRUD` when using `Resolver`.
