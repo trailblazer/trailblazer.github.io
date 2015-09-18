@@ -3,6 +3,8 @@ layout: default
 permalink: /gems/operation/
 ---
 
+[API](api.html) - [Collection](collection.html) - [Callback](callback.html) - [Controller](controller.html) - [representer](representer.html) - [Model](model.html) - [Policy](policy.html) - [Builder](builder.html)
+
 # Trailblazer::Operation
 
 An operation is a service object.
@@ -95,7 +97,7 @@ The `validate` block is only executed when the validation was successful and all
 
 [Learn more.](/gems/operation/api.html#contract)
 
-## Model
+## Operation::Model
 
 Normally, a `Create` operation will instantiate a new model object, whereas `Update`, `Show`, or `Delete` operations need to find a particular model.
 
@@ -123,6 +125,8 @@ Now, the operation takes care of creating the model in `validate`. Note that the
 {% highlight ruby %}
 Comment::Create.(comment: {body: "MVC is so 90s."}).model #=> <Comment body="MVC ..">
 {% endhighlight %}
+
+[Learn more](model.html)
 
 ## Run
 
@@ -221,11 +225,4 @@ This normally covers the logic for two controller actions, e.g. `new` and `creat
 
 Operation has many optional features like authorization, callbacks, polymorphic builders, etc.
 
-Pages: [API](api.html)
-Pages: [Collection](collection.html)
-Pages: [Callback](callback.html)
-Pages: [Controller](controller.html)
-Pages: [representer](representer.html)
-Pages: [CRUD](crud.html)
-Pages: [Policy](policy.html)
-Pages: [Builder](builder.html)
+
