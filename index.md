@@ -81,6 +81,8 @@ end
       <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
       <p>Operations are the only place to write to persistence via models.</p>
     </div>
+
+    <a href="/gems/operation">Learn more</a>
   </div>
 
   <div class="code-box">

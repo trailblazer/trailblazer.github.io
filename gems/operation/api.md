@@ -71,6 +71,8 @@ Callstack
 
 ## Contract
 
+self.contract_class=
+
 ## Model Setup
 
 This is the flow in `setup!`. You can override any method here and customize the setup process.

@@ -9,9 +9,11 @@ An operation is a service object.
 
 Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
 
+![](/images/diagrams/stack.png){: .left }
+
 Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
-Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to include features like policis, representers or callbacks.
+Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to include features like policies, representers or callbacks.
 
 ## API
 
@@ -67,6 +69,58 @@ Since every public function in your application is implemented as an operation, 
 
 ## Contract
 
+The cool thing about Trailblazer's operation is that it integrates the validation process using a form object.
+
+{% highlight ruby %}
+class Comment::Create < Trailblazer::Operation
+  contract do
+    property :body, validates: {presence: true}
+  end
+
+  def process(params)
+    @model = Comment.new
+
+    validate(params[:comment], @model) do
+      contract.save
+    end
+  end
+end
+{% endhighlight %}
+
+Using the `::contract` block you can define a `Reform::Form` class that the operation will use for validation (and rendering). [Any Reform feature](/gems/reform) like nesting, populators or complex validations can be used here.
+
+The `validate` block is only executed when the validation was successful and allows you to save the model and run arbitrary post-processing code. Here, we use the contract's `save` which will push the validated data to the model and then save it.
+
+[Learn more.](/gems/operation/api.html#contract)
+
+## Model
+
+Normally, a `Create` operation will instantiate a new model object, whereas `Update`, `Show`, or `Delete` operations need to find a particular model.
+
+This is such a common workflow for CRUD operations that it is built into Trailblazer in the `Operation::Model` module.
+
+{% highlight ruby %}
+class Comment::Create < Trailblazer::Operation
+  include Model
+  model Comment, :create
+
+  contract do
+    property :body, validates: {presence: true}
+  end
+
+  def process(params)
+    validate(params[:comment]) do
+      contract.save
+    end
+  end
+end
+{% endhighlight %}
+
+Now, the operation takes care of creating the model in `validate`. Note that there is zero coupling to ActiveRecord: `Model` will only call `Comment.new` or `Comment.find(id)` on the configured model class to accomplish its job, allowing any kind of persistence layer with that API.
+
+{% highlight ruby %}
+Comment::Create.(comment: {body: "MVC is so 90s."}).model #=> <Comment body="MVC ..">
+{% endhighlight %}
 
 ## Run
 
@@ -92,19 +146,51 @@ However, it also accepts a block that's run in case of a _successful validation_
 {% highlight ruby %}
 res, operation = Comment::Create.run(comment: {}) do |op|
   # this is not run, because validation not successful.
-  puts "Hey, #{op.model} was created!"
+  puts "Hey, #{op.model} was created!" and return
 end
+
+puts "That's wrong: #{operation.errors}"
 {% endhighlight %}
 
 This style is often used in framework bindings for Rails, Lotus or Roda when hooking the operation call into the endpoint.
 
-
-
 ## Design Goals
 
-Operations decouple the business logic from the actual framework and from the persistence layer. This makes is really easy to swap ORMs or the entire framework. For instance, operations written in a Rails environment can be run in Sinatra or Lotus as the only coupling happens when querying or writing to the database.
+Operations decouple the business logic from the actual framework and from the persistence layer.
 
-Abstraction via Twin (for view, BL, representers)
+This makes is really easy to update or swap the underlying framework or ORM. For instance, operations written in a Rails environment can be run in Sinatra or Lotus as the only coupling happens when querying or writing to the database.
+
+## Testing Operations
+
+Operations are incredibly simple to test. All edge-cases can cleanly be tested in unit tests, without the HTTP overhead.
+
+{% highlight ruby %}
+describe Comment::Create do
+  it "works" do
+    comment = Comment::Create.(comment: {body: "Operation rules!"}).model
+    expect(comment.body).to eq("Operation rules!")
+  end
+end
+{% endhighlight %}
+
+## Testing With Operations
+
+Another huge advantage is: operations can be used in any environment like scripts, background jobs and will do the exact same as in a controller. This is extremely helpful to use operations as a replacement for test factories.
+
+{% highlight ruby %}
+describe Comment::Update do
+  it "updates" do
+    comment = Comment::Create(..) # this is a factory.
+
+    Comment::Update.(id: comment.id, comment: {body: "FTW!"})
+    expect(comment.body).to eq("FTW!")
+  end
+end
+{% endhighlight %}
+
+## More
+
+Operation has many optional features like authorization, callbacks, polymorphic builders, etc.
 
 Pages: [API](api.html)
 Pages: [Collection](collection.html)
