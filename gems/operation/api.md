@@ -46,6 +46,7 @@ res, operation = Comment::Create.reject(comment: {}) do |op|
 end
 {% endhighlight %}
 
+Regardless of the style, you always get the operation instance. This is only for presentation. Please treat it as immutuable.
 
 ## Operations in Tests
 
@@ -217,22 +218,22 @@ self.contract_class = CommentForm
 
 Sometimes you don't need a form object but still want the validity behavior of an operation.
 
-```ruby
+{% highlight ruby %}
 def process(params)
   return invalid! unless params[:id]
 
   Comment.find(params[:id]).destroy
   self
 end
-```
+{% endhighlight %}
 
 ## Rendering Operation's Form
 
 You have access to an operation's form using `::present`.
 
-```ruby
+{% highlight ruby %}
 Comment::Create.present(params)
-```
+{% endhighlight %}
 
 This will run the operation's `#process` method _without_ the validate block and return the contract.
 
@@ -240,12 +241,12 @@ This will run the operation's `#process` method _without_ the validate block and
 
 ## ActiveModel Semantics
 
-When using `Reform::Form::ActiveModel` (which is used automatically in a Rails environment to make form builders work) you need to invoke `model Comment` in the contract. This can be inferred automatically from the operation by including `CRUD::ActiveModel`.
+When using `Reform::Form::ActiveModel` (which is used automatically in a Rails environment to make form builders work) you need to invoke `model Comment` in the contract. This can be inferred automatically from the operation by including `Model::ActiveModel`.
 
 ```ruby
 class Create < Trailblazer::Operation
-  include CRUD
-  include CRUD::ActiveModel
+  include Model
+  include Model::ActiveModel
 
   model Comment
 
