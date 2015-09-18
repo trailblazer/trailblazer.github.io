@@ -3,7 +3,7 @@ layout: default
 permalink: /gems/operation/
 ---
 
-[API](api.html) - [Collection](collection.html) - [Callback](callback.html) - [Controller](controller.html) - [representer](representer.html) - [Model](model.html) - [Policy](policy.html) - [Builder](builder.html)
+[API](api.html) - [Builder](builder.html) - [Collection](collection.html) - [Callback](callback.html) - [Controller](controller.html) - [representer](representer.html) - [Model](model.html) - [Policy](policy.html)
 
 # Trailblazer::Operation
 
