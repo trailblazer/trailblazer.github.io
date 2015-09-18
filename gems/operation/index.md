@@ -55,13 +55,13 @@ Normally, operations are working on _models_. This term does absolutely not limi
 Assigning `@model` will allow accessing your operation model from the outside.
 
 {% highlight ruby %}
-class Comment::Create < Trailblazer::Operation
+class Comment::Update < Trailblazer::Operation
   def process(params)
     @model = Comment.find params[:id]
   end
 end
 
-op = Comment::Create.(id: 1)
+op = Comment::Update.(id: 1)
 op.model #=> <Comment id: 1>
 {% endhighlight %}
 
@@ -70,6 +70,8 @@ Since every public function in your application is implemented as an operation, 
 ## Contract
 
 The cool thing about Trailblazer's operation is that it integrates the validation process using a form object.
+
+This is often done wrong in Rails applications where the controller first instantiates a form and then passes it to a service object. In Trailblazer, the operation is the place for all business logic.
 
 {% highlight ruby %}
 class Comment::Create < Trailblazer::Operation
@@ -187,6 +189,33 @@ describe Comment::Update do
   end
 end
 {% endhighlight %}
+
+## Presenting Operations
+
+The operation is not only helpful for validating and processing data, it can also be used when rendering the form.
+
+{% highlight ruby %}
+operation = Comment::Update.present(id: 1)
+{% endhighlight %}
+
+`Comment::Update` will now run the model-finding logic and create the form object for you. It will _not_ run `#process`.
+
+{% highlight ruby %}
+# Operation finds the model..
+operation.model #=> <Comment body="FTW!">
+# and provides the Reform object.
+@form = operation.contract #=> <Reform::Form ..>
+{% endhighlight %}
+
+As Reform works with most form builders out-of-the-box, you can pass the form right into it.
+
+{% highlight ruby %}
+= simple_form_for @form do |f|
+  = f.input :body
+  = f.button :submit
+{% endhighlight %}
+
+This normally covers the logic for two controller actions, e.g. `new` and `create`.
 
 ## More
 
