@@ -45,3 +45,31 @@ Of course, this works in views, too.
 {% highlight erb %}
 <%= title(escape: false) %>
 {% endhighlight %}
+
+
+
+
+
+
+## AV
+
+clean encap, no global access, interfaces
+
+# Initialize
+
+Class.()
+
+Class.build (no def args)
+
+ViewModel::cell()
+
+## Nesting
+
+
+# Collections
+
+This will instantiate each collection cell as follows.
+
+```ruby
+Comment.(comment, style: "awesome", volume: "loud")
+```
