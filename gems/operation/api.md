@@ -200,19 +200,34 @@ You can access the contracts `Errors` object via `Operation#errors`.
 
 ## Manual Contract
 
-In case you want to keep your contract in a separate file, or reuse a contract class without inheriting from another operation, use `::contract_class=` to reference another contract. Note that this in _not_ a copy but references the very same contract.
+The operation's contract is just a plain Reform class and doesn't know anything about the composing operation.
+
+This is why you may reference arbitrary contract classes using `::contract`. That's helpful if you keep contracts in separate files, or reuse them without inheriting from another operation.
 
 {% highlight ruby %}
 class Comment::Delete < Trailblazer::Operation
-  self.contract_class = Update.contract_class
+  contract CommentForm # a plain Reform::Form class.
 {% endhighlight %}
 
-You can also reference a normal Reform class.
+You can also reference a contract from another operation.
 
 {% highlight ruby %}
-self.contract_class = CommentForm
+class Comment::Delete < Trailblazer::Operation
+  contract Update.contract
 {% endhighlight %}
 
+Note that `::contract` will subclass the referenced contract class, making it a copy of the original, allowing you to add and remove fields and validations in the copy.
+
+You can also copy and refine the contract.
+
+{% highlight ruby %}
+class Comment::Delete < Trailblazer::Operation
+  self.contract Update.contract do
+    property :upvotes
+  end
+{% endhighlight %}
+
+To reference without copying, use `Operation::contract_class=(constant)`
 
 ## Marking Operation as Invalid
 
