@@ -222,7 +222,7 @@ You can also copy and refine the contract.
 
 {% highlight ruby %}
 class Comment::Delete < Trailblazer::Operation
-  self.contract Update.contract do
+  contract Update.contract do
     property :upvotes
   end
 {% endhighlight %}
