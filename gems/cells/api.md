@@ -2,8 +2,31 @@
 layout: default
 ---
 
+## Initialize
 
-### Call
+Normally, you instantiate cells with the `concept` or `cell` helper.
+
+{% highlight ruby %}
+cell = concept("comment/cell", comment)
+{% endhighlight %}
+
+This gives you the cell instance. Although not encouraged, you could call multiple methods on it.
+
+{% highlight ruby %}
+cell.(:show)
+cell.(:javascript)
+{% endhighlight %}
+
+Normally, you will want to run the `show` method, only. In controller views, this will be called automatically. However, you could do that manually as follows.
+
+## Call
+
+{% highlight ruby %}
+concept("comment/cell", comment).(:show)
+{% endhighlight %}
+
+Always invoke cell methods via `call`. This will ensure that caching - if configured - is performed properly.
+
 
 The `#call` method also accepts a block and yields `self` (the cell instance) to it. This is extremely helpful for using `content_for` outside of the cell.
 
@@ -13,6 +36,37 @@ The `#call` method also accepts a block and yields `self` (the cell instance) to
 ```
 
 Note how the block is run in the global view's context, allowing you to use global helpers like `content_for`.
+
+## Options
+
+A cell can wrap more than one model. This can be handy to pass in additional data you need for presentation.
+
+{% highlight ruby %}
+concept("comment/cell", comment, admin: true)
+{% endhighlight %}
+
+Inside the cell, the additional options are available via `#options`.
+
+{% highlight ruby %}
+class Comment::Cell < Cell::ViewModel
+  def show
+    return render :admin if options[:admin]
+    render
+  end
+{% endhighlight %}
+
+
+
+Class.()
+
+Class.build (no def args)
+
+ViewModel::cell()
+
+
+
+
+
 
 ## HTML Escaping
 
@@ -55,13 +109,6 @@ Of course, this works in views, too.
 
 clean encap, no global access, interfaces
 
-# Initialize
-
-Class.()
-
-Class.build (no def args)
-
-ViewModel::cell()
 
 ## Nesting
 
