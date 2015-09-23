@@ -198,7 +198,7 @@ form      = operation.contract
 You can access the contracts `Errors` object via `Operation#errors`.
 
 
-## Manual Contract
+## Composable Interface: Contract
 
 The operation's contract is just a plain Reform class and doesn't know anything about the composing operation.
 

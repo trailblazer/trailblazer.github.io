@@ -63,7 +63,7 @@ Song::Create.(song: '{"title": "Fury"}').to_json
 
 In `to_json`, the operation's contract will be passed to the representer and rendered using the representer.
 
-## Manual Representer
+## Composable Interface
 
 You can set your own representer class if you don't want it to be inferred.
 
