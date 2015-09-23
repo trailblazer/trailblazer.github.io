@@ -2,7 +2,7 @@
 layout: default
 permalink: /gems/cells/
 ---
-[API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Templates](templates.html)
+[API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html)
 
 # Cells
 
