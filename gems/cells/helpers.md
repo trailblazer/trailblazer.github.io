@@ -43,4 +43,4 @@ class Comment::Cell < Cell::Concept
   delegates :parent_controller, :image_tag
 {% endhighlight %}
 
-It is a [well-known problem](https://github.com/apotonick/cells/issues/214) that the cell will render the "wrong" path when using Sprockets. The above delegation fixes this. Please note that this is due to the way Rails includes helpers and accesses global data.
+The delegation fixes the [well-known problem](https://github.com/apotonick/cells/issues/214) of the cell rendering the "wrong" path when using Sprockets. Please note that this fix is necessary due to the way Rails includes helpers and accesses global data.
