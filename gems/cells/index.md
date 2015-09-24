@@ -6,7 +6,7 @@ permalink: /gems/cells/
 
 # Cells
 
-Out of the frustration with Rails' view layer, its lack of encapsulation and the mess coming with partials and helpers both accessing global state, the [Cells](https://github.com/apotonick/cells) gem emerged.
+Out of the frustration with Rails' view layer, its lack of encapsulation and the convoluted code resulting from partials and helpers both accessing global state, the [Cells](https://github.com/apotonick/cells) gem emerged.
 
 The cells gem is completely stand-alone and can be used without Trailblazer.
 

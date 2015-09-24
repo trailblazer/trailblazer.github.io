@@ -33,3 +33,14 @@ class Admin::Comment::Cell < Cell::Concept
 {% endhighlight %}
 
 The lookup will now be `cell.admin.greeting`.
+
+## ImageTag
+
+When using asset path helpers like `image_tag` that render different paths in production, please simply delegate to the controller.
+
+{% highlight ruby %}
+class Comment::Cell < Cell::Concept
+  delegates :parent_controller, :image_tag
+{% endhighlight %}
+
+It is a [well-known problem](https://github.com/apotonick/cells/issues/214) that the cell will render the "wrong" path when using Sprockets. The above delegation fixes this. Please note that this is due to the way Rails includes helpers and accesses global data.
