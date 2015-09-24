@@ -34,7 +34,7 @@ class Admin::Comment::Cell < Cell::Concept
 
 The lookup will now be `cell.admin.greeting`.
 
-## ImageTag
+## Asset Helpers
 
 When using asset path helpers like `image_tag` that render different paths in production, please simply delegate to the controller.
 
