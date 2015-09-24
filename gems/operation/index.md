@@ -164,7 +164,7 @@ This style is often used in framework bindings for Rails, Lotus or Roda when hoo
 
 Operations decouple the business logic from the actual framework and from the persistence layer.
 
-This makes is really easy to update or swap the underlying framework or ORM. For instance, operations written in a Rails environment can be run in Sinatra or Lotus as the only coupling happens when querying or writing to the database.
+This makes it really easy to update or swap the underlying framework or ORM. For instance, operations written in a Rails environment can be run in Sinatra or Lotus as the only coupling happens when querying or writing to the database.
 
 ## Testing Operations
 
