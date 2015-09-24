@@ -59,7 +59,7 @@ class SongForm < Reform::Form
 
 Be warned, though, that those validators write to the model instance. Even though this _usually_ is not persisted, this will mess up your application state, as in case of an invalid validation your model will have unexpected values.
 
-This is not Reform's fault but a design flaw in ActiveModel's validators.
+This is not Reform's fault but a design flaw in ActiveRecord's validators.
 
 You're encouraged to use Reform's non-writing `unique: true` validation, though.
 
