@@ -12,6 +12,15 @@ Before the operation is invoked, the controller method `process_params!` is run.
 
 Each method will set `@operation`, `@model` and `@form` on the controller which allows using them in views, too. Each method returns the operation instance.
 
+You need to include the `Controller` module.
+
+{% highlight ruby %}
+class ApplicationController < ActionController::Base
+  include Trailblazer::Operation::Controller
+end
+{% endhighlight %}
+
+
 ## Run
 
 Use `#run` to invoke the operation.
