@@ -10,7 +10,7 @@ The `Operation::Controller` module provides four shorthand methods to run and pr
 
 Before the operation is invoked, the controller method `process_params!` is run. You can override that to normalize the incoming parameters.
 
-Each method will set `@operation`, `@model` and `@form` on the controller which allows using them in views, too. Each method returns the operation instance.
+Each method will set the `@operation` and `@model` instance variables on the controller which allows using them in views, too. Each method returns the operation instance.
 
 You need to include the `Controller` module.
 
@@ -44,9 +44,9 @@ result, op = Comment::Create.run(params)
 @form      = op.contract
 {% endhighlight %}
 
-First, you have the chance to normalize parameters. The controller's `params` hash is then passed into the operation run. After that, the three instance variables on the controller are set.
+First, you have the chance to normalize parameters. The controller's `params` hash is then passed into the operation run. After that, the three instance variables on the controller are set, giving you access to operation instance, form and model.
 
-An optional block for `#run` is run only when the operation was valid.
+An optional block for `#run` is invoked only when the operation was valid.
 
 {% highlight ruby %}
 class CommentsController < ApplicationController
@@ -60,24 +60,24 @@ end
 
 ## Present
 
-To setup an operation without running its `#process` method, use `#present`.
+To setup an operation without running its `#process` method, use `#present`. This is often used if you only need the operation's model for presentation.
 
 {% highlight ruby %}
 class CommentsController < ApplicationController
   def show
     present Comment::Update
-    puts @model.id # this is available now.
+    # you have access to @operation and @model.
   end
 end
 {% endhighlight %}
 
-Instead of running the operation, this will call `::present`, pass in the controller's `params` and hence only run the model finding logic (or, more precise, everything inside `Operation#setup!`).
+Instead of running the operation, this will only instantiate the operation by passing in the controller's `params`. In turn, this only runs the operation's `#setup` (which embraces model finding logic) and does **not instantiate** a contract and **doesn't run** `#process`.
 
 {% highlight ruby %}
-Comment::Update.present(params)
+Comment::Update.new(params)
+@operation = op
+@model     = op.model
 {% endhighlight %}
-
-Everything else of the call stack is identical to `#run`.
 
 ## Form
 
@@ -91,14 +91,15 @@ class CommentsController < ApplicationController
 end
 {% endhighlight %}
 
-This is identical to `#present` with one addition: after the operation, model and form are set up, the form's `prepopulate!` method is called.
+This is identical to `#present` with two additional step: besides the `@operation` and `@model` instance variables, the `@form` will be assigned, too. After that, the form's `prepopulate!` method is called and the form is ready for rendering, e.g. via `#form_for`.
 
 {% highlight ruby %}
 op = Comment::Create.present(params)
 op.contract.prepopulate!
+@operation = op
+@model     = op.model
+@form      = op.contract
 {% endhighlight %}
-
-If you don't want `prepopulate!` to be invoked, simply use `#present` in place of `#form`.
 
 ## Respond
 
