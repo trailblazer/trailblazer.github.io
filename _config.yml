@@ -1,3 +1,5 @@
 kramdown:
   auto_ids:   true
   input:      GFM
+exclude:
+  - node_modules

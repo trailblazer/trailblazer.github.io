@@ -18,6 +18,11 @@ Pages: [Rails](rails.html)
 Pages: [Upgrading Guide](upgrading-guide.html)
 
 
+## Associations
+
+_"How do I map `has_many` associations to my form?"_
+
+
 ## Workflow
 
 new
