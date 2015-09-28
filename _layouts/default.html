@@ -34,17 +34,18 @@
     <meta name="twitter:title" content="{{ page.title }}">
     <meta name="twitter:description" content="{{ page.description }}">
     <meta name="twitter:image" content="{{ page.imageurl }}">
-  
+
     <!-- modernizr
     ================================================== -->
     <script src="bower_components/modernizr/modernizr.js"></script>
   </head>
   <body>
+    {% include nav.html %}
 
 <div class="off-canvas-wrap" data-offcanvas>
-  <div class="inner-wrap"> 
+  <div class="inner-wrap">
     <!-- Add header and nav here  -->
-    
+
         <!--[if lt IE 8]>
             <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
         <![endif]-->
@@ -54,7 +55,7 @@
         <div class="small-12 columns">
             <section class="right show-for-medium-up mam">
                 <ul class="inline-list">
-                    {% include nav.html %}
+
                 </ul>
             </section>
 
@@ -84,13 +85,13 @@
         <div class="row">
           <section role="main">
             <div class="small-12 columns">
-        
-              {{ content }} 
-           
+
+              {{ content }}
+
             </div>
           </section>
         </div>
-        
+
 
         <footer class="site-footer row" role="contentinfo">
         <hr/>

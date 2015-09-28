@@ -1,4 +1,3 @@
-asdfasfas
 Pages: [API](api.html)
           Pages: [Testing](testing.html)
           Pages: [Rendering](render.html)

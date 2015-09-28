@@ -34,17 +34,46 @@
     <meta name="twitter:title" content="">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="">
-  
+
     <!-- modernizr
     ================================================== -->
     <script src="bower_components/modernizr/modernizr.js"></script>
   </head>
   <body>
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">My Site</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="active"><a href="#">Right Button Active</a></li>
+      <li class="has-dropdown">
+        <a href="#">Right Button Dropdown</a>
+        <ul class="dropdown">
+          <li><a href="#">First link in dropdown</a></li>
+          <li class="active"><a href="#">Active link in dropdown</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Left Nav Button</a></li>
+    </ul>
+  </section>
+</nav>
+
 
 <div class="off-canvas-wrap" data-offcanvas>
-  <div class="inner-wrap"> 
+  <div class="inner-wrap">
     <!-- Add header and nav here  -->
-    
+
         <!--[if lt IE 8]>
             <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
         <![endif]-->
@@ -54,10 +83,7 @@
         <div class="small-12 columns">
             <section class="right show-for-medium-up mam">
                 <ul class="inline-list">
-                    <li><a href="">Home</a></li>
-<li><a href="page-html-unit-test.html">Unit test</a></li>
-<li><a href="page-foundation-example.html">Foundation</a></li>
-<li><a href="page-template-example.html">Template</a></li>
+
                 </ul>
             </section>
 
@@ -79,10 +105,35 @@
         <aside class="right-off-canvas-menu">
             <!-- navigation list goes here -->
             <ul class="off-canvas-list">
-               <li><a href="">Home</a></li>
-<li><a href="page-html-unit-test.html">Unit test</a></li>
-<li><a href="page-foundation-example.html">Foundation</a></li>
-<li><a href="page-template-example.html">Template</a></li>
+               <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">My Site</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="active"><a href="#">Right Button Active</a></li>
+      <li class="has-dropdown">
+        <a href="#">Right Button Dropdown</a>
+        <ul class="dropdown">
+          <li><a href="#">First link in dropdown</a></li>
+          <li class="active"><a href="#">Active link in dropdown</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Left Nav Button</a></li>
+    </ul>
+  </section>
+</nav>
+
             </ul>
         </aside>
 
@@ -90,7 +141,7 @@
         <div class="row">
           <section role="main">
             <div class="small-12 columns">
-        
+
               <h2 id="initialize">Initialize</h2>
 
 <p>Normally, you instantiate cells with the <code>concept</code> or <code>cell</code> helper.</p>
@@ -176,21 +227,46 @@
 
 <pre><code class="language-ruby">Comment.(comment, style: "awesome", volume: "loud")
 </code></pre>
- 
-           
+
+
             </div>
           </section>
         </div>
-        
+
 
         <footer class="site-footer row" role="contentinfo">
         <hr/>
           <div class="large-12 columns">
             <ul class="inline-list">
-                <li><a href="">Home</a></li>
-<li><a href="page-html-unit-test.html">Unit test</a></li>
-<li><a href="page-foundation-example.html">Foundation</a></li>
-<li><a href="page-template-example.html">Template</a></li>
+                <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">My Site</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="active"><a href="#">Right Button Active</a></li>
+      <li class="has-dropdown">
+        <a href="#">Right Button Dropdown</a>
+        <ul class="dropdown">
+          <li><a href="#">First link in dropdown</a></li>
+          <li class="active"><a href="#">Active link in dropdown</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Left Nav Button</a></li>
+    </ul>
+  </section>
+</nav>
+
             </ul>
             <p class="quiet copyright right"> <a href="https://twitter.com/">
                 <i class="fa fa-twitter">
