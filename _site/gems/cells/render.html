@@ -1,0 +1,187 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> - </title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <!-- CSS  Get: http://www.google.com/fonts/
+    http://stackoverflow.com/questions/7985081/how-to-deploy-a-jekyll-site-locally-with-css-js-and-background-images-included
+    ================================================== -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+    <!-- Fount Awesome -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Ah, the favicon.
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Open Graph: https://developers.facebook.com/docs/opengraph/howtos/maximizing-distribution-media-content/
+    Twitter: https://dev.twitter.com/docs/cards/types/summary-card
+    ============================== -->
+    <meta property="og:title" content=""/>
+    <meta property="og:site_name" content=" - "/>
+    <meta property="og:url" content=" - "/>
+    <meta property="og:description" content=""/>
+    <meta property="og:image" content=""/>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+  
+    <!-- modernizr
+    ================================================== -->
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap"> 
+    <!-- Add header and nav here  -->
+    
+        <!--[if lt IE 8]>
+            <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
+        <![endif]-->
+
+    <header id="header" class="row">
+
+        <div class="small-12 columns">
+            <section class="right show-for-medium-up mam">
+                <ul class="inline-list">
+                    <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+                </ul>
+            </section>
+
+            <section class="right show-for-small">
+                <ul class="inline-list mam">
+                <li>
+                    <a class="right-off-canvas-toggle" href="#"><i class="fa fa-bars fa-lg">
+                    </i></a>
+                </li>
+                </ul>
+            </section>
+
+            <h1><a href=""></a></h1>
+
+        </div>
+    </header>
+
+        <!-- Off Canvas Menu -->
+        <aside class="right-off-canvas-menu">
+            <!-- navigation list goes here -->
+            <ul class="off-canvas-list">
+               <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+        </aside>
+
+
+        <div class="row">
+          <section role="main">
+            <div class="small-12 columns">
+        
+              <h1 id="rendering">Rendering</h1>
+
+<h2 id="view-paths">View Paths</h2>
+
+<p>Every cell class can have multiple view paths. However, I advise you not to have more than two, better one, unless you’re imlementing a cell in an engine. This is simply to prevent unexpected behavior.</p>
+
+<p>View paths are set via the <code>::view_paths</code> method.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">view_paths</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;app/cells&quot;</span><span class="o">]</span></code></pre></div>
+
+<p>Use the setter to override the view paths entirely, or append as follows.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Shopify</span><span class="o">::</span><span class="no">CartCell</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">view_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;/var/shopify/app/cells&quot;</span></code></pre></div>
+
+<p>The <code>view_paths</code> variable is an inheritable array.</p>
+
+<p>A trick to quickly find out about the directory lookup list is to inspect the <code>::prefixes</code> class method of your particular cell.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="no">Shopify</span><span class="o">::</span><span class="no">CartCell</span><span class="o">.</span><span class="n">prefixes</span>
+<span class="c1">#=&gt; [&quot;app/cells/shopify/cart&quot;, &quot;/var/shopify/app/cells/shopify/cart&quot;]</span></code></pre></div>
+
+<p>This is the authorative list when finding templates. It will include inherited cell’s directories as well when you used inheritance. The list is traversed from left to right.</p>
+
+<h2 id="partials">Partials</h2>
+
+<p>Even considered a taboo, you may render global partials from Cells.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">SongCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="no">Partial</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="ss">partial</span><span class="p">:</span> <span class="s2">&quot;../views/shared/sidebar.html&quot;</span>
+  <span class="k">end</span></code></pre></div>
+
+<p>Make sure to use the <code>:partial</code> option and specify a path relative to the cell’s view path. Cells will automatically add the format and the terrible underscore, resulting in <code>"../views/shared/_sidebar.html.erb"</code>.</p>
+ 
+           
+            </div>
+          </section>
+        </div>
+        
+
+        <footer class="site-footer row" role="contentinfo">
+        <hr/>
+          <div class="large-12 columns">
+            <ul class="inline-list">
+                <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+            <p class="quiet copyright right"> <a href="https://twitter.com/">
+                <i class="fa fa-twitter">
+                </i>
+             @</a>, <a href="https://github.com//">
+                <i class="fa fa-github">
+                </i>
+             @</a> .</p>
+          </div>
+        </footer>
+
+
+      <!-- close the off-canvas menu -->
+      <a class="exit-off-canvas"></a>
+
+      </div>
+    </div>
+
+
+    <!-- Loading JavaScripts
+    ================================================== -->
+    <!-- Zepto (http://zeptojs.com/) is great, but I am sticking with jQuery. Sorry! -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.js"><\/script>')</script>
+    <script src="js/plugins.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,380 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> - </title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <!-- CSS  Get: http://www.google.com/fonts/
+    http://stackoverflow.com/questions/7985081/how-to-deploy-a-jekyll-site-locally-with-css-js-and-background-images-included
+    ================================================== -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+    <!-- Fount Awesome -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Ah, the favicon.
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Open Graph: https://developers.facebook.com/docs/opengraph/howtos/maximizing-distribution-media-content/
+    Twitter: https://dev.twitter.com/docs/cards/types/summary-card
+    ============================== -->
+    <meta property="og:title" content=""/>
+    <meta property="og:site_name" content=" - "/>
+    <meta property="og:url" content=" - "/>
+    <meta property="og:description" content=""/>
+    <meta property="og:image" content=""/>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+  
+    <!-- modernizr
+    ================================================== -->
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap"> 
+    <!-- Add header and nav here  -->
+    
+        <!--[if lt IE 8]>
+            <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
+        <![endif]-->
+
+    <header id="header" class="row">
+
+        <div class="small-12 columns">
+            <section class="right show-for-medium-up mam">
+                <ul class="inline-list">
+                    <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+                </ul>
+            </section>
+
+            <section class="right show-for-small">
+                <ul class="inline-list mam">
+                <li>
+                    <a class="right-off-canvas-toggle" href="#"><i class="fa fa-bars fa-lg">
+                    </i></a>
+                </li>
+                </ul>
+            </section>
+
+            <h1><a href=""></a></h1>
+
+        </div>
+    </header>
+
+        <!-- Off Canvas Menu -->
+        <aside class="right-off-canvas-menu">
+            <!-- navigation list goes here -->
+            <ul class="off-canvas-list">
+               <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+        </aside>
+
+
+        <div class="row">
+          <section role="main">
+            <div class="small-12 columns">
+        
+              <h1 id="operation-api">Operation API</h1>
+
+<p>This document discusses the callstack from top to bottom.</p>
+
+<h2 id="call-style">Call Style</h2>
+
+<p>The <em>call style</em>  returns the operation when the validation was successful. With invalid data, it will raise an <code>InvalidContract</code> exception.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment</span><span class="p">:</span> <span class="p">{</span><span class="ss">body</span><span class="p">:</span> <span class="s2">&quot;MVC is so 90s.&quot;</span><span class="p">})</span> <span class="c1">#=&gt; &lt;Comment::Create @model=..&gt;</span>
+<span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment</span><span class="p">:</span> <span class="p">{})</span> <span class="c1">#=&gt; exception raised!</span></code></pre></div>
+
+<p>The call style is popular for tests and on the console.</p>
+
+<h2 id="run-style">Run Style</h2>
+
+<p>The <em>run style</em> returns a result set <code>[result, operation]</code> in both cases.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">res</span><span class="p">,</span> <span class="n">operation</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="ss">comment</span><span class="p">:</span> <span class="p">{</span><span class="ss">body</span><span class="p">:</span> <span class="s2">&quot;MVC is so 90s.&quot;</span><span class="p">})</span></code></pre></div>
+
+<p>However, it also accepts a block that’s run in case of a <em>successful validation</em>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">res</span><span class="p">,</span> <span class="n">operation</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="ss">comment</span><span class="p">:</span> <span class="p">{})</span> <span class="k">do</span> <span class="o">|</span><span class="n">op</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Hey, </span><span class="si">#{</span><span class="n">op</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> was created!&quot;</span> <span class="ow">and</span> <span class="k">return</span> <span class="c1"># not run.</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="s2">&quot;That&#39;s wrong: </span><span class="si">#{</span><span class="n">operation</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span></code></pre></div>
+
+<p>To conveniently handle the inverse case where the block should be run in case of an <em>invalid</em> operation, use <code>::reject</code>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">res</span><span class="p">,</span> <span class="n">operation</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="ss">comment</span><span class="p">:</span> <span class="p">{})</span> <span class="k">do</span> <span class="o">|</span><span class="n">op</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">&quot;this is all wrong! </span><span class="si">#{</span><span class="n">operation</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">end</span></code></pre></div>
+
+<p>Regardless of the style, you always get the operation instance. This is only for presentation. Please treat it as immutuable.</p>
+
+<h2 id="operations-in-tests">Operations in Tests</h2>
+
+<p>Operations when used test factories are usually invoked with the <em>call</em> style.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">let</span><span class="p">(</span><span class="ss">:comment</span><span class="p">)</span> <span class="p">{</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">valid_comment_params</span><span class="p">)</span><span class="o">.</span><span class="n">model</span> <span class="p">}</span></code></pre></div>
+
+<p>Using operations as test factories is a fundamental concept of Trailblazer to remove buggy redundancy in tests and manual factories. Note that you might use FactoryGirl to create <code>params</code> hashes.</p>
+
+<h2 id="the-callstack">The Callstack</h2>
+
+<p>Here’s the default call stack of methods involved when running an Operation.</p>
+
+<pre>
+::call
+├── ::build_operation
+│   ├── #initialize
+│   │   ├── #setup!
+│   │   │   ├── #setup_params!
+│   │   │   ├── #build_model!
+│   │   │   │   ├── #assign_model!
+│   │   │   │   │   ├── #model!
+│   │   │   │   ├── #setup_model!
+│   ├── #run
+│   │   ├── #process
+</pre>
+
+<ol>
+  <li>In case of a polymorphic setup when you want different operation classes to handle different contexts, configured <a href="builder.html">builders</a> will be run by <code>::build_operation</code> to figure out the class to instantiate.</li>
+  <li>Override <code>#setup_params!</code> to normalize the incoming parameters.</li>
+  <li>Override <code>#model!</code> to compute the operation’s model.</li>
+  <li>Override <code>#setup_model!</code> for tasks such as adding nested models to the operation’s model.</li>
+  <li>Implement <code>#process</code> for your business logic.</li>
+</ol>
+
+<p>The <code>Operation::Model</code> module to <a href="model.html">create/find models automatically</a> hooks into those methods.</p>
+
+<h2 id="process">Process</h2>
+
+<p>The <code>#process</code> method is the pivot of any operation. Here, business logic and validations get executed and dispatched.</p>
+
+<p>Its only argument is the <code>params</code> hash being passed into <code>Op.({..})</code>. Note that you don’t even have to use a contract or a model.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="c1"># do whatever you feel like.</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<h2 id="validate">Validate</h2>
+
+<p>The <code>validate</code> method will instantiate the operation’s Reform form with the model and validate it. If you pass a block to it, this will be executed only if the validation was successful (valid).</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Update</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">validates</span><span class="p">:</span> <span class="p">{</span><span class="ss">presence</span><span class="p">:</span> <span class="kp">true</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">manual_model</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">manual_model</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="o">.</span><span class="n">save</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>Note that when <code>Model</code> is <em>not</em> included, you have to pass in the model as the second argument to <code>#validate</code>.</p>
+
+<p>However, since most operations use <code>Model</code>, we can omit a lot of code here.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Update</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="kp">include</span> <span class="no">Model</span>
+  <span class="n">model</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">:update</span>
+
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">validates</span><span class="p">:</span> <span class="p">{</span><span class="ss">presence</span><span class="p">:</span> <span class="kp">true</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="o">.</span><span class="n">save</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>With <code>Model</code> included, <code>#validate</code> only takes one argument: the <code>params</code> to validate.</p>
+
+<h2 id="validate-internals">Validate Internals</h2>
+
+<p>Internally, this is what happens.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="vi">@contract</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">contract_class</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+  <span class="vi">@valid</span> <span class="o">=</span> <span class="vi">@contract</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="k">end</span></code></pre></div>
+
+<ol>
+  <li>The contract is instantiated using the operation’s <code>#model</code>. The contract is available via <code>#contract</code> throughout the operation (even before you call <code>#validate</code>, which will use the same instance).</li>
+  <li>It then validates the incoming <code>params</code>, assigns values and errors on the contract object and returns the result.</li>
+</ol>
+
+<h2 id="validate-handling-invalid">Validate: Handling Invalid</h2>
+
+<p>You don’t have to use the block-style <code>#validate</code>. It returns the validation result and allows an <code>if/else</code>, too.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:comment</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">contract</span><span class="o">.</span><span class="n">save</span> <span class="c1"># success.</span>
+  <span class="k">else</span>
+    <span class="n">notify!</span> <span class="c1"># invalid.</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<h2 id="contract">Contract</h2>
+
+<p>Normally, the contract is instantiated when calling <code>validate</code>. However, you can access the contract before that. The <code>contract</code> is memoized and <code>validate</code> will use the existing instance.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="n">contract</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;Static&quot;</span>
+  <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:comment</span><span class="o">]</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># will use above contract.</span>
+    <span class="n">contract</span><span class="o">.</span><span class="n">save</span> <span class="c1"># also the same as above.</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The <code>#contract</code> method always returns the Reform object. It has the <a href="/gems/reform/api.html">identical API</a> and allows to <code>sync</code>, <code>save</code>, etc.</p>
+
+<p>This is not only useful in the <code>validate</code> block, but also afterwards, for example to render the invalid form.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">operation</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">form</span>      <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">contract</span></code></pre></div>
+
+<h2 id="validation-errors">Validation Errors</h2>
+
+<p>You can access the contracts <code>Errors</code> object via <code>Operation#errors</code>.</p>
+
+<h2 id="composable-interface-contract">Composable Interface: Contract</h2>
+
+<p>The operation’s contract is just a plain Reform class and doesn’t know anything about the composing operation.</p>
+
+<p>This is why you may reference arbitrary contract classes using <code>::contract</code>. That’s helpful if you keep contracts in separate files, or reuse them without inheriting from another operation.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Delete</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="no">CommentForm</span> <span class="c1"># a plain Reform::Form class.</span></code></pre></div>
+
+<p>You can also reference a contract from another operation.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Delete</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="no">Update</span><span class="o">.</span><span class="n">contract</span></code></pre></div>
+
+<p>Note that <code>::contract</code> will subclass the referenced contract class, making it a copy of the original, allowing you to add and remove fields and validations in the copy.</p>
+
+<p>You can also copy and refine the contract.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Delete</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="no">Update</span><span class="o">.</span><span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:upvotes</span>
+  <span class="k">end</span></code></pre></div>
+
+<p>To reference without copying, use <code>Operation::contract_class=(constant)</code></p>
+
+<h2 id="marking-operation-as-invalid">Marking Operation as Invalid</h2>
+
+<p>Sometimes you don’t need a form object but still want the validity behavior of an operation.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">invalid!</span> <span class="k">unless</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+
+  <span class="no">Comment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">destroy</span>
+  <span class="nb">self</span>
+<span class="k">end</span></code></pre></div>
+
+<h2 id="rendering-operations-form">Rendering Operation’s Form</h2>
+
+<p>You have access to an operation’s form using <code>::present</code>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="n">present</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></code></pre></div>
+
+<p>This will run the operation’s <code>#process</code> method <em>without</em> the validate block and return the contract.</p>
+
+<h2 id="activemodel-semantics">ActiveModel Semantics</h2>
+
+<p>When using <code>Reform::Form::ActiveModel</code> (which is used automatically in a Rails environment to make form builders work) you need to invoke <code>model Comment</code> in the contract. This can be inferred automatically from the operation by including <code>Model::ActiveModel</code>.</p>
+
+<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
+  include Model
+  include Model::ActiveModel
+
+  model Comment
+
+  contract do # no need to call ::model, here.
+    property :text
+  end
+</code></pre>
+
+<p>If you want that in all CRUD operations, check out <a href="https://github.com/apotonick/gemgem-trbrb/blob/chapter-5/config/initializers/trailblazer.rb#L26">how you can include</a> it automatically.</p>
+ 
+           
+            </div>
+          </section>
+        </div>
+        
+
+        <footer class="site-footer row" role="contentinfo">
+        <hr/>
+          <div class="large-12 columns">
+            <ul class="inline-list">
+                <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+            <p class="quiet copyright right"> <a href="https://twitter.com/">
+                <i class="fa fa-twitter">
+                </i>
+             @</a>, <a href="https://github.com//">
+                <i class="fa fa-github">
+                </i>
+             @</a> .</p>
+          </div>
+        </footer>
+
+
+      <!-- close the off-canvas menu -->
+      <a class="exit-off-canvas"></a>
+
+      </div>
+    </div>
+
+
+    <!-- Loading JavaScripts
+    ================================================== -->
+    <!-- Zepto (http://zeptojs.com/) is great, but I am sticking with jQuery. Sorry! -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.js"><\/script>')</script>
+    <script src="js/plugins.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+  </body>
+</html>

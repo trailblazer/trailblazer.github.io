@@ -1,0 +1,211 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> - </title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <!-- CSS  Get: http://www.google.com/fonts/
+    http://stackoverflow.com/questions/7985081/how-to-deploy-a-jekyll-site-locally-with-css-js-and-background-images-included
+    ================================================== -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+    <!-- Fount Awesome -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Ah, the favicon.
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Open Graph: https://developers.facebook.com/docs/opengraph/howtos/maximizing-distribution-media-content/
+    Twitter: https://dev.twitter.com/docs/cards/types/summary-card
+    ============================== -->
+    <meta property="og:title" content=""/>
+    <meta property="og:site_name" content=" - "/>
+    <meta property="og:url" content=" - "/>
+    <meta property="og:description" content=""/>
+    <meta property="og:image" content=""/>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+  
+    <!-- modernizr
+    ================================================== -->
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap"> 
+    <!-- Add header and nav here  -->
+    
+        <!--[if lt IE 8]>
+            <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
+        <![endif]-->
+
+    <header id="header" class="row">
+
+        <div class="small-12 columns">
+            <section class="right show-for-medium-up mam">
+                <ul class="inline-list">
+                    <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+                </ul>
+            </section>
+
+            <section class="right show-for-small">
+                <ul class="inline-list mam">
+                <li>
+                    <a class="right-off-canvas-toggle" href="#"><i class="fa fa-bars fa-lg">
+                    </i></a>
+                </li>
+                </ul>
+            </section>
+
+            <h1><a href=""></a></h1>
+
+        </div>
+    </header>
+
+        <!-- Off Canvas Menu -->
+        <aside class="right-off-canvas-menu">
+            <!-- navigation list goes here -->
+            <ul class="off-canvas-list">
+               <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+        </aside>
+
+
+        <div class="row">
+          <section role="main">
+            <div class="small-12 columns">
+        
+              <h1 id="operationrepresenter">Operation::Representer</h1>
+
+<p>Representer are a concept from Representable and <a href="/gems/roar">Roar</a> and help to parse and render documents, as found in JSON or XML APIs.</p>
+
+<p>Operations usually receive the <code>params</code> hash and pass this to the form’s <code>#validate</code> method. The same works with documents, with the exception that the form needs a representer to deserialize the document.</p>
+
+<p>With <code>Representer</code> included, operations can infer a representer from the contract class. The representer can be further customized in the <code>::representer</code> block.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Song</span><span class="o">::</span><span class="no">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="kp">include</span> <span class="no">Representer</span>
+
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:name</span>
+    <span class="n">validates</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">presence</span><span class="p">:</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="n">representer</span> <span class="k">do</span>
+    <span class="c1"># inherited :name</span>
+    <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">HAL</span>
+
+    <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span> <span class="p">{</span> <span class="n">song_path</span><span class="p">(</span><span class="n">represented</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:song</span><span class="o">]</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># params[:song] is a JSON document.</span>
+      <span class="n">contract</span><span class="o">.</span><span class="n">save</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<h2 id="validation">Validation</h2>
+
+<p>You now invoke the operation with a JSON document, not with a hash anymore.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Song</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">song</span><span class="p">:</span> <span class="s1">&#39;{&quot;title&quot;: &quot;Fury&quot;}&#39;</span><span class="p">)</span></code></pre></div>
+
+<p>In <code>Operation#validate</code>, the incoming <code>params[:song]</code> will now be treated as a document.</p>
+
+<p>The operation’s representer will be passed into the form’s <code>validate</code> and used as the deserializer, as it can read JSON and understands the format’s specific semantics.</p>
+
+<p>After deserialization/population is finished, validation and processing is analogue to a “normal” non-representer operation.</p>
+
+<h2 id="rendering">Rendering</h2>
+
+<p>The <code>Representer</code> module also imports <code>to_json</code>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Song</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">song</span><span class="p">:</span> <span class="s1">&#39;{&quot;title&quot;: &quot;Fury&quot;}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span>
+<span class="c1">#=&gt; &#39;{&quot;title&quot;: &quot;Fury&quot;,&quot;_links&quot;:{&quot;self&quot;:&quot;/songs/1&quot;}}&#39;</span></code></pre></div>
+
+<p>In <code>to_json</code>, the operation’s contract will be passed to the representer and rendered using the representer.</p>
+
+<h2 id="composable-interface">Composable Interface</h2>
+
+<p>You can set your own representer class if you don’t want it to be inferred.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">representer_class</span> <span class="o">=</span> <span class="no">SongRepresenter</span></code></pre></div>
+
+<h2 id="responder">Responder</h2>
+
+<p>The <code>Operation::Responder</code> module uses <code>Representer</code> and allows using an operation instance directly with Rails responders.</p>
+ 
+           
+            </div>
+          </section>
+        </div>
+        
+
+        <footer class="site-footer row" role="contentinfo">
+        <hr/>
+          <div class="large-12 columns">
+            <ul class="inline-list">
+                <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+            <p class="quiet copyright right"> <a href="https://twitter.com/">
+                <i class="fa fa-twitter">
+                </i>
+             @</a>, <a href="https://github.com//">
+                <i class="fa fa-github">
+                </i>
+             @</a> .</p>
+          </div>
+        </footer>
+
+
+      <!-- close the off-canvas menu -->
+      <a class="exit-off-canvas"></a>
+
+      </div>
+    </div>
+
+
+    <!-- Loading JavaScripts
+    ================================================== -->
+    <!-- Zepto (http://zeptojs.com/) is great, but I am sticking with jQuery. Sorry! -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.js"><\/script>')</script>
+    <script src="js/plugins.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+  </body>
+</html>

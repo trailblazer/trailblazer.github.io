@@ -1,0 +1,280 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> - </title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <!-- CSS  Get: http://www.google.com/fonts/
+    http://stackoverflow.com/questions/7985081/how-to-deploy-a-jekyll-site-locally-with-css-js-and-background-images-included
+    ================================================== -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+    <!-- Fount Awesome -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Ah, the favicon.
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- Open Graph: https://developers.facebook.com/docs/opengraph/howtos/maximizing-distribution-media-content/
+    Twitter: https://dev.twitter.com/docs/cards/types/summary-card
+    ============================== -->
+    <meta property="og:title" content=""/>
+    <meta property="og:site_name" content=" - "/>
+    <meta property="og:url" content=" - "/>
+    <meta property="og:description" content=""/>
+    <meta property="og:image" content=""/>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+  
+    <!-- modernizr
+    ================================================== -->
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap"> 
+    <!-- Add header and nav here  -->
+    
+        <!--[if lt IE 8]>
+            <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
+        <![endif]-->
+
+    <header id="header" class="row">
+
+        <div class="small-12 columns">
+            <section class="right show-for-medium-up mam">
+                <ul class="inline-list">
+                    <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+                </ul>
+            </section>
+
+            <section class="right show-for-small">
+                <ul class="inline-list mam">
+                <li>
+                    <a class="right-off-canvas-toggle" href="#"><i class="fa fa-bars fa-lg">
+                    </i></a>
+                </li>
+                </ul>
+            </section>
+
+            <h1><a href=""></a></h1>
+
+        </div>
+    </header>
+
+        <!-- Off Canvas Menu -->
+        <aside class="right-off-canvas-menu">
+            <!-- navigation list goes here -->
+            <ul class="off-canvas-list">
+               <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+        </aside>
+
+
+        <div class="row">
+          <section role="main">
+            <div class="small-12 columns">
+        
+              <p><a href="api.html">API</a> - <a href="testing.html">Testing</a> - <a href="render.html">Rendering</a> - <a href="engine.html">Engine Cells</a> - <a href="rails.html">Rails</a> - <a href="helpers.html">Helpers</a> - <a href="templates.html">Templates</a> - <a href="troubleshooting.html">Troubleshooting</a></p>
+
+<h1 id="cells">Cells</h1>
+
+<p>Out of the frustration with Rails’ view layer, its lack of encapsulation and the convoluted code resulting from partials and helpers both accessing global state, the <a href="https://github.com/apotonick/cells">Cells</a> gem emerged.</p>
+
+<p>The cells gem is completely stand-alone and can be used without Trailblazer.</p>
+
+<p>A cell is an object that represent a fragment of your UI. The scope of that fragment is up to you: it can embrace an entire page, a single comment container in a thread or just an avatar image link.</p>
+
+<p>Cells are faster than ActionView. While exposing a better performance, you step-wise encapsulate fragments into cell widgets and enforce interfaces.</p>
+
+<h2 id="view-model">View Model</h2>
+
+<p>Think of cells, or <em>view models</em>, as small Rails controllers, but without any HTTP coupling. Cells embrace all presentation and rendering logic to present a fragment of the UI.</p>
+
+<h2 id="rendering-a-cell">Rendering a Cell</h2>
+
+<p>Cells can be rendered anywhere in your application. Mostly, you want to use them in controller views or actions to replace a complex helper/partial mess.</p>
+
+<div class="highlight"><pre><code class="language-haml" data-lang="haml"><span class="p">-</span> <span class="c1"># app/views/comments/index.html.haml</span>
+<span class="nt">%h1</span> Comments
+@comments.each do |comment|
+  <span class="p">=</span> <span class="n">concept</span><span class="p">(</span><span class="s2">&quot;comment/cell&quot;</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span> <span class="c1">#=&gt; Comment::Cell.new(comment).show</span></code></pre></div>
+
+<p>This will instantiate and invoke the <code>Comment::Cell</code> for each comment. It is completely up to the cell how to return the necessary markup.</p>
+
+<h2 id="cell-class">Cell Class</h2>
+
+<p>Following the Trailblazer convention, the <code>Comment::Cell</code> sits in <code>app/concepts/comment/cell.rb</code>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="s2">&quot;This: </span><span class="si">#{</span><span class="n">model</span><span class="o">.</span><span class="n">inspect</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>Per default, the <code>#show</code> method of a cell is called when it is invoked from a view. This method is responsible to compile the HTML (or whatever else you want to present) that is returned and displayed.</p>
+
+<p>Whatever you pass into the cell via the <code>concept</code> helper will be available as the cell’s <code>#model</code>.<br />
+Whatever you return from the <code>show</code> method will be displayed in the page invoking the cell.</p>
+
+<div class="highlight"><pre><code class="language-haml" data-lang="haml"><span class="p">=</span> <span class="n">concept</span><span class="p">(</span><span class="s2">&quot;comment/cell&quot;</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span> <span class="c1">#=&gt; &quot;This: &lt;Comment body=\&quot;MVC!\&quot;&gt;&quot;</span></code></pre></div>
+
+<p>Note that you can pass anything into a cell. This can be an ActiveRecord model, a PORO or an array of attachments. The cell provides access to it via <code>model</code> and it’s your job do use it correctly.</p>
+
+<h2 id="cell-views">Cell Views</h2>
+
+<p>While we already have a cleaner interface as compared to helpers accessing to global state, the real power of Cells comes when rendering views. This, again, is similar to controllers.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="c1"># renders app/concepts/comment/views/show.haml</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>Using <code>#render</code> without any arguments will parse and interpolate the <code>app/concepts/comment/views/show.haml</code> template. Note that you’re free to use <a href="https://github.com/trailblazer/cells-erb">ERB</a>, <a href="https://github.com/trailblazer/cells-haml">Haml</a>, or <a href="https://github.com/trailblazer/cells-slim">Slim</a>.</p>
+
+<div class="highlight"><pre><code class="language-haml" data-lang="haml"><span class="p">-</span> <span class="c1"># app/concepts/comment/views/show.haml</span>
+<span class="nt">%li</span>
+  <span class="p">=</span> <span class="n">model</span><span class="o">.</span><span class="n">body</span>
+  By
+  <span class="p">=</span> <span class="n">link_to</span> <span class="n">model</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">author_path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">author</span><span class="p">)</span></code></pre></div>
+
+<p>That’s right, you can use Rails helpers in cell views.</p>
+
+<h2 id="no-helpers">No Helpers</h2>
+
+<p>While you could reference <code>model</code> throughout your view and strongly couple view and model, Cells makes it extremely simple to have logicless views and move presentation code to the cell instance itself.</p>
+
+<div class="highlight"><pre><code class="language-haml" data-lang="haml"><span class="p">-</span> <span class="c1"># app/concepts/comment/views/show.haml</span>
+<span class="nt">%li</span>
+  <span class="p">=</span> <span class="n">body</span>
+  By <span class="si">#{</span><span class="n">author_link</span><span class="si">}</span></code></pre></div>
+
+<p>Every method invoked in the view is called on the cell instance. This means we have to implement <code>#body</code> and <code>#author_link</code> in the cell class. Note that how that completely replaces helpers with clean object-oriented methods.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span>
+  <span class="k">end</span>
+
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">body</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">body</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">author_link</span>
+    <span class="n">link_to</span> <span class="n">model</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">author_path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>What were global helper functions are now instance methods. All Rails helpers like <code>link_to</code> are available on the cell instance.</p>
+
+<h2 id="properties">Properties</h2>
+
+<p>Delegating attributes to the model is so common it is built into Cells.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">property</span> <span class="ss">:body</span>
+  <span class="n">property</span> <span class="ss">:author</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span>
+  <span class="k">end</span>
+
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">author_link</span>
+    <span class="n">link_to</span> <span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">author_path</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The <code>::property</code> declaration will create a delegating method for you.</p>
+
+<h2 id="testing">Testing</h2>
+
+<p>The best part about Cells is: you can test them in isolation. If they work in a test, they will work just anywhere.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="k">do</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">concept</span><span class="p">(</span><span class="s2">&quot;comment/cell&quot;</span><span class="p">,</span> <span class="no">Comment</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="p">()</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">html</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">have_css</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The <code>concept</code> helper will behave exactly like in a controller or view and allows you to write rock-solid test for view components with a very simple API.</p>
+
+<h2 id="more">More</h2>
+
+<p>Cells comes with a bunch of helpful features like nesting, caching, view inheritance, and more.</p>
+ 
+           
+            </div>
+          </section>
+        </div>
+        
+
+        <footer class="site-footer row" role="contentinfo">
+        <hr/>
+          <div class="large-12 columns">
+            <ul class="inline-list">
+                <li><a href="">Home</a></li>
+<li><a href="page-html-unit-test.html">Unit test</a></li>
+<li><a href="page-foundation-example.html">Foundation</a></li>
+<li><a href="page-template-example.html">Template</a></li>
+            </ul>
+            <p class="quiet copyright right"> <a href="https://twitter.com/">
+                <i class="fa fa-twitter">
+                </i>
+             @</a>, <a href="https://github.com//">
+                <i class="fa fa-github">
+                </i>
+             @</a> .</p>
+          </div>
+        </footer>
+
+
+      <!-- close the off-canvas menu -->
+      <a class="exit-off-canvas"></a>
+
+      </div>
+    </div>
+
+
+    <!-- Loading JavaScripts
+    ================================================== -->
+    <!-- Zepto (http://zeptojs.com/) is great, but I am sticking with jQuery. Sorry! -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.js"><\/script>')</script>
+    <script src="js/plugins.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+  </body>
+</html>
