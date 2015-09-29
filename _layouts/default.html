@@ -8,13 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="keywords" content="{{ page.keywords }}, {{ site.keywords }}" />
 
-    <!-- CSS  Get: http://www.google.com/fonts/
-    http://stackoverflow.com/questions/7985081/how-to-deploy-a-jekyll-site-locally-with-css-js-and-background-images-included
-    ================================================== -->
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
-    <!-- Fount Awesome -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="css/style.css" />
 
     <!-- Ah, the favicon.
@@ -42,76 +35,46 @@
   <body>
     {% include nav.html %}
 
-<div class="off-canvas-wrap" data-offcanvas>
-  <div class="inner-wrap">
-    <!-- Add header and nav here  -->
-
-        <!--[if lt IE 8]>
-            <div data-alert class="alert-box alert radius" class="browsehappy">Please <a href="http://browsehappy.com/">upgrade your browser</a>. <a href="#" class="close">&times;</a></div>
-        <![endif]-->
-
-    <header id="header" class="row">
-
-        <div class="small-12 columns">
-            <section class="right show-for-medium-up mam">
-                <ul class="inline-list">
-
-                </ul>
-            </section>
-
-            <section class="right show-for-small">
-                <ul class="inline-list mam">
-                <li>
-                    <a class="right-off-canvas-toggle" href="#"><i class="fa fa-bars fa-lg">
-                    </i></a>
-                </li>
-                </ul>
-            </section>
-
-            <h1><a href="{{ site.url }}">{{ site.brand }}</a></h1>
-
-        </div>
-    </header>
-
-        <!-- Off Canvas Menu -->
-        <aside class="right-off-canvas-menu">
-            <!-- navigation list goes here -->
-            <ul class="off-canvas-list">
-               {% include nav.html %}
-            </ul>
-        </aside>
-
-
+     <!-- Hero -->
+    <div class="hero">
+      <div class="hero-unit">
         <div class="row">
-          <section role="main">
-            <div class="small-12 columns">
+          <div class="columns">
+            <h1 id="project_title">
+              <a href="#"><img src="/images/icon_trb_glow.png"></a>
 
-              {{ content }}
+              Trailblazer
+            </h1>
+            <h2>Trailblazer gives you a high-level architecture for web applications</h2>
 
-            </div>
-          </section>
-        </div>
-
-
-        <footer class="site-footer row" role="contentinfo">
-        <hr/>
-          <div class="large-12 columns">
-            <ul class="inline-list">
-                {% include nav.html %}
-            </ul>
-            <p class="quiet copyright right"> <a href="https://twitter.com/{{ site.twitter }}">
-                <i class="fa fa-twitter">
-                </i>
-             @{{ site.twitter }}</a>, <a href="https://github.com/{{ site.github }}/">
-                <i class="fa fa-github">
-                </i>
-             @{{ site.github }}</a> {{ site.year }}.</p>
           </div>
-        </footer>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="medium-3 columns">
+        <ul class="side-nav">
+          <li><a href="#">Link 1</a></li>
+          <li><a href="#">Link 2</a></li>
+          <li><a href="#">Link 3</a></li>
+          <li><a href="#">Link 4</a></li>
+        </ul>
+      </div>
+      <div class="medium-9 columns">
 
+        {{ content }}
 
-      <!-- close the off-canvas menu -->
-      <a class="exit-off-canvas"></a>
+      </div>
+    </div>
+
+    <!-- FOOTER  -->
+    <footer>
+      <div class="row">
+        <div class="columns">
+          <p>Trailblazer maintained by <a href="https://github.com/trailblazer">trailblazer</a></p>
+        </div>
+      </div>
+    </footer>
 
       </div>
     </div>
