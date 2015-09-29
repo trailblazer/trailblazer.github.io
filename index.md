@@ -375,23 +375,6 @@ All gems are documented here.
 * [Disposable](gems/disposable)
 
 
-## The Book
-
-<div class="row">
-  <div class="box">
-    <a href="https://leanpub.com/trailblazer">
-    <img src="images/3dbuch-freigestellt.png" />
-    </a>
-  </div>
-
-  <div class="right-text">
-    <p>Yes, there's a book!</p>
-    <p>Written by the busy creator of Trailblazer, it is about 70% finished and will get another 150 pages, making it 300 pages full of wisdom about Trailblazer and all the gems.</p>
-
-    <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
-  </div>
-</div>
-
 <!-- ## Testimonials
 
 * _"At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."_ -- **Igor Pstyga, Shop Hers Inc.**
