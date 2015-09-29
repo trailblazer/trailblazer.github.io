@@ -392,10 +392,12 @@ All gems are documented here.
   </div>
 </div>
 
-## Testimonials
+
+<!-- ## Testimonials
 
 * _"At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."_ -- **Igor Pstyga, Shop Hers Inc.**
 
 * _"Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."_ -- **Paulo Fabiano Langer, Chefsclub**
 
 * _"Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."_ -- **Yuri Freire Lima, AzClick**
+ -->
