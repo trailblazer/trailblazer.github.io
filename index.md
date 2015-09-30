@@ -8,7 +8,7 @@ Trailblazer gives you a high-level architecture for web applications.
 
 Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
 
-![](images/Trb-Stack.png){: .left }
+![](images/Trb-Stack.png)
 
 By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
 
@@ -16,16 +16,14 @@ By applying encapsulation and good OOP, Trailblazer maximizes reusability of com
 A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
 
 
+<!-- Controller -->
+
 <div id="controller">
   <h3>Controller</h3>
+  <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
 
-  <div class="box">
-    <div class="description">
-      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+  <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
 
-      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
-    </div>
-  </div>
 
   <div class="code-box">
     {% highlight ruby %}
@@ -45,9 +43,6 @@ class CommentsController < ApplicationController
   </div>
 </div>
 
-
-
-
 <div class="left-code">
     {% highlight ruby %}
 class Comment < ActiveRecord::Base
@@ -60,20 +55,18 @@ end
   </div>
 
 
-  <div id="model">
-    <h3>Model</h3>
+<!-- Model -->
 
-    <div class="description">
-      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
+<div id="model">
+  <h3>Model</h3>
+  <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
+  <p>That's right: No callbacks, no validations, no business logic in models. </p>
+</div>
 
-      <p>That's right: No callbacks, no validations, no business logic in models. </p>
-    </div>
-  </div>
-
+<!-- Operation -->
 
 <div id="operation">
   <h3>Operation</h3>
-
   <div class="box">
     <div class="description">
       <p>Per public action, there's one operation orchestrating the business logic.</p>
@@ -103,10 +96,6 @@ end
     {% endhighlight %}
   </div>
 </div>
-
-
-
-
 <div class="left-code-50">
     {% highlight ruby %}
 contract do
@@ -121,31 +110,24 @@ end
     {% endhighlight %}
   </div>
 
+<!-- Form -->
 
 <div id="form">
   <h3>Form</h3>
-
-  <div class="description">
-    <p>Every operation contains a form object. </p>
-      <p>This is the place for validations.</p>
-    <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
-    <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
-  </div>
+  <p>Every operation contains a form object. </p>
+    <p>This is the place for validations.</p>
+  <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
+  <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
 </div>
 
 
-
+<!-- Callback -->
 
 <div id="callback">
   <h3>Callback</h3>
-
-  <div class="box">
-    <div class="description">
-      <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
-      <p>They can be configured in a separate Callback class.</p>
-      <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
-    </div>
-  </div>
+  <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
+  <p>They can be configured in a separate Callback class.</p>
+  <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
 
   <div class="code-box">
     {% highlight ruby %}
@@ -161,8 +143,7 @@ end
 </div>
 
 
-<div class="row">
-  <div class="left-code">
+<div class="left-code">
     {% highlight ruby %}
 policy do
   user.admin? or not post.published?
@@ -170,31 +151,22 @@ end
     {% endhighlight %}
   </div>
 
+<!-- Policy -->
 
-  <div id="policy">
-    <h3>Policy</h3>
-
-    <div class="description">
-      <p>Policies allow authentication on a global or fine-granular level.</p>
-      <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
-    </div>
-  </div>
+<div id="policy">
+  <h3>Policy</h3>
+  <p>Policies allow authentication on a global or fine-granular level.</p>
+  <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
 </div>
 
 
-
+<!-- View Model -->
 
 <div id="view-model">
   <h3>View Model</h3>
-
-  <div class="box">
-    <div class="description">
-      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
-      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
-      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
-    </div>
-  </div>
-
+  <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
+  <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
+  <p>Rails helpers can still be used but are limited to the cell's scope.</p>
 
   <div class="code-box">
     {% highlight ruby %}
@@ -228,41 +200,33 @@ end
 
 
 
-<div class="row">
-  <div class="left-code-50">
-    {% highlight erb %}
+
+<div class="left-code-50">
+  {% highlight erb %}
 <h1>Comments for <%= @thing.name %></h1>
 
 This was created <%= @thing.created_at %>
 
-<%= concept("comment/cell",
+  <%= concept("comment/cell",
   collection: @thing.comments) %>
     {% endhighlight %}
-  </div>
-
-
-  <div id="views">
-    <h3>Views</h3>
-
-    <div class="description">
-      <p>Controller views are still ok to use.</p>
-      <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
-    </div>
-  </div>
 </div>
 
+<!-- View Model -->
 
+<div id="views">
+  <h3>Views</h3>
+  <p>Controller views are still ok to use.</p>
+  <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
+</div>
+
+<!-- Representer -->
 
 <div id="representer">
   <h3>Representer</h3>
-
-  <div class="box">
-    <div class="description">
-      <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
-      <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
-      <p>You can use media formats, hypermedia and all other Roar features.</p>
-    </div>
-  </div>
+  <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
+  <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
+  <p>You can use media formats, hypermedia and all other Roar features.</p>
 
 
   <div class="code-box">
@@ -279,45 +243,33 @@ end
   </div>
 </div>
 
-
-
-
-<div class="row">
-  <div class="left-code">
-    {% highlight ruby %}
+<div class="left-code">
+  {% highlight ruby %}
 class Comment::Update < Create
-  policy do
-    is_owner?(model)
-  end
+policy do
+  is_owner?(model)
 end
-    {% endhighlight %}
+end
+  {% endhighlight %}
   </div>
 
+<!-- Inheritance -->
+
+<div id="inheritance">
   <h3>Inheritance</h3>
+  <p>Trailblazer reintroduces object-orientation.</p>
 
-  <div class="right-text">
-    <div class="description">
-      <p>Trailblazer reintroduces object-orientation.</p>
+  <p>For each public action, there's one operation class.</p>
 
-      <p>For each public action, there's one operation class.</p>
-
-      <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
-    </div>
-  </div>
+  <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
 </div>
 
-
+<!-- Polymorphism -->
 
 <div id="polymorphism">
   <h3>Polymorphism</h3>
-
-  <div class="box">
-    <div class="description">
-      <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
-      <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
-    </div>
-  </div>
-
+  <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
+  <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
 
   <div class="code-box">
 {% highlight ruby %}
@@ -335,54 +287,54 @@ class Comment::Create < Trailblazer::Operation
   </div>
 </div>
 
+<div id="file-layout">
+  <h3>File Layout</h3>
+  <p>
+    In Trailblazer, files that belong to one group are called _concepts_. They sit in one directory as Trailblazer introduces and new, more intuitive and easier to navigate file structure.
+  </p>
 
-## File Layout
+  <pre>
+  app
+  ├── concepts
+  │   ├── comment
+  │   │   ├── crud.rb
+  │   │   ├── cell.rb
+  │   │   ├── views
+  │   │   │   ├── show.haml
+  │   │   │   ├── list.haml
+  │   │   │   ├── comment.css.sass
+  │   │   └── twin.rb
+  │   │
+  │   └── post
+  │       └── crud.rb
+  </pre>
+</div>
 
-In Trailblazer, files that belong to one group are called _concepts_. They sit in one directory as Trailblazer introduces and new, more intuitive and easier to navigate file structure.
-
-<pre>
-app
-├── concepts
-│   ├── comment
-│   │   ├── crud.rb
-│   │   ├── cell.rb
-│   │   ├── views
-│   │   │   ├── show.haml
-│   │   │   ├── list.haml
-│   │   │   ├── comment.css.sass
-│   │   └── twin.rb
-│   │
-│   └── post
-│       └── crud.rb
-</pre>
-
+<!-- Gems -->
 
 <div id="gems">
   <h3>Gems</h3>
   <p>
     Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
+  </p>
+  <p>
+    The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
+  </p>
+  <p>
+    All gems are documented here.
+  </p>
+  <ul class="no-bullet">
+    <li><a href="#">Cells</a></li>
+    <li><a href="#">Reform</a></li>
+    <li><a href="#">Representable</a></li>
+    <li><a href="#">Roar</a></li>
+    <li><a href="#">Disposable</a></li>
+  </ul>
 
-  The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
-
-  All gems are documented here.
-
-  * [Cells](/gems/cells)
-  * [Operation](gems/operation)
+<!--   * [Operation](gems/operation)
   * [Reform](gems/reform)
   * [Representable](gems/representable)
   * Roar
-  * [Disposable](gems/disposable)
-  </p>
+  * [Disposable](gems/disposable) -->
 
 </div>
-
-
-
-
-<!-- ## Testimonials
-
-* _"At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."_ -- **Igor Pstyga, Shop Hers Inc.**
-
-* _"Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."_ -- **Paulo Fabiano Langer, Chefsclub**
-
-* _"Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."_ -- **Yuri Freire Lima, AzClick** -->
