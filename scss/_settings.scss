@@ -95,29 +95,29 @@ $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
 // $font-weight-normal: normal !default;
 // $font-weight-bold: bold !default;
 
-// $white       : #FFFFFF;
-// $ghost       : #FAFAFA;
-// $snow        : #F9F9F9;
-// $vapor       : #F6F6F6;
-// $white-smoke : #F5F5F5;
-// $silver      : #EFEFEF;
-// $smoke       : #EEEEEE;
-// $gainsboro   : #DDDDDD;
-// $iron        : #CCCCCC;
-// $base        : #AAAAAA;
-// $aluminum    : #999999;
-// $jumbo       : #888888;
-// $monsoon     : #777777;
-// $steel       : #666666;
-// $charcoal    : #555555;
-// $tuatara     : #444444;
-// $oil         : #333333;
-// $jet         : #222222;
-// $black       : #000000;
+$white       : #FFFFFF;
+$ghost       : #F9F6F6;
+$snow        : #F6f6f6;
+$vapor       : #f1edeb;
+$white-smoke : #F5F5F5;
+$silver      : #7F7F77;
+$smoke       : #EEEEEE;
+$gainsboro   : #DDDDDD;
+$iron        : #CCCCCC;
+$base        : #AAAAAA;
+$aluminum    : #999999;
+$jumbo       : #888888;
+$monsoon     : #777777;
+$steel       : #666666;
+$charcoal    : #555555;
+$tuatara     : #1E1E1F;
+$oil         : #1B1B1C;
+$jet         : #232324;
+$black       : #000000;
 
 // We use these as default colors throughout
-$primary-color: #8bad93;
-// $secondary-color: #e7e7e7;
+$primary-color: #DC3522;
+$secondary-color: $smoke;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
@@ -1364,7 +1364,7 @@ $header-font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 // $include-html-top-bar-classes: $include-html-classes;
 
 // Background color for the top bar
-// $topbar-bg-color: $oil;
+$topbar-bg-color: $oil;
 // $topbar-bg: $topbar-bg-color;
 
 // Height and margin

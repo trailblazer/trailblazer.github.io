@@ -1,0 +1,27 @@
+footer {
+  background: darken($tuatara, 1);
+  min-height: 150px;
+  padding: 3em 0;
+  color: lighten($tuatara, 22);
+  a {
+    color: lighten($tuatara, 22);
+  }
+  h4 {
+    color: $vapor;
+  }
+  hr {
+    width: 30px;
+    height: 1px;
+    background: lighten($tuatara, 35);
+    border: 0;
+    margin: 1.3em 0;
+  }
+  .copyright {
+    font-size: rem-calc(12);
+  }
+  .logo-box {
+    @media #{$small-only} {
+      margin-bottom: 2em;
+    }
+  }
+}
