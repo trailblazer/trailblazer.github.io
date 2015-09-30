@@ -2,7 +2,7 @@
 layout: default
 ---
 
-# Trailblazer
+## About Trailblazer
 
 Trailblazer gives you a high-level architecture for web applications.
 
@@ -16,7 +16,7 @@ By applying encapsulation and good OOP, Trailblazer maximizes reusability of com
 A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
 
 
-<div class="row">
+<div id="controller">
   <h3>Controller</h3>
 
   <div class="box">
@@ -47,8 +47,8 @@ class CommentsController < ApplicationController
 
 
 
-<div class="row">
-    <div class="left-code">
+
+<div class="left-code">
     {% highlight ruby %}
 class Comment < ActiveRecord::Base
   has_many   :users
@@ -60,7 +60,7 @@ end
   </div>
 
 
-  <div class="right-text">
+  <div id="model">
     <h3>Model</h3>
 
     <div class="description">
@@ -69,10 +69,9 @@ end
       <p>That's right: No callbacks, no validations, no business logic in models. </p>
     </div>
   </div>
-</div>
 
 
-<div class="row">
+<div id="operation">
   <h3>Operation</h3>
 
   <div class="box">
@@ -107,8 +106,8 @@ end
 
 
 
-<div class="row">
-  <div class="left-code-50">
+
+<div class="left-code-50">
     {% highlight ruby %}
 contract do
   property :body
@@ -123,22 +122,21 @@ end
   </div>
 
 
-  <div class="right-text">
-    <h3>Form</h3>
+<div id="form">
+  <h3>Form</h3>
 
-    <div class="description">
-      <p>Every operation contains a form object. </p>
-        <p>This is the place for validations.</p>
-      <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
-      <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
-    </div>
+  <div class="description">
+    <p>Every operation contains a form object. </p>
+      <p>This is the place for validations.</p>
+    <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
+    <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
   </div>
 </div>
 
 
 
 
-<div class="row">
+<div id="callback">
   <h3>Callback</h3>
 
   <div class="box">
@@ -173,7 +171,7 @@ end
   </div>
 
 
-  <div class="box">
+  <div id="policy">
     <h3>Policy</h3>
 
     <div class="description">
@@ -186,7 +184,7 @@ end
 
 
 
-<div class="row">
+<div id="view-model">
   <h3>View Model</h3>
 
   <div class="box">
@@ -243,7 +241,7 @@ This was created <%= @thing.created_at %>
   </div>
 
 
-  <div class="box">
+  <div id="views">
     <h3>Views</h3>
 
     <div class="description">
@@ -255,7 +253,7 @@ This was created <%= @thing.created_at %>
 
 
 
-<div class="row">
+<div id="representer">
   <h3>Representer</h3>
 
   <div class="box">
@@ -310,7 +308,7 @@ end
 
 
 
-<div class="row">
+<div id="polymorphism">
   <h3>Polymorphism</h3>
 
   <div class="box">
@@ -359,20 +357,26 @@ app
 </pre>
 
 
-## Gems
+<div id="gems">
+  <h3>Gems</h3>
+  <p>
+    Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
 
-Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
+  The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
 
-The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
+  All gems are documented here.
 
-All gems are documented here.
+  * [Cells](/gems/cells)
+  * [Operation](gems/operation)
+  * [Reform](gems/reform)
+  * [Representable](gems/representable)
+  * Roar
+  * [Disposable](gems/disposable)
+  </p>
 
-* [Cells](/gems/cells)
-* [Operation](gems/operation)
-* [Reform](gems/reform)
-* [Representable](gems/representable)
-* Roar
-* [Disposable](gems/disposable)
+</div>
+
+
 
 
 <!-- ## Testimonials
