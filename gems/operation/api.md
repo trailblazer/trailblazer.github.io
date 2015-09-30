@@ -59,7 +59,7 @@ let(:comment) { Comment::Create.(valid_comment_params).model }
 Using operations as test factories is a fundamental concept of Trailblazer to remove buggy redundancy in tests and manual factories. Note that you might use FactoryGirl to create `params` hashes.
 
 
-## The Callstack
+## Callstack
 
 Here's the default call stack of methods involved when running an Operation.
 
@@ -193,6 +193,8 @@ operation = Comment::Create.(params)
 form      = operation.contract
 {% endhighlight %}
 
+Note that you don't have to `run` an operation in order to get its form object (which would invoke the `#process` method). You can [use `::present` instead](#).
+
 ## Validation Errors
 
 You can access the contracts `Errors` object via `Operation#errors`.
@@ -242,17 +244,19 @@ def process(params)
 end
 {% endhighlight %}
 
-## Rendering Operation's Form
+## Present
 
-You have access to an operation's form using `::present`.
+To grab the operation's form object for presentation without running `process`, use `::present`.
 
 {% highlight ruby %}
-Comment::Create.present(params)
+op = Comment::Create.present(params)
+op.model    #=> model is available!
+op.contract #=> form object, too.
 {% endhighlight %}
 
-This will run the operation's `#process` method _without_ the validate block and return the contract.
+[In the callstack](#callstack), this simply runs `#initialize`, only.
 
-
+This is used when presenting the operation's form or model, for example in `new`, `edit` or `show` actions in a controller.
 
 ## ActiveModel Semantics
 
