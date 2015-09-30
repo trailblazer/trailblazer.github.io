@@ -8,7 +8,8 @@ Trailblazer gives you a high-level architecture for web applications.
 
 Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
 
-![](images/Trb-Stack.png)
+<!-- ![](images/Trb-Stack.png) -->
+<img src="http://placehold.it/700x550">
 
 By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
 
@@ -18,14 +19,14 @@ A polymorphic architecture sitting between controller and persistence is designe
 
 <!-- Controller -->
 
-<div id="controller">
+<div id="controller" class="code-section">
   <h3>Controller</h3>
   <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
 
   <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
 
 
-  <div class="code-box">
+  <div class="code-box" class="code-section">
     {% highlight ruby %}
 class CommentsController < ApplicationController
   def new
@@ -43,7 +44,7 @@ class CommentsController < ApplicationController
   </div>
 </div>
 
-<div class="left-code">
+<div class="left-code" class="code-section">
     {% highlight ruby %}
 class Comment < ActiveRecord::Base
   has_many   :users
@@ -57,7 +58,7 @@ end
 
 <!-- Model -->
 
-<div id="model">
+<div id="model" class="code-section">
   <h3>Model</h3>
   <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
   <p>That's right: No callbacks, no validations, no business logic in models. </p>
@@ -65,7 +66,7 @@ end
 
 <!-- Operation -->
 
-<div id="operation">
+<div id="operation" class="code-section">
   <h3>Operation</h3>
   <div class="box">
     <div class="description">
@@ -112,7 +113,7 @@ end
 
 <!-- Form -->
 
-<div id="form">
+<div id="form" class="code-section">
   <h3>Form</h3>
   <p>Every operation contains a form object. </p>
     <p>This is the place for validations.</p>
@@ -123,7 +124,7 @@ end
 
 <!-- Callback -->
 
-<div id="callback">
+<div id="callback" class="code-section">
   <h3>Callback</h3>
   <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
   <p>They can be configured in a separate Callback class.</p>
@@ -153,7 +154,7 @@ end
 
 <!-- Policy -->
 
-<div id="policy">
+<div id="policy" class="code-section">
   <h3>Policy</h3>
   <p>Policies allow authentication on a global or fine-granular level.</p>
   <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
@@ -162,7 +163,7 @@ end
 
 <!-- View Model -->
 
-<div id="view-model">
+<div id="view-model" class="code-section">
   <h3>View Model</h3>
   <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
   <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
@@ -214,7 +215,7 @@ This was created <%= @thing.created_at %>
 
 <!-- View Model -->
 
-<div id="views">
+<div id="views" class="code-section">
   <h3>Views</h3>
   <p>Controller views are still ok to use.</p>
   <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
@@ -222,7 +223,7 @@ This was created <%= @thing.created_at %>
 
 <!-- Representer -->
 
-<div id="representer">
+<div id="representer" class="code-section">
   <h3>Representer</h3>
   <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
   <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
@@ -255,7 +256,7 @@ end
 
 <!-- Inheritance -->
 
-<div id="inheritance">
+<div id="inheritance" class="code-section">
   <h3>Inheritance</h3>
   <p>Trailblazer reintroduces object-orientation.</p>
 
@@ -266,7 +267,7 @@ end
 
 <!-- Polymorphism -->
 
-<div id="polymorphism">
+<div id="polymorphism" class="code-section">
   <h3>Polymorphism</h3>
   <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
   <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
@@ -287,7 +288,7 @@ class Comment::Create < Trailblazer::Operation
   </div>
 </div>
 
-<div id="file-layout">
+<div id="file-layout" class="code-section">
   <h3>File Layout</h3>
   <p>
     In Trailblazer, files that belong to one group are called _concepts_. They sit in one directory as Trailblazer introduces and new, more intuitive and easier to navigate file structure.
@@ -312,7 +313,7 @@ class Comment::Create < Trailblazer::Operation
 
 <!-- Gems -->
 
-<div id="gems">
+<div id="gems" class="code-section">
   <h3>Gems</h3>
   <p>
     Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.

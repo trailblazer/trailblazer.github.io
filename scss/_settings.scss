@@ -96,9 +96,9 @@ $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
 // $font-weight-bold: bold !default;
 
 $white       : #FFFFFF;
-$ghost       : #F9F6F6;
+$ghost       : #F8f8f8;
 $snow        : #F6f6f6;
-$vapor       : #f1edeb;
+$vapor       : #ebeae3;
 $white-smoke : #F5F5F5;
 $silver      : #7F7F77;
 $smoke       : #EEEEEE;
@@ -117,7 +117,7 @@ $black       : #000000;
 
 // We use these as default colors throughout
 $primary-color: #DC3522;
-$secondary-color: $smoke;
+$secondary-color: $steel;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
@@ -279,10 +279,10 @@ $header-font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 // $definition-list-margin-bottom: rem-calc(12);
 
 // We use these to style blockquotes
-// $blockquote-font-color: scale-color($header-font-color, $lightness: 35%);
+$blockquote-font-color: scale-color($tuatara, $lightness: 10%);
 // $blockquote-padding: rem-calc(9 20 0 19);
-// $blockquote-border: 1px solid $gainsboro;
-// $blockquote-cite-font-size: rem-calc(13);
+$blockquote-border: none;
+$blockquote-cite-font-size: rem-calc(15);
 // $blockquote-cite-font-color: scale-color($header-font-color, $lightness: 23%);
 // $blockquote-cite-link-color: $blockquote-cite-font-color;
 
@@ -1368,7 +1368,7 @@ $topbar-bg-color: $oil;
 // $topbar-bg: $topbar-bg-color;
 
 // Height and margin
-// $topbar-height: rem-calc(45);
+$topbar-height: rem-calc(55);
 // $topbar-margin-bottom: 0;
 
 // Controlling the styles for the title in the top bar
