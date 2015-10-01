@@ -96,8 +96,7 @@ class Comment::Create < Trailblazer::Operation
 end
     {% endhighlight %}
   </div>
-</div>
-<div class="left-code-50">
+  <div class="left-code-50">
     {% highlight ruby %}
 contract do
   property :body
@@ -110,6 +109,8 @@ contract do
 end
     {% endhighlight %}
   </div>
+</div>
+
 
 <!-- Form -->
 
@@ -141,16 +142,17 @@ callback do
 end
     {% endhighlight %}
   </div>
-</div>
-
-
-<div class="left-code">
+  <div class="left-code">
     {% highlight ruby %}
 policy do
   user.admin? or not post.published?
 end
     {% endhighlight %}
   </div>
+</div>
+
+
+
 
 <!-- Policy -->
 
@@ -195,13 +197,6 @@ end
 </div>
 {% endhighlight %}
   </div>
-
-</div>
-
-
-
-
-
 <div class="left-code-50">
   {% highlight erb %}
 <h1>Comments for <%= @thing.name %></h1>
@@ -212,6 +207,8 @@ This was created <%= @thing.created_at %>
   collection: @thing.comments) %>
     {% endhighlight %}
 </div>
+</div>
+
 
 <!-- View Model -->
 
@@ -242,9 +239,7 @@ representer do
 end
 {% endhighlight %}
   </div>
-</div>
-
-<div class="left-code">
+  <div class="left-code">
   {% highlight ruby %}
 class Comment::Update < Create
 policy do
@@ -253,6 +248,9 @@ end
 end
   {% endhighlight %}
   </div>
+</div>
+
+
 
 <!-- Inheritance -->
 

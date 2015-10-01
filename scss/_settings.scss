@@ -87,7 +87,7 @@ $include-html-global-classes: $include-html-classes;
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // We use these to define default font stacks
-$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif: "Open Sans","Helvetica Neue", Helvetica, Arial, sans-serif;
 // $font-family-serif: Georgia, Cambria, "Times New Roman", Times, serif;
 // $font-family-monospace: Consolas, "Liberation Mono", Courier, monospace;
 
@@ -98,7 +98,7 @@ $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $white       : #FFFFFF;
 $ghost       : #F8f8f8;
 $snow        : #F6f6f6;
-$vapor       : #ebeae3;
+$vapor       : #eaeced;
 $white-smoke : #F5F5F5;
 $silver      : #7F7F77;
 $smoke       : #EEEEEE;
@@ -116,7 +116,7 @@ $jet         : #232324;
 $black       : #000000;
 
 // We use these as default colors throughout
-$primary-color: #DC3522;
+$primary-color: #d60004;
 $secondary-color: $steel;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
@@ -195,9 +195,9 @@ $secondary-color: $steel;
 // $include-html-type-classes: $include-html-classes;
 
 // We use these to control header font styles
-$header-font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-// $header-font-weight: $font-weight-normal;
-// $header-font-style: normal;
+$header-font-family: $font-family-sans-serif;
+$header-font-weight: 300;
+$header-font-style: normal;
 // $header-font-color: $jet;
 // $header-line-height: 1.4;
 // $header-top-margin: .2rem;
@@ -1122,10 +1122,10 @@ $blockquote-cite-font-size: rem-calc(15);
 // 26. Side Nav
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// $include-html-nav-classes: $include-html-classes;
+$include-html-nav-classes: $include-html-classes;
 
 // We use this to control padding.
-// $side-nav-padding: rem-calc(14 0);
+$side-nav-padding: rem-calc(16 0);
 
 // We use these to control list styles.
 // $side-nav-list-type: none;
@@ -1133,13 +1133,13 @@ $blockquote-cite-font-size: rem-calc(15);
 // $side-nav-list-margin: rem-calc(0 0 7 0);
 
 // We use these to control link styles.
-// $side-nav-link-color: $primary-color;
+$side-nav-link-color: $charcoal;
 // $side-nav-link-color-active: scale-color($side-nav-link-color, $lightness: 30%);
-// $side-nav-link-color-hover: scale-color($side-nav-link-color, $lightness: 30%);
-// $side-nav-link-bg-hover: hsla(0, 0, 0, 0.025);
+$side-nav-link-color-hover: scale-color($side-nav-link-color, $lightness: 20%);
+$side-nav-link-bg-hover: hsla(0, 0, 0, 0.075);
 // $side-nav-link-margin: 0;
-// $side-nav-link-padding: rem-calc(7 14);
-// $side-nav-font-size: rem-calc(14);
+$side-nav-link-padding: rem-calc(8 16);
+$side-nav-font-size: rem-calc(16);
 // $side-nav-font-weight: $font-weight-normal;
 // $side-nav-font-weight-active: $side-nav-font-weight;
 // $side-nav-font-family: $body-font-family;

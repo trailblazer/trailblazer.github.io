@@ -9,16 +9,17 @@
   margin-bottom: 40px;
   display: table;
   width: 100%;
+  h1,
+  h2 {
+    color: #fff;
+  }
+  h1 {
+    font-size: rem-calc(64);
+  }
 }
 
-.hero h1,
-.hero h2 {
-  color: #fff;
-}
 
-.hero h2 {
-  font-weight: 300;
-}
+
 
 .hero-unit {
   display: table-cell;
