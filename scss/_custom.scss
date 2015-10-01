@@ -5,4 +5,8 @@
 @import "layout/sections";
 
 // UI Components
-@import "components/testimonials"
+@import "components/testimonials";
+
+.side-nav {
+  position: fixed;
+}

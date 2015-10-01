@@ -19,7 +19,7 @@ A polymorphic architecture sitting between controller and persistence is designe
 
 <!-- Controller -->
 
-<div id="controller" class="code-section">
+<div data-magellan-destination="controller" id="controller" class="code-section">
   <h3>Controller</h3>
   <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
 
