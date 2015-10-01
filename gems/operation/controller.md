@@ -106,6 +106,15 @@ op.contract.prepopulate!
 @form      = op.contract
 {% endhighlight %}
 
+The `#form` method returns the actual form object. This is helpful if you want to render multiple forms on a page.
+
+{% highlight ruby %}
+def show
+  @create_form = form(Comment::Create)
+  @survey_form = form(Survey::Support::Create)
+end
+{% endhighlight %}
+
 ## Respond
 
 Rails-specific.
