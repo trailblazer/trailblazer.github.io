@@ -199,6 +199,19 @@ Note that you don't have to `run` an operation in order to get its form object (
 
 You can access the contracts `Errors` object via `Operation#errors`.
 
+## Present
+
+To grab the operation's form object for presentation without running `process`, use `::present`.
+
+{% highlight ruby %}
+op = Comment::Create.present(params)
+op.model    #=> model is available!
+op.contract #=> form object, too.
+{% endhighlight %}
+
+[In the callstack](#callstack), this simply runs `#initialize`, only.
+
+This is used when presenting the operation's form or model, for example in `new`, `edit` or `show` actions in a controller.
 
 ## Composable Interface: Contract
 
@@ -244,19 +257,6 @@ def process(params)
 end
 {% endhighlight %}
 
-## Present
-
-To grab the operation's form object for presentation without running `process`, use `::present`.
-
-{% highlight ruby %}
-op = Comment::Create.present(params)
-op.model    #=> model is available!
-op.contract #=> form object, too.
-{% endhighlight %}
-
-[In the callstack](#callstack), this simply runs `#initialize`, only.
-
-This is used when presenting the operation's form or model, for example in `new`, `edit` or `show` actions in a controller.
 
 ## ActiveModel Semantics
 

@@ -4,7 +4,12 @@ layout: default
 
 # Operation::Controller
 
-The `Operation::Controller` module provides four shorthand methods to run and present operations. It works in Rails but should also be fine in Sinatra.
+The `Operation::Controller` module provides four shorthand methods to run and present operations.
+
+Note that you're free to invoke operations manually at any time by [invoking them directly](api.html).
+
+
+It works in Rails but should also be fine in Sinatra and Lotus.
 
 ## Generics
 
