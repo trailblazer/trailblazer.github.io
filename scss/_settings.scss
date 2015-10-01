@@ -198,7 +198,7 @@ $secondary-color: $steel;
 $header-font-family: $font-family-sans-serif;
 $header-font-weight: 300;
 $header-font-style: normal;
-// $header-font-color: $jet;
+$header-font-color: $jet;
 // $header-line-height: 1.4;
 // $header-top-margin: .2rem;
 // $header-bottom-margin: .5rem;
@@ -279,11 +279,11 @@ $header-font-style: normal;
 // $definition-list-margin-bottom: rem-calc(12);
 
 // We use these to style blockquotes
-$blockquote-font-color: scale-color($tuatara, $lightness: 10%);
-// $blockquote-padding: rem-calc(9 20 0 19);
+$blockquote-font-color: scale-color($tuatara, $lightness: 25%);
+$blockquote-padding: rem-calc(0 0 0 0);
 $blockquote-border: none;
-$blockquote-cite-font-size: rem-calc(15);
-// $blockquote-cite-font-color: scale-color($header-font-color, $lightness: 23%);
+$blockquote-cite-font-size: rem-calc(16);
+$blockquote-cite-font-color: $primary-color;
 // $blockquote-cite-link-color: $blockquote-cite-font-color;
 
 // Acronym styles
