@@ -155,6 +155,37 @@ respond Comment::Create, namespace: [:api]
 
 This will result in a call `respond_with :api, op`.
 
+## Custom Params
+
+If you want to manually hand in parameters to `#run`, `#respond`, `#form` or `#present`, use the `params:` option.
+
+{% highlight ruby %}
+def create
+  run Comment::Create, params: {comment: {body: "Always the same! Boring!"}}
+end
+{% endhighlight %}
+
+## Document Formats
+
+In a `:html` or `:js` request format, Trailblazer will pass Rails' `params` hash into the operation.
+
+For all other formats, e.g. `:json`, not a hash but the request body will be passed into the operation, keyed under the operation's `model_name`.
+
+{% highlight ruby %}
+Comment::Create.({comment: request.body.string})
+{% endhighlight %}
+
+This allows the operation's representer to deserialize the document and populate the contract, bypassing the Rails `ParamsParser`.
+
+You can instruct Trailblazer not to do that and pass in the normal `params` hash if you don't want that using the `:is_document` option.
+
+{% highlight ruby %}
+def create
+  puts request.format #=> :json
+  run Comment::Create, is_document: false # will run Comment::Create(params)
+end
+{% endhighlight %}
+
 ## Normalizing Params
 
 Override #process_params! to add or remove values to params before the operation is run. This is called in #run, #respond and #present and #form.
