@@ -1,20 +1,13 @@
 footer {
   background: $tuatara;
-  min-height: 150px;
+  min-height: 200px;
   padding: 3em 0;
   color: lighten($tuatara, 22);
   a {
     color: lighten($tuatara, 22);
   }
   h4 {
-    color: $vapor;
-  }
-  hr {
-    width: 30px;
-    height: 1px;
-    background: lighten($tuatara, 35);
-    border: 0;
-    margin: 1.3em 0;
+    color: $steel;
   }
   .copyright {
     font-size: rem-calc(12);
@@ -23,5 +16,22 @@ footer {
     @media #{$small-only} {
       margin-bottom: 2em;
     }
+  }
+  .inline-list li{
+    margin-left: 0;
+  }
+}
+
+.footer-icon {
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+  background-repeat: no-repeat;
+}
+
+.twitter-icon {
+  background-image: url("/images/twitter.svg");
+  &:hover{
+    background-image: url("/images/twitter-blue.svg");
   }
 }
