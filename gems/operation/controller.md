@@ -99,12 +99,17 @@ end
 This is identical to `#present` with two additional step: besides the `@operation` and `@model` instance variables, the `@form` will be assigned, too. After that, the form's `prepopulate!` method is called and the form is ready for rendering, e.g. via `#form_for`.
 
 {% highlight ruby %}
-op = Comment::Create.present(params)
-op.contract.prepopulate!
-@operation = op
-@model     = op.model
-@form      = op.contract
+def form(Comment::Create, options={})
+  op = Comment::Create.present(params)
+
+  op.contract.prepopulate!(options)
+
+  @operation = op
+  @model     = op.model
+  @form      = op.contract
 {% endhighlight %}
+
+All options from the `#form` call are directly passed to the form's `prepopulate!` method, allowing you to use runtime data in prepopulators.
 
 The `#form` method returns the actual form object. This is helpful if you want to render multiple forms on a page.
 
@@ -167,21 +172,20 @@ end
 
 ## Document Formats
 
-In a `:html` or `:js` request format, Trailblazer will pass Rails' `params` hash into the operation.
+Normally, Trailblazer will pass Rails' `params` hash into any operation.
 
-For all other formats, e.g. `:json`, not a hash but the request body will be passed into the operation, keyed under the operation's `model_name`.
+For operations that have `Operation::Representer` included, not a hash but the request body will be passed into the operation, keyed under the operation's `model_name`.
 
 {% highlight ruby %}
 Comment::Create.({comment: request.body.string})
 {% endhighlight %}
 
-This allows the operation's representer to deserialize the document and populate the contract, bypassing the Rails `ParamsParser`.
+This allows the operation's representer to deserialize the document and populate the contract, bypassing Rails' `ParamsParser`.
 
 You can instruct Trailblazer not to do that and pass in the normal `params` hash if you don't want that using the `:is_document` option.
 
 {% highlight ruby %}
 def create
-  puts request.format #=> :json
   run Comment::Create, is_document: false # will run Comment::Create(params)
 end
 {% endhighlight %}
