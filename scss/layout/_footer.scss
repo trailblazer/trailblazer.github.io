@@ -17,8 +17,10 @@ footer {
       margin-bottom: 2em;
     }
   }
-  .inline-list li{
+  .inline-list {
+    li:first-child{
     margin-left: 0;
+    }
   }
 }
 
@@ -35,3 +37,11 @@ footer {
     background-image: url("/images/twitter-blue.svg");
   }
 }
+
+.github-icon {
+  background-image: url("/images/github.svg");
+  &:hover{
+    background-image: url("/images/github-blue.svg");
+  }
+}
+
