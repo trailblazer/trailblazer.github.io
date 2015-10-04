@@ -322,17 +322,10 @@ class Comment::Create < Trailblazer::Operation
     All gems are documented here.
   </p>
   <ul class="no-bullet">
-    <li><a href="#">Cells</a></li>
-    <li><a href="#">Reform</a></li>
-    <li><a href="#">Representable</a></li>
+    <li><a href="gems/operation">Operation</a></li>
+    <li><a href="gems/reform">Reform</a></li>
+    <li><a href="gems/representable">Representable</a></li>
     <li><a href="#">Roar</a></li>
-    <li><a href="#">Disposable</a></li>
+    <li><a href="gems/disposable">Disposable</a></li>
   </ul>
-
-<!--   * [Operation](gems/operation)
-  * [Reform](gems/reform)
-  * [Representable](gems/representable)
-  * Roar
-  * [Disposable](gems/disposable) -->
-
 </div>
