@@ -12,7 +12,7 @@ We try to make upgrading as smooth as possible. Here's the generic documentation
 
 For dynamic options like `:instance` or `:getter` we used to expose a positional API like `instance: ->(fragment, options)` where every option has a slightly different signature. Even worse, for `collection`s this would result in a differing signature plus an index like `instance: ->(fragment, index, options)`.
 
-From Representable 2.4 onwards, only one argument is passed in for all options with an identical, easily memoizable API.
+From Representable 2.4 onwards, only one argument is passed in for all options with an identical, easily memoizable API. Note that the old signatures will print deprecation warnings, but still work.
 
 For parsing, this is as follows (`:instance` is just an example).
 
