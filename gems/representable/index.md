@@ -18,3 +18,4 @@ In case you're looking towards implementing a REST API, check out [Roar](/gems/r
 
 Pages: [Performance](performance.html)
 Pages: [Architecture](architecture.html)
+Pages: [Upgrading Guide](upgrading-guide.html)
