@@ -1,16 +1,18 @@
 footer {
   background: $tuatara;
-  min-height: 200px;
+  min-height: 150px;
   padding: 3em 0;
   color: lighten($tuatara, 22);
   a {
     color: lighten($tuatara, 22);
   }
   h4 {
-    color: $steel;
+    color: lighten($tuatara, 35);
+    margin-bottom: 1em;
   }
   .copyright {
     font-size: rem-calc(12);
+    margin-bottom: 0;
   }
   .logo-box {
     @media #{$small-only} {
