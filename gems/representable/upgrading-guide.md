@@ -32,3 +32,32 @@ We highly recommend to use keyword arguments if you're using Ruby 2.1+.
 {% highlight ruby %}
 property :artist, instance: ->(fragment:, user_options:, **) do
 {% endhighlight %}
+
+### Pass Options
+
+The `:pass_options` option is deprecated and you should simply remove it, even though it still works in < 3.0. You have access to all the environmental object via `options[:binding]`.
+
+In older version, you might have done as follows.
+
+{% highlight ruby %}
+property :artist, pass_options: true,
+  instance: ->(fragment, options) { options.represented }
+{% endhighlight %}
+
+Runtime information such as `represented` or `decorator` is now available via the generic options.
+
+{% highlight ruby %}
+property :artist, instance: ->(options) do
+  options[:binding]              # property Binding instance.
+  options[:binding].represented  # the represented object
+  options[:user_options]         # options from user.
+end
+{% endhighlight %}
+
+The same with keyword arguments.
+
+{% highlight ruby %}
+property :artist, instance: ->(binding:, user_options:, **) do
+  binding.represented  # the represented object
+end
+{% endhighlight %}
