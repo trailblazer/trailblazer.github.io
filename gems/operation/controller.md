@@ -143,7 +143,7 @@ respond_with op
 
 The operation needs to be prepared for the responder as the latter makes weird assumptions about the object being passed to `respond_with`. For example, the operation needs to respond to `to_json` in a JSON request. Read about [Representer](representer.html) here.
 
-In a non-HTML request (e.g. for `application/json`) the params hash will be slightly modified. As the operation's model key, the request body document is passed into the operation.
+If the operation class has `Representer` mixed in, the params hash will be slightly modified. As the operation's model key, the request body document is passed into the operation.
 
 {% highlight ruby %}
 params[:comment] = request.body
