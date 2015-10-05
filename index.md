@@ -365,6 +365,8 @@ Trailblazer is an architectural style. However, what sounds nice in theory is ba
 
 The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
 
+Generic docs: [Traiblazer](/gems/trailblazer)
+
 All gems are documented here.
 
 * [Cells](/gems/cells)
