@@ -1,5 +1,4 @@
-.book,
-.testimonials {
+.sub-section {
   padding: 3em 0;
   width: 100%;
   h2 {
@@ -7,10 +6,14 @@
   }
 }
 
-.book {
-  background: $ghost;
-}
+// .book {
+//   background: $ghost;
+// }
 
 .code-section {
   margin-bottom: 3em;
+}
+
+.gems {
+  background: $vapor;
 }

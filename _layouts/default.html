@@ -44,8 +44,17 @@
       </div>
     </div>
 
+    <!-- Gems -->
+    <section class="sub-section gems">
+      <div class="row">
+        <div class="columns">
+            {% include gems.html %}
+        </div>
+      </div>
+    </section>
+
     <!-- Book -->
-    <section class="book">
+    <section class="sub-section book">
       <div class="row">
         <div class="columns">
             {% include book.html %}
@@ -56,7 +65,7 @@
 
 
     <!-- Testimonials -->
-    <section class="testimonials">
+    <section class="sub-section testimonials">
       <div class="row">
         <div class="columns">
           {% include testimonials.html %}
@@ -75,6 +84,7 @@
     <script src="bower_components/foundation/js/foundation.min.js"></script>
     <script src="js/script.js"></script>
 
-
-  </body>
+    <script>
+        $(document).foundation();
+    </script>
 </html>

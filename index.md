@@ -308,24 +308,3 @@ class Comment::Create < Trailblazer::Operation
   </pre>
 </div>
 
-<!-- Gems -->
-
-<div id="gems" class="code-section">
-  <h3>Gems</h3>
-  <p>
-    Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
-  </p>
-  <p>
-    The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
-  </p>
-  <p>
-    All gems are documented here.
-  </p>
-  <ul class="no-bullet">
-    <li><a href="gems/operation">Operation</a></li>
-    <li><a href="gems/reform">Reform</a></li>
-    <li><a href="gems/representable">Representable</a></li>
-    <li><a href="#">Roar</a></li>
-    <li><a href="gems/disposable">Disposable</a></li>
-  </ul>
-</div>
