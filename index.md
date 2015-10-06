@@ -2,20 +2,6 @@
 layout: default
 ---
 
-## About Trailblazer
-
-Trailblazer gives you a high-level architecture for web applications.
-
-Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
-
-![](images/Trb-Stack.png)
-
-By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
-
-
-A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
-
-
 <!-- Controller -->
 
 <div data-magellan-destination="controller" id="controller" class="code-section">

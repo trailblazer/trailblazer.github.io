@@ -5,16 +5,7 @@
     background: #fff;
     padding: 3em;
   }
-  .avatar {
-    border-radius: 50%;
-    @media #{$small-up} {
-      margin: 0 auto 1.5em auto;
-      display: block;
-    }
-    @media #{$medium-up} {
-      margin: 0;
-    }
-  }
+
   blockquote {
     @media #{$large-up} {
       margin: 0.8em 0 0 0;
