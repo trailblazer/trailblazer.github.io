@@ -9,6 +9,9 @@
   margin-bottom: 40px;
   display: table;
   width: 100%;
+  @media #{$small-only} {
+    min-height: 300px;
+  }
   h1,
   h2 {
     color: #fff;
@@ -16,14 +19,21 @@
   h1 {
     font-size: rem-calc(64);
   }
+  @media #{$small-only} {
+    h1 {
+      font-size: rem-calc(44);
+    }
+    h2 {
+      font-size: rem-calc(24);
+    }
+  }
+  .hero-unit {
+    height: 150px;
+  }
 }
-
-
-
 
 .hero-unit {
   display: table-cell;
   vertical-align: middle;
   height: 200px;
-
 }
