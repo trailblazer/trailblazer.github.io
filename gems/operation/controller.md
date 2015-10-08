@@ -109,7 +109,23 @@ def form(Comment::Create, options={})
   @form      = op.contract
 {% endhighlight %}
 
-All options from the `#form` call are directly passed to the form's `prepopulate!` method, allowing you to use runtime data in prepopulators.
+### Options for prepopulate!
+
+All options from the `#form` call are directly passed to the form's `prepopulate!` method, allowing you to use runtime data in prepopulators. Note that the original `params` object is available in this options hash, too.
+
+{% highlight ruby %}
+form Comment::Create, color: "green"
+{% endhighlight %}
+
+This will result in the following hash being passed to `prepopulate!`.
+
+{% highlight ruby %}
+contract do
+  def prepopulate!(options)
+    options[:color]  #=> "green"
+    options[:params] #=> <ActionController::Params ..>
+{% endhighlight %}
+
 
 The `#form` method returns the actual form object. This is helpful if you want to render multiple forms on a page.
 
