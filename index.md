@@ -2,45 +2,6 @@
 layout: default
 ---
 
-<!-- Controller -->
-
-<div data-magellan-destination="controller" id="controller" class="code-section">
-  <h3>Controller</h3>
-  <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
-
-  <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
-
-
-  <div class="code-box" class="code-section">
-    {% highlight ruby %}
-class CommentsController < ApplicationController
-  def new
-    form Comment::Update
-  end
-
-  def create
-    run Comment::Update do |op|
-      return redirect_to comments_path(op.model)
-    end
-
-    render :new
-  end
-    {% endhighlight %}
-  </div>
-</div>
-
-<div class="left-code" class="code-section">
-    {% highlight ruby %}
-class Comment < ActiveRecord::Base
-  has_many   :users
-  belongs_to :thing
-
-  scope :recent, -> { limit(10) }
-end
-    {% endhighlight %}
-  </div>
-
-
 <!-- Model -->
 
 <div id="model" class="code-section">
