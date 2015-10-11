@@ -6,6 +6,17 @@ layout: default
 
 <div id="model" class="code-section">
   <h3>Model</h3>
+    <div class="left-code" class="code-section">
+    {% highlight ruby %}
+class Comment < ActiveRecord::Base
+  has_many   :users
+  belongs_to :thing
+
+  scope :recent, -> { limit(10) }
+end
+    {% endhighlight %}
+  </div>
+
   <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
   <p>That's right: No callbacks, no validations, no business logic in models. </p>
 </div>
@@ -42,7 +53,12 @@ class Comment::Create < Trailblazer::Operation
 end
     {% endhighlight %}
   </div>
-  <div class="left-code-50">
+
+<!-- Form -->
+
+<div id="form" class="code-section">
+  <h3>Form</h3>
+    <div class="left-code-50">
     {% highlight ruby %}
 contract do
   property :body
@@ -56,12 +72,6 @@ end
     {% endhighlight %}
   </div>
 </div>
-
-
-<!-- Form -->
-
-<div id="form" class="code-section">
-  <h3>Form</h3>
   <p>Every operation contains a form object. </p>
     <p>This is the place for validations.</p>
   <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
@@ -88,22 +98,20 @@ callback do
 end
     {% endhighlight %}
   </div>
-  <div class="left-code">
-    {% highlight ruby %}
-policy do
-  user.admin? or not post.published?
-end
-    {% endhighlight %}
-  </div>
 </div>
-
-
 
 
 <!-- Policy -->
 
 <div id="policy" class="code-section">
   <h3>Policy</h3>
+    <div class="left-code">
+    {% highlight ruby %}
+policy do
+  user.admin? or not post.published?
+end
+    {% endhighlight %}
+  </div>
   <p>Policies allow authentication on a global or fine-granular level.</p>
   <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
 </div>
@@ -143,7 +151,15 @@ end
 </div>
 {% endhighlight %}
   </div>
-<div class="left-code-50">
+
+</div>
+
+
+<!-- View Model -->
+
+<div id="views" class="code-section">
+  <h3>Views</h3>
+  <div class="left-code-50">
   {% highlight erb %}
 <h1>Comments for <%= @thing.name %></h1>
 
@@ -153,13 +169,6 @@ This was created <%= @thing.created_at %>
   collection: @thing.comments) %>
     {% endhighlight %}
 </div>
-</div>
-
-
-<!-- View Model -->
-
-<div id="views" class="code-section">
-  <h3>Views</h3>
   <p>Controller views are still ok to use.</p>
   <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
 </div>
@@ -185,15 +194,7 @@ representer do
 end
 {% endhighlight %}
   </div>
-  <div class="left-code">
-  {% highlight ruby %}
-class Comment::Update < Create
-policy do
-  is_owner?(model)
-end
-end
-  {% endhighlight %}
-  </div>
+
 </div>
 
 
@@ -202,6 +203,15 @@ end
 
 <div id="inheritance" class="code-section">
   <h3>Inheritance</h3>
+    <div class="left-code">
+  {% highlight ruby %}
+class Comment::Update < Create
+policy do
+  is_owner?(model)
+end
+end
+  {% endhighlight %}
+  </div>
   <p>Trailblazer reintroduces object-orientation.</p>
 
   <p>For each public action, there's one operation class.</p>

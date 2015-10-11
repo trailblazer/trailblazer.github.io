@@ -21,14 +21,4 @@ class CommentsController < ApplicationController
   end
     {% endhighlight %}
   </div>
-  <div class="left-code" class="code-section">
-    {% highlight ruby %}
-class Comment < ActiveRecord::Base
-  has_many   :users
-  belongs_to :thing
-
-  scope :recent, -> { limit(10) }
-end
-    {% endhighlight %}
-  </div>
 </div>
