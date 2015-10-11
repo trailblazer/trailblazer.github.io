@@ -1,11 +1,13 @@
 <div class="sub-section gems">
   <h2>Controller</h2>
-  <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+  <div class="row">
+    <div class="columns large-6">
+      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
 
-  <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
-
-
-  <div class="code-box" class="code-section">
+      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+    </div>
+    <div class="columns large-6">
+        <div class="code-box">
     {% highlight ruby %}
 class CommentsController < ApplicationController
   def new
@@ -21,4 +23,10 @@ class CommentsController < ApplicationController
   end
     {% endhighlight %}
   </div>
+    </div>
+  </div>
+
+
+
+
 </div>

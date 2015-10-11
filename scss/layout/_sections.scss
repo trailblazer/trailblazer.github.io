@@ -11,7 +11,9 @@
     }
   }
   p {
-    font-size: 1.1rem;
+    @media #{$large-up} {
+      font-size: 1.1rem;
+    }
   }
 }
 

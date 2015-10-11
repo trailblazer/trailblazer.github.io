@@ -4,21 +4,26 @@ layout: default
 
 <!-- Model -->
 
-<div id="model" class="code-section">
-  <h3>Model</h3>
-    <div class="left-code" class="code-section">
-    {% highlight ruby %}
-class Comment < ActiveRecord::Base
-  has_many   :users
-  belongs_to :thing
+<div class="sub-section">
+  <h2>Model</h2>
+  <div class="row">
+    <div class="columns large-6">
+      <div class="code-section">
+        {% highlight ruby %}
+    class Comment < ActiveRecord::Base
+      has_many   :users
+      belongs_to :thing
 
-  scope :recent, -> { limit(10) }
-end
-    {% endhighlight %}
+      scope :recent, -> { limit(10) }
+    end
+        {% endhighlight %}
+      </div>
+    </div>
+    <div class="columns large-6">
+      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
+      <p>That's right: No callbacks, no validations, no business logic in models. </p>
+    </div>
   </div>
-
-  <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
-  <p>That's right: No callbacks, no validations, no business logic in models. </p>
 </div>
 
 <!-- Operation -->
