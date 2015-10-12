@@ -11,7 +11,7 @@ layout: default
     </div>
   </div>
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <div class="">
         {% highlight ruby %}
     class Comment < ActiveRecord::Base
@@ -23,7 +23,7 @@ layout: default
         {% endhighlight %}
       </div>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
       <p>That's right: No callbacks, no validations, no business logic in models. </p>
     </div>
@@ -40,7 +40,7 @@ layout: default
   </div>
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <div class="code-box">
         {% highlight ruby %}
     class Comment::Create < Trailblazer::Operation
@@ -60,7 +60,7 @@ layout: default
         {% endhighlight %}
       </div>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Per public action, there's one operation orchestrating the business logic.</p>
       <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
       <p>Operations are the only place to write to persistence via models.</p>
@@ -79,7 +79,7 @@ layout: default
   </div>
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <div class="">
         {% highlight ruby %}
           contract do
@@ -94,7 +94,7 @@ layout: default
         {% endhighlight %}
       </div>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Every operation contains a form object. </p>
         <p>This is the place for validations.</p>
       <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
@@ -113,12 +113,12 @@ layout: default
   </div>
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
       <p>They can be configured in a separate Callback class.</p>
       <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
         <div class="code-box">
         {% highlight ruby %}
     callback do
@@ -143,7 +143,7 @@ layout: default
     </div>
   </div>
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <div class="left-code">
         {% highlight ruby %}
     policy do
@@ -152,7 +152,7 @@ layout: default
         {% endhighlight %}
       </div>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Policies allow authentication on a global or fine-granular level.</p>
       <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
     </div>
@@ -169,12 +169,12 @@ layout: default
     </div>
   </div>
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
       <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
       <p>Rails helpers can still be used but are limited to the cell's scope.</p>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <div class="code-box">
           {% highlight ruby %}
       class Comment::Cell < Cell::ViewModel
@@ -214,7 +214,7 @@ layout: default
     </div>
   </div>
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       {% highlight erb %}
       <h1>Comments for <%= @thing.name %></h1>
 
@@ -224,7 +224,7 @@ layout: default
         collection: @thing.comments) %>
           {% endhighlight %}
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Controller views are still ok to use.</p>
       <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
     </div>
@@ -240,12 +240,12 @@ layout: default
     </div>
   </div>
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
       <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
       <p>You can use media formats, hypermedia and all other Roar features.</p>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       {% highlight ruby %}
       representer do
         include Roar::JSON::HAL
@@ -271,7 +271,7 @@ layout: default
 
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       {% highlight ruby %}
         class Comment::Update < Create
         policy do
@@ -280,7 +280,7 @@ layout: default
         end
       {% endhighlight %}
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Trailblazer reintroduces object-orientation.</p>
       <p>For each public action, there's one operation class.</p>
       <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
@@ -298,11 +298,11 @@ layout: default
   </div>
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
       <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       {% highlight ruby %}
         class Comment::Create < Trailblazer::Operation
           build do |params|
@@ -327,7 +327,7 @@ layout: default
   </div>
 
   <div class="row">
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <pre>
       app
       ├── concepts
@@ -344,7 +344,7 @@ layout: default
       │       └── crud.rb
       </pre>
     </div>
-    <div class="columns large-6">
+    <div class="columns medium-6">
       <p>
         In Trailblazer, files that belong to one group are called _concepts_. They sit in one directory as Trailblazer introduces and new, more intuitive and easier to navigate file structure.
       </p>
