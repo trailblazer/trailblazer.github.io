@@ -1,7 +1,16 @@
 .code-content{
-	margin-bottom: 3em;
-	pre,
+	margin-bottom: 4em;
+	pre {
+		margin-top: 1rem;
+		margin-bottom: 2rem;
+	}
 	h2 {
-		margin-bottom: 1em;
+		margin-bottom: 0.5em;
+	}
+	p {
+		code {
+			background: $ghost;
+			color: $jet;
+		}
 	}
 }
