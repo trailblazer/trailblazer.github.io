@@ -12,16 +12,14 @@ layout: home
   </div>
   <div class="row">
     <div class="columns medium-6">
-      <pre>
-        <code class="ruby">
-          class Comment < ActiveRecord::Base
-            has_many   :users
-            belongs_to :thing
+      <pre><code class="ruby">
+  class Comment < ActiveRecord::Base
+    has_many   :users
+    belongs_to :thing
 
-            scope :recent, -> { limit(10) }
-          end
-        </code>
-    </pre>
+    scope :recent, -> { limit(10) }
+  end
+      </code></pre>
       
     </div>
     <div class="columns medium-6">
@@ -42,24 +40,22 @@ layout: home
 
   <div class="row">
     <div class="columns medium-6">
-      <div class="code-box">
-        {% highlight ruby %}
-    class Comment::Create < Trailblazer::Operation
-      contract do
-        property :body
-        validates :body, length: {maximum: 160}
-      end
+      <pre><code class="ruby">
+  class Comment::Create < Trailblazer::Operation
+    contract do
+      property :body
+      validates :body, length: {maximum: 160}
+    end
 
-      def process(params)
-        if validate(params)
+    def process(params)
+      if validate(params)
 
-        else
+      else
 
-        end
       end
     end
-        {% endhighlight %}
-      </div>
+  end
+      </code></pre>
     </div>
     <div class="columns medium-6">
       <p>Per public action, there's one operation orchestrating the business logic.</p>
@@ -81,19 +77,17 @@ layout: home
 
   <div class="row">
     <div class="columns medium-6">
-      <div class="">
-        {% highlight ruby %}
-          contract do
-            property :body
-            validates :body, length: {maximum: 160}
+      <pre><code class="ruby">
+  contract do
+    property :body
+    validates :body, length: {maximum: 160}
 
-            property :author do
-              property :email
-              validates :email, email: true
-            end
-          end
-        {% endhighlight %}
-      </div>
+    property :author do
+      property :email
+      validates :email, email: true
+    end
+  end
+      </code></pre>
     </div>
     <div class="columns medium-6">
       <p>Every operation contains a form object. </p>
@@ -120,17 +114,15 @@ layout: home
       <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
     </div>
     <div class="columns medium-6">
-        <div class="code-box">
-        {% highlight ruby %}
-    callback do
-      on_create :notify_owner!
+     <pre><code class="ruby">
+  callback do
+    on_create :notify_owner!
 
-      property :author do
-        on_add :reset_authorship!
-      end
+    property :author do
+      on_add :reset_authorship!
     end
-        {% endhighlight %}
-      </div>
+  end
+      </code></pre>
     </div>
   </div>
 </div>
@@ -145,13 +137,12 @@ layout: home
   </div>
   <div class="row">
     <div class="columns medium-6">
-      <div class="left-code">
-        {% highlight ruby %}
+      <pre><code class="ruby">
     policy do
       user.admin? or not post.published?
     end
-        {% endhighlight %}
-      </div>
+      </code>
+      </pre>
     </div>
     <div class="columns medium-6">
       <p>Policies allow authentication on a global or fine-granular level.</p>
@@ -329,20 +320,22 @@ layout: home
 
   <div class="row">
     <div class="columns medium-6">
-      <pre>
-      app
-      ├── concepts
-      │   ├── comment
-      │   │   ├── crud.rb
-      │   │   ├── cell.rb
-      │   │   ├── views
-      │   │   │   ├── show.haml
-      │   │   │   ├── list.haml
-      │   │   │   ├── comment.css.sass
-      │   │   └── twin.rb
-      │   │
-      │   └── post
-      │       └── crud.rb
+      <pre><code>
+    app
+    ├── concepts
+    │   ├── comment
+    │   │   ├── crud.rb
+    │   │   ├── cell.rb
+    │   │   ├── views
+    │   │   │   ├── show.haml
+    │   │   │   ├── list.haml
+    │   │   │   ├── comment.css.sass
+    │   │   └── twin.rb
+    │   │
+    │   └── post
+    │       └── crud.rb
+        </code>
+      
       </pre>
     </div>
     <div class="columns medium-6">
