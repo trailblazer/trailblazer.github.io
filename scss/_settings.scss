@@ -196,7 +196,7 @@ $body-font-weight: $font-weight-normal;
 
 // We use these to control header font styles
 $header-font-family: $font-family-sans-serif;
-$header-font-weight: 300;
+$header-font-weight: normal;
 $header-font-style: normal;
 $header-font-color: $jet;
 // $header-line-height: 1.4;
@@ -243,10 +243,10 @@ $h6-font-size: 1rem;
 // $paragraph-text-rendering: optimizeLegibility;
 
 // We use these to style <code> tags
-// $code-color: $oil;
+$code-color: $white;
 // $code-font-family: $font-family-monospace;
 // $code-font-weight: $font-weight-normal;
-// $code-background-color: scale-color($secondary-color, $lightness: 70%);
+$code-background-color: #232324;
 $code-border-size: 0;
 // $code-border-style: solid;
 // $code-border-color: scale-color($code-background-color, $lightness: -10%);

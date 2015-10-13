@@ -2,6 +2,39 @@
 layout: home
 ---
 
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Controller</h2>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class CommentsController < ApplicationController
+    def new
+      form Comment::Update
+    end
+
+    def create
+      run Comment::Update do |op|
+        return redirect_to comments_path(op.model)
+      end
+
+      render :new
+    end
+      </code></pre>
+    </div>
+     <div class="columns medium-6">
+      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+
+      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+    </div>
+  </div>
+</div>
+
+
 <!-- Model -->
 
 <div class="sub-section">
@@ -167,32 +200,30 @@ layout: home
       <p>Rails helpers can still be used but are limited to the cell's scope.</p>
     </div>
     <div class="columns medium-6">
-      <div class="code-box">
-          {% highlight ruby %}
-      class Comment::Cell < Cell::ViewModel
-        property :body
-        property :author
+      <pre><code class="ruby">
+  class Comment::Cell < Cell::ViewModel
+  property :body
+  property :author
 
-        def show
-          render
-        end
+  def show
+    render
+  end
 
-      private
-        def author_link
-          link_to "#{author.email}", author
-        end
-      end
-      {% endhighlight %}
-      </div>
-        <div class="code-box">
-    {% highlight erb %}
-    <div class="comment">
-      <%= body %>
-      By <%= author_link %>
-    </div>
-    {% endhighlight %}
+  private
+    def author_link
+      link_to "#{author.email}", author
+    end
+  end
+      </code></pre>
+      <pre>
+        <code class="html ruby">
+  &lt;div class="comment"&gt;
+    <%= body %>
+    By <%= author_link %>
+  &lt;/div&gt;
+      </code></pre>
+
   </div>
-</div>
 </div>
 </div>
 
@@ -207,14 +238,16 @@ layout: home
   </div>
   <div class="row">
     <div class="columns medium-6">
-      {% highlight erb %}
-      <h1>Comments for <%= @thing.name %></h1>
+      <pre><code class="ruby">
+  &lt;h1&gt;Comments for <%= @thing.name %>&lt;/h1&gt;
 
-      This was created <%= @thing.created_at %>
+  This was created <%= @thing.created_at %>
 
-        <%= concept("comment/cell",
-        collection: @thing.comments) %>
-          {% endhighlight %}
+    <%= concept("comment/cell",
+    collection: @thing.comments) %>
+      </code></pre>
+
+      
     </div>
     <div class="columns medium-6">
       <p>Controller views are still ok to use.</p>
@@ -238,16 +271,17 @@ layout: home
       <p>You can use media formats, hypermedia and all other Roar features.</p>
     </div>
     <div class="columns medium-6">
-      {% highlight ruby %}
-      representer do
-        include Roar::JSON::HAL
+    <pre><code class="ruby">
+  representer do
+    include Roar::JSON::HAL
 
-        property :body
-        property :user, embedded: true
+    property :body
+    property :user, embedded: true
 
-        link(:self) { comment_path(model) }
-      end
-      {% endhighlight %}
+    link(:self) { comment_path(model) }
+  end
+    </code></pre>
+     
     </div>
   </div>
 </div>
@@ -264,13 +298,14 @@ layout: home
 
   <div class="row">
     <div class="columns medium-6">
-      {% highlight ruby %}
-        class Comment::Update < Create
-        policy do
-          is_owner?(model)
-        end
-        end
-      {% endhighlight %}
+    <pre><code class="ruby">
+  class Comment::Update < Create
+  policy do
+    is_owner?(model)
+  end
+  end
+    </code></pre>
+      
     </div>
     <div class="columns medium-6">
       <p>Trailblazer reintroduces object-orientation.</p>
@@ -295,18 +330,19 @@ layout: home
       <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
     </div>
     <div class="columns medium-6">
-      {% highlight ruby %}
-        class Comment::Create < Trailblazer::Operation
-          build do |params|
-            Admin if params[:current_user].admin?
-          end
+      <pre><code class="ruby">
+  class Comment::Create < Trailblazer::Operation
+    build do |params|
+      Admin if params[:current_user].admin?
+    end
 
-          class Admin < Create
-            contract do
-              remove_validations! :body
-            end
-          end
-        {% endhighlight %}
+    class Admin < Create
+      contract do
+        remove_validations! :body
+      end
+    end
+      </code></pre>
+        
     </div>
   </div>
 </div>
