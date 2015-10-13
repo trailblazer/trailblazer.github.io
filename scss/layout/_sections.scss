@@ -1,5 +1,5 @@
 .sub-section {
-  padding: 3em 0;
+  padding: 3em 0
   @media #{$small-only} {
     padding: 2em 0;
   }
@@ -8,11 +8,6 @@
     margin-bottom: 2em;
     @media #{$small-only} {
       margin-bottom: 1em;
-    }
-  }
-  p {
-    @media #{$large-up} {
-      font-size: 1.1rem;
     }
   }
 }

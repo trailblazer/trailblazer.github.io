@@ -12,16 +12,17 @@ layout: home
   </div>
   <div class="row">
     <div class="columns medium-6">
-      <div class="">
-        {% highlight ruby %}
-    class Comment < ActiveRecord::Base
-      has_many   :users
-      belongs_to :thing
+      <pre>
+        <code class="ruby">
+          class Comment < ActiveRecord::Base
+            has_many   :users
+            belongs_to :thing
 
-      scope :recent, -> { limit(10) }
-    end
-        {% endhighlight %}
-      </div>
+            scope :recent, -> { limit(10) }
+          end
+        </code>
+    </pre>
+      
     </div>
     <div class="columns medium-6">
       <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
