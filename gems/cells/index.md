@@ -1,8 +1,8 @@
 ---
-layout: gems
+layout: cells
 permalink: /gems/cells/
 ---
-<!-- [API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html) - [Troubleshooting](troubleshooting.html) -->
+[API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html) - [Troubleshooting](troubleshooting.html)
 
 ## Cells
 
