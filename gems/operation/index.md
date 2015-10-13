@@ -186,7 +186,7 @@ Another huge advantage is: operations can be used in any environment like script
 {% highlight ruby %}
 describe Comment::Update do
   it "updates" do
-    comment = Comment::Create(..) # this is a factory.
+    comment = Comment::Create.(..) # this is a factory.
 
     Comment::Update.(id: comment.id, comment: {body: "FTW!"})
     expect(comment.body).to eq("FTW!")
