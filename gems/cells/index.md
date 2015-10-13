@@ -2,9 +2,9 @@
 layout: gems
 permalink: /gems/cells/
 ---
-[API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html) - [Troubleshooting](troubleshooting.html)
+<!-- [API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html) - [Troubleshooting](troubleshooting.html) -->
 
-# Cells
+## Cells
 
 Out of the frustration with Rails' view layer, its lack of encapsulation and the convoluted code resulting from partials and helpers both accessing global state, the [Cells](https://github.com/apotonick/cells) gem emerged.
 
@@ -22,12 +22,11 @@ Think of cells, or _view models_, as small Rails controllers, but without any HT
 
 Cells can be rendered anywhere in your application. Mostly, you want to use them in controller views or actions to replace a complex helper/partial mess.
 
-{% highlight haml %}
-- # app/views/comments/index.html.haml
-%h1 Comments
-@comments.each do |comment|
-  = concept("comment/cell", comment) #=> Comment::Cell.new(comment).show
-{% endhighlight %}
+
+    - # app/views/comments/index.html.haml
+    %h1 Comments
+    @comments.each do |comment|
+      = concept("comment/cell", comment) #=> Comment::Cell.new(comment).show
 
 This will instantiate and invoke the `Comment::Cell` for each comment. It is completely up to the cell how to return the necessary markup.
 

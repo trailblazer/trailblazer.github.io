@@ -3,9 +3,18 @@
 @import "layout/footer";
 @import "layout/hero";
 @import "layout/sections";
+@import "layout/code-content";
 
 // UI Components
 @import "components/testimonials";
 @import "components/gems";
 @import "components/avatar";
 
+
+pre {
+	margin-top: 0;
+	@media #{$small-only} { 
+		margin: 1em auto;
+	}
+}
+	

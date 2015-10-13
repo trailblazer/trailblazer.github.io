@@ -174,8 +174,7 @@ layout: home
     policy do
       user.admin? or not post.published?
     end
-      </code>
-      </pre>
+      </code></pre>
     </div>
     <div class="columns medium-6">
       <p>Policies allow authentication on a global or fine-granular level.</p>
