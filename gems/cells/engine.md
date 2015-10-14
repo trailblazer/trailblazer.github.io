@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: cells
 ---
 
 # Engine Cells
@@ -14,37 +14,36 @@ Each engine cell has to set its `view_paths`.
 
 The easiest way is to do this in a base cell in your engine.
 
-{% highlight ruby %}
-module MyEngine
-  class Cell < Cell::Concept
-    view_paths = ["#{MyEngine::Engine.root}/app/concepts"]
-  end
-end
-{% endhighlight %}
+
+	module MyEngine
+	  class Cell < Cell::Concept
+	    view_paths = ["#{MyEngine::Engine.root}/app/concepts"]
+	  end
+	end
+
 
 The `view_paths` is inherited, you only have to define it once when using inheritance within your engine.
 
-{% highlight ruby %}
-module MyEngine
-  class Song::Cell < Cell # inherits from MyEngine::Cell
-{% endhighlight %}
+
+	module MyEngine
+	  class Song::Cell < Cell # inherits from MyEngine::Cell
+
 
 This will _not_ allow overriding views of this engine cell in `app/cells` as it is not part of the engine cell's `view_paths`. When rendering `MyEngine::User::Cell` or a subclass, it will _not_ look in `app/cells`.
 
 To achieve just that, you may append the engine's view path instead of overwriting it.
 
-{% highlight ruby %}
-class MyEngine::User::Cell < Cell::Concept
-  view_paths << "#{MyEngine::Engine.root}/app/concepts"
-end
-{% endhighlight %}
+
+	class MyEngine::User::Cell < Cell::Concept
+	  view_paths << "#{MyEngine::Engine.root}/app/concepts"
+	end
 
 
 ## Render problems
 
 You might have to include cells' template gem into your **application's** `Gemfile`. This will properly require the extension.
 
-{% highlight ruby %}
-# application Gemfile
-gem "cells-erb"
-{% endhighlight %}
+
+	# application Gemfile
+	gem "cells-erb"
+
