@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: operation
 ---
 
 # Operation::Representer
@@ -10,38 +10,36 @@ Operations usually receive the `params` hash and pass this to the form's `#valid
 
 With `Representer` included, operations can infer a representer from the contract class. The representer can be further customized in the `::representer` block.
 
-{% highlight ruby %}
-class Song::Create < Trailblazer::Operation
-  include Representer
 
-  contract do
-    property :name
-    validates :name, presence: true
-  end
+    class Song::Create < Trailblazer::Operation
+      include Representer
 
-  representer do
-    # inherited :name
-    include Roar::JSON::HAL
+      contract do
+        property :name
+        validates :name, presence: true
+      end
 
-    link(:self) { song_path(represented.id) }
-  end
+      representer do
+        # inherited :name
+        include Roar::JSON::HAL
 
-  def process(params)
-    validate(params[:song]) do # params[:song] is a JSON document.
-      contract.save
+        link(:self) { song_path(represented.id) }
+      end
+
+      def process(params)
+        validate(params[:song]) do # params[:song] is a JSON document.
+          contract.save
+        end
+      end
     end
-  end
-end
-{% endhighlight %}
 
 
 ## Validation
 
 You now invoke the operation with a JSON document, not with a hash anymore.
 
-{% highlight ruby %}
-Song::Create.(song: '{"title": "Fury"}')
-{% endhighlight %}
+
+    Song::Create.(song: '{"title": "Fury"}')
 
 
 In `Operation#validate`, the incoming `params[:song]` will now be treated as a document.
@@ -56,10 +54,10 @@ After deserialization/population is finished, validation and processing is analo
 
 The `Representer` module also imports `to_json`.
 
-{% highlight ruby %}
-Song::Create.(song: '{"title": "Fury"}').to_json
-#=> '{"title": "Fury","_links":{"self":"/songs/1"}}'
-{% endhighlight %}
+
+    Song::Create.(song: '{"title": "Fury"}').to_json
+    #=> '{"title": "Fury","_links":{"self":"/songs/1"}}'
+
 
 In `to_json`, the operation's contract will be passed to the representer and rendered using the representer.
 
@@ -67,10 +65,10 @@ In `to_json`, the operation's contract will be passed to the representer and ren
 
 You can set your own representer class if you don't want it to be inferred.
 
-{% highlight ruby %}
-class Create < Trailblazer::Operation
-  self.representer_class = SongRepresenter
-{% endhighlight %}
+
+    class Create < Trailblazer::Operation
+      self.representer_class = SongRepresenter
+
 
 ## Responder
 

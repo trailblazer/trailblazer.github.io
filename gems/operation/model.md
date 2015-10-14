@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: operation
 ---
 
 # Operation::Model
@@ -8,22 +8,22 @@ Including `Model` will add simple CRUD semantics to your operation to find/creat
 
 Note that this is not limited to ActiveRecord.
 
-{% highlight ruby %}
-class Create < Trailblazer::Operation
-  include Model
-  model Comment, :create
-{% endhighlight %}
+
+	class Create < Trailblazer::Operation
+	  include Model
+	  model Comment, :create
+
 
 Using the `::model` method you _have to_ define what model class to work with. The second argument specifies the action.
 
 This will override `model!` as follows.
 
-{% highlight ruby %}
-class Create < Trailblazer::Operation
-  def model!
-    Comment.new
-  end
-{% endhighlight %}
+
+	class Create < Trailblazer::Operation
+	  def model!
+	    Comment.new
+	  end
+
 
 The model is automatically created for you in `#setup!` and hence available in `process`.
 
@@ -31,14 +31,14 @@ The model is automatically created for you in `#setup!` and hence available in `
 
 In `validate`, you don't need to provide the model anymore.
 
-```ruby
-def process(params)
-  model #=> <Comment body=""> # created via #model!.
-  validate(params[:thing]) do
-    ..
-  end
-end
-```
+
+	def process(params)
+	  model #=> <Comment body=""> # created via #model!.
+	  validate(params[:thing]) do
+	    ..
+	  end
+	end
+
 
 ## Actions
 

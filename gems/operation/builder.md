@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: operation
 ---
 
 # Builder
@@ -8,31 +8,29 @@ Different contexts like _"admin user"_ vs. _"signed in"_ can be handled in the s
 
 The easiest way is to use normal inheritance for context-specific operations.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  # generic code, contracts, etc.
 
-  class SignedIn < self
-    # specific code
-  end
-end
-{% endhighlight %}
+    class Thing::Create < Trailblazer::Operation
+      # generic code, contracts, etc.
+
+      class SignedIn < self
+        # specific code
+      end
+    end
+
 
 A `builds` block allows to let the operation class take care of the instantiation process.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  builds -> (params) do
-    return SignedIn if params[:current_user]
-  end
-{% endhighlight %}
+    class Thing::Create < Trailblazer::Operation
+      builds -> (params) do
+        return SignedIn if params[:current_user]
+      end
 
 When running the top-level operation, the builder will instantiate the correct subclass according to the `params` environment.
 
-{% highlight ruby %}
-op = Thing::Create.(current_user: admin)
-op.class #=> Thing::Create::SignedIn
-{% endhighlight %}
+
+    op = Thing::Create.(current_user: admin)
+    op.class #=> Thing::Create::SignedIn
+
 
 If the `builds` block doesn't return a constant, the original constant will be used for instantiation. In our example, this would resolve to `Thing::Create`.
 
@@ -40,19 +38,19 @@ If the `builds` block doesn't return a constant, the original constant will be u
 
 `builds` blocks are _not inherited_. You can copy them to other classes, though.
 
-{% highlight ruby %}
-class Thing::Update < Trailblazer::Operation
-  self.builds_class = Create.build_class
-{% endhighlight %}
+
+    class Thing::Update < Trailblazer::Operation
+      self.builds_class = Create.build_class
+
 
 Be careful about constant resolving here: the block you copied has to have runtime evaluation of constants.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  builds -> (params) do
-    return self::SignedIn if # ...
-  end
-{% endhighlight %}
+
+    class Thing::Create < Trailblazer::Operation
+      builds -> (params) do
+        return self::SignedIn if # ...
+      end
+
 
 Now, the block can safely be copied to other classes where `SignedIn` will be resolved in the new context.
 
@@ -60,18 +58,18 @@ Now, the block can safely be copied to other classes where `SignedIn` will be re
 
 A resolver allows you to use both the operation model and the policy in the builder.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  include Resolver
 
-  policy Thing::Policy, :create?
-  model Thing, :create
+    class Thing::Create < Trailblazer::Operation
+      include Resolver
 
-  builds -> (model, policy, params)
-    return Admin if policy.admin?
-    return SignedIn if params[:current_user]
-  end
-{% endhighlight %}
+      policy Thing::Policy, :create?
+      model Thing, :create
+
+      builds -> (model, policy, params)
+        return Admin if policy.admin?
+        return SignedIn if params[:current_user]
+      end
+
 
 Please note that the `builds` block is run in class context, no operation instance is available, yet. It is important to understand that `Resolver` also changes the way the operation's model is created/found. This, too, happens on the class layer, now.
 
@@ -79,14 +77,14 @@ You have to configure the CRUD module using `::model` so the operation can insta
 
 If you want to change the way the model is created, you have to do so on the class level.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  include Resolver
-  # ..
 
-  def self.model!(params)
-    Thing.find_by(slug: params[:slug])
-  end
-{% endhighlight %}
+    class Thing::Create < Trailblazer::Operation
+      include Resolver
+      # ..
+
+      def self.model!(params)
+        Thing.find_by(slug: params[:slug])
+      end
+
 
 Do _not_ include `CRUD` when using `Resolver`.

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: operation
 ---
 
 # Policy
@@ -12,22 +12,22 @@ The format of a policy class is heavily inspired by the excellent [Pundit](https
 
 A policy file per concept is recommendable.
 
-{% highlight ruby %}
-class Thing::Policy
-  def initialize(user, thing)
-    @user, @thing = user, thing
-  end
 
-  def create?
-    admin?
-  end
+    class Thing::Policy
+      def initialize(user, thing)
+        @user, @thing = user, thing
+      end
 
-  def admin?
-    @user.admin == true
-  end
-  # ..
-end
-{% endhighlight %}
+      def create?
+        admin?
+      end
+
+      def admin?
+        @user.admin == true
+      end
+      # ..
+    end
+
 
 This class would probably be best located at `app/concepts/thing/policy.rb`.
 
@@ -35,19 +35,19 @@ This class would probably be best located at `app/concepts/thing/policy.rb`.
 
 Use `::policy` to hook the policy class along with a query action into your operation.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  include Policy
 
-  policy Thing::Policy, :create?
-{% endhighlight %}
+    class Thing::Create < Trailblazer::Operation
+      include Policy
+
+      policy Thing::Policy, :create?
+
 
 
 The policy is evaluated in `#setup!`, raises an exception if `false` and thus suppresses running `#process`. It is a great way to protect your operations from unauthorized users.
 
-{% highlight ruby %}
-Thing::Create.(current_user: User.find_normal_user, thing: {})
-{% endhighlight %}
+
+    Thing::Create.(current_user: User.find_normal_user, thing: {})
+
 
 This will raise a `Trailblazer::NotAuthorizedError`.
 
@@ -59,10 +59,10 @@ To instantiate the `Thing::Policy` object internally, per default the `params[:c
 
 After `#setup!`, the policy instance is available at any point in your operation code.
 
-{% highlight ruby %}
-def process(params)
-  notify_admin! if policy.admin?
-{% endhighlight %}
+
+    def process(params)
+      notify_admin! if policy.admin?
+
 
 This won't raise an exception.
 
@@ -70,11 +70,11 @@ This won't raise an exception.
 
 Pundit policy classes can be used directly in operations.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  include Policy
-  policy ThingPolicy, :create?
-{% endhighlight %}
+
+    class Thing::Create < Trailblazer::Operation
+      include Policy
+      policy ThingPolicy, :create?
+
 
 As a matter of course, you may call other rule queries on the internal policy object later on.
 
