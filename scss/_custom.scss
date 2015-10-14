@@ -10,6 +10,7 @@
 @import "components/gems";
 @import "components/avatar";
 
+/* I need to fix this later on, they need sass super powers, but in the meantime they are going to stay here */
 
 pre {
 	margin-top: 0;
@@ -17,4 +18,34 @@ pre {
 		margin: 1em auto;
 	}
 }
-	
+
+.cells-hero {
+  background-color: #CE2458;
+}
+
+.operation-hero {
+  background-color: #17C2AA;
+}
+
+
+.cells-body {
+	.code-content {
+		a {
+		color: #CE2458;
+		&:hover {
+			color: darken(#CE2458, 15%);
+			}
+		}
+	}
+}
+
+.operation-body {
+	.code-content {
+		a {
+		color: #17C2AA;
+		&:hover {
+			color: darken(#17C2AA, 15%);
+			}
+		}
+	}
+}

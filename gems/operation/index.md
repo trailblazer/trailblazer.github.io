@@ -11,7 +11,7 @@ An operation is a service object.
 
 Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
 
-![](/images/diagrams/stack.png){: .left }
+![](/images/diagrams/stack.png)
 
 Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
@@ -21,9 +21,9 @@ Note that operation is not a monolithic god object, but a composition of many st
 
 An operation is to be seen as a _function_ as in _Functional Programming_. You invoke an operation using the implicit `::call` class method.
 
-{% highlight ruby %}
-op = Comment::Create.(comment: {body: "MVC is so 90s."})
-{% endhighlight %}
+
+    op = Comment::Create.(comment: {body: "MVC is so 90s."})
+
 
 This will instantiate the `Comment::Create` operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.
 
@@ -33,20 +33,20 @@ This will instantiate the `Comment::Create` operation for you, run it and return
 
 All you need in an operation is a `#process` method.
 
-{% highlight ruby %}
-class Comment::Create < Trailblazer::Operation
-  def process(params)
-    puts params
-  end
-end
-{% endhighlight %}
+
+    class Comment::Create < Trailblazer::Operation
+      def process(params)
+        puts params
+      end
+    end
+
 
 Running this operation will result in the following.
 
-{% highlight ruby %}
-Comment::Create.(comment: {body: "MVC is so 90s."})
-#=> {comment: {body: "MVC is so 90s."}}
-{% endhighlight %}
+
+    Comment::Create.(comment: {body: "MVC is so 90s."})
+    #=> {comment: {body: "MVC is so 90s."}}
+
 
 The params from the invocation get passed into `#process`.
 
@@ -56,16 +56,16 @@ Normally, operations are working on _models_. This term does absolutely not limi
 
 Assigning `@model` will allow accessing your operation model from the outside.
 
-{% highlight ruby %}
-class Comment::Update < Trailblazer::Operation
-  def process(params)
-    @model = Comment.find params[:id]
-  end
-end
 
-op = Comment::Update.(id: 1)
-op.model #=> <Comment id: 1>
-{% endhighlight %}
+    class Comment::Update < Trailblazer::Operation
+      def process(params)
+        @model = Comment.find params[:id]
+      end
+    end
+
+    op = Comment::Update.(id: 1)
+    op.model #=> <Comment id: 1>
+
 
 Since every public function in your application is implemented as an operation, you don't access models directly anymore on the outside.
 
@@ -75,27 +75,27 @@ The cool thing about Trailblazer's operation is that it integrates the validatio
 
 This is often done wrong in Rails applications where the controller first instantiates a form and then passes it to a service object. In Trailblazer, the operation is the place for all business logic.
 
-{% highlight ruby %}
-class Comment::Create < Trailblazer::Operation
-  contract do
-    property :body, validates: {presence: true}
-  end
 
-  def process(params)
-    @model = Comment.new
+    class Comment::Create < Trailblazer::Operation
+      contract do
+        property :body, validates: {presence: true}
+      end
 
-    validate(params[:comment], @model) do
-      contract.save
+      def process(params)
+        @model = Comment.new
+
+        validate(params[:comment], @model) do
+          contract.save
+        end
+      end
     end
-  end
-end
-{% endhighlight %}
+
 
 Using the `::contract` block you can define a `Reform::Form` class that the operation will use for validation (and rendering). [Any Reform feature](/gems/reform) like nesting, populators or complex validations can be used here.
 
 The `validate` block is only executed when the validation was successful and allows you to save the model and run arbitrary post-processing code. Here, we use the contract's `save` which will push the validated data to the model and then save it.
 
-[Learn more.](/gems/operation/api.html#contract)
+[Learn more](/gems/operation/api.html#contract)
 
 ## Operation::Model
 
@@ -103,28 +103,28 @@ Normally, a `Create` operation will instantiate a new model object, whereas `Upd
 
 This is such a common workflow for CRUD operations that it is built into Trailblazer in the `Operation::Model` module.
 
-{% highlight ruby %}
-class Comment::Create < Trailblazer::Operation
-  include Model
-  model Comment, :create
 
-  contract do
-    property :body, validates: {presence: true}
-  end
+    class Comment::Create < Trailblazer::Operation
+      include Model
+      model Comment, :create
 
-  def process(params)
-    validate(params[:comment]) do
-      contract.save
+      contract do
+        property :body, validates: {presence: true}
+      end
+
+      def process(params)
+        validate(params[:comment]) do
+          contract.save
+        end
+      end
     end
-  end
-end
-{% endhighlight %}
+
 
 Now, the operation takes care of creating the model in `validate`. Note that there is zero coupling to ActiveRecord: `Model` will only call `Comment.new` or `Comment.find(id)` on the configured model class to accomplish its job, allowing any kind of persistence layer with that API.
 
-{% highlight ruby %}
-Comment::Create.(comment: {body: "MVC is so 90s."}).model #=> <Comment body="MVC ..">
-{% endhighlight %}
+
+    Comment::Create.(comment: {body: "MVC is so 90s."}).model #=> <Comment body="MVC ..">
+
 
 [Learn more](model.html)
 
@@ -134,29 +134,29 @@ There's two different invocation styles.
 
 The **call style** will return the operation when the validation was successful. With invalid data, it will raise an `InvalidContract` exception.
 
-{% highlight ruby %}
-Comment::Create.(comment: {body: "MVC is so 90s."}) #=> <Comment::Create @model=..>
-Comment::Create.(comment: {}) #=> exception raised!
-{% endhighlight %}
+
+    Comment::Create.(comment: {body: "MVC is so 90s."}) #=> <Comment::Create @model=..>
+    Comment::Create.(comment: {}) #=> exception raised!
+
 
 The call style is popular for tests and on the console.
 
 The **run style** returns a result set `[result, operation]` in both cases.
 
-{% highlight ruby %}
-res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
-{% endhighlight %}
+
+    res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
+
 
 However, it also accepts a block that's run in case of a _successful validation_.
 
-{% highlight ruby %}
-res, operation = Comment::Create.run(comment: {}) do |op|
-  # this is not run, because validation not successful.
-  puts "Hey, #{op.model} was created!" and return
-end
 
-puts "That's wrong: #{operation.errors}"
-{% endhighlight %}
+    res, operation = Comment::Create.run(comment: {}) do |op|
+      # this is not run, because validation not successful.
+      puts "Hey, #{op.model} was created!" and return
+    end
+
+    puts "That's wrong: #{operation.errors}"
+
 
 This style is often used in framework bindings for Rails, Lotus or Roda when hooking the operation call into the endpoint.
 
@@ -170,54 +170,54 @@ This makes it really easy to update or swap the underlying framework or ORM. For
 
 Operations are incredibly simple to test. All edge-cases can cleanly be tested in unit tests, without the HTTP overhead.
 
-{% highlight ruby %}
-describe Comment::Create do
-  it "works" do
-    comment = Comment::Create.(comment: {body: "Operation rules!"}).model
-    expect(comment.body).to eq("Operation rules!")
-  end
-end
-{% endhighlight %}
+
+    describe Comment::Create do
+      it "works" do
+        comment = Comment::Create.(comment: {body: "Operation rules!"}).model
+        expect(comment.body).to eq("Operation rules!")
+      end
+    end
+
 
 ## Testing With Operations
 
 Another huge advantage is: operations can be used in any environment like scripts, background jobs and will do the exact same as in a controller. This is extremely helpful to use operations as a replacement for test factories.
 
-{% highlight ruby %}
-describe Comment::Update do
-  it "updates" do
-    comment = Comment::Create(..) # this is a factory.
 
-    Comment::Update.(id: comment.id, comment: {body: "FTW!"})
-    expect(comment.body).to eq("FTW!")
-  end
-end
-{% endhighlight %}
+    describe Comment::Update do
+      it "updates" do
+        comment = Comment::Create(..) # this is a factory.
+
+        Comment::Update.(id: comment.id, comment: {body: "FTW!"})
+        expect(comment.body).to eq("FTW!")
+      end
+    end
+
 
 ## Presenting Operations
 
 The operation is not only helpful for validating and processing data, it can also be used when rendering the form.
 
-{% highlight ruby %}
-operation = Comment::Update.present(id: 1)
-{% endhighlight %}
+
+    operation = Comment::Update.present(id: 1)
+
 
 `Comment::Update` will now run the model-finding logic and create the form object for you. It will _not_ run `#process`.
 
-{% highlight ruby %}
-# Operation finds the model..
-operation.model #=> <Comment body="FTW!">
-# and provides the Reform object.
-@form = operation.contract #=> <Reform::Form ..>
-{% endhighlight %}
+
+    # Operation finds the model..
+    operation.model #=> <Comment body="FTW!">
+    # and provides the Reform object.
+    @form = operation.contract #=> <Reform::Form ..>
+
 
 As Reform works with most form builders out-of-the-box, you can pass the form right into it.
 
-{% highlight ruby %}
-= simple_form_for @form do |f|
-  = f.input :body
-  = f.button :submit
-{% endhighlight %}
+
+    = simple_form_for @form do |f|
+      = f.input :body
+      = f.button :submit
+
 
 This normally covers the logic for two controller actions, e.g. `new` and `create`.
 
