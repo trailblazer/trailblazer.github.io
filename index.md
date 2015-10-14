@@ -194,11 +194,6 @@ layout: home
   </div>
   <div class="row">
     <div class="columns medium-6">
-      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
-      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
-      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
-    </div>
-    <div class="columns medium-6">
       <pre><code class="ruby">
   class Comment::Cell < Cell::ViewModel
   property :body
@@ -221,8 +216,12 @@ layout: home
     By <%= author_link %>
   &lt;/div&gt;
       </code></pre>
-
   </div>
+  <div class="columns medium-6">
+      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
+      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
+      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
+    </div>
 </div>
 </div>
 
