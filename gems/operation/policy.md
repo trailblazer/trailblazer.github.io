@@ -82,14 +82,14 @@ As a matter of course, you may call other rule queries on the internal policy ob
 
 Instead of using policies, you can also use a simple guard. A guard is like an inline policy that doesn't require you to define a policy class. It is run in `#setup!`, too, like a real policy, but isn't accessable in the operation after that.
 
-{% highlight ruby %}
-class Thing::Create < Trailblazer::Operation
-  include Policy::Guard
 
-  policy-> (params) do
-    return false if params[:current_user].nil?
-  end
-{% endhighlight %}
+    class Thing::Create < Trailblazer::Operation
+      include Policy::Guard
+
+      policy-> (params) do
+        return false if params[:current_user].nil?
+      end
+
 
 Note that you can't mix `Policy` and guards in one class.
 
