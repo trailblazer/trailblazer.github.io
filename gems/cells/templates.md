@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: cells
 ---
 
 # Template Engines
@@ -10,12 +10,12 @@ We provide support for Haml, Erb, and Slim. You can also write [your own](#your-
 
 In a non-Rails environment, you need to include the respective module into your cells, so it knows what template to find.
 
-{% highlight ruby %}
-class SongCell < Cell::ViewModel
-  include Cell::Erb
-  # include Cell::Haml
-  # include Cell::Slim
-{% endhighlight %}
+
+	class SongCell < Cell::ViewModel
+	  include Cell::Erb
+	  # include Cell::Haml
+	  # include Cell::Slim
+
 
 Note that you can only include _one engine per class_. This is due to problems with helpers in Rails and the way they have to be fixed in combination with Cells.
 
@@ -25,26 +25,26 @@ When including more than one engine in your Gemfile in Rails, the last one wins.
 
 Currently, there's no clean way but to disable automatic inclusion from each gem (not yet implemented) and then include template modules into your application cells manually.
 
-# ERB
+## ERB
 
-# Haml
+## Haml
 
-# Slim
+## Slim
 
-# Your Own
+## Your Own
 
 Theoretically, you can use any template engine supported by Tilt.
 
 To activate it in a cell, you only need to override `#template_options_for`.
 
-{% highlight ruby %}
-class SongCell < Cell::ViewModel
-  def template_options_for(options)
-    {
-      template_class: Tilt, # or Your::Template.
-      suffix:         "your"
-  }
-  end
-{% endhighlight %}
+
+	class SongCell < Cell::ViewModel
+	  def template_options_for(options)
+	    {
+	      template_class: Tilt, # or Your::Template.
+	      suffix:         "your"
+	  }
+	  end
+
 
 This will use `Tilt` to instantiate a template to be evaluated. The `:suffix` is needed for Cells when finding the view.

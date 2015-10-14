@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: cells
 ---
 
 # Helpers
@@ -10,27 +10,27 @@ Conceptually, Cells doesn't have helpers anymore. You can still include modules 
 
 You can use the `#t` helper.
 
-{% highlight ruby %}
-require "cell/translation"
 
-class Admin::Comment::Cell < Cell::Concept
-  include Cell::Translation
+	require "cell/translation"
 
-  def show
-    t(".greeting")
-  end
-end
-{% endhighlight %}
+	class Admin::Comment::Cell < Cell::Concept
+	  include Cell::Translation
+
+	  def show
+	    t(".greeting")
+	  end
+	end
+
 
 This will lookup the I18N path `admin.comment.greeting`.
 
 Setting a differing translation path works with `::translation_path`.
 
-{% highlight ruby %}
-class Admin::Comment::Cell < Cell::Concept
-  include Cell::Translation
-  self.translation_path = "cell.admin"
-{% endhighlight %}
+
+	class Admin::Comment::Cell < Cell::Concept
+	  include Cell::Translation
+	  self.translation_path = "cell.admin"
+
 
 The lookup will now be `cell.admin.greeting`.
 
@@ -38,9 +38,9 @@ The lookup will now be `cell.admin.greeting`.
 
 When using asset path helpers like `image_tag` that render different paths in production, please simply delegate to the controller.
 
-{% highlight ruby %}
-class Comment::Cell < Cell::Concept
-  delegates :parent_controller, :image_tag
-{% endhighlight %}
+
+	class Comment::Cell < Cell::Concept
+	  delegates :parent_controller, :image_tag
+
 
 The delegation fixes the [well-known problem](https://github.com/apotonick/cells/issues/214) of the cell rendering the "wrong" path when using Sprockets. Please note that this fix is necessary due to the way Rails includes helpers and accesses global data.
