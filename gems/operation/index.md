@@ -1,5 +1,5 @@
 ---
-layout: gems
+layout: operation
 permalink: /gems/operation/
 ---
 
