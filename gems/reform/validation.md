@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: reform
 ---
 
 # Validation
@@ -15,47 +15,47 @@ In Rails environments, the AM support will be automatically loaded.
 
 In other frameworks, you need to include `Reform::Form::ActiveModel::Validations` either into a particular form class, or simply into `Reform::Form` and make it available for all subclasses.
 
-{% highlight ruby %}
-require "reform/form/active_model/validations"
 
-Reform::Form.class_eval do
-  include Reform::Form::ActiveModel::Validations
-end
-{% endhighlight %}
+    require "reform/form/active_model/validations"
+
+    Reform::Form.class_eval do
+      include Reform::Form::ActiveModel::Validations
+    end
+
 
 
 ## Lotus
 
 To use Lotus validations (recommended).
 
-{% highlight ruby %}
-require "reform/form/lotus"
 
-Reform::Form.class_eval do
-  include Reform::Form::Lotus
-end
-{% endhighlight %}
+    require "reform/form/lotus"
+
+    Reform::Form.class_eval do
+      include Reform::Form::Lotus
+    end
+
 
 Put this into an initializer or on top of your script.
 
 If you forget doing so, the following exception will remind you.
 
-<pre>
-`validates': [Reform] Please include either Reform::Form::ActiveModel::Validations or Reform::Form::Lotus in your form class. (RuntimeError)
-</pre>
+
+    `validates': [Reform] Please include either Reform::Form::ActiveModel::Validations or Reform::Form::Lotus in your form class. (RuntimeError)
+
 
 ## Uniqueness Validation
 
 Both ActiveRecord and Mongoid modules will support "native" uniqueness support where the validation is basically delegated to the "real" model class. This happens when you use `validates_uniqueness_of` and will respect options like `:scope`, etc.
 
-{% highlight ruby %}
-class SongForm < Reform::Form
-  include Reform::Form::ActiveRecord
-  model :song
 
-  property :title
-  validates_uniqueness_of :title, scope: [:album_id, :artist_id]
-{% endhighlight %}
+    class SongForm < Reform::Form
+      include Reform::Form::ActiveRecord
+      model :song
+
+      property :title
+      validates_uniqueness_of :title, scope: [:album_id, :artist_id]
+
 
 Be warned, though, that those validators write to the model instance. Even though this _usually_ is not persisted, this will mess up your application state, as in case of an invalid validation your model will have unexpected values.
 
@@ -63,14 +63,14 @@ This is not Reform's fault but a design flaw in ActiveRecord's validators.
 
 You're encouraged to use Reform's non-writing `unique: true` validation, though.
 
-{% highlight ruby %}
-require "reform/form/validation/unique_validator.rb"
 
-class SongForm < Reform::Form
-  property :title
-  validates :title, unique: true
-end
-{% endhighlight %}
+    require "reform/form/validation/unique_validator.rb"
+
+    class SongForm < Reform::Form
+      property :title
+      validates :title, unique: true
+    end
+
 
 This will only validate the uniqueness of `title`. Other options are not supported, yet. Feel free to [help us here](https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb)!
 
@@ -80,14 +80,14 @@ Likewise, the `confirm: true` validation from ActiveResource is considered dange
 
 Instead, use your own virtual fields.
 
-{% highlight ruby %}
-class SignInForm < Reform::Form
-  property :password, virtual: true
-  property :password_confirmation, virtual: true
 
-  validate :passwork_ok? do
-    errors.add(:password, "Password mismatch") if password != password_confirmation
-  end
-{% endhighlight %}
+    class SignInForm < Reform::Form
+      property :password, virtual: true
+      property :password_confirmation, virtual: true
+
+      validate :passwork_ok? do
+        errors.add(:password, "Password mismatch") if password != password_confirmation
+      end
+
 
 This is discussed in the _Authentication_ chapter of the [Trailblazer book](https://leanpub.com/trailblazer).

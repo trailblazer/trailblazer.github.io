@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: reform
 permalink: /gems/reform/
 ---
 

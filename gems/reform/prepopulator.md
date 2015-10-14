@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: reform
 permalink: /gems/reform/prepopulator.html
 ---
 
@@ -17,12 +17,11 @@ This page explains prepopulation used to prepare the form for rendering.
 
 You can use the `:prepopulator` option on every property or collection.
 
-{% highlight ruby %}
-class AlbumForm < Reform::Form
-  property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
-    property :name
-  end
-{% endhighlight %}
+  class AlbumForm < Reform::Form
+    property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
+      property :name
+    end
+
 
 The option value can be a lambda or an instance method name.
 
@@ -33,14 +32,14 @@ In the block/method, you have access to the form API and can invoke any kind of 
 
 Prepopulation must be invoked manually.
 
-{% highlight ruby %}
-form = AlbumForm.new(Album.new)
-form.artist #=> nil
 
-form.prepopulate!
+    form = AlbumForm.new(Album.new)
+    form.artist #=> nil
 
-form.artist #=> <nested ArtistForm @model=<Artist ..>>
-{% endhighlight %}
+    form.prepopulate!
+
+    form.artist #=> <nested ArtistForm @model=<Artist ..>>
+
 
 This explicit call must happen before the form gets rendered. For instance, in Trailblazer, this happens in the controller action.
 
@@ -57,21 +56,21 @@ This is explained in the _Nested Forms_ chapter of the Trailblazer book. Please 
 
 Options may be passed. They will be available in the `:prepopulator` block.
 
-{% highlight ruby %}
-class AlbumForm < Reform::Form
-  property :title, prepopulator: ->(options) { self.title = options[:def_title] }
-end
-{% endhighlight %}
+
+    class AlbumForm < Reform::Form
+      property :title, prepopulator: ->(options) { self.title = options[:def_title] }
+    end
+
 
 You can then pass arbitrary arguments to `prepopulate!`.
 
-{% highlight ruby %}
-form.title #=> nil
 
-form.prepopulate!(def_title: "Roxanne")
+    form.title #=> nil
 
-form.title #=> "Roxanne"
-{% endhighlight %}
+    form.prepopulate!(def_title: "Roxanne")
+
+    form.title #=> "Roxanne"
+
 
 The arguments passed to the `prepopulate!` call will be passed straight to the block/method.
 
@@ -87,10 +86,10 @@ Note that you have to assign the pre-populated values to the form by using sette
 
 This is especially cool when populating collections.
 
-{% highlight ruby %}
-property :songs,
-  prepopulator: ->(*) { self.songs << Song.new if songs.size < 3 } do
-{% endhighlight %}
+
+    property :songs,
+      prepopulator: ->(*) { self.songs << Song.new if songs.size < 3 } do
+
 
 This will always add an empty song form to the nested `songs` collection until three songs are attached. You can use the `Twin::Collection` [API](/gems/disposable/collection.html) when adding, changing or deleting items from a collection.
 
@@ -100,13 +99,13 @@ Note that when calling `#prepopulate!`, your `:prepopulate` code for all existin
 
 You don't have to use the `:prepopulator` option. Instead, you can simply override `#prepopulate!` itself.
 
-{% highlight ruby %}
-class AlbumForm < Reform::Form
-  def prepopulate!(options)
-    self.title = "Roxanne"
-    self.artist = Artist.new(name: "The Police")
-  end
-{% endhighlight %}
+
+    class AlbumForm < Reform::Form
+      def prepopulate!(options)
+        self.title = "Roxanne"
+        self.artist = Artist.new(name: "The Police")
+      end
+
 
 
 # Defaults
@@ -116,10 +115,9 @@ There's different alternatives for setting a default value for a formerly empty 
 1. Use `:prepopulator` as [described here](#configuration). Don't forget to call `prepopulate!` before rendering the form.
 2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in `#validate`.
 
-{% highlight ruby %}
-property :title
 
-def title
-  super or "Unnamed"
-end
-{% endhighlight %}
+    property :title
+
+    def title
+      super or "Unnamed"
+    end
