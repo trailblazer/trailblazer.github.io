@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: reform
 ---
 
 # Upgrading Guide
@@ -8,12 +8,11 @@ We try to make upgrading as smooth as possible. Here's the generic documentation
 
 ## 2.0 to 2.1
 
-* In a Rails environment with ActiveModel/ActiveRecord, you have to include the [reform-rails](https://github.com/trailblazer/reform-rails) gem.
+In a Rails environment with ActiveModel/ActiveRecord, you have to include the [reform-rails](https://github.com/trailblazer/reform-rails) gem.
 
-{% highlight ruby %}
-gem "reform"
-gem "reform-rails"
-{% endhighlight %}
+
+	gem "reform"
+	gem "reform-rails"
 
 
 ## 1.2 to 2.0
@@ -22,9 +21,9 @@ gem "reform-rails"
 
 Validations like `validates_acceptance_of` are not available anymore, you have to use the new syntax.
 
-{% highlight ruby %}
-validates acceptance: true
-{% endhighlight %}
+
+	validates acceptance: true
+
 
 ### Form#valid?
 
@@ -34,11 +33,11 @@ Using `form.valid?` is a private concept and was never publicly documented. It i
 
 Apparently, some people used `form.update!({..})` to pre-fillout forms. `#update!` has never been publicly documented and got removed in Reform 2. However, you can achieve the same behavior using the following hack.
 
-{% highlight ruby %}
-Reform::Form.class_eval do
-  alias_method :update!, :deserialize
-  public :update!
-{% endhighlight %}
+
+	Reform::Form.class_eval do
+	  alias_method :update!, :deserialize
+	  public :update!
+
 
 ### Validation Backend
 
@@ -46,9 +45,9 @@ This only is necessary when _not_ using `reform/rails`, which is automatically l
 
 In an initializer, e.g. `config/initializers/reform.rb`.
 
-{% highlight ruby %}
-require "reform/form/active_model/validations"
-Reform::Form.class_eval do
-  include Reform::Form::ActiveModel::Validations
-end
-{% endhighlight %}
+
+	require "reform/form/active_model/validations"
+	Reform::Form.class_eval do
+	  include Reform::Form::ActiveModel::Validations
+	end
+
