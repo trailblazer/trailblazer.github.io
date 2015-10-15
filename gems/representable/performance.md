@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: representable
 ---
 
 # Representable: Performance
@@ -16,18 +16,18 @@ Now, only one binding instance is used to render/parse the entire collection.
 
 As per Representable 2.2 this feature is still experimental. Nevertheless, we recommend using it. Note that caching **only works with decorators**.
 
-{% highlight ruby %}
-class AlbumRepresenter < Representable::Decorator
-  include Representable::Hash
-  feature Representable::Cached
 
-  property :name
+	class AlbumRepresenter < Representable::Decorator
+	  include Representable::Hash
+	  feature Representable::Cached
 
-  collection :songs do
-    property :title
-  end
-end
-{% endhighlight %}
+	  property :name
+
+	  collection :songs do
+	    property :title
+	  end
+	end
+
 
 Inserting the module on the top-level representer via `feature Representable::Cached` will activate caching for all representers in the graph.
 
@@ -39,14 +39,13 @@ It is also possible to cache the top-level representer and reuse it, e.g. for mu
 
 [roar-rails support]
 
-{% highlight ruby %}
-decorator = AlbumRepresenter.new(album)
+	decorator = AlbumRepresenter.new(album)
 
-decorator.to_json # first request.
+	decorator.to_json # first request.
 
-decorator.update!(album) # second request.
-decorator.to_json
-{% endhighlight %}
+	decorator.update!(album) # second request.
+	decorator.to_json
+
 
 Since the decorator and its bindings are stateless, you only need to update the represented object. When rendering or parsing, all changing runtime data is then passed the the respective sub-systems using method arguments. No state is held.
 
