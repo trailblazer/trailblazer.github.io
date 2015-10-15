@@ -39,6 +39,10 @@ pre {
   background-color: #F4A608;
 }
 
+.disposable-hero {
+	background-color: #8714AD;
+}
+
 .cells-body {
 	.code-content {
 		a {
@@ -78,6 +82,17 @@ pre {
 		color: #10A6F7;
 		&:hover {
 			color: darken(#10A6F7, 10%);
+			}
+		}
+	}
+}
+
+.disposable-body {
+	.code-content {
+		a {
+		color: #8714AD;
+		&:hover {
+			color: darken(#8714AD, 10%);
 			}
 		}
 	}
