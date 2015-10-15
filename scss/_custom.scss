@@ -31,6 +31,9 @@ pre {
   background-color: #F04694;
 }
 
+.representable-hero {
+  background-color: #10A6F7;
+}
 
 .cells-body {
 	.code-content {
@@ -60,6 +63,17 @@ pre {
 		color: #F04694;
 		&:hover {
 			color: darken(#F04694, 10%);
+			}
+		}
+	}
+}
+
+.representable-body {
+	.code-content {
+		a {
+		color: #10A6F7;
+		&:hover {
+			color: darken(#10A6F7, 10%);
 			}
 		}
 	}
