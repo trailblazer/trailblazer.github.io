@@ -3,8 +3,6 @@ layout: operation
 permalink: /gems/operation/
 ---
 
-[API](api.html) - [Builder](builder.html) - [Collection](collection.html) - [Callback](callback.html) - [Controller](controller.html) - [representer](representer.html) - [Model](model.html) - [Policy](policy.html)
-
 # Trailblazer::Operation
 
 An operation is a service object.
