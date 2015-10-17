@@ -2,7 +2,8 @@
 
 .hero {
   min-height: 450px;
-  background-image: url("/images/background-hero.jpg");
+  background: url("/images/background-hero.jpg");
+  background-size: cover;
   font-weight: 300;
   color: #fff;
   text-align: center;
@@ -29,6 +30,9 @@
   }
   .hero-unit {
     height: 150px;
+  }
+  img {
+    height: 120px;
   }
 }
 
