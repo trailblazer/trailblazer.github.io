@@ -2,9 +2,8 @@
 layout: cells
 permalink: /gems/cells/
 ---
-[API](api.html) - [Testing](testing.html) - [Rendering](render.html) - [Engine Cells](engine.html) - [Rails](rails.html) - [Helpers](helpers.html) - [Templates](templates.html) - [Troubleshooting](troubleshooting.html)
 
-## Cells
+# Cells
 
 Out of the frustration with Rails' view layer, its lack of encapsulation and the convoluted code resulting from partials and helpers both accessing global state, the [Cells](https://github.com/apotonick/cells) gem emerged.
 

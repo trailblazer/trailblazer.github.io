@@ -1125,7 +1125,7 @@ $panel-padding: rem-calc(30);
 $include-html-nav-classes: $include-html-classes;
 
 // We use this to control padding.
-$side-nav-padding: rem-calc(16 0);
+$side-nav-padding: rem-calc(10 0);
 
 // We use these to control list styles.
 // $side-nav-list-type: none;
@@ -1138,8 +1138,8 @@ $side-nav-link-color: $charcoal;
 $side-nav-link-color-hover: scale-color($side-nav-link-color, $lightness: 20%);
 $side-nav-link-bg-hover: hsla(0, 0, 0, 0.075);
 // $side-nav-link-margin: 0;
-$side-nav-link-padding: rem-calc(8 16);
-$side-nav-font-size: rem-calc(16);
+$side-nav-link-padding: rem-calc(4 10);
+$side-nav-font-size: rem-calc(14);
 // $side-nav-font-weight: $font-weight-normal;
 // $side-nav-font-weight-active: $side-nav-font-weight;
 // $side-nav-font-family: $body-font-family;
