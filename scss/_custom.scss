@@ -1,100 +1,13 @@
+// UI Components
+@import "components/testimonials";
+@import "components/gems";
+@import "components/list";
+@import "components/avatar";
+@import "components/code_boxes";
+
 //Layout
 
 @import "layout/footer";
 @import "layout/hero";
 @import "layout/sections";
 @import "layout/code-content";
-
-// UI Components
-@import "components/testimonials";
-@import "components/gems";
-@import "components/list";
-@import "components/avatar";
-
-/* I need to fix this later on, they need sass super powers, but in the meantime they are going to stay here */
-
-pre {
-	margin-top: 0;
-	@media #{$small-only} { 
-		margin: 1em auto;
-	}
-}
-
-.cells-hero {
-  background: #CE2458;
-}
-
-.operation-hero {
-  background: #17C2AA;
-}
-
-.reform-hero {
-  background: #F04694;
-}
-
-.representable-hero {
-  background: #10A6F7;
-}
-
-.roar-hero {
-  background: #F4A608;
-}
-
-.disposable-hero {
-	background: #8714AD;
-}
-
-.cells-body {
-	.code-content {
-		a {
-		color: #CE2458;
-		&:hover {
-			color: darken(#CE2458, 10%);
-			}
-		}
-	}
-}
-
-.operation-body {
-	.code-content {
-		a {
-		color: #17C2AA;
-		&:hover {
-			color: darken(#17C2AA, 10%);
-			}
-		}
-	}
-}
-
-.reform-body {
-	.code-content {
-		a {
-		color: #F04694;
-		&:hover {
-			color: darken(#F04694, 10%);
-			}
-		}
-	}
-}
-
-.representable-body {
-	.code-content {
-		a {
-		color: #10A6F7;
-		&:hover {
-			color: darken(#10A6F7, 10%);
-			}
-		}
-	}
-}
-
-.disposable-body {
-	.code-content {
-		a {
-		color: #8714AD;
-		&:hover {
-			color: darken(#8714AD, 10%);
-			}
-		}
-	}
-}
