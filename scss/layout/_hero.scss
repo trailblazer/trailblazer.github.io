@@ -53,6 +53,9 @@
 .gems-hero {
   text-align: left;
   min-height: 200px;
+  @media #{$small-only} {
+    min-height: 100px;
+  }
 }
 
 
