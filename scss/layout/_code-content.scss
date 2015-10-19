@@ -17,4 +17,9 @@
 			color: $jet;
 		}
 	}
+	img {
+		@media #{$large-up} { 
+			width: 70%;
+		}
+	}
 }
