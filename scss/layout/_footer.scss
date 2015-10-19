@@ -5,6 +5,9 @@ footer {
   color: lighten($tuatara, 22);
   a {
     color: lighten($tuatara, 22);
+    &:hover {
+      color: lighten($tuatara, 32);
+    }
   }
   h4 {
     color: lighten($tuatara, 35);
