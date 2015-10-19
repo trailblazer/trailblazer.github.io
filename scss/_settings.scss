@@ -128,7 +128,7 @@ $body-bg: $white;
 $body-font-color: $jet;
 $body-font-family: $font-family-sans-serif;
 $body-font-weight: $font-weight-normal;
-// $body-font-style: normal;
+$body-font-style: normal;
 
 // We use this to control font-smoothing
 // $font-smoothing: antialiased;
@@ -202,7 +202,7 @@ $header-font-color: $jet;
 // $header-line-height: 1.4;
 // $header-top-margin: .2rem;
 $header-bottom-margin: .5rem;
-// $header-text-rendering: optimizeLegibility;
+$header-text-rendering: optimizeLegibility;
 
 // We use these to control header font sizes
 $h1-font-size: rem-calc(44);
@@ -232,15 +232,15 @@ $h6-font-size: 1rem;
 // $small-font-color: scale-color($header-font-color, $lightness: 35%);
 
 // We use these to style paragraphs
-// $paragraph-font-family: inherit;
-// $paragraph-font-weight: $font-weight-normal;
-// $paragraph-font-size: 1rem;
-// $paragraph-line-height: 1.6;
-// $paragraph-margin-bottom: rem-calc(20);
-// $paragraph-aside-font-size: rem-calc(14);
-// $paragraph-aside-line-height: 1.35;
-// $paragraph-aside-font-style: italic;
-// $paragraph-text-rendering: optimizeLegibility;
+$paragraph-font-family: inherit;
+$paragraph-font-weight: 300;
+$paragraph-font-size: 1rem;
+$paragraph-line-height: 1.6;
+$paragraph-margin-bottom: rem-calc(20);
+$paragraph-aside-font-size: rem-calc(14);
+$paragraph-aside-line-height: 1.35;
+$paragraph-aside-font-style: italic;
+$paragraph-text-rendering: optimizeLegibility;
 
 // We use these to style <code> tags
 $code-color: $white;
@@ -1140,7 +1140,7 @@ $side-nav-link-bg-hover: hsla(0, 0, 0, 0.075);
 // $side-nav-link-margin: 0;
 $side-nav-link-padding: rem-calc(1 6);
 $side-nav-font-size: rem-calc(14);
-// $side-nav-font-weight: $font-weight-normal;
+$side-nav-font-weight: 300;
 // $side-nav-font-weight-active: $side-nav-font-weight;
 // $side-nav-font-family: $body-font-family;
 // $side-nav-font-family-active: $side-nav-font-family;
