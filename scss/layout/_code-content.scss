@@ -20,6 +20,8 @@
 	img {
 		@media #{$large-up} { 
 			width: 70%;
+			margin-top: 1em;
+			margin-bottom: 1em;
 		}
 	}
 }
