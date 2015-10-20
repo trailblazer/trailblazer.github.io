@@ -27,7 +27,7 @@ op = Comment::Create.(comment: {body: "MVC is so 90s."})
 
 This will instantiate the `Comment::Create` operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.
 
-**Consider this operation instance as a throw-away immutual object.** Don't use it for anything but presentation or you will have unwanted side-effects.
+**Consider this operation instance as a throw-away immutable object.** Don't use it for anything but presentation or you will have unwanted side-effects.
 
 ## Operation Class
 
