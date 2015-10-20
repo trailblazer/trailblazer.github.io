@@ -8,7 +8,7 @@ layout: home
       <h2>Controller</h2>
     </div>
   </div>
-  
+
   <div class="row">
     <div class="columns medium-6">
       <pre><code class="ruby">
@@ -53,7 +53,7 @@ layout: home
     scope :recent, -> { limit(10) }
   end
       </code></pre>
-      
+
     </div>
     <div class="columns medium-6">
       <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
@@ -245,7 +245,7 @@ layout: home
     collection: @thing.comments) %>
       </code></pre>
 
-      
+
     </div>
     <div class="columns medium-6">
       <p>Controller views are still ok to use.</p>
@@ -279,7 +279,7 @@ layout: home
     link(:self) { comment_path(model) }
   end
     </code></pre>
-     
+
     </div>
   </div>
 </div>
@@ -303,7 +303,7 @@ layout: home
   end
   end
     </code></pre>
-      
+
     </div>
     <div class="columns medium-6">
       <p>Trailblazer reintroduces object-orientation.</p>
@@ -340,7 +340,7 @@ layout: home
       end
     end
       </code></pre>
-        
+
     </div>
   </div>
 </div>
@@ -369,12 +369,18 @@ layout: home
     │   └── post
     │       └── crud.rb
         </code>
-      
+
       </pre>
     </div>
     <div class="columns medium-6">
       <p>
-        In Trailblazer, files that belong to one group are called _concepts_. They sit in one directory as Trailblazer introduces and new, more intuitive and easier to navigate file structure.
+        In Trailblazer, files are no longer organized by technology. Classes, views, assets, policies, and more, are all grouped by <em>concept</em> and sit in one directory.
+      </p>
+      <p>
+        A concept may embrace a simple CRUD concern, or an invoice PDF generator, and can be virtually anything.
+      </p>
+      <p>
+        Concepts in turn can be nested again, and provide you a  more intuitive and easier to navigate file structure.
       </p>
     </div>
 
