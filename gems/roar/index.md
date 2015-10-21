@@ -5,4 +5,4 @@ permalink: /gems/roar/
 
 # Roar
 
-This will soon be elaborated. Please refer to... in the meantime
+This will soon be elaborated.
