@@ -9,11 +9,9 @@
     <meta name="keywords" content="{{ page.keywords }}, {{ site.keywords }}" />
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,700' rel='stylesheet' type='text/css'>
-  
+
     <link rel="stylesheet" href="css/style.css" />
     <link rel="shortcut icon" href="favicon.ico">
-
-    <script src="javascripts/jquery-1.11.3.min.js"></script>
 
     <link rel="stylesheet" href="css/dark.css">
     <script src="/javascripts/highlight.pack.js"></script>
@@ -71,13 +69,7 @@
     <!-- Footer -->
     {% include footer.html %}
 
-
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.js"><\/script>')</script>
-    <script src="js/plugins.js"></script>
-    <script src="bower_components/foundation/js/foundation.min.js"></script>
-    <script src="js/script.js"></script>
+    {% include scripts.html %}
 
     <script>
         $(document).foundation();
