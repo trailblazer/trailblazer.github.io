@@ -1,7 +1,7 @@
 /* Hero */
 
 .hero {
-  min-height: 450px;
+  height: 450px;
   background: url("/images/background-hero.jpg");
   background-size: cover;
   font-weight: 300;
@@ -25,15 +25,14 @@
     font-size: rem-calc(64);
   }
   @media #{$small-only} {
+    height: 350px;
+
     h1 {
       font-size: rem-calc(44);
     }
     h2 {
       font-size: rem-calc(20);
     }
-  }
-  .hero-unit {
-    height: 150px;
   }
   img {
     height: 120px;
