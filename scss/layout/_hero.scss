@@ -11,7 +11,7 @@
   display: table;
   width: 100%;
   @media #{$small-only} {
-    min-height: 350px;
+    height: 350px;
   }
   h1,
   h2 {
@@ -49,11 +49,14 @@
 }
 
 
-.gems-hero {
+.hero.gems-hero {
   text-align: left;
-  min-height: 200px;
+  height: 200px;
   @media #{$small-only} {
-    min-height: 100px;
+    height: 150px;
+  }
+  .hero-unit {
+    height: 100px;
   }
 }
 
