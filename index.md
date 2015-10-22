@@ -177,7 +177,7 @@ layout: home
       </code></pre>
     </div>
     <div class="columns medium-6">
-      <p>Policies allow authentication on a global or fine-granular level.</p>
+      <p>Policies allow authorization on a global or fine-granular level.</p>
       <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
     </div>
   </div>
