@@ -8,8 +8,16 @@ The `Operation::Controller` module provides four shorthand methods to run and pr
 
 Note that you're free to invoke operations manually at any time by [invoking them directly](api.html).
 
+It works in Rails but should also be fine in Sinatra, Lotus and other frameworks that expose a `params` object.
 
-It works in Rails but should also be fine in Sinatra and Lotus.
+## Overview
+
+You have four methods to pick from.
+
+* Use `#present` if you're only interested in _presenting_ the operation's model.
+* Use `#form` to _render_ the form object. This will not run the operation.
+* Use `#run` to process incoming data using the operation (and present it afterwards).
+* Use `#respond` to process incoming data and present it using Rails' `respond_to`.
 
 ## Generics
 
