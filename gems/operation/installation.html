@@ -1,0 +1,31 @@
+<h1 id="trailblazer-installation">Trailblazer Installation</h1>
+
+<p>The obvious needs to be in your <code>Gemfile</code>.</p>
+
+<pre><code class="language-ruby">gem "trailblazer"
+gem "cells"
+</code></pre>
+
+<p>Cells is <em>not</em> required per default! Add it if you use it, which is highly recommended.</p>
+
+<p>This is, in case you want to use <code>ViewModel</code>s.</p>
+
+<h1 id="rails-setup">Rails Setup</h1>
+
+<ol>
+  <li>
+    <p>The railtie needs to get loaded at the bottom of <code>config/application.rb</code>.</p>
+
+    <p><code>ruby
+ require "trailblazer/rails/railtie"
+</code></p>
+
+    <p>Otherwise, autoloading for operations won’t work properly.</p>
+  </li>
+  <li>
+    <p>Fix from here: https://github.com/apotonick/gemgem-trbrb/blob/88dabcdbe9b75d2408e934093d945ad1732cd2f1/config/initializers/trailblazer.rb#L27</p>
+  </li>
+  <li>
+    <p>Include Controller: https://github.com/apotonick/gemgem-trbrb/blob/master/app/controllers/application_controller.rb#L6</p>
+  </li>
+</ol>

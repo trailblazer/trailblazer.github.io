@@ -1,0 +1,229 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="../../js/foundation.js"></script>
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="cells-body">
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero cells-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1 id="project_title">
+              Cells
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="template-engines">Template Engines</h1>
+
+<p>Cells supports various template engines.</p>
+
+<p>We provide support for Haml, Erb, and Slim. You can also write <a href="#your-own">your own</a> template engine.</p>
+
+<p>In a non-Rails environment, you need to include the respective module into your cells, so it knows what template to find.</p>
+
+<pre><code>class SongCell &lt; Cell::ViewModel
+  include Cell::Erb
+  # include Cell::Haml
+  # include Cell::Slim
+</code></pre>
+
+<p>Note that you can only include <em>one engine per class</em>. This is due to problems with helpers in Rails and the way they have to be fixed in combination with Cells.</p>
+
+<h3 id="multiple-template-engines-in-rails">Multiple Template Engines in Rails</h3>
+
+<p>When including more than one engine in your Gemfile in Rails, the last one wins. Since each gem includes itself into <code>Cell::ViewModel</code>, unfortunately there can only be one global engine.</p>
+
+<p>Currently, there’s no clean way but to disable automatic inclusion from each gem (not yet implemented) and then include template modules into your application cells manually.</p>
+
+<h2 id="erb">ERB</h2>
+
+<h2 id="haml">Haml</h2>
+
+<h2 id="slim">Slim</h2>
+
+<h2 id="your-own">Your Own</h2>
+
+<p>Theoretically, you can use any template engine supported by Tilt.</p>
+
+<p>To activate it in a cell, you only need to override <code>#template_options_for</code>.</p>
+
+<pre><code>class SongCell &lt; Cell::ViewModel
+  def template_options_for(options)
+    {
+      template_class: Tilt, # or Your::Template.
+      suffix:         "your"
+  }
+  end
+</code></pre>
+
+<p>This will use <code>Tilt</code> to instantiate a template to be evaluated. The <code>:suffix</code> is needed for Cells when finding the view.</p>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+  </body>
+</html>

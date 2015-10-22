@@ -1,0 +1,382 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="operation-body">
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero operation-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Operation
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="operationcontroller">Operation::Controller</h1>
+
+<p>The <code>Operation::Controller</code> module provides four shorthand methods to run and present operations.</p>
+
+<p>Note that you’re free to invoke operations manually at any time by <a href="api.html">invoking them directly</a>.</p>
+
+<p>It works in Rails but should also be fine in Sinatra and Lotus.</p>
+
+<h2 id="generics">Generics</h2>
+
+<p>Before the operation is invoked, the controller method <code>process_params!</code> is run. You can override that to normalize the incoming parameters.</p>
+
+<p>Each method will set the <code>@operation</code> and <code>@model</code> instance variables on the controller which allows using them in views, too. Each method returns the operation instance.</p>
+
+<p>You need to include the <code>Controller</code> module.</p>
+
+<pre><code>class ApplicationController &lt; ActionController::Base
+  include Trailblazer::Operation::Controller
+end
+</code></pre>
+
+<h2 id="run">Run</h2>
+
+<p>Use <code>#run</code> to invoke the operation.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def create
+    run Comment::Create
+  end
+end
+</code></pre>
+
+<p>Internally, this will do as follows.</p>
+
+<pre><code>process_params!(params)
+
+result, op = Comment::Create.run(params)
+@operation = op
+@model     = op.model
+@form      = op.contract
+</code></pre>
+
+<p>First, you have the chance to normalize parameters. The controller’s <code>params</code> hash is then passed into the operation run. After that, the three instance variables on the controller are set, giving you access to operation instance, form and model.</p>
+
+<p>An optional block for <code>#run</code> is invoked only when the operation was valid.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def create
+    run Comment::Create do |op|
+      flash[:notice] = "Success!" # only run for successful/valid operation.
+    end
+  end
+end
+</code></pre>
+
+<h2 id="present">Present</h2>
+
+<p>To setup an operation without running its <code>#process</code> method, use <code>#present</code>. This is often used if you only need the operation’s model for presentation.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def show
+    present Comment::Update
+    # you have access to @operation and @model.
+  end
+end
+</code></pre>
+
+<p>Instead of running the operation, this will only instantiate the operation by passing in the controller’s <code>params</code>. In turn, this only runs the operation’s <code>#setup</code> (which embraces model finding logic) and does <strong>not instantiate</strong> a contract and <strong>doesn’t run</strong> <code>#process</code>.</p>
+
+<pre><code>Comment::Update.new(params)
+@operation = op
+@model     = op.model
+</code></pre>
+
+<h2 id="form">Form</h2>
+
+<p>To render the operation’s form, use <code>#form</code>.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def show
+    form Comment::Create
+  end
+end
+</code></pre>
+
+<p>This is identical to <code>#present</code> with two additional step: besides the <code>@operation</code> and <code>@model</code> instance variables, the <code>@form</code> will be assigned, too. After that, the form’s <code>prepopulate!</code> method is called and the form is ready for rendering, e.g. via <code>#form_for</code>.</p>
+
+<pre><code>def form(Comment::Create, options={})
+  op = Comment::Create.present(params)
+
+  op.contract.prepopulate!(options)
+
+  @operation = op
+  @model     = op.model
+  @form      = op.contract
+end
+</code></pre>
+
+<h3 id="options-for-prepopulate">Options for prepopulate!</h3>
+
+<p>All options from the <code>#form</code> call are directly passed to the form’s <code>prepopulate!</code> method, allowing you to use runtime data in prepopulators. Note that the original <code>params</code> object is available in this options hash, too.</p>
+
+<pre><code>form Comment::Create, color: "green"
+</code></pre>
+
+<p>This will result in the following hash being passed to <code>prepopulate!</code>.</p>
+
+<pre><code>contract do
+  def prepopulate!(options)
+    options[:color]  #=&gt; "green"
+    options[:params] #=&gt; &lt;ActionController::Params ..&gt;
+</code></pre>
+
+<p>The <code>#form</code> method returns the actual form object. This is helpful if you want to render multiple forms on a page.</p>
+
+<pre><code>def show
+  @create_form = form(Comment::Create)
+  @survey_form = form(Survey::Support::Create)
+end
+</code></pre>
+
+<h2 id="respond">Respond</h2>
+
+<p>Rails-specific.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  respond_to :json
+
+  def create
+    respond Comment::Create
+  end
+end
+</code></pre>
+
+<p>This will do the same as <code>#run</code>, invoke the operation and then pass it to <code>#respond_with</code>.</p>
+
+<pre><code>op = Comment::Create.(params)
+respond_with op
+</code></pre>
+
+<p>The operation needs to be prepared for the responder as the latter makes weird assumptions about the object being passed to <code>respond_with</code>. For example, the operation needs to respond to <code>to_json</code> in a JSON request. Read about <a href="representer.html">Representer</a> here.</p>
+
+<p>If the operation class has <code>Representer</code> mixed in, the params hash will be slightly modified. As the operation’s model key, the request body document is passed into the operation.</p>
+
+<pre><code>params[:comment] = request.body
+Comment::Create.(params)
+</code></pre>
+
+<p>By doing so the operation’s representer will automatically parse and deserialize the incoming document, bypassing Rails’ <code>ParamsParser</code>.</p>
+
+<p>If you want the responder to compute URLs with namespaces, pass in the <code>:namespace</code> option.</p>
+
+<pre><code>respond Comment::Create, namespace: [:api]
+</code></pre>
+
+<p>This will result in a call <code>respond_with :api, op</code>.</p>
+
+<h2 id="custom-params">Custom Params</h2>
+
+<p>If you want to manually hand in parameters to <code>#run</code>, <code>#respond</code>, <code>#form</code> or <code>#present</code>, use the <code>params:</code> option.</p>
+
+<pre><code>def create
+  run Comment::Create, params: {comment: {body: "Always the same! Boring!"}}
+end
+</code></pre>
+
+<h2 id="document-formats">Document Formats</h2>
+
+<p>Normally, Trailblazer will pass Rails’ <code>params</code> hash into any operation.</p>
+
+<p>For operations that have <code>Operation::Representer</code> included, not a hash but the request body will be passed into the operation, keyed under the operation’s <code>model_name</code>.</p>
+
+<pre><code>Comment::Create.({comment: request.body.string})
+</code></pre>
+
+<p>This allows the operation’s representer to deserialize the document and populate the contract, bypassing Rails’ <code>ParamsParser</code>.</p>
+
+<p>You can instruct Trailblazer not to do that and pass in the normal <code>params</code> hash if you don’t want that using the <code>:is_document</code> option.</p>
+
+<pre><code>def create
+  run Comment::Create, is_document: false # will run Comment::Create(params)
+end
+</code></pre>
+
+<h2 id="normalizing-params">Normalizing Params</h2>
+
+<p>Override #process_params! to add or remove values to params before the operation is run. This is called in #run, #respond and #present and #form.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+private
+  def process_params!(params)
+    params.merge!(current_user: current_user)
+  end
+end
+</code></pre>
+
+<p>This centralizes params normalization and doesn’t require you to do that in every action manually.</p>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+
+  </body>
+</html>

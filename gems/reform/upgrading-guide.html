@@ -1,0 +1,229 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">>
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="javascripts/script.js"></script>
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="reform-body">
+
+      <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero reform-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Reform
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="upgrading-guide">Upgrading Guide</h1>
+
+<p>We try to make upgrading as smooth as possible. Here’s the generic documentation, but don’t hesitate to ask for <a href="https://gitter.im/trailblazer/chat">help on Gitter</a>.</p>
+
+<h2 id="to-21">2.0 to 2.1</h2>
+
+<p>In a Rails environment with ActiveModel/ActiveRecord, you have to include the <a href="https://github.com/trailblazer/reform-rails">reform-rails</a> gem.</p>
+
+<pre><code>gem "reform"
+gem "reform-rails"
+</code></pre>
+
+<h2 id="to-20">1.2 to 2.0</h2>
+
+<h3 id="validations">Validations</h3>
+
+<p>Validations like <code>validates_acceptance_of</code> are not available anymore, you have to use the new syntax.</p>
+
+<pre><code>validates acceptance: true
+</code></pre>
+
+<h3 id="formvalid">Form#valid?</h3>
+
+<p>Using <code>form.valid?</code> is a private concept and was never publicly documented. It is still available (private) but you are strongly recommended to use <code>#validate</code> instead.</p>
+
+<h3 id="formupdate">Form#update!</h3>
+
+<p>Apparently, some people used <code>form.update!({..})</code> to pre-fillout forms. <code>#update!</code> has never been publicly documented and got removed in Reform 2. However, you can achieve the same behavior using the following hack.</p>
+
+<pre><code>Reform::Form.class_eval do
+  alias_method :update!, :deserialize
+  public :update!
+</code></pre>
+
+<h3 id="validation-backend">Validation Backend</h3>
+
+<p>This only is necessary when <em>not</em> using <code>reform/rails</code>, which is automatically loaded in a Rails environment.</p>
+
+<p>In an initializer, e.g. <code>config/initializers/reform.rb</code>.</p>
+
+<pre><code>require "reform/form/active_model/validations"
+Reform::Form.class_eval do
+  include Reform::Form::ActiveModel::Validations
+end
+</code></pre>
+
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+  </body>
+</html>

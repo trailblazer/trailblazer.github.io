@@ -1,0 +1,691 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/style.css" />
+    
+    
+    <link rel="stylesheet" href="css/dark.css">
+    <script src="/javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero">
+  <div class="hero-unit">
+    <div class="row">
+      <div class="columns">
+        <h1>
+          <img src="images/logo.svg">
+        </h1>
+        <h2>A High-level Architecture For The Web</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- About -->
+    <section class="sub-section about">
+      <div class="row">
+        <div class="columns">
+            <h2>About Trailblazer</h2>
+
+<div class="row">
+  <div class="columns medium-6">
+    <p>Trailblazer gives you a high-level architecture for web applications.</p>
+    <p>
+      Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
+    </p>
+    <p>
+      By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
+    </p>
+    <p>
+      A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
+    </p>
+  </div>
+  <div class="columns medium-6">
+    <img src="images/Trb-Stack.png">
+  </div>
+</div>
+
+
+
+
+        </div>
+      </div>
+    </section>
+
+
+    <div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Controller</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class CommentsController &lt; ApplicationController
+    def new
+      form Comment::Update
+    end
+
+    def create
+      run Comment::Update do |op|
+        return redirect_to comments_path(op.model)
+      end
+
+      render :new
+    end
+      </code></pre>
+    </div>
+     <div class="columns medium-6">
+      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+
+      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Model -->
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>Model</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class Comment &lt; ActiveRecord::Base
+    has_many   :users
+    belongs_to :thing
+
+    scope :recent, -&gt; { limit(10) }
+  end
+      </code></pre>
+
+    </div>
+    <div class="columns medium-6">
+      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
+      <p>That's right: No callbacks, no validations, no business logic in models. </p>
+    </div>
+  </div>
+</div>
+
+<!-- Operation -->
+
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Operation</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class Comment::Create &lt; Trailblazer::Operation
+    contract do
+      property :body
+      validates :body, length: {maximum: 160}
+    end
+
+    def process(params)
+      if validate(params)
+
+      else
+
+      end
+    end
+  end
+      </code></pre>
+    </div>
+    <div class="columns medium-6">
+      <p>Per public action, there's one operation orchestrating the business logic.</p>
+      <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
+      <p>Operations are the only place to write to persistence via models.</p>
+      <a class="button radius" href="/gems/operation">Learn more</a>
+    </div>
+  </div>
+</div>
+
+<!-- Form -->
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>Form</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  contract do
+    property :body
+    validates :body, length: {maximum: 160}
+
+    property :author do
+      property :email
+      validates :email, email: true
+    end
+  end
+      </code></pre>
+    </div>
+    <div class="columns medium-6">
+      <p>Every operation contains a form object. </p>
+        <p>This is the place for validations.</p>
+      <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
+      <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Callback -->
+
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Callback</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
+      <p>They can be configured in a separate Callback class.</p>
+      <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
+    </div>
+    <div class="columns medium-6">
+     <pre><code class="ruby">
+  callback do
+    on_create :notify_owner!
+
+    property :author do
+      on_add :reset_authorship!
+    end
+  end
+      </code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Policy -->
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>Policy</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+    policy do
+      user.admin? or not post.published?
+    end
+      </code></pre>
+    </div>
+    <div class="columns medium-6">
+      <p>Policies allow authentication on a global or fine-granular level.</p>
+      <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
+    </div>
+  </div>
+</div>
+
+<!-- View Model -->
+
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>View Model</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class Comment::Cell &lt; Cell::ViewModel
+    property :body
+    property :author
+
+    def show
+      render
+    end
+
+  private
+    def author_link
+      link_to "#{author.email}", author
+    end
+  end
+      </code></pre>
+      <pre>
+        <code class="html ruby">
+  &lt;div class="comment"&gt;
+    &lt;%= body %&gt;
+    By &lt;%= author_link %&gt;
+  &lt;/div&gt;
+      </code></pre>
+  </div>
+  <div class="columns medium-6">
+      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
+      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
+      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
+    </div>
+</div>
+</div>
+
+<!-- View Model -->
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>Views</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  &lt;h1&gt;Comments for &lt;%= @thing.name %&gt;&lt;/h1&gt;
+
+  This was created &lt;%= @thing.created_at %&gt;
+
+    &lt;%= concept("comment/cell",
+    collection: @thing.comments) %&gt;
+      </code></pre>
+
+
+    </div>
+    <div class="columns medium-6">
+      <p>Controller views are still ok to use.</p>
+      <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Representer -->
+
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Representer</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="columns medium-6">
+      <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
+      <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
+      <p>You can use media formats, hypermedia and all other Roar features.</p>
+    </div>
+    <div class="columns medium-6">
+    <pre><code class="ruby">
+  representer do
+    include Roar::JSON::HAL
+
+    property :body
+    property :user, embedded: true
+
+    link(:self) { comment_path(model) }
+  end
+    </code></pre>
+
+    </div>
+  </div>
+</div>
+
+<!-- Inheritance -->
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>Inheritance</h2>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="columns medium-6">
+    <pre><code class="ruby">
+  class Comment::Update &lt; Create
+    policy do
+      is_owner?(model)
+    end
+  end
+    </code></pre>
+
+    </div>
+    <div class="columns medium-6">
+      <p>Trailblazer reintroduces object-orientation.</p>
+      <p>For each public action, there's one operation class.</p>
+      <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Polymorphism -->
+
+<div class="sub-section section-separator">
+  <div class="row">
+    <div class="columns">
+      <h2>Polymorphism</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
+      <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
+    </div>
+    <div class="columns medium-6">
+      <pre><code class="ruby">
+  class Comment::Create &lt; Trailblazer::Operation
+    build do |params|
+      Admin if params[:current_user].admin?
+    end
+
+    class Admin &lt; Create
+      contract do
+        remove_validations! :body
+      end
+    end
+      </code></pre>
+
+    </div>
+  </div>
+</div>
+
+<div class="sub-section">
+  <div class="row">
+    <div class="columns">
+      <h2>File Layout</h2>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="columns medium-6">
+      <pre><code>
+    app
+    ├── concepts
+    │   ├── comment
+    │   │   ├── operations.rb
+    │   │   ├── cell.rb
+    │   │   ├── policy.rb
+    │   │   ├── views
+    │   │   │   ├── show.haml
+    │   │   │   ├── list.haml
+    │   │   │   ├── comment.css.sass
+    │   │   └── twin.rb
+    │   │
+    │   └── post
+    │       └── crud.rb
+        </code>
+
+      </pre>
+    </div>
+    <div class="columns medium-6">
+      <p>
+        In Trailblazer, files are no longer organized by technology. Classes, views, assets, policies, and more, are all grouped by <em>concept</em> and sit in one directory.
+      </p>
+      <p>
+        A concept may embrace a simple CRUD concern, or an invoice PDF generator, and can be virtually anything.
+      </p>
+      <p>
+        Concepts in turn can be nested again, and provide you a  more intuitive and easier to navigate file structure.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+
+    <!-- Gems -->
+    <section class="sub-section gems">
+      <div class="row">
+        <div class="columns">
+            <!-- Gems -->
+
+<h2>Gems</h2>
+<p>
+  Trailblazer is an architectural style. However, what sounds nice in theory is backed by gems for you to implement that style.
+</p>
+<p>
+  The gems itself are completely self-contained, minimalistic and solve just one particular problem. Many of them have been in use in thousands of production sites for years.
+</p>
+
+<ul class="medium-block-grid-3 small-block-grid-2 gems-list">
+  <li>
+    <a href="gems/cells">
+      <div class="panel">
+        <img class="avatar" src="../images/cells.svg">
+        <h4>Cells</h4>
+      </div>
+    </a>
+  </li>
+  <li>
+    <a href="gems/operation">
+      <div class="panel">
+        <img class="avatar" src="../images/operation.svg">
+        <h4>Operation</h4>
+      </div>
+    </a>
+  </li>
+  <li>
+    <a href="gems/reform">
+      <div class="panel">
+        <img class="avatar" src="../images/reform.svg">
+        <h4>Reform</h4>
+      </div>
+    </a>
+  </li>
+  <li>
+    <a href="gems/representable">
+      <div class="panel">
+        <img class="avatar" src="../images/representable.svg">
+        <h4>Representable</h4>
+      </div>
+    </a>
+  </li>
+  <li>
+    <a href="gems/roar">
+      <div class="panel">
+        <img class="avatar" src="../images/roar.svg">
+        <h4>Roar</h4>
+      </div>
+    </a>
+  </li>
+  <li>
+    <a href="gems/disposable">
+      <div class="panel">
+        <img class="avatar" src="../images/disposable.svg">
+        <h4>Disposable</h4>
+      </div>
+    </a>
+  </li>
+</ul>
+
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Book -->
+    <section class="sub-section book">
+      <div class="row">
+        <div class="columns">
+            <h2>The Book</h2>
+<div class="row the-book">
+  <div class="columns medium-3">
+    <a href="https://leanpub.com/trailblazer">
+    <img src="images/3dbuch-freigestellt.png" />
+    </a>
+  </div>
+
+  <div class="columns medium-9">
+  <h3>Yes, there's a book!</h3>
+    <p>Written by the busy creator of Trailblazer, it is about 70% finished and will get another 150 pages, making it 300 pages full of wisdom about Trailblazer and all the gems.</p>
+
+    <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
+    <a href="#" class="button radius">Buy Book</a>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="sub-section testimonials">
+      <div class="row">
+        <div class="columns">
+          <h2>
+  Testimonials
+</h2>
+
+<div class="row testimonial">
+  <div class="columns medium-2">
+    <img src="../images/igor.jpg" class="avatar">
+  </div>
+  <div class="columns medium-10">
+    <blockquote>
+      "At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."
+      <cite><strong>Igor Pstyga</strong>, Shop Hers Inc</cite>
+    </blockquote>
+  </div>
+</div>
+
+<div class="row testimonial">
+  <div class="columns medium-2">
+    <img src="../images/paulo.jpg" class="avatar">
+  </div>
+  <div class="columns medium-10">
+    <blockquote>
+      "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
+      <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
+    </blockquote>
+  </div>
+</div>
+
+<div class="row testimonial">
+  <div class="columns medium-2">
+    <img src="../images/yuri.jpg" class="avatar">
+  </div>
+  <div class="columns medium-10">
+    <blockquote>
+      "Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."
+      <cite><strong>Yuri Freire Lima</strong>, AzClick</cite>
+    </blockquote>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+    <script>
+        $(document).foundation();
+    </script>
+</html>

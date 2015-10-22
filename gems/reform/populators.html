@@ -1,0 +1,373 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">>
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="javascripts/script.js"></script>
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="reform-body">
+
+      <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero reform-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Reform
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="populating">Populating</h1>
+
+<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code>validate</code>.</p>
+
+<p><a href="/gems/reform/prepopulator.html">Prepopulating</a> is helpful when you want to fill out fields (aka. <em>defaults</em>) or add nested forms before rendering.</p>
+
+<p><a href="/gems/reform/populators.html">Populating</a> is invoked in <code>validate</code> and will add nested forms depending on the incoming hash.</p>
+
+<p>This page discusses the latter.</p>
+
+<p>[Populators are discussed in detail in the chapters <em>Nested Forms</em> and <em>Mastering Forms</em> of the Trailblazer book.]</p>
+
+<h2 id="populators">Populators</h2>
+
+<p>In <code>#validate</code>, Reform per default will try to match nested hashes to nested forms. In other words, Reform thinks that the form object graph is already matching 1-to-1 to the incoming params hash.</p>
+
+<p>Let’s say you’re setting up the following form.</p>
+
+<pre><code>album.songs.size #=&gt; 1
+form = AlbumForm.new(album)
+form.songs.size #=&gt; 1
+</code></pre>
+
+<p>In <code>validate</code> you then pass in an additional <code>Song</code> hash.</p>
+
+<pre><code>form.validate(songs: [{name: "The Tempest"}, {name: "Nevermore"}])
+</code></pre>
+
+<p>Intuitively, you will expect Reform to create an additional song with the name “Nevermore”. However, this is not how it works. Without configuration, Reform has no idea how to assign the second <code>:songs</code> fragment to the form and will raise an exception.</p>
+
+<h2 id="the-populateifempty-option">The :populate_if_empty Option</h2>
+
+<p>To let the form create a new model wrapped by a nested form for you use <code>:populate_if_empty</code>.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :songs, populate_if_empty: Song do
+    property :name
+  end
+end
+</code></pre>
+
+<p>When traversing the incoming <code>songs:</code> collection, fragments without a counterpart nested form will be created for you with a new <code>Song</code> object.</p>
+
+<p>You can also create the object yourself and leverage data from the traversed fragment, for instance, to try to find a <code>Song</code> object by name, first, before creating a new one.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :songs, populate_if_empty: -&gt;(fragment, options) {
+    Song.find_by(name: fragment["name"]) or Song.new } do
+</code></pre>
+
+<p>The result from this block will be automatically added to the form graph.</p>
+
+<p>You can also provide an instance method on the respective form.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :songs, populate_if_empty: :populate_songs! do
+    property :name
+  end
+
+  def populate_songs!(fragment, options)
+    Song.find_by(name: fragment["name"]) or Song.new
+  end
+</code></pre>
+
+<p>Arguments are the currently processed hash <code>fragment</code> and <code>options</code>.</p>
+
+<p>The result of the block will automatically assigned to the property or collection for you. Note that you can’t use the twin API in here. If you want to do fancy stuff, use <code>:populator</code>.</p>
+
+<h2 id="the-populator-option">The :populator Option</h2>
+
+<p>While the <code>:populate_if_empty</code> option is only called when no matching form was found for the input, the <code>:populator</code> option is always invoked and gives you maximum flexibility for population.</p>
+
+<p>Please do <em>not</em> use both <code>:prepopulate_if_empty</code> and <code>:populator</code> for the same property.</p>
+
+<h2 id="populator-for-collections">Populator for Collections</h2>
+
+<p>A <code>:populator</code> for collections is executed for every collection fragment in the incoming hash.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  collection :songs,
+    populator: lambda { |fragment, collection, index, options|
+      (item = collection[index]) ? item : collection.insert(index, Song.new) } do
+
+    property :title
+  end
+</code></pre>
+
+<p>The <code>:populator</code> option accepts blocks and instance method names.</p>
+
+<p>The signature is as follows.</p>
+
+<ul>
+  <li><code>fragment</code> is the fragment of the incoming hash that matches the processed nested form.</li>
+  <li><code>collection</code> is the nested form collection (manually available via <code>form.songs</code>).</li>
+  <li><code>index</code> will be the index of the currently processed fragment.</li>
+  <li><code>options</code></li>
+</ul>
+
+<p>Note that you manually have to check whether or not a nested form is already available (by index or ID) and then need to add it using the form API writers.</p>
+
+<p>Another requirement is that per block invocation, the nested form has to be returned from the block. This is important for further processing of the incoming hash when values are mapped to properties by Reform (e.g. <code>title</code>).</p>
+
+<h2 id="populator-for-single-properties">Populator for Single Properties</h2>
+
+<p>Naturally, a single property <code>:populator</code> is only called once.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :composer, populator: lambda { |fragment, model, options|
+      model || self.composer= Artist.new } do
+
+    property :name
+  end
+</code></pre>
+
+<p>The signature here is identical to collections, except that the <code>index</code> argument is missing for obvious reasons.</p>
+
+<p>Again, a requirement is that the nested form has to be returned from the block.</p>
+
+<h2 id="populating-by-id">Populating by ID</h2>
+
+<p>[This is described in chapter <em>Authentication</em> in the Trailblazer book.]</p>
+
+<p>Reform matches incoming hash fragments and nested forms by their order. It doesn’t know anything about IDs or other persistence mechanics.</p>
+
+<p>You can use <code>:populator</code> to write your own matching for IDs. This is a feature that might be included into Reform since this is a frequently implemented requirement when working with persisted models.</p>
+
+<pre><code>property :songs,
+  populator: -&gt;(fragment, collection, index, options) {
+    # find out if incoming song is already added.
+    item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
+    item ? item : songs.insert(index, Song.new)
+  }
+</code></pre>
+
+<p>Note that a <code>:populator</code> requires you to add/replace/update/delete the model yourself. You have access to the form API here since the block is executed in form instance context.</p>
+
+<p>The <code>:populator</code> block has to return the corresponding nested form.</p>
+
+<p>This naturally works for single properties, too.</p>
+
+<pre><code>property :artist,
+  populator: -&gt;(fragment, options) {
+    artist ? artist : self.artist = Artist.find_by(id: fragment["id"])
+  }
+</code></pre>
+
+<p>It is important to check whether the respective collection item or single property already exists in the form, otherwise your graph will get out-of-sync.</p>
+
+<h2 id="uninitialized-collections">Uninitialized Collections</h2>
+
+<p>A problem with populators can be an uninitialized <code>collection</code> property.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  collection :songs, populate_if_empty: Song do
+    property :title
+  end
+end
+
+album = Album.new
+form  = AlbumForm.new(album)
+
+album.songs #=&gt; nil
+form.songs  #=&gt; nil
+
+form.validate(songs: [{title: "Friday"}])
+#=&gt; NoMethodError: undefined method `original' for nil:NilClass
+</code></pre>
+
+<p>What happens is as follows.</p>
+
+<ol>
+  <li>In <code>validate</code>, the form can’t find a corresponding nested songs form and calls the <code>populate_if_empty</code> code.</li>
+  <li>The populator will create a <code>Song</code> model and assign it to the parent form via <code>form.songs &lt;&lt; Song.new</code>.</li>
+  <li>This crashes, as <code>form.songs</code> is <code>nil</code>.</li>
+</ol>
+
+<p>The solution is to initialize your object correctly. This is per design. It is your job to do that as Reform/Disposable is likely to do it wrong.</p>
+
+<pre><code>album = Album.new(songs: [])
+form  = AlbumForm.new(album)
+</code></pre>
+
+<p>With ORMs, the setup happens automatically, this only appears when using <code>Struct</code> or other POROs as models.</p>
+
+<h2 id="internals">Internals</h2>
+
+<p><code>:populator</code> options are called via the <code>:instance</code> hook in the deserializer. They disable <code>:setter</code>, hence you have to set newly created twins yourself.</p>
+
+<p>(how models automatically become twinned when assigning)</p>
+
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+  </body>
+</html>

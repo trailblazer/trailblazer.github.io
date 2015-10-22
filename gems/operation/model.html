@@ -1,0 +1,238 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="operation-body">
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero operation-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Operation
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="operationmodel">Operation::Model</h1>
+
+<p>Including <code>Model</code> will add simple CRUD semantics to your operation to find/create a model in <code>#setup!</code>.</p>
+
+<p>Note that this is not limited to ActiveRecord.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  include Model
+  model Comment, :create
+</code></pre>
+
+<p>Using the <code>::model</code> method you <em>have to</em> define what model class to work with. The second argument specifies the action.</p>
+
+<p>This will override <code>model!</code> as follows.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  def model!
+    Comment.new
+  end
+</code></pre>
+
+<p>The model is automatically created for you in <code>#setup!</code> and hence available in <code>process</code>.</p>
+
+<h2 id="validation">Validation</h2>
+
+<p>In <code>validate</code>, you don’t need to provide the model anymore.</p>
+
+<pre><code>def process(params)
+  model #=&gt; &lt;Comment body=""&gt; # created via #model!.
+  validate(params[:thing]) do
+    ..
+  end
+end
+</code></pre>
+
+<h2 id="actions">Actions</h2>
+
+<p>The following actions for <code>::model</code> are available.</p>
+
+<ul>
+  <li><code>:create</code> calls <code>Comment.new</code></li>
+  <li><code>:update</code> or <code>:find</code> will execute <code>Comment.find(params[:id])</code></li>
+</ul>
+
+<p>In <code>process</code>, you now have a new or existing <code>model</code> available.</p>
+
+<h2 id="api">API</h2>
+
+<p>You may override <code>#instantiate_model!</code>, <code>create_model!</code> or <code>update_model!</code> from the <code>Model</code> module if you need to change behavior.</p>
+
+<h2 id="discussion">Discussion</h2>
+
+<p>Note that this is really simple behavior. Do not use this module when you plan to use more complex models.</p>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+
+  </body>
+</html>

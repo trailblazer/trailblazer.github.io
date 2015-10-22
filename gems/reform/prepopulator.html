@@ -1,0 +1,293 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Trailblazer</title>
+    <meta name="description" content=" - " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content=", " />
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">>
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="javascripts/script.js"></script>
+    <link rel="stylesheet" href="/../../css/dark.css">
+    <script src="/../../javascripts/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="bower_components/modernizr/modernizr.js"></script>
+  </head>
+
+  <body class="reform-body">
+
+      <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero reform-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Reform
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="prepopulating">Prepopulating</h1>
+
+<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code>validate</code>.</p>
+
+<p><a href="/gems/reform/prepopulator.html">Prepopulating</a> is helpful when you want to fill out fields (aka. <em>defaults</em>) or add nested forms before rendering.</p>
+
+<p><a href="/gems/reform/populators.html">Populating</a> is invoked in <code>validate</code> and will add nested forms depending on the incoming hash.</p>
+
+<p>This page explains prepopulation used to prepare the form for rendering.</p>
+
+<h2 id="configuration">Configuration</h2>
+
+<p>You can use the <code>:prepopulator</code> option on every property or collection.</p>
+
+<p>class AlbumForm &lt; Reform::Form<br />
+    property :artist, prepopulator: -&gt;(options) { self.artist = Artist.new } do<br />
+      property :name<br />
+    end</p>
+
+<p>The option value can be a lambda or an instance method name.</p>
+
+<p>In the block/method, you have access to the form API and can invoke any kind of logic to prepopulate your form. Note you need to assign models for nested form using their writers.</p>
+
+<h2 id="invocation">Invocation</h2>
+
+<p>Prepopulation must be invoked manually.</p>
+
+<pre><code>form = AlbumForm.new(Album.new)
+form.artist #=&gt; nil
+
+form.prepopulate!
+
+form.artist #=&gt; &lt;nested ArtistForm @model=&lt;Artist ..&gt;&gt;
+</code></pre>
+
+<p>This explicit call must happen before the form gets rendered. For instance, in Trailblazer, this happens in the controller action.</p>
+
+<h2 id="prepopulate-is-not-populate">Prepopulate is not Populate</h2>
+
+<p><code>:populator</code> and <code>:populate_if_empty</code> will be run automatically in <code>validate</code>. Do not call <code>prepopulate!</code> before <code>validate</code> if you use the populator options. This will usually result in “more” nested forms being added as you wanted (unless you know what you’re doing).</p>
+
+<p>Prepopulators are a concept designed to <strong>prepare a form for rendering</strong>, whereas populators are meant to <strong>set up the form in <code>validate</code></strong> when the input hash is deserialized.</p>
+
+<p>This is explained in the <em>Nested Forms</em> chapter of the Trailblazer book. Please read it first if you have trouble understanding this, and then open an issue.</p>
+
+<h2 id="options">Options</h2>
+
+<p>Options may be passed. They will be available in the <code>:prepopulator</code> block.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title, prepopulator: -&gt;(options) { self.title = options[:def_title] }
+end
+</code></pre>
+
+<p>You can then pass arbitrary arguments to <code>prepopulate!</code>.</p>
+
+<pre><code>form.title #=&gt; nil
+
+form.prepopulate!(def_title: "Roxanne")
+
+form.title #=&gt; "Roxanne"
+</code></pre>
+
+<p>The arguments passed to the <code>prepopulate!</code> call will be passed straight to the block/method.</p>
+
+<p>This call will be applied to the entire nested form graph recursively <em>after</em> the currently traversed form’s prepopulators were run.</p>
+
+<h2 id="execution">Execution</h2>
+
+<p>The blocks are run in form instance context, meaning you have access to all possible data you might need. With a symbol, the same-named method will be called on the form instance, too.</p>
+
+<p>Note that you have to assign the pre-populated values to the form by using setters. In turn, the form will automatically create nested forms for you.</p>
+
+<p>This is especially cool when populating collections.</p>
+
+<pre><code>property :songs,
+  prepopulator: -&gt;(*) { self.songs &lt;&lt; Song.new if songs.size &lt; 3 } do
+</code></pre>
+
+<p>This will always add an empty song form to the nested <code>songs</code> collection until three songs are attached. You can use the <code>Twin::Collection</code> <a href="/gems/disposable/collection.html">API</a> when adding, changing or deleting items from a collection.</p>
+
+<p>Note that when calling <code>#prepopulate!</code>, your <code>:prepopulate</code> code for all existing forms in the graph will <em>be executed</em> . It is up to you to add checks if you need that.</p>
+
+<h2 id="overriding">Overriding</h2>
+
+<p>You don’t have to use the <code>:prepopulator</code> option. Instead, you can simply override <code>#prepopulate!</code> itself.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  def prepopulate!(options)
+    self.title = "Roxanne"
+    self.artist = Artist.new(name: "The Police")
+  end
+</code></pre>
+
+<h1 id="defaults">Defaults</h1>
+
+<p>There’s different alternatives for setting a default value for a formerly empty field.</p>
+
+<ol>
+  <li>Use <code>:prepopulator</code> as <a href="#configuration">described here</a>. Don’t forget to call <code>prepopulate!</code> before rendering the form.</li>
+  <li>
+    <p>Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in <code>#validate</code>.</p>
+
+    <p>property :title</p>
+
+    <p>def title<br />
+   super or “Unnamed”<br />
+ end</p>
+  </li>
+</ol>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+  </body>
+</html>

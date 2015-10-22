@@ -1,0 +1,49 @@
+<h1 id="upgrading-guide">Upgrading Guide</h1>
+
+<p>We try to make upgrading as smooth as possible. Here’s the generic documentation, but don’t hesitate to ask for <a href="https://gitter.im/trailblazer/chat">help on Gitter</a>.</p>
+
+<h2 id="to-24">2.3 to 2.4</h2>
+
+<h3 id="positional-arguments">Positional Arguments</h3>
+
+<p>For dynamic options like <code>:instance</code> or <code>:getter</code> we used to expose a positional API like <code>instance: -&gt;(fragment, options)</code> where every option has a slightly different signature. Even worse, for <code>collection</code>s this would result in a differing signature plus an index like <code>instance: -&gt;(fragment, index, options)</code>.</p>
+
+<p>From Representable 2.4 onwards, only one argument is passed in for all options with an identical, easily memoizable API. Note that the old signatures will print deprecation warnings, but still work.</p>
+
+<p>For parsing, this is as follows (<code>:instance</code> is just an example).</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:fragment</span><span class="o">]</span> <span class="c1"># the parsed fragment</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:doc</span><span class="o">]</span>      <span class="c1"># the entire document</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:result</span><span class="o">]</span>   <span class="c1"># whatever the former function returned,</span>
+                     <span class="c1"># usually this is the deserialized object.</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:user_options</span><span class="o">]</span> <span class="c1"># options passed into the parse method (e.g. from_json).</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:index</span><span class="o">]</span>    <span class="c1"># index of the currently iterated fragment (only with collection)</span>
+<span class="k">end</span></code></pre></div>
+
+<p>We highly recommend to use keyword arguments if you’re using Ruby 2.1+.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="ss">fragment</span><span class="p">:,</span> <span class="ss">user_options</span><span class="p">:,</span> <span class="o">**</span><span class="p">)</span> <span class="k">do</span></code></pre></div>
+
+<h3 id="pass-options">Pass Options</h3>
+
+<p>The <code>:pass_options</code> option is deprecated and you should simply remove it, even though it still works in &lt; 3.0. You have access to all the environmental object via <code>options[:binding]</code>.</p>
+
+<p>In older version, you might have done as follows.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">pass_options</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
+  <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span> <span class="n">options</span><span class="o">.</span><span class="n">represented</span> <span class="p">}</span></code></pre></div>
+
+<p>Runtime information such as <code>represented</code> or <code>decorator</code> is now available via the generic options.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:binding</span><span class="o">]</span>              <span class="c1"># property Binding instance.</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:binding</span><span class="o">].</span><span class="n">represented</span>  <span class="c1"># the represented object</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:user_options</span><span class="o">]</span>         <span class="c1"># options from user.</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The same with keyword arguments.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="nb">binding</span><span class="p">:,</span> <span class="ss">user_options</span><span class="p">:,</span> <span class="o">**</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nb">binding</span><span class="o">.</span><span class="n">represented</span>  <span class="c1"># the represented object</span>
+<span class="k">end</span></code></pre></div>
