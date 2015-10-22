@@ -4,7 +4,12 @@ layout: operation
 
 # Operation::Controller
 
-The `Operation::Controller` module provides four shorthand methods to run and present operations. It works in Rails but should also be fine in Sinatra.
+The `Operation::Controller` module provides four shorthand methods to run and present operations.
+
+Note that you're free to invoke operations manually at any time by [invoking them directly](api.html).
+
+
+It works in Rails but should also be fine in Sinatra and Lotus.
 
 ## Generics
 
@@ -94,12 +99,36 @@ To render the operation's form, use `#form`.
 This is identical to `#present` with two additional step: besides the `@operation` and `@model` instance variables, the `@form` will be assigned, too. After that, the form's `prepopulate!` method is called and the form is ready for rendering, e.g. via `#form_for`.
 
 
-    op = Comment::Create.present(params)
-    op.contract.prepopulate!
-    @operation = op
-    @model     = op.model
-    @form      = op.contract
+    def form(Comment::Create, options={})
+      op = Comment::Create.present(params)
 
+      op.contract.prepopulate!(options)
+
+      @operation = op
+      @model     = op.model
+      @form      = op.contract
+    end
+
+### Options for prepopulate!
+
+All options from the `#form` call are directly passed to the form's `prepopulate!` method, allowing you to use runtime data in prepopulators. Note that the original `params` object is available in this options hash, too.
+
+    form Comment::Create, color: "green"
+
+This will result in the following hash being passed to `prepopulate!`.
+
+    contract do
+      def prepopulate!(options)
+        options[:color]  #=> "green"
+        options[:params] #=> <ActionController::Params ..>
+
+
+The `#form` method returns the actual form object. This is helpful if you want to render multiple forms on a page.
+
+    def show
+      @create_form = form(Comment::Create)
+      @survey_form = form(Survey::Support::Create)
+    end
 
 ## Respond
 
@@ -124,7 +153,7 @@ This will do the same as `#run`, invoke the operation and then pass it to `#resp
 
 The operation needs to be prepared for the responder as the latter makes weird assumptions about the object being passed to `respond_with`. For example, the operation needs to respond to `to_json` in a JSON request. Read about [Representer](representer.html) here.
 
-In a non-HTML request (e.g. for `application/json`) the params hash will be slightly modified. As the operation's model key, the request body document is passed into the operation.
+If the operation class has `Representer` mixed in, the params hash will be slightly modified. As the operation's model key, the request body document is passed into the operation.
 
 
     params[:comment] = request.body
@@ -136,22 +165,44 @@ By doing so the operation's representer will automatically parse and deserialize
 If you want the responder to compute URLs with namespaces, pass in the `:namespace` option.
 
 
-  respond Comment::Create, namespace: [:api]
+    respond Comment::Create, namespace: [:api]
 
 
 This will result in a call `respond_with :api, op`.
+
+## Custom Params
+
+If you want to manually hand in parameters to `#run`, `#respond`, `#form` or `#present`, use the `params:` option.
+
+    def create
+      run Comment::Create, params: {comment: {body: "Always the same! Boring!"}}
+    end
+
+## Document Formats
+
+Normally, Trailblazer will pass Rails' `params` hash into any operation.
+
+For operations that have `Operation::Representer` included, not a hash but the request body will be passed into the operation, keyed under the operation's `model_name`.
+
+    Comment::Create.({comment: request.body.string})
+
+This allows the operation's representer to deserialize the document and populate the contract, bypassing Rails' `ParamsParser`.
+
+You can instruct Trailblazer not to do that and pass in the normal `params` hash if you don't want that using the `:is_document` option.
+
+    def create
+      run Comment::Create, is_document: false # will run Comment::Create(params)
+    end
 
 ## Normalizing Params
 
 Override #process_params! to add or remove values to params before the operation is run. This is called in #run, #respond and #present and #form.
 
-{% highlight ruby %}
-class CommentsController < ApplicationController
-private
-  def process_params!(params)
-    params.merge!(current_user: current_user)
-  end
-end
-{% endhighlight %}
+    class CommentsController < ApplicationController
+    private
+      def process_params!(params)
+        params.merge!(current_user: current_user)
+      end
+    end
 
 This centralizes params normalization and doesn't require you to do that in every action manually.

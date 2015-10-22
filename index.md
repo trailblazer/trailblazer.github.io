@@ -350,6 +350,7 @@ layout: home
     <div class="columns">
       <h2>File Layout</h2>
     </div>
+
   </div>
 
   <div class="row">

@@ -25,7 +25,7 @@ An operation is to be seen as a _function_ as in _Functional Programming_. You i
 
 This will instantiate the `Comment::Create` operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.
 
-**Consider this operation instance as a throw-away immutual object.** Don't use it for anything but presentation or you will have unwanted side-effects.
+**Consider this operation instance as a throw-away immutable object.** Don't use it for anything but presentation or you will have unwanted side-effects.
 
 ## Operation Class
 
@@ -184,7 +184,7 @@ Another huge advantage is: operations can be used in any environment like script
 
     describe Comment::Update do
       it "updates" do
-        comment = Comment::Create(..) # this is a factory.
+        comment = Comment::Create.(..) # this is a factory.
 
         Comment::Update.(id: comment.id, comment: {body: "FTW!"})
         expect(comment.body).to eq("FTW!")
