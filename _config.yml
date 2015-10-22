@@ -3,3 +3,8 @@ kramdown:
   input:      GFM
 exclude:
   - node_modules
+baseurl: /
+domain_name: 'http://trailblazer.to'
+url: 'http://trailblazer.to'
+include:
+  - .nojekyll
