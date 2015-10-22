@@ -127,15 +127,24 @@
 
 <p>Note that you’re free to invoke operations manually at any time by <a href="api.html">invoking them directly</a>.</p>
 
-<p>It works in Rails but should also be fine in Sinatra and Lotus.</p>
+<p>It works in Rails but should also be fine in Sinatra, Lotus and other frameworks that expose a <code>params</code> object.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>You have four methods to pick from.</p>
+
+<ul>
+  <li>Use <code>#present</code> if you’re only interested in <em>presenting</em> the operation’s model.</li>
+  <li>Use <code>#form</code> to <em>render</em> the form object. This will not run the operation.</li>
+  <li>Use <code>#run</code> to process incoming data using the operation (and present it afterwards).</li>
+  <li>Use <code>#respond</code> to process incoming data and present it using Rails’ <code>respond_to</code>.</li>
+</ul>
 
 <h2 id="generics">Generics</h2>
 
 <p>Before the operation is invoked, the controller method <code>process_params!</code> is run. You can override that to normalize the incoming parameters.</p>
 
-<p>Each method will set the <code>@operation</code> and <code>@model</code> instance variables on the controller which allows using them in views, too. Each method returns the operation instance.</p>
-
-<p>You need to include the <code>Controller</code> module.</p>
+<p>You need to include the <code>Controller</code> module into the controller. This will import the <code>form</code>, <code>present</code>, <code>run</code> and <code>respond</code> methods.</p>
 
 <pre><code>class ApplicationController &lt; ActionController::Base
   include Trailblazer::Operation::Controller
@@ -153,17 +162,27 @@ end
 end
 </code></pre>
 
-<p>Internally, this will do as follows.</p>
+<p>This <em>runs</em> the operation with <code>params</code>, sets <code>@operation</code> and <code>@model</code> on the controller instance, and returns the operation instance.</p>
 
-<pre><code>process_params!(params)
+<p>Note that you can grab the operation and reassign it to another instance variable if you have multiple operation invocations.</p>
 
-result, op = Comment::Create.run(params)
-@operation = op
-@model     = op.model
-@form      = op.contract
+<pre><code>class CommentsController &lt; ApplicationController
+  def create
+    create_op = run Comment::Create # returns operation instance.
+    @comment  = create_op.model
+  end
 </code></pre>
 
-<p>First, you have the chance to normalize parameters. The controller’s <code>params</code> hash is then passed into the operation run. After that, the three instance variables on the controller are set, giving you access to operation instance, form and model.</p>
+<p>The call stack in <code>#run</code> is as follows.</p>
+
+<pre><code>#run
+  process_params!(params)
+  result, op = Comment::Create.run(params)
+  @operation = op
+  @model     = op.model
+</code></pre>
+
+<p>First, you have the chance to normalize parameters. The controller’s <code>params</code> hash is then passed into the operation run. After that, operation and model are assigned to controller instance variables.</p>
 
 <p>An optional block for <code>#run</code> is invoked only when the operation was valid.</p>
 
@@ -188,16 +207,34 @@ end
 end
 </code></pre>
 
-<p>Instead of running the operation, this will only instantiate the operation by passing in the controller’s <code>params</code>. In turn, this only runs the operation’s <code>#setup</code> (which embraces model finding logic) and does <strong>not instantiate</strong> a contract and <strong>doesn’t run</strong> <code>#process</code>.</p>
+<p>This <em>instantiates</em> the operation with <code>params</code>, sets <code>@operation</code> and <code>@model</code> on the controller instance, and returns the operation instance.</p>
 
-<pre><code>Comment::Update.new(params)
-@operation = op
-@model     = op.model
+<p>Instead of running the operation, this will only instantiate the operation by passing in the controller’s <code>params</code>. In turn, this only runs the operation’s <code>#setup</code> (which embraces model finding logic).</p>
+
+<p>The <code>#present</code> helper <strong>does not run</strong> <code>#process</code> and does <strong>not instantiate</strong> a contract (which will be faster than <code>#form</code>).</p>
+
+<p>Note that you can grab the operation and reassign it to another instance variable if you have multiple operation invocations.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def show
+    update_op = present Comment::Update # returns operation instance.
+    @comment  = update_op.model
+  end
 </code></pre>
+
+<p>The call stack in <code>#present</code> is as follows.</p>
+
+<pre><code>#present
+  op = Comment::Update.present(params)
+  @operation = op
+  @model     = op.model
+</code></pre>
+
+<p>Note that no <code>@form</code> is instantiated and assigned to the controller. If you need the form use the <code>#form</code> method.</p>
 
 <h2 id="form">Form</h2>
 
-<p>To render the operation’s form, use <code>#form</code>.</p>
+<p>To render the operation’s form, use <code>#form</code>. This is identical to <code>#present</code> with two additional steps.</p>
 
 <pre><code>class CommentsController &lt; ApplicationController
   def show
@@ -206,40 +243,45 @@ end
 end
 </code></pre>
 
-<p>This is identical to <code>#present</code> with two additional step: besides the <code>@operation</code> and <code>@model</code> instance variables, the <code>@form</code> will be assigned, too. After that, the form’s <code>prepopulate!</code> method is called and the form is ready for rendering, e.g. via <code>#form_for</code>.</p>
+<p>This <em>instantiates</em> the operation with <code>params</code> and then sets <code>@operation</code>, <code>@model</code> and <code>@form</code> on the controller instance. After that, the form’s <code>prepopulate!</code> method is called and the form is ready for rendering.</p>
 
-<pre><code>def form(Comment::Create, options={})
+<p>It returns the <em>form</em> instance.</p>
+
+<p>Note that you can grab the form and reassign it to another instance variable if you use multiple operations in your endpoint.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+  def show
+    @create_form = form Comment::Create # returns form instance.
+    @post_form   = form Post::Create
+  end
+</code></pre>
+
+<p>The call stack in <code>#form</code> is as follows.</p>
+
+<pre><code>#form(operation, options)
   op = Comment::Create.present(params)
-
-  op.contract.prepopulate!(options)
 
   @operation = op
   @model     = op.model
   @form      = op.contract
-end
+
+  @form.prepopulate!(options)
 </code></pre>
 
 <h3 id="options-for-prepopulate">Options for prepopulate!</h3>
 
-<p>All options from the <code>#form</code> call are directly passed to the form’s <code>prepopulate!</code> method, allowing you to use runtime data in prepopulators. Note that the original <code>params</code> object is available in this options hash, too.</p>
+<p>Any options passed to <code>#form</code> are directly propagated to the form’s <code>prepopulate!</code> method, allowing you to use runtime data in prepopulators. Note that the original <code>params</code> object is available in this options hash, too.</p>
 
 <pre><code>form Comment::Create, color: "green"
 </code></pre>
 
 <p>This will result in the following hash being passed to <code>prepopulate!</code>.</p>
 
-<pre><code>contract do
-  def prepopulate!(options)
-    options[:color]  #=&gt; "green"
-    options[:params] #=&gt; &lt;ActionController::Params ..&gt;
-</code></pre>
-
-<p>The <code>#form</code> method returns the actual form object. This is helpful if you want to render multiple forms on a page.</p>
-
-<pre><code>def show
-  @create_form = form(Comment::Create)
-  @survey_form = form(Survey::Support::Create)
-end
+<pre><code>class Comment::Create &lt; Trailblazer::Operation
+  contract do
+    def prepopulate!(options)
+      options[:color]  #=&gt; "green"
+      options[:params] #=&gt; &lt;ActionController::Params ..&gt;
 </code></pre>
 
 <h2 id="respond">Respond</h2>
@@ -307,7 +349,7 @@ end
 
 <h2 id="normalizing-params">Normalizing Params</h2>
 
-<p>Override #process_params! to add or remove values to params before the operation is run. This is called in #run, #respond and #present and #form.</p>
+<p>Override <code>#process_params!</code> to add or remove values to params before the operation is run. This is called in <code>#run</code>, <code>#respond</code>, <code>#present</code> and <code>#form</code>.</p>
 
 <pre><code>class CommentsController &lt; ApplicationController
 private
