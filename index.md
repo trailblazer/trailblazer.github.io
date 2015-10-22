@@ -369,7 +369,7 @@ layout: home
     │   │   └── twin.rb
     │   │
     │   └── post
-    │       └── crud.rb
+    │       └── operations.rb
         </code>
 
       </pre>
