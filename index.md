@@ -177,7 +177,7 @@ layout: home
       </code></pre>
     </div>
     <div class="columns medium-6">
-      <p>Policies allow authentication on a global or fine-granular level.</p>
+      <p>Policies allow authorization on a global or fine-granular level.</p>
       <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
     </div>
   </div>
@@ -196,12 +196,12 @@ layout: home
     <div class="columns medium-6">
       <pre><code class="ruby">
   class Comment::Cell < Cell::ViewModel
-  property :body
-  property :author
+    property :body
+    property :author
 
-  def show
-    render
-  end
+    def show
+      render
+    end
 
   private
     def author_link
@@ -298,9 +298,9 @@ layout: home
     <div class="columns medium-6">
     <pre><code class="ruby">
   class Comment::Update < Create
-  policy do
-    is_owner?(model)
-  end
+    policy do
+      is_owner?(model)
+    end
   end
     </code></pre>
 
@@ -350,6 +350,7 @@ layout: home
     <div class="columns">
       <h2>File Layout</h2>
     </div>
+
   </div>
 
   <div class="row">
@@ -358,8 +359,9 @@ layout: home
     app
     ├── concepts
     │   ├── comment
-    │   │   ├── crud.rb
+    │   │   ├── operations.rb
     │   │   ├── cell.rb
+    │   │   ├── policy.rb
     │   │   ├── views
     │   │   │   ├── show.haml
     │   │   │   ├── list.haml
@@ -367,7 +369,7 @@ layout: home
     │   │   └── twin.rb
     │   │
     │   └── post
-    │       └── crud.rb
+    │       └── operations.rb
         </code>
 
       </pre>

@@ -4,7 +4,7 @@ layout: reform
 
 # Upgrading Guide
 
-We try to make upgrading as smooth as possible. Here's the generic documentation, but don't hesitate to ask for help on IRC.
+We try to make upgrading as smooth as possible. Here's the generic documentation, but don't hesitate to ask for [help on Gitter](https://gitter.im/trailblazer/chat).
 
 ## 2.0 to 2.1
 
