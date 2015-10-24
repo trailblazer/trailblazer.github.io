@@ -1,6 +1,6 @@
 ---
 layout: reform
-title: "Trailblazer: Reform Validation"
+title: "Reform Validation"
 ---
 
 # Validation

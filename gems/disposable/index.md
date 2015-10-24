@@ -1,7 +1,7 @@
 ---
 layout: disposable
 permalink: /gems/disposable/
-title: "Trailblazer: Disposable"
+title: "Disposable"
 ---
 
 # Disposable

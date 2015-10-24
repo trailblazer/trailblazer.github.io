@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells Templates"
+title: "Cells Templates"
 ---
 
 # Template Engines

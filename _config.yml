@@ -6,5 +6,7 @@ exclude:
 baseurl: /
 domain_name: 'http://trailblazer.to'
 url: 'http://trailblazer.to'
+name: "Trailblazer"
+
 include:
   - .nojekyll

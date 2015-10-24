@@ -1,7 +1,7 @@
 ---
 layout: roar
 permalink: /gems/roar/
-title: "Trailblazer: Roar"
+title: "Roar"
 ---
 
 # Roar

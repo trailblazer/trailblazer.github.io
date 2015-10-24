@@ -1,6 +1,6 @@
 ---
 layout: reform
-title: "Trailblazer: Reform Upgrading Guide"
+title: "Reform Upgrading Guide"
 ---
 
 # Upgrading Guide

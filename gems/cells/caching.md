@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Trailblazer: Cells Caching"
+title: "Cells Caching"
 ---
 
 ****** non rails env

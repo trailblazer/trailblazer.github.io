@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Testing Cells"
+title: "Testing Cells"
 ---
 
 # Testing

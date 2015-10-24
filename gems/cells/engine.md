@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells with Engines"
+title: "Cells with Engines"
 ---
 
 # Engine Cells

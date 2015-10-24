@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells and Rails"
+title: "Cells and Rails"
 ---
 
 # Rails

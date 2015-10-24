@@ -1,6 +1,6 @@
 ---
 layout: disposable
-title: "Trailblazer: Disposable API"
+title: "Disposable API"
 ---
 
 ## Change Tracking

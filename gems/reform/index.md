@@ -1,7 +1,7 @@
 ---
 layout: reform
 permalink: /gems/reform/
-title: "Trailblazer: Reform"
+title: "Reform"
 ---
 
 # Reform

@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells and Helpers"
+title: "Cells and Helpers"
 ---
 
 # Helpers

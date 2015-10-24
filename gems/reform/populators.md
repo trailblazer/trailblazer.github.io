@@ -1,7 +1,7 @@
 ---
 layout: reform
 permalink: /gems/reform/populators.html
-title: "Trailblazer: Reform Populators"
+title: "Reform Populators"
 ---
 
 # Populating

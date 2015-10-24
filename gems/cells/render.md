@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells Render API"
+title: "Cells Render API"
 ---
 
 # Rendering

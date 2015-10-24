@@ -1,6 +1,6 @@
 ---
 layout: cells
-title: "Trailblazer: Cells Troubleshooting"
+title: "Cells Troubleshooting"
 ---
 
 # Troubleshooting
