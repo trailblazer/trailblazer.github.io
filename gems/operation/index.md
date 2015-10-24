@@ -1,7 +1,7 @@
 ---
 layout: operation
 permalink: /gems/operation/
-title: Trailblazer: Operation
+title: "Trailblazer: Operation"
 ---
 
 # Trailblazer::Operation
