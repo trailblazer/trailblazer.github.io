@@ -1,6 +1,7 @@
 ---
 layout: cells
 permalink: /gems/cells/
+title: "Trailblazer: Cells"
 ---
 
 # Cells

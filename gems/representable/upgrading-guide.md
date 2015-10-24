@@ -1,5 +1,6 @@
 ---
 layout: default
+title: "Trailblazer: Representable Upgrading Guide"
 ---
 
 # Upgrading Guide

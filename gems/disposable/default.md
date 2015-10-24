@@ -1,5 +1,6 @@
 ---
 layout: disposable
+title: "Trailblazer: Disposable Default"
 ---
 
 # Twin: Default

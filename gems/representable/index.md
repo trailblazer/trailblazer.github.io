@@ -1,6 +1,7 @@
 ---
 layout: representable
 permalink: /gems/representable/
+title: "Trailblazer: Representable"
 ---
 
 # Representable

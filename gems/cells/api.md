@@ -1,5 +1,6 @@
 ---
 layout: cells
+title: "Trailblazer: Cells API"
 ---
 
 ## Initialize

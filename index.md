@@ -1,5 +1,6 @@
 ---
 layout: home
+title: Trailblazer
 ---
 
 <div class="sub-section section-separator">

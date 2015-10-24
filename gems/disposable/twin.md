@@ -1,6 +1,7 @@
 ---
 layout: disposable
 permalink: /gems/disposable/twin/
+title: "Trailblazer: Disposable Twin"
 ---
 
 # Twin
