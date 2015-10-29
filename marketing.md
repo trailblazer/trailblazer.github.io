@@ -40,13 +40,9 @@ Trailblazer is a collection of very mature gems. Gems that have been around for 
 
 You pick what you need.
 
-### Dispatch
+Rails, Lotus, Roda, Webmachine or Grape, they all work fine with Trailblazer's architecture.
 
-Routing HTTP calls and dispatching to your business logic can happen with a variety of frameworks. Rails, Lotus, Roda, Webmachine or Grape, they all work fine with Trailblazer's architecture.
-
-### ORM
-
-The persistence layer is completely up to you. Use ActiveRecord, Lotus::Model, ROM, or Sequel. They will handle the persisting of data and retrieval. Keep them free of validations and callbacks, that is Trailblazer's job now.
+The persistence layer is completely up to you, too. Use ActiveRecord, Lotus::Model, ROM, or Sequel. They will handle the persisting of data and retrieval. Keep them free of validations and callbacks, that is Trailblazer's job now.
 
 ### Cells
 
