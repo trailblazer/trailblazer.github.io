@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation Callback
+title: "Operation Callbacks"
 ---
 
 ## Composable Interface

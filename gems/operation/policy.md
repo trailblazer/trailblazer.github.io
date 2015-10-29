@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation Policies
+title: "Operation Policies"
 ---
 
 # Policy

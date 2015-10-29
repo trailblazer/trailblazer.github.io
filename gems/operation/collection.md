@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation Collection
+title: "Operation Collection"
 ---
 
 # Collections

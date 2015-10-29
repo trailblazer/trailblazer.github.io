@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation API
+title: "Operation API"
 ---
 
 

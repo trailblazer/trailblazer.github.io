@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation with Representers
+title: "Operation with Representers"
 ---
 
 # Operation::Representer

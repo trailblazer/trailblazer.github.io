@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation Builder
+title: "Operation Builder"
 ---
 
 # Builder

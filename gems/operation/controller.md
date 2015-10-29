@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation::Controller
+title: "Operation::Controller"
 ---
 
 # Operation::Controller

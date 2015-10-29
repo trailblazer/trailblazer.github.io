@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: Trailblazer: Operation::Model
+title: "Operation::Model"
 ---
 
 # Operation::Model
