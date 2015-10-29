@@ -40,12 +40,34 @@ Trailblazer is a collection of very mature gems. Gems that have been around for 
 
 You pick what you need.
 
-Cells
+### Dispatch
 
-Operation
+Routing HTTP calls and dispatching to your business logic can happen with a variety of frameworks. Rails, Lotus, Roda, Webmachine or Grape, they all work fine with Trailblazer's architecture.
 
-Reform
+### ORM
 
-Representable/Roar
+The persistence layer is completely up to you. Use ActiveRecord, Lotus::Model, ROM, or Sequel. They will handle the persisting of data and retrieval. Keep them free of validations and callbacks, that is Trailblazer's job now.
 
-Disposable
+### Cells
+
+View models from the Cells gem embrace fragments of your UI in an object. They act as a mini-MVC stack, provide decoration for the presented objects, and can render views.
+
+### Operation
+
+An operation implements the Gang of Four `Command` pattern. It orchestrates all behavior between request dispatch and presentation, including persistence using the ORM of your choice.
+
+Every operation keeps a form object to validate incoming data. This includes parameter whitelisting and supercedes strong_parameters.
+
+### Reform
+
+Form objects in Trailblazer and its operations are provided by the Reform gem which can deserialize and validate nested forms into object graphs and push the sane data to models.
+
+Forms can also easily be rendered using form builders or your homegrown form renderer.
+
+### Representable/Roar
+
+To handle documents for APIs, the Representable gem gives you representers. They allow deserializing of incoming form data, JSON documents or XML. They also allow rendering documents from the same representer.
+
+### Disposable
+
+Modelling your persistent models into domain objects that focus on what you want to do, not how to store it, you use twins from the Disposable gem.
