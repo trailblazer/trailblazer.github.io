@@ -50,13 +50,15 @@ The persistence layer is completely up to you. Use ActiveRecord, Lotus::Model, R
 
 ### Cells
 
-View models from the Cells gem embrace fragments of your UI in an object. They act as a mini-MVC stack, provide decoration for the presented objects, and can render views.
+View models from the Cells gem are objects that embrace fragments of your UI. They can render arbitrary views, provide decoration for the presented objects, and are 120% faster than ActionView.
 
 ### Operation
 
 An operation implements the Gang of Four `Command` pattern. It orchestrates all behavior between request dispatch and presentation, including persistence using the ORM of your choice.
 
 Every operation keeps a form object to validate incoming data. This includes parameter whitelisting and supercedes strong_parameters.
+
+The power of an operation lies in the encapsulation of a task, hiding performed work from the caller and making the task reusable.
 
 ### Reform
 
