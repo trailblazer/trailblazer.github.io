@@ -1,10 +1,7 @@
 ---
-layout: default
+layout: cells
 title: "Cells Caching"
 ---
-
-****** non rails env
-
 
 ## Caching
 
