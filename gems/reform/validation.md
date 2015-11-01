@@ -7,7 +7,7 @@ title: "Reform Validation"
 
 Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `Lotus::Validations`.
 
-Reform will at some point drop ActiveModel-support in favor of a clean, fast, maintainable, and simple validations implementation as found in [lotus-validations](https://github.com/lotus/lotus-validations).
+Reform will at some point drop ActiveModel-support in favor of a clean, fast, maintainable, and simple validations implementation as found in [lotus-validations](https://github.com/lotus/validations).
 
 
 ## ActiveModel
