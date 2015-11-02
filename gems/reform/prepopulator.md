@@ -18,10 +18,10 @@ This page explains prepopulation used to prepare the form for rendering.
 
 You can use the `:prepopulator` option on every property or collection.
 
-  class AlbumForm < Reform::Form
-    property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
-      property :name
-    end
+    class AlbumForm < Reform::Form
+      property :artist, prepopulator: ->(options) { self.artist = Artist.new } do
+        property :name
+      end
 
 
 The option value can be a lambda or an instance method name.
@@ -113,12 +113,11 @@ You don't have to use the `:prepopulator` option. Instead, you can simply overri
 
 There's different alternatives for setting a default value for a formerly empty field.
 
-1. Use `:prepopulator` as [described here](#configuration). Don't forget to call `prepopulate!` before rendering the form.
-2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in `#validate`.
+ 1. Use `:prepopulator` as [described here](#configuration). Don't forget to call `prepopulate!` before rendering the form.
+ 2. Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in `#validate`.
 
+        property :title
 
-    property :title
-
-    def title
-      super or "Unnamed"
-    end
+        def title
+          super or "Unnamed"
+        end
