@@ -147,10 +147,11 @@
 
 <p>You can use the <code>:prepopulator</code> option on every property or collection.</p>
 
-<p>class AlbumForm &lt; Reform::Form<br />
-    property :artist, prepopulator: -&gt;(options) { self.artist = Artist.new } do<br />
-      property :name<br />
-    end</p>
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :artist, prepopulator: -&gt;(options) { self.artist = Artist.new } do
+    property :name
+  end
+</code></pre>
 
 <p>The option value can be a lambda or an instance method name.</p>
 
@@ -236,11 +237,12 @@ form.title #=&gt; "Roxanne"
   <li>
     <p>Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in <code>#validate</code>.</p>
 
-    <p>property :title</p>
+    <pre><code>property :title
 
-    <p>def title<br />
-   super or “Unnamed”<br />
- end</p>
+def title
+  super or "Unnamed"
+end
+</code></pre>
   </li>
 </ol>
 
