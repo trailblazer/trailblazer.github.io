@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Cells Templates</title>
-<meta name="description" content="Cells Templates - Trailblazer" />
+<title>Trailblazer: JSON API</title>
+<meta name="description" content="JSON API - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -20,19 +20,19 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Cells Templates"/>
+<meta property="og:title" content="JSON API"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Cells Templates">
+<meta name="twitter:title" content="JSON API">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
   </head>
 
-  <body class="cells-body">
+  <body class="roar-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -67,12 +67,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero cells-hero">
+    <div class="hero gems-hero roar-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
             <h1 id="project_title">
-              Cells
+              Roar
             </h1>
           </div>
         </div>
@@ -136,50 +136,59 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="template-engines">Template Engines</h1>
+        <h1 id="json-api">JSON API</h1>
 
-<p>Cells supports various template engines.</p>
+<p>Roar supports rendering and parsing documents using the <a href="http://jsonapi.org/format/">JSON API 1.0</a> specification.</p>
 
-<p>We provide support for Haml, Erb, and Slim. You can also write <a href="#your-own">your own</a> template engine.</p>
+<p>By including <code>Roar::JSON::JSONAPI</code> into your representer a handful of additional DSL methods get imported.</p>
 
-<p>In a non-Rails environment, you need to include the respective module into your cells, so it knows what template to find.</p>
+<h2 id="overview">Overview</h2>
 
-<pre><code>class SongCell &lt; Cell::ViewModel
-  include Cell::Erb
-  # include Cell::Haml
-  # include Cell::Slim
-</code></pre>
+<p>Here’s a full example of a JSON API representer.</p>
 
-<p>Note that you can only include <em>one engine per class</em>. This is due to problems with helpers in Rails and the way they have to be fixed in combination with Cells.</p>
+<pre><code>class ArticleDecorator &lt; Roar::Decorator
+  include Roar::JSON::JSONAPI
+  type :articles
 
-<h3 id="multiple-template-engines-in-rails">Multiple Template Engines in Rails</h3>
-
-<p>When including more than one engine in your Gemfile in Rails, the last one wins. Since each gem includes itself into <code>Cell::ViewModel</code>, unfortunately there can only be one global engine.</p>
-
-<p>Currently, there’s no clean way but to disable automatic inclusion from each gem (not yet implemented) and then include template modules into your application cells manually.</p>
-
-<h2 id="erb">ERB</h2>
-
-<h2 id="haml">Haml</h2>
-
-<h2 id="slim">Slim</h2>
-
-<h2 id="your-own">Your Own</h2>
-
-<p>Theoretically, you can use any template engine supported by Tilt.</p>
-
-<p>To activate it in a cell, you only need to override <code>#template_options_for</code>.</p>
-
-<pre><code>class SongCell &lt; Cell::ViewModel
-  def template_options_for(options)
-    {
-      template_class: Tilt, # or Your::Template.
-      suffix:         "your"
-  }
+  # top-level link.
+  link :self, toplevel: true do
+    "//articles"
   end
+
+  # attributes: {}
+  property :id
+  property :title
+
+
+  # resource object links
+  link(:self) { "http://#{represented.class}/#{represented.id}" }
+
+  # relationships
+  has_one :author, class: Author, populator: ::Representable::FindOrInstantiate do # populator is for parsing, only.
+    type :authors
+
+    property :id
+    property :email
+    link(:self) { "http://authors/#{represented.id}" }
+  end
+
+  has_many :comments, class: Comment, populator: ::Representable::FindOrInstantiate do
+    type :comments
+
+    property :id
+    property :body
+    link(:self) { "http://comments/#{represented.id}" }
+  end
+end
 </code></pre>
 
-<p>This will use <code>Tilt</code> to instantiate a template to be evaluated. The <code>:suffix</code> is needed for Cells when finding the view.</p>
+<h2 id="relationships">Relationships</h2>
+
+<h2 id="top-level-links">Top-Level Links</h2>
+
+<h2 id="parsing-collections">Parsing Collections</h2>
+
+<h2 id="sparse-fieldsets">Sparse Fieldsets</h2>
 
       </div>
     </div>
