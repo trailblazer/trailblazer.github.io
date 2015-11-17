@@ -9,6 +9,12 @@ We try to make upgrading as smooth as possible. Here's the generic documentation
 
 ## 2.3 to 2.4
 
+### Deprecations
+
+Once you code is migrated to 2.4, you can disable slow and annoying deprecations as follows.
+
+    Representable.deprecations = false
+
 ### Positional Arguments
 
 For dynamic options like `:instance` or `:getter` we used to expose a positional API like `instance: ->(fragment, options)` where every option has a slightly different signature. Even worse, for `collection`s this would result in a differing signature plus an index like `instance: ->(fragment, index, options)`.
