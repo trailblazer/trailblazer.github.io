@@ -58,3 +58,6 @@ Here's a full example of a JSON API representer.
 ## Parsing Collections
 
 ## Sparse Fieldsets
+
+
+to_hash(included: false)
