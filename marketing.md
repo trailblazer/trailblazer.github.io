@@ -14,6 +14,22 @@ Rails is a popular web framework for ruby. It is used as a teaching aid to teach
 
 Rails does an awesome job at introducing the basics to developers, however, code can grow and Rails code can be a bit unwieldy once it becomes a monolith. Trailblazer provides that next piece of the puzzle, to refactor your applications into lean trailblazers.
 
+
+
+"We never had the time to refactor that..."
+
+In a low-level framework like Rails you waste an incredible amount of time for thinking about where goes what, and how to make certain code apply to a specific environment, only.
+
+Trailblazer takes away most of those decisions.
+
+1. You structure your code by use cases.
+2. You know where validations, deserialization and mapping, persistence, callbacks, authorization and presentation logic go. We have layers for that.
+3. The common workflows for web applications are identified and implemented in Trailblazer.
+4. Inheritance, composition and modules allow to share any kind of logic between use cases. This allows to reuse validations, rendering code or parts of your persistence for different user roles, different models, ...
+
+you save time by using a higher level structure that works for many people
+
+
 ## Loose Coupling
 
 Trailblazer decouples your business logic from the framework you use.
@@ -69,3 +85,8 @@ To handle documents for APIs, the Representable gem gives you representers. They
 ### Disposable
 
 Modelling your persistent models into domain objects that focus on what you want to do, not how to store it, you use twins from the Disposable gem.
+
+
+
+tests:
+op: input => output
