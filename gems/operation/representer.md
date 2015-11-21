@@ -35,7 +35,7 @@ With `Representer` included, operations can infer a representer from the contrac
     end
 
 
-## Validation
+## Deserialization
 
 You now invoke the operation with a JSON document, not with a hash anymore.
 
@@ -47,8 +47,17 @@ In `Operation#validate`, the incoming `params[:song]` will now be treated as a d
 
 The operation's representer will be passed into the form's `validate` and used as the deserializer, as it can read JSON and understands the format's specific semantics.
 
-After deserialization/population is finished, validation and processing is analogue to a "normal" non-representer operation.
+If you prefer to use the `params` hash for deserialization, include `Deserializer::Hash`.
 
+    class Create < Trailblazer::Operation
+      include Representer
+      include Representer::Deserializer::Hash
+
+You can now pass the params hash into operation call. This will still use the representer, but no JSON parsing will happen.
+
+## Validation
+
+After deserialization/population is finished, validation and processing is analogue to a "normal" non-representer operation.
 
 
 ## Rendering
@@ -60,7 +69,13 @@ The `Representer` module also imports `to_json`.
     #=> '{"title": "Fury","_links":{"self":"/songs/1"}}'
 
 
-In `to_json`, the operation's contract will be passed to the representer and rendered using the representer.
+In `to_json`, the operation's _contract_ will be passed to the representer and rendered using the representer.
+
+If you want to render the model instead (or anything else), override `Operation#represented`.
+
+    class Create < Trailblazer::Operation
+      include Representer
+      def represented; model; end # will serialize @model instead of @contract.
 
 ## Composable Interface
 
