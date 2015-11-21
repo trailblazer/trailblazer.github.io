@@ -12,6 +12,8 @@ The cells gem is completely stand-alone and can be used without Trailblazer.
 
 A cell is an object that represent a fragment of your UI. The scope of that fragment is up to you: it can embrace an entire page, a single comment container in a thread or just an avatar image link.
 
+In other words: **A cell is an object that can render a template.**
+
 Cells are faster than ActionView. While exposing a better performance, you step-wise encapsulate fragments into cell widgets and enforce interfaces.
 
 ## View Model
