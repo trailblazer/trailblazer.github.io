@@ -4,6 +4,13 @@
 
 <h2 id="to-24">2.3 to 2.4</h2>
 
+<h3 id="deprecations">Deprecations</h3>
+
+<p>Once you code is migrated to 2.4, you can disable slow and annoying deprecations as follows.</p>
+
+<pre><code>Representable.deprecations = false
+</code></pre>
+
 <h3 id="positional-arguments">Positional Arguments</h3>
 
 <p>For dynamic options like <code>:instance</code> or <code>:getter</code> we used to expose a positional API like <code>instance: -&gt;(fragment, options)</code> where every option has a slightly different signature. Even worse, for <code>collection</code>s this would result in a differing signature plus an index like <code>instance: -&gt;(fragment, index, options)</code>.</p>

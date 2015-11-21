@@ -167,7 +167,7 @@
 end
 </code></pre>
 
-<h2 id="validation">Validation</h2>
+<h2 id="deserialization">Deserialization</h2>
 
 <p>You now invoke the operation with a JSON document, not with a hash anymore.</p>
 
@@ -177,6 +177,17 @@ end
 <p>In <code>Operation#validate</code>, the incoming <code>params[:song]</code> will now be treated as a document.</p>
 
 <p>The operation’s representer will be passed into the form’s <code>validate</code> and used as the deserializer, as it can read JSON and understands the format’s specific semantics.</p>
+
+<p>If you prefer to use the <code>params</code> hash for deserialization, include <code>Deserializer::Hash</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  include Representer
+  include Representer::Deserializer::Hash
+</code></pre>
+
+<p>You can now pass the params hash into operation call. This will still use the representer, but no JSON parsing will happen.</p>
+
+<h2 id="validation">Validation</h2>
 
 <p>After deserialization/population is finished, validation and processing is analogue to a “normal” non-representer operation.</p>
 
@@ -188,7 +199,14 @@ end
 #=&gt; '{"title": "Fury","_links":{"self":"/songs/1"}}'
 </code></pre>
 
-<p>In <code>to_json</code>, the operation’s contract will be passed to the representer and rendered using the representer.</p>
+<p>In <code>to_json</code>, the operation’s <em>contract</em> will be passed to the representer and rendered using the representer.</p>
+
+<p>If you want to render the model instead (or anything else), override <code>Operation#represented</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  include Representer
+  def represented; model; end # will serialize @model instead of @contract.
+</code></pre>
 
 <h2 id="composable-interface">Composable Interface</h2>
 
