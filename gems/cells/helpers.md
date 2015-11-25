@@ -12,9 +12,10 @@ Conceptually, Cells doesn't have helpers anymore. You can still include modules 
 You can use the `#t` helper.
 
 
-	require "cell/translation"
+	require "cells/translation"
 
 	class Admin::Comment::Cell < Cell::Concept
+	  include ActionView::Helpers::TranslationHelper
 	  include Cell::Translation
 
 	  def show
