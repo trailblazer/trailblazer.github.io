@@ -87,8 +87,8 @@ Instead of using policies, you can also use a simple guard. A guard is like an i
     class Thing::Create < Trailblazer::Operation
       include Policy::Guard
 
-      policy-> (params) do
-        return false if params[:current_user].nil?
+      policy do |params|
+        params[:current_user].present? # true when present.
       end
 
 

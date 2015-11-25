@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: representable
 title: "Representable Upgrading Guide"
 ---
 
@@ -7,11 +7,26 @@ title: "Representable Upgrading Guide"
 
 We try to make upgrading as smooth as possible. Here's the generic documentation, but don't hesitate to ask for [help on Gitter](https://gitter.im/trailblazer/chat).
 
+## 2.4 to 2.5
+
+to_hash(user_options: {})
+->(options) { options[:user_options] }
+->(user_options:,**) { user_options }
+
 ## 2.3 to 2.4
+
+The 2.4 line contains many new features and got a major internal restructuring. It is a transitional release with deprecations for all changes.
+
+### Breakage
+
+    :render_filter => lambda { |val, options| "#{val.upcase},#{options[:doc]},#{options[:options][:user_options]}" }
+
 
 ### Deprecations
 
-Once you code is migrated to 2.4, you can disable slow and annoying deprecations as follows.
+Once your code is migrated to 2.4, you should upgrade to 2.5, which does _not_ have deprecations anymore and only supports Ruby 2.1 and higher.
+
+If you can't upgrade from 2.4 to 2.5, you can disable slow and annoying deprecations as follows.
 
     Representable.deprecations = false
 
@@ -25,6 +40,7 @@ For parsing, this is as follows (`:instance` is just an example).
 
 {% highlight ruby %}
 property :artist, instance: ->(options) do
+  options[:input]
   options[:fragment] # the parsed fragment
   options[:doc]      # the entire document
   options[:result]   # whatever the former function returned,
@@ -39,6 +55,16 @@ We highly recommend to use keyword arguments if you're using Ruby 2.1+.
 {% highlight ruby %}
 property :artist, instance: ->(fragment:, user_options:, **) do
 {% endhighlight %}
+
+### User Options
+
+When passing dynamic options to `to_hash`/`from_hash` and friends, in older version you were allowed to pass in the options directly.
+
+    decorator.to_hash(is_admin: true)
+
+This is deprecated. You now have to use the `:user_options` key to make it compatible with library options.
+
+    decorator.to_hash(user_options: { is_admin: true })
 
 ### Pass Options
 
@@ -68,3 +94,19 @@ property :artist, instance: ->(binding:, user_options:, **) do
   binding.represented  # the represented object
 end
 {% endhighlight %}
+
+### Parse Strategy
+
+The `:parse_strategy` option is deprecated in favor of `:populator`. Please replace all occurrences with the new populator style to stay cool.
+
+If you used a `:class` proc with `:parse_strategy`, the new API is `class: ->(options)`. It used to be `class: ->(fragment, user_options)`.
+
+### Class and Instance
+
+In older versions you could use `:class` and `:instance` in combination, which resulted in hard-to-follow behavior. These options work exlusively now.
+
+### SkipRender
+
+skip_render: lambda { |options|
+# raise options[:represented].inspect
+        options[:user_options][:skip?] and options[:input].name == "Rancid"
