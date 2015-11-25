@@ -67,26 +67,26 @@ You can suppress rendering of the compound document using the `:included` option
 
 As per specification, JSON API allows to suppress rendering of arbitrary fields. This is called [sparse fieldsets](http://jsonapi.org/format/#fetching-sparse-fieldsets).
 
-With Roar, you can do that with all kinds of resource objects: Filtering attributes works for the top "primary data" and for relationships.
+With Roar, you can do that with all kinds of resource objects: Filtering attributes works for the top "primary data" and for the compound object.
 
 For the primary data, you simply provide what to include via the `:include` option.
 
     decorator.to_hash(
-      include: [:id, :title]
+      include: [:title]
     )
 
-This will only render `:id` and `:title`.
+This will only render the two obligatory fields `:id`, `:type` and the  `:title` attribute.
 
     "data": {
       "type": "articles",
       "id": "1",
-      "attributes": {"title"=>"My Article"}
+      "attributes": {"title": "My Article"}
     }
 
 To include particular attributes, only, in the compound document, use `:fields`.
 
     decorator.to_hash(
-      include: [:id, :title, :author],
+      include: [:title, :author],
       fields:  {author: [:email]}
     )
 
@@ -97,7 +97,7 @@ The `:fields` option allows to specify what attributes for what type to include.
     "data": {
       "type": "articles",
       "id": "1",
-      "attributes": {"title"=>"My Article"}
+      "attributes": {"title": "My Article"}
     },
     "included": [
       {
