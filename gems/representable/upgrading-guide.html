@@ -1,12 +1,165 @@
-<h1 id="upgrading-guide">Upgrading Guide</h1>
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Representable Upgrading Guide</title>
+<meta name="description" content="Representable Upgrading Guide - Trailblazer" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords" content=", " />
+
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="../../css/style.css" />
+<link rel="shortcut icon" href="favicon.ico">
+
+<script src="../../js/foundation.js"></script>
+<link rel="stylesheet" href="/../../css/dark.css">
+<script src="/../../javascripts/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="/bower_components/modernizr/modernizr.js"></script>
+
+<meta property="og:title" content="Representable Upgrading Guide"/>
+<meta property="og:site_name" content="Trailblazer"/>
+<meta property="og:url" content="http://trailblazer.to"/>
+<meta property="og:description" content=""/>
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Representable Upgrading Guide">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+  </head>
+
+  <body class="representable-body">
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>     
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero representable-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1>
+              Representable
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+
+    <li class="heading"><a href="/gems/operation">operation</a></li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/cells">cells</a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/helpers.html">Helpers</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/caching.html">Caching</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/populators.html">Populators</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/performance.html">Performance</a></li>
+    <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/roar/">Roar</a></li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider"></li>
+
+    <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="upgrading-guide">Upgrading Guide</h1>
 
 <p>We try to make upgrading as smooth as possible. Here’s the generic documentation, but don’t hesitate to ask for <a href="https://gitter.im/trailblazer/chat">help on Gitter</a>.</p>
 
+<h2 id="to-25">2.4 to 2.5</h2>
+
+<p>to_hash(user_options: {})<br />
+-&gt;(options) { options[:user_options] }<br />
+-&gt;(user_options:,**) { user_options }</p>
+
 <h2 id="to-24">2.3 to 2.4</h2>
+
+<p>The 2.4 line contains many new features and got a major internal restructuring. It is a transitional release with deprecations for all changes.</p>
+
+<h3 id="breakage">Breakage</h3>
+
+<pre><code>:render_filter =&gt; lambda { |val, options| "#{val.upcase},#{options[:doc]},#{options[:options][:user_options]}" }
+</code></pre>
 
 <h3 id="deprecations">Deprecations</h3>
 
-<p>Once you code is migrated to 2.4, you can disable slow and annoying deprecations as follows.</p>
+<p>Once your code is migrated to 2.4, you should upgrade to 2.5, which does <em>not</em> have deprecations anymore and only supports Ruby 2.1 and higher.</p>
+
+<p>If you can’t upgrade from 2.4 to 2.5, you can disable slow and annoying deprecations as follows.</p>
 
 <pre><code>Representable.deprecations = false
 </code></pre>
@@ -20,6 +173,7 @@
 <p>For parsing, this is as follows (<code>:instance</code> is just an example).</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">options</span><span class="o">[</span><span class="ss">:input</span><span class="o">]</span>
   <span class="n">options</span><span class="o">[</span><span class="ss">:fragment</span><span class="o">]</span> <span class="c1"># the parsed fragment</span>
   <span class="n">options</span><span class="o">[</span><span class="ss">:doc</span><span class="o">]</span>      <span class="c1"># the entire document</span>
   <span class="n">options</span><span class="o">[</span><span class="ss">:result</span><span class="o">]</span>   <span class="c1"># whatever the former function returned,</span>
@@ -31,6 +185,18 @@
 <p>We highly recommend to use keyword arguments if you’re using Ruby 2.1+.</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="ss">fragment</span><span class="p">:,</span> <span class="ss">user_options</span><span class="p">:,</span> <span class="o">**</span><span class="p">)</span> <span class="k">do</span></code></pre></div>
+
+<h3 id="user-options">User Options</h3>
+
+<p>When passing dynamic options to <code>to_hash</code>/<code>from_hash</code> and friends, in older version you were allowed to pass in the options directly.</p>
+
+<pre><code>decorator.to_hash(is_admin: true)
+</code></pre>
+
+<p>This is deprecated. You now have to use the <code>:user_options</code> key to make it compatible with library options.</p>
+
+<pre><code>decorator.to_hash(user_options: { is_admin: true })
+</code></pre>
 
 <h3 id="pass-options">Pass Options</h3>
 
@@ -54,3 +220,90 @@
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">instance</span><span class="p">:</span> <span class="o">-&gt;</span><span class="p">(</span><span class="nb">binding</span><span class="p">:,</span> <span class="ss">user_options</span><span class="p">:,</span> <span class="o">**</span><span class="p">)</span> <span class="k">do</span>
   <span class="nb">binding</span><span class="o">.</span><span class="n">represented</span>  <span class="c1"># the represented object</span>
 <span class="k">end</span></code></pre></div>
+
+<h3 id="parse-strategy">Parse Strategy</h3>
+
+<p>The <code>:parse_strategy</code> option is deprecated in favor of <code>:populator</code>. Please replace all occurrences with the new populator style to stay cool.</p>
+
+<p>If you used a <code>:class</code> proc with <code>:parse_strategy</code>, the new API is <code>class: -&gt;(options)</code>. It used to be <code>class: -&gt;(fragment, user_options)</code>.</p>
+
+<h3 id="class-and-instance">Class and Instance</h3>
+
+<p>In older versions you could use <code>:class</code> and <code>:instance</code> in combination, which resulted in hard-to-follow behavior. These options work exlusively now.</p>
+
+<h3 id="skiprender">SkipRender</h3>
+
+<p>skip_render: lambda { |options|<br />
+# raise options[:represented].inspect<br />
+        options[:user_options][:skip?] and options[:input].name == “Rancid”</p>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+  </body>
+</html>

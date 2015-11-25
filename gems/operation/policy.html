@@ -213,8 +213,8 @@ end
 <pre><code>class Thing::Create &lt; Trailblazer::Operation
   include Policy::Guard
 
-  policy-&gt; (params) do
-    return false if params[:current_user].nil?
+  policy do |params|
+    params[:current_user].present? # true when present.
   end
 </code></pre>
 
