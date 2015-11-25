@@ -188,9 +188,66 @@ end
 
 <h2 id="parsing-collections">Parsing Collections</h2>
 
+<h2 id="compound-document">Compound Document</h2>
+
+<p>You can suppress rendering of the compound document using the <code>:included</code> option.</p>
+
+<pre><code>decorator.to_json(included: false)
+</code></pre>
+
 <h2 id="sparse-fieldsets">Sparse Fieldsets</h2>
 
-<p>to_hash(included: false)</p>
+<p>As per specification, JSON API allows to suppress rendering of arbitrary fields. This is called <a href="http://jsonapi.org/format/#fetching-sparse-fieldsets">sparse fieldsets</a>.</p>
+
+<p>With Roar, you can do that with all kinds of resource objects: Filtering attributes works for the top “primary data” and for relationships.</p>
+
+<p>For the primary data, you simply provide what to include via the <code>:include</code> option.</p>
+
+<pre><code>decorator.to_hash(
+  include: [:id, :title]
+)
+</code></pre>
+
+<p>This will only render <code>:id</code> and <code>:title</code>.</p>
+
+<pre><code>"data": {
+  "type": "articles",
+  "id": "1",
+  "attributes": {"title"=&gt;"My Article"}
+}
+</code></pre>
+
+<p>To include particular attributes, only, in the compound document, use <code>:fields</code>.</p>
+
+<pre><code>decorator.to_hash(
+  include: [:id, :title, :author],
+  fields:  {author: [:email]}
+)
+</code></pre>
+
+<p>You can control what types should be included in the compound document by adding them to <code>:include</code>.</p>
+
+<p>The <code>:fields</code> option allows to specify what attributes for what type to include.</p>
+
+<pre><code>"data": {
+  "type": "articles",
+  "id": "1",
+  "attributes": {"title"=&gt;"My Article"}
+},
+"included": [
+  {
+    "type": "author",
+    "id":   "a:1",
+    "attributes": {
+      "email": "celsito@trb.to"
+    }
+  }
+]
+</code></pre>
+
+<p>Note that the <code>author</code> fragment only contains the <code>email</code> in its attributes.</p>
+
+<p>The <code>to_json</code> API is designed to be able to process <code>params</code> directly, where JSON API parameters like <code>fields</code> from the request URL are parsed into hashes and arrays.</p>
 
       </div>
     </div>
