@@ -144,9 +144,10 @@
 
 <p>You can use the <code>#t</code> helper.</p>
 
-<pre><code>require "cell/translation"
+<pre><code>require "cells/translation"
 
 class Admin::Comment::Cell &lt; Cell::Concept
+  include ActionView::Helpers::TranslationHelper
   include Cell::Translation
 
   def show
