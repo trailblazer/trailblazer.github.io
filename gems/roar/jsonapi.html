@@ -204,11 +204,11 @@ end
 <p>For the primary data, you simply provide what to include via the <code>:include</code> option.</p>
 
 <pre><code>decorator.to_hash(
-  include: [:id, :title]
+  include: [:title]
 )
 </code></pre>
 
-<p>This will only render <code>:id</code> and <code>:title</code>.</p>
+<p>This will only render the two obligatory fields <code>:id</code>, <code>:type</code> and the  <code>:title</code> attribute.</p>
 
 <pre><code>"data": {
   "type": "articles",
@@ -220,7 +220,7 @@ end
 <p>To include particular attributes, only, in the compound document, use <code>:fields</code>.</p>
 
 <pre><code>decorator.to_hash(
-  include: [:id, :title, :author],
+  include: [:title, :author],
   fields:  {author: [:email]}
 )
 </code></pre>
