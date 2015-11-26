@@ -7,7 +7,10 @@ title: "Representable Upgrading Guide"
 
 We try to make upgrading as smooth as possible. Here's the generic documentation, but don't hesitate to ask for [help on Gitter](https://gitter.im/trailblazer/chat).
 
-## 2.4 to 2.5
+## 2.4 to 3.0
+
+* The 3.0 line runs with Ruby >2.0, only. This is to make extensive use of keyword arguments.
+* All deprecations from 2.4 have been removed.
 
 to_hash(user_options: {})
 ->(options) { options[:user_options] }
@@ -24,9 +27,9 @@ The 2.4 line contains many new features and got a major internal restructuring. 
 
 ### Deprecations
 
-Once your code is migrated to 2.4, you should upgrade to 2.5, which does _not_ have deprecations anymore and only supports Ruby 2.1 and higher.
+Once your code is migrated to 2.4, you should upgrade to 3.0, which does _not_ have deprecations anymore and only supports Ruby 2.0 and higher.
 
-If you can't upgrade from 2.4 to 2.5, you can disable slow and annoying deprecations as follows.
+If you can't upgrade to 3.0, you can disable slow and annoying deprecations as follows.
 
     Representable.deprecations = false
 
@@ -110,3 +113,7 @@ In older versions you could use `:class` and `:instance` in combination, which r
 skip_render: lambda { |options|
 # raise options[:represented].inspect
         options[:user_options][:skip?] and options[:input].name == "Rancid"
+
+### Binding
+
+The `:binding` option is deprecated and will be removed in 3.0. You can use your own pipeline and replace the `WriteFragment` function with your own.
