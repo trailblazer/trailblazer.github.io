@@ -24,13 +24,128 @@ A representer can either be a class (called _decorator_) or a module (called _re
       property :title
     end
 
-A representer simply defines the fields that will be mapped to the document. You can then simply decorate an object and render or parse. Here's an example.
+A representer simply defines the fields that will be mapped to the document using `property` or `collection`. You can then decorate an object and render or parse. Here's an example.
 
     SongRepresenter.new(song).to_json #=> {"id": 1, title":"Fallout"}
 
 The details are being discussed in the [public API](#public-api) section.
 
 ### Representer Modules
+
+Instead of using classes as representers, you can also leverage modules which will then get mixed into the represented object.
+
+    module SongRepresenter
+      include Representable::JSON
+
+      property :id
+      property :title
+    end
+
+The API in a module representer is identical to decorators. However, the way you apply them is different.
+
+    song.extend(SongRepresenter).to_json #=> {"id": 1, title":"Fallout"}
+
+There's two drawbacks with this approach.
+
+1. You pollute the represented object with the imported representer methods (e.g. `to_json`).
+2. Extending an object at run-time is costly and with many `extend`s there will be a noteable performance decrease.
+
+Throughout this documentation, we will use decorator as examples to encourage this cleaner and faster approach.
+
+### Collections
+
+Not everything is a scalar value. Sometimes an object's property can be a collection of values. Use `collection` to represent arrays.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :id
+      property :title
+      collection :composer_ids
+    end
+
+The new collection `composer_ids` has to be enumeratable object, like an array.
+
+    Song = Struct.new(:id, :title, :composer_ids)
+    song = Song.new(1, "Fallout", [2, 3])
+
+    song.to_json #=> {"id": 1, title":"Fallout", composer_ids:[2,3]}
+
+Of course, this works also for parsing. The incoming `composer_ids` will override the old collection on the represented object.
+
+### Nesting
+
+Representable can also handle compositions of objects. For example, a song could nest an artist object.
+
+    Song   = Struct.new(:id, :title, :artist)
+    Artist = Struct.new(:id, :name)
+
+    artist = Artist.new(2, "The Police")
+    song = Song.new(1, "Fallout", artist)
+
+### Inline Representer
+
+The easiest way to nest representers is by using an inline representer.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :id
+      property :title
+
+      property :artist do
+        property :id
+        property :name
+      end
+    end
+
+Note that you can have any levels of nesting.
+
+### Explicit Representer
+
+Sometimes you want to compose two existing, stand-alone representers.
+
+    class ArtistRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :id
+      property :name
+    end
+
+To maximize reusability of representers, you can reference a nested representer using the `:decorator` option.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :id
+      property :title
+
+      property :artist, decorator: ArtistRepresenter
+    end
+
+This is identical to an inline representer, but allows you to reuse `ArtistRepresenter` elsewhere.
+
+Note that the `:extend` and `:decorator` options are identical. They can both reference a decorator or a module.
+
+### Nested Rendering
+
+Regardless of the representer types you use, rendering will result in a nested document.
+
+    SongRepresenter.new(song).to_json
+    #=> {"id": 1, title":"Fallout", artist:{"id":2, "name":"The Police"}}
+
+### Nested Parsing
+
+When parsing, .......
+
+    song = Song.new(nil, nil, Artist.new)
+
+    SongRepresenter.new(song).
+        from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
+
+    song.artist.name #=> "The Police"
+
+Note that the artist object has to be present
 
 ## Public API
 
