@@ -163,6 +163,8 @@ This happens via the `:class` option. Now, the document can be parsed and a nest
 
     song.artist.name #=> "The Police"
 
+The default behavior is - admittedly - very primitive. Representable's parsing allow rich mapping, object creation and runtime checks. Read about [populators](populator.html) to learn how that works.
+
 ### Document Nesting
 
 Not always does the structure of the desired document map to your objects. The `::nested` method allows structuring properties within a separate section while still mapping the properties to the outer object.
@@ -338,6 +340,11 @@ This renames the property but still inherits all the inlined configuration.
 
 Basically, `:inherit` copies the configuration from the parent property, then merges in your options from the inheriting representer. It exposes the same behaviour as `super` in Ruby - when using `:inherit` the property must exist in the parent representer.
 
+
+## Defaults
+
+
+.........
 
 ## Public API
 
