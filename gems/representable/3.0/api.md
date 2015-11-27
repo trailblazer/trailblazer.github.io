@@ -83,6 +83,15 @@ Representable can also handle compositions of objects. For example, a song could
     artist = Artist.new(2, "The Police")
     song = Song.new(1, "Fallout", artist)
 
+Here's a better view of that object graph.
+
+    #<struct Song
+      id=1,
+      title="Fallout",
+      artist=#<struct Artist
+        id=2,
+        name="The Police">>
+
 ### Inline Representer
 
 The easiest way to nest representers is by using an inline representer.
@@ -136,16 +145,199 @@ Regardless of the representer types you use, rendering will result in a nested d
 
 ### Nested Parsing
 
-When parsing, .......
+When parsing, per default Representable will want to instantiate an object for every nested, typed fragment.
 
-    song = Song.new(nil, nil, Artist.new)
+You have to tell Representable what object to instantiate for the nested `artist:` fragment.
+
+    class SongRepresenter < Representable::Decorator
+      # ..
+      property :artist, decorator: ArtistRepresenter, class: Artist
+    end
+
+This happens via the `:class` option. Now, the document can be parsed and a nested `Artist` will be created by the parsing.
+
+    song = Song.new # nothing set.
 
     SongRepresenter.new(song).
         from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
 
     song.artist.name #=> "The Police"
 
-Note that the artist object has to be present
+### Document Nesting
+
+Not always does the structure of the desired document map to your objects. The `::nested` method allows structuring properties within a separate section while still mapping the properties to the outer object.
+
+Imagine the following document.
+
+    {"title": "Roxanne",
+     "details":
+       {"track": 3,
+        "length": "4:10"}
+    }
+
+However, in the `Song` class, there's no such concept as `details`.
+
+    Song = Struct.new(:title, :track, :length)
+
+
+Both track and length are properties of the song object itself. Representable gives you ::nested to map the virtual `details` section to the song instance.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :title
+
+      nested :details do
+        property :track
+        property :length
+      end
+    end
+
+Accessors for the nested properties will still be called on the song object. And as always, this works both ways - for rendering and parsing.
+
+### Wrapping
+
+You can automatically wrap a document.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      self.representation_wrap= :song
+
+      property :title
+      property :id
+    end
+
+This will add a container for rendering and parsing.
+
+    song.extend(SongRepresenter).to_json
+    #=> {"song":{"title":"Fallout","id":1}}
+
+Setting self.representation_wrap = true will advice representable to figure out the wrap itself by inspecting the represented object class.
+
+### Inheritance
+
+Properties can be inherited across representer classes and modules.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :id
+      property :title
+    end
+
+What if you need a refined representer to also add the artist. Use inheritance.
+
+    class SongWithArtistRepresenter < SongRepresenter
+      property :artist do
+        property :name
+      end
+    end
+
+All configuration from `SongRepresenter` will be inherited, making the properties on `SongWithArtistRepresenter`: `id`, `title`, and `artist`. The original `SongRepresenter` will stay as it is.
+
+### Composition
+
+You can also use modules and decorators together to compose representers.
+
+    module GenericRepresenter
+      include Representable::JSON
+
+      property :id
+    end
+
+This can be included in other representers and will extend their configuration.
+
+    class SongRepresenter < Representable::Decorator
+      include GenericRepresenter
+
+      property :title
+    end
+
+As a result, `SongRepresenter` will contain the good old `id` and `title` property.
+
+### Overriding Properties
+
+You might want to override a particular property in an inheriting representer. Successively calling `property(name)` will override the former definition - exactly as you know it from overriding methods in Ruby.
+
+    class CoverSongRepresenter < SongRepresenter
+      include Representable::JSON
+
+      property :title, as: :name # overrides that definition.
+    end
+
+### Partly Overriding Properties
+
+Instead of fully replacing a property, you can extend it with `:inherit`. This will _add_ your new options and override existing options in case the one you provided already existed.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :title, as: :name, render_nil: true
+    end
+
+You can now inherit properties but still override or add options.
+
+    class CoverSongRepresenter < SongRepresenter
+      include Representable::JSON
+
+      property :title, as: :songTitle, default: "n/a", inherit: true
+    end
+
+
+Using the :inherit, this will result in a property having the following options.
+
+    property :title,
+      as:         :songTitle, # overridden in CoverSongRepresenter.
+      render_nil: true        # inherited from SongRepresenter.
+      default:    "n/a"       # defined in CoverSongRepresenter.
+
+The `:inherit` option works for both inheritance and module composition.
+
+### Inherit With Inline Representers
+
+`:inherit` also works applied with inline representers.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      property :title
+      property :artist do
+        property :name
+      end
+    end
+
+You can now override or add properties within the inline representer.
+
+    class HitRepresenter < SongRepresenter
+      include Representable::JSON
+
+      property :artist, inherit: true do
+        property :email
+      end
+    end
+
+Results in a combined inline representer as it inherits.
+
+    property :artist do
+      property :name
+      property :email
+    end
+
+Naturally, `:inherit` can be used within the inline representer block.
+
+Note that the following also works.
+
+    class HitRepresenter < SongRepresenter
+      include Representable::JSON
+
+      property :artist, as: :composer, inherit: true
+    end
+
+This renames the property but still inherits all the inlined configuration.
+
+Basically, `:inherit` copies the configuration from the parent property, then merges in your options from the inheriting representer. It exposes the same behaviour as `super` in Ruby - when using `:inherit` the property must exist in the parent representer.
+
 
 ## Public API
 
