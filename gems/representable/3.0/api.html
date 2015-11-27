@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Roar</title>
-<meta name="description" content="Roar - Trailblazer" />
+<title>Trailblazer: Representable API</title>
+<meta name="description" content="Representable API - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -20,19 +20,19 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Roar"/>
+<meta property="og:title" content="Representable API"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Roar">
+<meta name="twitter:title" content="Representable API">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
   </head>
 
-  <body class="roar-body">
+  <body class="representable-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -67,12 +67,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero roar-hero">
+    <div class="hero gems-hero representable-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
-            <h1 id="project_title">
-              Roar
+            <h1>
+              Representable
             </h1>
           </div>
         </div>
@@ -138,9 +138,146 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="roar">Roar</h1>
+        <h1 id="representable-api">Representable API</h1>
 
-<p>This will soon be elaborated.</p>
+<p>In Representable, we differentiate between three different APIs.</p>
+
+<p>The <a href="#declarative-api">declarative API</a> is how we define representers. You can learn how to use those representers by reading about the very brief <a href="#public-api">public API</a>. Representable is extendable without having to hack existing code: the <a href="#function-api">function API</a> documents how to use its options to achieve what you need.</p>
+
+<h2 id="declarative-api">Declarative API</h2>
+
+<p>To render objects to documents or parse documents to objects, you need to define a representer.</p>
+
+<p>A representer can either be a class (called <em>decorator</em>) or a module (called <em>representer module</em>). Throughout the docs, we will use decorators as they are cleaner and faster, but keep in mind you can also use modules.</p>
+
+<pre><code>require 'representable/json'
+
+class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+
+  property :id
+  property :title
+end
+</code></pre>
+
+<p>A representer simply defines the fields that will be mapped to the document. You can then simply decorate an object and render or parse. Here’s an example.</p>
+
+<pre><code>SongRepresenter.new(song).to_json #=&gt; {"id": 1, title":"Fallout"}
+</code></pre>
+
+<p>The details are being discussed in the <a href="#public-api">public API</a> section.</p>
+
+<h3 id="representer-modules">Representer Modules</h3>
+
+<h2 id="public-api">Public API</h2>
+
+<p>When decorating an object with a representer, the object needs to provide readers for every defined <code>property</code> - and writers, if you’re planning to parse.</p>
+
+<h3 id="accessors">Accessors</h3>
+
+<p>In our small <code>SongRepresenter</code> example, the represented object has to provide <code>#id</code> and <code>#title</code> for rendering.</p>
+
+<pre><code>Song = Struct.new(:id, :title)
+song = Song.new(1, "Fallout")
+</code></pre>
+
+<h3 id="rendering">Rendering</h3>
+
+<p>You can render the document by decorating the object and calling the serializer method.</p>
+
+<pre><code>SongRepresenter.new(song).to_json #=&gt; {"id":1, title":"Fallout"}
+</code></pre>
+
+<p>When rendering, the document fragment is read from the represented object using the getter (e.g. <code>Song#id</code>).</p>
+
+<p>Since we use <code>Representable::JSON</code> the serializer method is <code>#to_json</code>.</p>
+
+<p>For other format engines the serializer method will have the following name.</p>
+
+<ul>
+  <li><code>Representable::JSON#to_json</code></li>
+  <li><code>Representable::JSON#to_hash</code> (provides a hash instead of string)</li>
+  <li><code>Representable::Hash#to_hash</code></li>
+  <li><code>Representable::XML#to_xml</code></li>
+  <li><code>Representable::YAML#to_yaml</code></li>
+</ul>
+
+<h3 id="parsing">Parsing</h3>
+
+<p>Likewise, parsing will read values from the document and write them to the represented object.</p>
+
+<pre><code>song = Song.new
+SongRepresenter.new(song).from_json('{"id":1, "title":"Fallout"}')
+song.id    #=&gt; 1
+song.title #=&gt; "Fallout"
+</code></pre>
+
+<p>When parsing, the read fragment is written to the represented object using the setter (e.g. <code>Song#id=</code>).</p>
+
+<p>For other format engines, the deserializing method is named analogue to the serializing counterpart, where <code>to</code> becomes <code>from</code>. For example, <code>Representable::XML#from_xml</code> will parse XML if the format engine is mixed into the representer.</p>
+
+<h3 id="user-options">User Options</h3>
+
+<p>You can provide options when representing an object using the <code>user_options:</code> option.</p>
+
+<pre><code>decorator.to_json(user_options: { is_admin: true })
+</code></pre>
+
+<p>Note that the <code>:user_options</code> will be accessable on all levels in a nested representer. They act like a “global” configuration and are passed to all option functions.</p>
+
+<p>Here’s an example where the <code>:if</code> option function evaluates a dynamic user option.</p>
+
+<pre><code>property :id, if: -&gt;(options) { options[:user_options][:is_admin] }
+</code></pre>
+
+<p>This property is now only rendered or parsed when <code>:is_admin</code> is true.</p>
+
+<p>Using Ruby 2.1’s keyword arguments is highly recommended - to make that look a bit nicer.</p>
+
+<pre><code>property :id, if: -&gt;(user_options:, **) { user_options[:is_admin] }
+</code></pre>
+
+<h3 id="nested-user-options">Nested User Options</h3>
+
+<p>Representable also allows passing nested options to particular representers. You have to provide the property’s name to do so.</p>
+
+<pre><code>decorator.to_json(artist: { user_options: { is_admin: true } })
+</code></pre>
+
+<p>This will pass the option to the nested <code>artist</code>, only. Note that this works with any level of nesting.</p>
+
+<h3 id="include-and-exclude">Include and Exclude</h3>
+
+<p>Representable supports two top-level options.</p>
+
+<p><code>:include</code> allows defining a set of properties to represent. The remaining will be skipped.</p>
+
+<pre><code>decorator.to_json(include: [:id])  #=&gt; {"id":1}
+</code></pre>
+
+<p>The other, <code>:exclude</code>, will - you might have guessed it already - skip the provided properties and represent the remaining.</p>
+
+<pre><code>decorator.to_json(exclude: [:id, :artist])  #=&gt; {"title":"Fallout"}
+</code></pre>
+
+<p>As always, these options work both ways, for rendering <em>and</em> parsing.</p>
+
+<p>Note that you can also nest <code>:include</code> and <code>:exclude</code>.</p>
+
+<pre><code>decorator.to_json(artist: { include: [:name] })
+#=&gt; {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
+</code></pre>
+
+<h2 id="function-api">Function API</h2>
+
+<h2 id="standalone-collections">Standalone Collections</h2>
+
+<p>You can also represent collections without a “real” object holding that collection. This is sometimes also called <em>lonely collection</em>.</p>
+
+<pre><code>collection :to_a do
+  property :id
+end
+</code></pre>
 
       </div>
     </div>

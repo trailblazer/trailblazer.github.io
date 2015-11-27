@@ -10,12 +10,12 @@
 
 <link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
 
-<link rel="stylesheet" href="../../css/style.css" />
+<link rel="stylesheet" href="/css/style.css" />
 <link rel="shortcut icon" href="favicon.ico">
 
-<script src="../../js/foundation.js"></script>
-<link rel="stylesheet" href="/../../css/dark.css">
-<script src="/../../javascripts/highlight.pack.js"></script>
+<script src="/js/foundation.js"></script>
+<link rel="stylesheet" href="/css/dark.css">
+<script src="/javascripts/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
@@ -120,8 +120,10 @@
     <li class="divider"></li>
 
     <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
     <li><a href="/gems/representable/performance.html">Performance</a></li>
     <li><a href="/gems/representable/architecture.html">Architecture</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider"></li>
 
     <li class="heading"><a href="/gems/roar/">Roar</a></li>
@@ -140,7 +142,12 @@
 
 <p>We try to make upgrading as smooth as possible. Here’s the generic documentation, but don’t hesitate to ask for <a href="https://gitter.im/trailblazer/chat">help on Gitter</a>.</p>
 
-<h2 id="to-25">2.4 to 2.5</h2>
+<h2 id="to-30">2.4 to 3.0</h2>
+
+<ul>
+  <li>The 3.0 line runs with Ruby &gt;2.0, only. This is to make extensive use of keyword arguments.</li>
+  <li>All deprecations from 2.4 have been removed.</li>
+</ul>
 
 <p>to_hash(user_options: {})<br />
 -&gt;(options) { options[:user_options] }<br />
@@ -157,9 +164,9 @@
 
 <h3 id="deprecations">Deprecations</h3>
 
-<p>Once your code is migrated to 2.4, you should upgrade to 2.5, which does <em>not</em> have deprecations anymore and only supports Ruby 2.1 and higher.</p>
+<p>Once your code is migrated to 2.4, you should upgrade to 3.0, which does <em>not</em> have deprecations anymore and only supports Ruby 2.0 and higher.</p>
 
-<p>If you can’t upgrade from 2.4 to 2.5, you can disable slow and annoying deprecations as follows.</p>
+<p>If you can’t upgrade to 3.0, you can disable slow and annoying deprecations as follows.</p>
 
 <pre><code>Representable.deprecations = false
 </code></pre>
@@ -236,6 +243,10 @@
 <p>skip_render: lambda { |options|<br />
 # raise options[:represented].inspect<br />
         options[:user_options][:skip?] and options[:input].name == “Rancid”</p>
+
+<h3 id="binding">Binding</h3>
+
+<p>The <code>:binding</code> option is deprecated and will be removed in 3.0. You can use your own pipeline and replace the <code>WriteFragment</code> function with your own.</p>
 
       </div>
     </div>
