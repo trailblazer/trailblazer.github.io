@@ -52,15 +52,13 @@ Here's a list of all available options.
 `:skip_parse` | [Skips parsing when evaluated to true](#skip-parse)
 `:skip_render` | [Skips rendering when evaluated to true](#skip-render)
 `:parse_filter` | [Pipeline to process parsing result](#parse-filter)
-`:skip_render` | [Pipeline to process rendering result](#render-filter)
-
-
-class: lambda { |fragment, [i], args| } (see Nesting)
-extend: lambda { |object, args| } (see Nesting)
-instance: lambda { |fragment, [i], args| } (see Object Creation)
-prepare: lambda { |object, args| } (see docs)
-serialize: lambda { |object, args| } (see docs)
-deserialize: lambda { |object, fragment, args| } (see docs)
+`:render_filter` | [Pipeline to process rendering result](#render-filter)
+`:deserialize` | [Override deserialization of nested object](#deserialize)
+`:serialize` | Override [serialization](#serialize) of nested object
+`:extend` | [Representer](#extend) to use for parsing or rendering
+`:prepare` | [Decorate](#prepare) the represented object
+`:class` | [Class](#class) to instantiate when parsing nested fragment
+`:instance` | [Instantiate](#class) object directlz when parsing nested fragment
 
 ## As
 
@@ -101,7 +99,7 @@ Again, don't overuse this method and consider a twin if you find yourself using 
 
 You can exclude properties when rendering or parsing, as if they were not defined at all. This works with `:if`.
 
-    property :id, if: ->(user_options) { user_options[:is_admin] }
+    property :id, if: ->(user_options:,**) { user_options[:is_admin] }
 
 When parsing (or rendering), the `id` property is only considered when `is_admin` has been passed in.
 
@@ -115,7 +113,7 @@ This will parse the `id` field.
 To override the entire parsing process, use `:reader`. You won't have access to `:fragment` here since parsing hasn't happened, yet.
 
     property :id,
-      reader: ->(represented:,doc:) { represented.payload = doc[:uuid] || "n/a" }
+      reader: ->(represented:,doc:,**) { represented.payload = doc[:uuid] || "n/a" }
 
 With `:reader`, parsing is completely up to you. Representable will only invoke the function and do nothing else.
 
@@ -124,7 +122,7 @@ With `:reader`, parsing is completely up to you. Representable will only invoke 
 To override the entire rendering process, use `:writer`. You won't have access to `:input` here since the value query to the represented object hasn't happened, yet.
 
     property :id,
-      writer: ->(represented:,doc:) { doc[:uuid] = represented.id }
+      writer: ->(represented:,doc:,**) { doc[:uuid] = represented.id }
 
 With `:writer`, rendering is completely up to you. Representable will only invoke the function and do nothing else.
 
@@ -133,7 +131,7 @@ With `:writer`, rendering is completely up to you. Representable will only invok
 To suppress parsing of a property, use `:skip_parse`.
 
     property :id,
-      skip_parse: ->(fragment:) { fragment.nil? || fragment=="" }
+      skip_parse: ->(fragment:,**) { fragment.nil? || fragment=="" }
 
 No further processing happens with this property, should the option evaluate to true.
 
@@ -142,7 +140,7 @@ No further processing happens with this property, should the option evaluate to 
 To suppress rendering of a property, use `:skip_render`.
 
     property :id,
-      skip_render: ->(represented:) { represented.id.nil? }
+      skip_render: ->(represented:,**) { represented.id.nil? }
 
 No further processing happens with this property, should the option evaluate to true.
 
@@ -167,3 +165,86 @@ Use `:render_filter` to process the rendered fragment.
 Just before rendering the fragment into the document, the `:render_filter` is invoked.
 
 Note that you can add multiple filters, the result from the last will be passed to the next.
+
+## Deserialize
+
+When deserializing a nested fragment, the default mechanics after decorating the represented object are to call `represented.from_json(fragment)`.
+
+Override this step using `:deserialize`.
+
+    property :artist,
+      deserialize: ->(input:,fragment:,**) { input.attributes = fragment }
+
+The `:input` option provides the currently deserialized object.
+
+## Serialize
+
+When serializing a nested object, the default mechanics after decorating the represented object are to call `represented.to_json`.
+
+Override this step using `:serialize`.
+
+    property :artist,
+      serialize: ->(represented:,**) { represented.attributes.to_h }
+
+## Extend
+
+Alias: `:decorator`.
+
+When rendering or parsing a nested object, that represented object needs to get decorated, which is configured via the `:extend` option.
+
+You can use `:extend` to configure an explicit representer module or decorator.
+
+    property :artist, extend: ArtistRepresenter
+
+Alternatively, you could also compute that representer at run-time.
+
+For parsing, this could look like this.
+
+    property :artist,
+      extend: ->(fragment:,**) do
+        fragment["type"] == "rockstar" ? RockstarRepresenter : ArtistRepresenter
+      end
+
+For rendering, you could do something as follows.
+
+    property :artist,
+      extend: ->(input:,**) do
+        input.is_a?(Rockstar) ? RockstarRepresenter : ArtistRepresenter
+      end
+
+This allows a dynamic polymorphic representer structure.
+
+## Prepare
+
+The default mechanics when representing a nested object is decorating the object, then calling the serializer or deserializer method on it.
+
+You can override this step using `:prepare`.
+
+    property :artist,
+      prepare: ->(represented:,**) { ArtistRepresenter.new(input) }
+
+Just for fun, you could mimic the original behavior.
+
+    property :artist,
+      prepare: ->(represented:,binding:,**) { binding[:extend].new(represented) }
+
+## Class
+
+When parsing a nested fragment, Representable per default creates an object for you. The class can be defined with `:class`.
+
+    property :artist,
+      class: Artist
+
+It could also be dynamic.
+
+    property :artist,
+      class: ->(fragment) { fragment["type"] == "rockstar" ? Rockstar : Artist }
+
+## Instance
+
+Instead of using `:class` you can directly instantiate the represented object yourself using `:instance`.
+
+    property :artist,
+      instance: ->(fragment) do
+        fragment["type"] == "rockstar" ? Rockstar.new : Artist.new
+      end
