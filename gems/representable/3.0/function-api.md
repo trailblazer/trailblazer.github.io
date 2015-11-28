@@ -43,17 +43,17 @@ Or, and that is the preferred way, use Ruby's keyword arguments.
 
 Here's a list of all available options.
 
-`:as` | [Renames property](#as)
-`:getter` | [Custom getter logic for rendering](#getter)
-`:setter` | [Custom setter logic after parsing](#setter)
-`:if` | [Includes property when rendering/parsing when evaluated to true](#if)
-`:reader` | [Overrides entire parsing process for property](#reader)
-`:writer` | [Overrides entire rendering process for property](#writer)
-`:skip_parse` | [Skips parsing when evaluated to true](#skip-parse)
-`:skip_render` | [Skips rendering when evaluated to true](#skip-render)
-`:parse_filter` | [Pipeline to process parsing result](#parse-filter)
-`:render_filter` | [Pipeline to process rendering result](#render-filter)
-`:deserialize` | [Override deserialization of nested object](#deserialize)
+`:as` | [Renames](#as) property
+`:getter` | Custom [getter](#getter) logic for rendering
+`:setter` | Custom [setter](#setter) logic after parsing
+`:if` | [Includes](#if) property when rendering/parsing when evaluated to true
+`:reader` | Overrides entire [parsing](#reader) process for property
+`:writer` | Overrides entire [rendering](#writer) process for property
+`:skip_parse` | [Skips parsing](#skip-parse) when evaluated to true
+`:skip_render` | [Skips rendering](#skip-render) when evaluated to true
+`:parse_filter` | Pipeline to process [parsing result](#parse-filter)
+`:render_filter` | Pipeline to process [rendering result](#render-filter)
+`:deserialize` | Override [deserialization](#deserialize) of nested object
 `:serialize` | Override [serialization](#serialize) of nested object
 `:extend` | [Representer](#extend) to use for parsing or rendering
 `:prepare` | [Decorate](#prepare) the represented object
