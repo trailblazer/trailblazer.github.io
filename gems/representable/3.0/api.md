@@ -7,7 +7,7 @@ title: "Representable API"
 
 In Representable, we differentiate between three different APIs.
 
-The [declarative API](#declarative-api) is how we define representers. You can learn how to use those representers by reading about the very brief [public API](#public-api). Representable is extendable without having to hack existing code: the [function API](#function-api) documents how to use its options to achieve what you need.
+The [declarative API](#declarative-api) is how we define representers. You can learn how to use those representers by reading about the very brief [public API](#public-api). Representable is extendable without having to hack existing code: the [function API](function-api.html) documents how to use its options to achieve what you need.
 
 ## Declarative API
 
@@ -215,7 +215,15 @@ This will add a container for rendering and parsing.
     song.extend(SongRepresenter).to_json
     #=> {"song":{"title":"Fallout","id":1}}
 
-Setting self.representation_wrap = true will advice representable to figure out the wrap itself by inspecting the represented object class.
+Setting `self.representation_wrap = true` will advice representable to figure out the wrap itself by inspecting the represented object class.
+
+Note that `representation_wrap` is a dynamic function option.
+
+    self.representation_wrap = ->(user_options:) { user_options[:my_wrap] }
+
+This would allow to provide the wrap manually.
+
+    decorator.to_json(user_options: { my_wrap: "hit" })
 
 ### Inheritance
 
@@ -432,8 +440,6 @@ Note that you can also nest `:include` and `:exclude`.
 
     decorator.to_json(artist: { include: [:name] })
     #=> {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
-
-## Function API
 
 
 
