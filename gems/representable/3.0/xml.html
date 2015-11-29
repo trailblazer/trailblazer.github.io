@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Cells and Helpers</title>
-<meta name="description" content="Cells and Helpers - Trailblazer" />
+<title>Trailblazer: Representable: XML</title>
+<meta name="description" content="Representable: XML - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -20,19 +20,19 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Cells and Helpers"/>
+<meta property="og:title" content="Representable: XML"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Cells and Helpers">
+<meta name="twitter:title" content="Representable: XML">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
   </head>
 
-  <body class="cells-body">
+  <body class="representable-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -67,12 +67,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero cells-hero">
+    <div class="hero gems-hero representable-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
-            <h1 id="project_title">
-              Cells
+            <h1>
+              Representable
             </h1>
           </div>
         </div>
@@ -141,46 +141,102 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="helpers">Helpers</h1>
+        <h1 id="representable-xml">Representable XML</h1>
 
-<p>Conceptually, Cells doesn’t have helpers anymore. You can still include modules to import utility methods but they won’t get copied to the view. In fact, the view is evaluated in the cell instance context and hence you can simply call instance methods in the template files.</p>
+<p>If you enjoy the pleasure of working with XML, Representable can help you. It does render and parse XML, too, with an almost identical declarative API.</p>
 
-<h2 id="translation-and-i18n">Translation and I18N</h2>
+<pre><code>require "representable/xml"
 
-<p>You can use the <code>#t</code> helper.</p>
+class SongRepresenter &lt; Representable::Decorator
+  include Representable::XML
 
-<pre><code>require "cells/translation"
-
-class Admin::Comment::Cell &lt; Cell::Concept
-  include ActionView::Helpers::TranslationHelper
-  include Cell::Translation
-
-  def show
-    t(".greeting")
-  end
+  property :title
+  property :id
+  collection :composers
 end
 </code></pre>
 
-<p>This will lookup the I18N path <code>admin.comment.greeting</code>.</p>
+<p>Note that you have to include the <code>Representable::XML</code> module.</p>
 
-<p>Setting a differing translation path works with <code>::translation_path</code>.</p>
+<p>The public API then gives you <code>to_xml</code> and <code>from_xml</code>.</p>
 
-<pre><code>class Admin::Comment::Cell &lt; Cell::Concept
-  include Cell::Translation
-  self.translation_path = "cell.admin"
+<pre><code>song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
+SongRepresenter.new(song).to_xml #=&gt;
+
+&lt;song&gt;
+    &lt;title&gt;Fallout&lt;/title&gt;
+    &lt;composers&gt;Stewart Copeland&lt;/composers&gt;
+    &lt;composers&gt;Sting&lt;/composers&gt;
+&lt;/song&gt;
 </code></pre>
 
-<p>The lookup will now be <code>cell.admin.greeting</code>.</p>
+<h2 id="tag-attributes">Tag Attributes</h2>
 
-<h2 id="asset-helpers">Asset Helpers</h2>
+<p>You can also map properties to tag attributes in Representable. This works only for the top-level node, though (seen from the representer’s perspective).</p>
 
-<p>When using asset path helpers like <code>image_tag</code> that render different paths in production, please simply delegate to the controller.</p>
+<pre><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::XML
 
-<pre><code>class Comment::Cell &lt; Cell::Concept
-  delegates :parent_controller, :image_tag
+  property :id, attribute: true
+  property :track, attribute: true
+end
+
+song.to_xml
+#=&gt; &lt;song title="American Idle" id="1" /&gt;
 </code></pre>
 
-<p>The delegation fixes the <a href="https://github.com/apotonick/cells/issues/214">well-known problem</a> of the cell rendering the “wrong” path when using Sprockets. Please note that this fix is necessary due to the way Rails includes helpers and accesses global data.</p>
+<p>Naturally, this works both ways.</p>
+
+<h2 id="mapping-content">Mapping Content</h2>
+
+<p>The same concept can also be applied to content. If you need to map a property to the top-level node’s content, use the <code>:content</code> option. Again, <em>top-level</em> refers to the document fragment that maps to the representer.</p>
+
+<pre><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::XML
+
+  property :title, content: true
+end
+
+song.to_xml
+#=&gt; &lt;song&gt;American Idle&lt;/song&gt;
+</code></pre>
+
+<h2 id="wrapping-collections">Wrapping Collections</h2>
+
+<p>It is sometimes unavoidable to wrap tag lists in a container tag.</p>
+
+<pre><code>class AlbumRepresenter &lt; Representable::Decorator
+  include Representable::XML
+
+  collection :songs, as: :song, wrap: :songs
+end
+</code></pre>
+
+<p>Note that <code>:wrap</code> defines the container tag name.</p>
+
+<pre><code>song.to_xml #=&gt;
+&lt;album&gt;
+    &lt;songs&gt;
+        &lt;song&gt;Laundry Basket&lt;/song&gt;
+        &lt;song&gt;Two Kevins&lt;/song&gt;
+        &lt;song&gt;Wright and Rong&lt;/song&gt;
+    &lt;/songs&gt;
+&lt;/album&gt;
+</code></pre>
+
+<h2 id="namespaces">Namespaces</h2>
+
+<p>Support for namespaces are not yet implemented. However, if an incoming parsed document contains namespaces, you can automatically remove them.</p>
+
+<pre><code>class AlbumRepresenter &lt; Representable::Decorator
+  include Representable::XML
+
+  remove_namespaces!
+</code></pre>
+
+<h2 id="development-status">Development Status</h2>
+
+<p>The <code>Representable::XML</code> module is currently not being further developed. If you are interested in working on it, feel free to PR. In case you need a feature but want us to build it, consider <a href="/inc/oss.html">hiring us</a> for an OSS feature project.</p>
 
       </div>
     </div>
