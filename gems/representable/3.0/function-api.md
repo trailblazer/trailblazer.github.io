@@ -5,7 +5,7 @@ title: "Representable: Function API"
 
 # Function API
 
-Both rendering and parsing have a rich API that allows you to hook into certain steps and change behavior.
+Both rendering and parsing have a rich API that allows you to hook into particular steps and change behavior.
 
 If that still isn't enough, you can create your own [pipeline](pipeline.html).
 
@@ -58,7 +58,10 @@ Here's a list of all available options.
 `:extend` | [Representer](#extend) to use for parsing or rendering
 `:prepare` | [Decorate](#prepare) the represented object
 `:class` | [Class](#class) to instantiate when parsing nested fragment
-`:instance` | [Instantiate](#class) object directlz when parsing nested fragment
+`:instance` | [Instantiate](#class) object directly when parsing nested fragment
+`:render_nil` | [Render nil](#render-nil) values
+`:render_empty` | [Render empty ](#render-empty) collections
+
 
 ## As
 
@@ -248,3 +251,19 @@ Instead of using `:class` you can directly instantiate the represented object yo
       instance: ->(fragment) do
         fragment["type"] == "rockstar" ? Rockstar.new : Artist.new
       end
+
+### Render Nil
+
+In Representable, `false` values are considered as a valid value and will be rendered into the document or parsed.
+
+If you want `nil` values to be included when rendering, use the `:render_nil` option.
+
+    property :title,
+      render_nil: true
+
+### Render Empty
+
+Per default, empty collections are rendered (unless they're `nil`). You can suppress rendering.
+
+    collection :songs,
+      render_empty: false

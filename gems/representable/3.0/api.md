@@ -75,7 +75,9 @@ Of course, this works also for parsing. The incoming `composer_ids` will overrid
 
 ### Nesting
 
-Representable can also handle compositions of objects. For example, a song could nest an artist object.
+Representable can also handle compositions of objects. This works for both `property` and `collection`.
+
+For example, a song could nest an artist object.
 
     Song   = Struct.new(:id, :title, :artist)
     Artist = Struct.new(:id, :name)
@@ -351,8 +353,38 @@ Basically, `:inherit` copies the configuration from the parent property, then me
 
 ## Defaults
 
+The `defaults` method allows setting options that will be applied to all property definitions of a representer.
 
-.........
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      defaults render_nil: true
+
+      property :id
+      property :title
+    end
+
+This will include `render_nil: true` in both `id` and `title` definitions, as if you'd provided that option each time.
+
+You can also have dynamic option computation at compile-time.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      defaults do |name|
+        { as: name.camelize }
+      end
+
+Combining those two forms also works.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON
+
+      defaults render_nil: true do |name|
+        { as: name.camelize }
+      end
+
+All defaults are inherited to subclasses or including modules.
 
 ## Public API
 
