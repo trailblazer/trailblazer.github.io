@@ -219,7 +219,9 @@ song.to_json #=&gt; {"id": 1, title":"Fallout", composer_ids:[2,3]}
 
 <h3 id="nesting">Nesting</h3>
 
-<p>Representable can also handle compositions of objects. For example, a song could nest an artist object.</p>
+<p>Representable can also handle compositions of objects. This works for both <code>property</code> and <code>collection</code>.</p>
+
+<p>For example, a song could nest an artist object.</p>
 
 <pre><code>Song   = Struct.new(:id, :title, :artist)
 Artist = Struct.new(:id, :name)
@@ -519,7 +521,41 @@ end
 
 <h2 id="defaults">Defaults</h2>
 
-<p>………</p>
+<p>The <code>defaults</code> method allows setting options that will be applied to all property definitions of a representer.</p>
+
+<pre><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+
+  defaults render_nil: true
+
+  property :id
+  property :title
+end
+</code></pre>
+
+<p>This will include <code>render_nil: true</code> in both <code>id</code> and <code>title</code> definitions, as if you’d provided that option each time.</p>
+
+<p>You can also have dynamic option computation at compile-time.</p>
+
+<pre><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+
+  defaults do |name|
+    { as: name.camelize }
+  end
+</code></pre>
+
+<p>Combining those two forms also works.</p>
+
+<pre><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+
+  defaults render_nil: true do |name|
+    { as: name.camelize }
+  end
+</code></pre>
+
+<p>All defaults are inherited to subclasses or including modules.</p>
 
 <h2 id="public-api">Public API</h2>
 

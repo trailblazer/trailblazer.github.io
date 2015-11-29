@@ -141,7 +141,7 @@
       <div class="columns medium-9 code-content">
         <h1 id="function-api">Function API</h1>
 
-<p>Both rendering and parsing have a rich API that allows you to hook into certain steps and change behavior.</p>
+<p>Both rendering and parsing have a rich API that allows you to hook into particular steps and change behavior.</p>
 
 <p>If that still isn’t enough, you can create your own <a href="pipeline.html">pipeline</a>.</p>
 
@@ -275,7 +275,15 @@
     </tr>
     <tr>
       <td><code>:instance</code></td>
-      <td><a href="#class">Instantiate</a> object directlz when parsing nested fragment</td>
+      <td><a href="#class">Instantiate</a> object directly when parsing nested fragment</td>
+    </tr>
+    <tr>
+      <td><code>:render_nil</code></td>
+      <td><a href="#render-nil">Render nil</a> values</td>
+    </tr>
+    <tr>
+      <td><code>:render_empty</code></td>
+      <td><a href="#render-empty">Render empty </a> collections</td>
     </tr>
   </tbody>
 </table>
@@ -489,6 +497,24 @@
   instance: -&gt;(fragment) do
     fragment["type"] == "rockstar" ? Rockstar.new : Artist.new
   end
+</code></pre>
+
+<h3 id="render-nil">Render Nil</h3>
+
+<p>In Representable, <code>false</code> values are considered as a valid value and will be rendered into the document or parsed.</p>
+
+<p>If you want <code>nil</code> values to be included when rendering, use the <code>:render_nil</code> option.</p>
+
+<pre><code>property :title,
+  render_nil: true
+</code></pre>
+
+<h3 id="render-empty">Render Empty</h3>
+
+<p>Per default, empty collections are rendered (unless they’re <code>nil</code>). You can suppress rendering.</p>
+
+<pre><code>collection :songs,
+  render_empty: false
 </code></pre>
 
       </div>
