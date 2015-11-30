@@ -125,7 +125,7 @@
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
     <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
     <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
-    <li><a href="/gems/representable/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
     <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider"></li>
 
@@ -197,6 +197,8 @@ end
 ├── ::build_operation
 │   ├── #initialize
 │   │   ├── #setup!
+│   │   │   ├── #assign_params!
+│   │   │   │   │   ├── #params!
 │   │   │   ├── #setup_params!
 │   │   │   ├── #build_model!
 │   │   │   │   ├── #assign_model!
@@ -208,7 +210,8 @@ end
 
 <ol>
   <li>In case of a polymorphic setup when you want different operation classes to handle different contexts, configured <a href="builder.html">builders</a> will be run by <code>::build_operation</code> to figure out the class to instantiate.</li>
-  <li>Override <code>#setup_params!</code> to normalize the incoming parameters.</li>
+  <li>Override <code>#setup_params!</code> to normalize the incoming parameters. This implies that you have to change the original hash.</li>
+  <li>Override <code>#params</code> if you want to use a different params hash - which you simply return from this method. This allows to keep the original <code>params</code> immutuable.</li>
   <li>Override <code>#model!</code> to compute the operation’s model.</li>
   <li>Override <code>#setup_model!</code> for tasks such as adding nested models to the operation’s model.</li>
   <li>Implement <code>#process</code> for your business logic.</li>
