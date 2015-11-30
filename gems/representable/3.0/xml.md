@@ -5,7 +5,7 @@ title: "Representable: XML"
 
 # Representable XML
 
-If you enjoy the pleasure of working with XML, Representable can help you. It does render and parse XML, too, with an almost identical declarative API.
+If you're enjoying the pleasure of working with XML, Representable can help you. It does render and parse XML, too, with an almost identical declarative API.
 
     require "representable/xml"
 
