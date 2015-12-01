@@ -34,6 +34,8 @@ The details are being discussed in the [public API](#public-api) section.
 
 Instead of using classes as representers, you can also leverage modules which will then get mixed into the represented object.
 
+A representer module is also a good way to share configuration and logic across decorators.
+
     module SongRepresenter
       include Representable::JSON
 

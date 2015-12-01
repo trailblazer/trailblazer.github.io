@@ -64,18 +64,45 @@ After deserialization/population is finished, validation and processing is analo
 
 The `Representer` module also imports `to_json`.
 
-
     Song::Create.(song: '{"title": "Fury"}').to_json
     #=> '{"title": "Fury","_links":{"self":"/songs/1"}}'
 
+In `to_json`, the operation's _model_ will be passed to the representer and rendered using the representer.
 
-In `to_json`, the operation's _contract_ will be passed to the representer and rendered using the representer.
+For a better understanding, here are the pseudo mechanics.
 
-If you want to render the model instead (or anything else), override `Operation#represented`.
+    module Representer
+      def to_json(options={})
+        self.class.representer. # retrieve operation's representer.
+          new(represented).     # instantiate decorator. #represented returns #model.
+          to_json(options)      # call decorator's rendering.
+      end
+    end
 
-    class Create < Trailblazer::Operation
-      include Representer
-      def represented; model; end # will serialize @model instead of @contract.
+If you want to render the contract instead (or anything else), override `Operation#represented`.
+
+    class Show < Trailblazer::Operation
+      include Trailblazer::Operation::Representer
+
+      def represented
+        contract
+      end
+
+### Passing Options
+
+Note that you can also pass your own options to the rendering.
+
+    class Show < Trailblazer::Operation
+      include Trailblazer::Operation::Representer
+
+      def to_json(*)
+        super(
+          include:      [:title, :comments],
+          user_options: { is_admin: policy.signed_in? }
+        )
+      end
+
+To learn how Representable processes options, read [the docs](/gems/representable/3.0/api.html#user-options).
 
 ## Composable Interface
 
