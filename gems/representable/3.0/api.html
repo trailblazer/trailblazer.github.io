@@ -120,6 +120,7 @@
     <li class="divider"></li>
 
     <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
     <li><a href="/gems/representable/3.0/api.html">API</a></li>
     <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
@@ -143,7 +144,7 @@
       <div class="columns medium-9 code-content">
         <h1 id="representable-api">Representable API</h1>
 
-<p>In Representable, we differentiate between three different APIs.</p>
+<p>In Representable, we differentiate between three APIs.</p>
 
 <p>The <a href="#declarative-api">declarative API</a> is how we define representers. You can learn how to use those representers by reading about the very brief <a href="#public-api">public API</a>. Representable is extendable without having to hack existing code: the <a href="function-api.html">function API</a> documents how to use its options to achieve what you need.</p>
 
@@ -561,6 +562,140 @@ end
 
 <p>All defaults are inherited to subclasses or including modules.</p>
 
+<h2 id="standalone-hash">Standalone Hash</h2>
+
+<p>If it’s required to represent a bare hash object, use <code>Representable::JSON::Hash</code> instead of <code>Representable::JSON</code>.</p>
+
+<p>This is sometimes called a <em>lonely hash</em>.</p>
+
+<pre><code>require "representable/json/hash"
+
+class SongsRepresenter &lt; Representable::Decorator
+  include Representable::JSON::Hash
+end
+</code></pre>
+
+<p>You can then use this hash decorator on instances of <code>Hash</code>.</p>
+
+<pre><code>hash = {"Nick" =&gt; "Hyper Music", "El" =&gt; "Blown In The Wind"}
+SongsRepresenter.new(hash).to_json
+#=&gt; {"Nick":"Hyper Music","El":"Blown In The Wind"}
+</code></pre>
+
+<p>This works both ways.</p>
+
+<p>A lonely hash starts to make sense especially when the values are nested objects that need to be represented, too. You can configure the nested value objects using the <code>values</code> method. This works exactly as if you were defining an inline representer, accepting the same options.</p>
+
+<pre><code>class SongsRepresenter &lt; Representable::Decorator
+  include Representable::JSON::Hash
+
+  values class: Song do
+    property :title
+  end
+end
+</code></pre>
+
+<p>You can now represents nested objects in the hash, both rendering and parsing-wise.</p>
+
+<pre><code>hash = {"Nick" =&gt; Song.new("Hyper Music")}
+SongsRepresenter.new(hash).to_json
+</code></pre>
+
+<p>In XML, use <code>XML::Hash</code>. If you want to store hash attributes in tag attributes instead of dedicated nodes, use <code>XML::AttributeHash</code>.</p>
+
+<h2 id="standalone-collection">Standalone Collection</h2>
+
+<p>Likewise, you can represent <em>lonely collections</em>, instances of <code>Array</code>.</p>
+
+<pre><code>require "representable/json/collection"
+
+class SongsRepresenter &lt; Representable::Decorator
+  include Representable::JSON::Collection
+
+  items class: Song do
+    property :title
+  end
+end
+</code></pre>
+
+<p>Here, you define how to represent items in the collection using <code>items</code>.</p>
+
+<p>Note that the items can be simple scalar values or deeply nested objects.</p>
+
+<pre><code>ary = [Song.new("Hyper Music"), Song.new("Screenager")]
+SongsRepresenter.new(ary).to_json
+#=&gt; [{"title":"Hyper Music"},{"title":"Screenager"}]
+</code></pre>
+
+<p>Note that this also works for XML.</p>
+
+<h2 id="standalone-collection-toa">Standalone Collection: to_a</h2>
+
+<p>Another trick to represent collections is using a normal representer with exactly one collection property named <code>to_a</code>.</p>
+
+<pre><code>class SongsRepresenter &lt; Representable::Decorator
+  include Representable::JSON # note that this is a plain representer.
+
+  collection :to_a, class: Song do
+    property :title
+  end
+end
+</code></pre>
+
+<p>You can use this representer the way you already know and appreciate, but directly on an array.</p>
+
+<pre><code>ary = []
+SongsRepresenter.new(ary).from_json('[{"title": "Screenager"}]')
+</code></pre>
+
+<p>In order to grab the collection for rendering or parsing, Representable will now call <code>array.to_a</code>, which returns the array itself.</p>
+
+<h2 id="automatic-collection-representer">Automatic Collection Representer</h2>
+
+<p>Instead of explicitly defining representers for collections using a <a href="#standalone-collection">“lonely collection”</a>, you can let Representable  do that for you.</p>
+
+<p>Rendering a collection of objects comes for free, using <code>for_collection</code>.</p>
+
+<pre><code>songs = Song.all
+SongRepresenter.new(songs).for_collection).to_json
+#=&gt; '[{"title": "Sevens"}, {"title": "Eric"}]'
+</code></pre>
+
+<p>For parsing, you need to provide the class for the nested items. This happens via `collection_representer</p>
+
+<pre><code class="language-ruby">class SongsRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+  property :title
+
+  collection_representer class: Song
+end
+</code></pre>
+
+<p>You can now parse collections to <code>Song</code> instances.</p>
+
+<pre><code>songs = Song.all
+json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
+
+SongRepresenter.new(songs).for_collection).from_json(json)
+</code></pre>
+
+<p>Note: the implicit collection representer internally is implemented using a lonely collection. Everything you pass to <code>::collection_representer</code> is simply provided to the <code>::items</code> call in the lonely collection. That allows you to use <code>:populator</code> and all the other goodies, too.</p>
+
+<h2 id="automatic-singular-and-collection">Automatic Singular and Collection</h2>
+
+<p>In case you don’t want to know whether or not you’re working with a collection or singular model, use <code>represent</code>.</p>
+
+<pre><code># singular
+SongRepresenter.represent(Song.find(1)).to_json
+#=&gt; '{"title": "Sevens"}'
+
+# collection
+SongRepresenter.represent(Song.all).to_json
+#=&gt; '[{"title": "Sevens"}, {"title": "Eric"}]' ```
+</code></pre>
+
+<p><code>represent</code> figures out the correct representer for you. This works for parsing, too.</p>
+
 <h2 id="public-api">Public API</h2>
 
 <p>When decorating an object with a representer, the object needs to provide readers for every defined <code>property</code> - and writers, if you’re planning to parse.</p>
@@ -660,14 +795,7 @@ song.title #=&gt; "Fallout"
 #=&gt; {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 </code></pre>
 
-<h2 id="standalone-collections">Standalone Collections</h2>
-
-<p>You can also represent collections without a “real” object holding that collection. This is sometimes also called <em>lonely collection</em>.</p>
-
-<pre><code>collection :to_a do
-  property :id
-end
-</code></pre>
+<h3 id="tohash-and-fromhash">to_hash and from_hash</h3>
 
       </div>
     </div>

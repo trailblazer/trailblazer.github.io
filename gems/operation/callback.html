@@ -120,6 +120,7 @@
     <li class="divider"></li>
 
     <li class="heading"><a href="/gems/representable">Representable</a></li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
     <li><a href="/gems/representable/3.0/api.html">API</a></li>
     <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
@@ -141,7 +142,20 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h2 id="composable-interface">Composable Interface</h2>
+        <h2 id="overview">Overview</h2>
+
+<pre><code>class Comment::Create &lt; Trailblazer::Operation
+  include Dispatch
+
+  callback :after_save do
+    on_change :notify!
+  end
+end
+</code></pre>
+
+<p>Note that you need to <code>include Dispatch</code> into operations that use callbacks.</p>
+
+<h2 id="composable-interface">Composable Interface</h2>
 
 <p>Using <code>Operation::callback</code> simply creates a new <code>Disposable::Callback::Group</code> class for you.</p>
 
