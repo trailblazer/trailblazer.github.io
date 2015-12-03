@@ -41,7 +41,7 @@ If the `builds` block doesn't return a constant, the original constant will be u
 
 
     class Thing::Update < Trailblazer::Operation
-      self.builds_class = Create.build_class
+      self.builder_class = Create.builder_class
 
 
 Be careful about constant resolving here: the block you copied has to have runtime evaluation of constants.
