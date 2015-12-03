@@ -3,6 +3,18 @@ layout: operation
 title: "Operation Callbacks"
 ---
 
+## Overview
+
+    class Comment::Create < Trailblazer::Operation
+      include Dispatch
+
+      callback :after_save do
+        on_change :notify!
+      end
+    end
+
+Note that you need to `include Dispatch` into operations that use callbacks.
+
 ## Composable Interface
 
 Using `Operation::callback` simply creates a new `Disposable::Callback::Group` class for you.

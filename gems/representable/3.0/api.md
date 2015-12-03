@@ -5,7 +5,7 @@ title: "Representable API"
 
 # Representable API
 
-In Representable, we differentiate between three different APIs.
+In Representable, we differentiate between three APIs.
 
 The [declarative API](#declarative-api) is how we define representers. You can learn how to use those representers by reading about the very brief [public API](#public-api). Representable is extendable without having to hack existing code: the [function API](function-api.html) documents how to use its options to achieve what you need.
 
@@ -388,6 +388,133 @@ Combining those two forms also works.
 
 All defaults are inherited to subclasses or including modules.
 
+## Standalone Hash
+
+If it's required to represent a bare hash object, use `Representable::JSON::Hash` instead of `Representable::JSON`.
+
+This is sometimes called a _lonely hash_.
+
+    require "representable/json/hash"
+
+    class SongsRepresenter < Representable::Decorator
+      include Representable::JSON::Hash
+    end
+
+You can then use this hash decorator on instances of `Hash`.
+
+    hash = {"Nick" => "Hyper Music", "El" => "Blown In The Wind"}
+    SongsRepresenter.new(hash).to_json
+    #=> {"Nick":"Hyper Music","El":"Blown In The Wind"}
+
+This works both ways.
+
+A lonely hash starts to make sense especially when the values are nested objects that need to be represented, too. You can configure the nested value objects using the `values` method. This works exactly as if you were defining an inline representer, accepting the same options.
+
+    class SongsRepresenter < Representable::Decorator
+      include Representable::JSON::Hash
+
+      values class: Song do
+        property :title
+      end
+    end
+
+You can now represents nested objects in the hash, both rendering and parsing-wise.
+
+    hash = {"Nick" => Song.new("Hyper Music")}
+    SongsRepresenter.new(hash).to_json
+
+In XML, use `XML::Hash`. If you want to store hash attributes in tag attributes instead of dedicated nodes, use `XML::AttributeHash`.
+
+## Standalone Collection
+
+Likewise, you can represent _lonely collections_, instances of `Array`.
+
+    require "representable/json/collection"
+
+    class SongsRepresenter < Representable::Decorator
+      include Representable::JSON::Collection
+
+      items class: Song do
+        property :title
+      end
+    end
+
+
+Here, you define how to represent items in the collection using `items`.
+
+Note that the items can be simple scalar values or deeply nested objects.
+
+    ary = [Song.new("Hyper Music"), Song.new("Screenager")]
+    SongsRepresenter.new(ary).to_json
+    #=> [{"title":"Hyper Music"},{"title":"Screenager"}]
+
+Note that this also works for XML.
+
+## Standalone Collection: to_a
+
+Another trick to represent collections is using a normal representer with exactly one collection property named `to_a`.
+
+    class SongsRepresenter < Representable::Decorator
+      include Representable::JSON # note that this is a plain representer.
+
+      collection :to_a, class: Song do
+        property :title
+      end
+    end
+
+
+You can use this representer the way you already know and appreciate, but directly on an array.
+
+    ary = []
+    SongsRepresenter.new(ary).from_json('[{"title": "Screenager"}]')
+
+In order to grab the collection for rendering or parsing, Representable will now call `array.to_a`, which returns the array itself.
+
+## Automatic Collection Representer
+
+Instead of explicitly defining representers for collections using a ["lonely collection"](#standalone-collection), you can let Representable  do that for you.
+
+Rendering a collection of objects comes for free, using `for_collection`.
+
+    songs = Song.all
+    SongRepresenter.new(songs).for_collection).to_json
+    #=> '[{"title": "Sevens"}, {"title": "Eric"}]'
+
+For parsing, you need to provide the class for the nested items. This happens via `collection_representer
+
+```ruby
+class SongsRepresenter < Representable::Decorator
+  include Representable::JSON
+  property :title
+
+  collection_representer class: Song
+end
+```
+
+You can now parse collections to `Song` instances.
+
+    songs = Song.all
+    json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
+
+    SongRepresenter.new(songs).for_collection).from_json(json)
+
+Note: the implicit collection representer internally is implemented using a lonely collection. Everything you pass to `::collection_representer` is simply provided to the `::items` call in the lonely collection. That allows you to use `:populator` and all the other goodies, too.
+
+## Automatic Singular and Collection
+
+In case you don't want to know whether or not you're working with a collection or singular model, use `represent`.
+
+    # singular
+    SongRepresenter.represent(Song.find(1)).to_json
+    #=> '{"title": "Sevens"}'
+
+    # collection
+    SongRepresenter.represent(Song.all).to_json
+    #=> '[{"title": "Sevens"}, {"title": "Eric"}]'
+```
+
+`represent` figures out the correct representer for you. This works for parsing, too.
+
 ## Public API
 
 When decorating an object with a representer, the object needs to provide readers for every defined `property` - and writers, if you're planning to parse.
@@ -475,13 +602,4 @@ Note that you can also nest `:include` and `:exclude`.
     decorator.to_json(artist: { include: [:name] })
     #=> {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 
-
-
-## Standalone Collections
-
-You can also represent collections without a "real" object holding that collection. This is sometimes also called _lonely collection_.
-
-
-    collection :to_a do
-      property :id
-    end
+### to_hash and from_hash
