@@ -137,6 +137,7 @@
     <li class="heading"><a href="/gems/disposable/">Disposable</a></li>
     <li><a href="/gems/disposable/api.html">API</a></li>
     <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
   </ul>
 </nav>
 
@@ -178,7 +179,7 @@ op.class #=&gt; Thing::Create::SignedIn
 <p><code>builds</code> blocks are <em>not inherited</em>. You can copy them to other classes, though.</p>
 
 <pre><code>class Thing::Update &lt; Trailblazer::Operation
-  self.builds_class = Create.build_class
+  self.builder_class = Create.builder_class
 </code></pre>
 
 <p>Be careful about constant resolving here: the block you copied has to have runtime evaluation of constants.</p>

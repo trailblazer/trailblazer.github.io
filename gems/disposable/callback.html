@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Cells Render API</title>
-<meta name="description" content="Cells Render API - Trailblazer" />
+<title>Trailblazer: Disposable Callbacks</title>
+<meta name="description" content="Disposable Callbacks - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -20,19 +20,19 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Cells Render API"/>
+<meta property="og:title" content="Disposable Callbacks"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Cells Render API">
+<meta name="twitter:title" content="Disposable Callbacks">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
   </head>
 
-  <body class="cells-body">
+  <body class="disposable-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -67,12 +67,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero cells-hero">
+    <div class="hero gems-hero disposable-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
             <h1 id="project_title">
-              Cells
+              Disposable
             </h1>
           </div>
         </div>
@@ -143,47 +143,87 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="rendering">Rendering</h1>
+        <h1 id="disposable-callback">Disposable: Callback</h1>
 
-<h2 id="view-paths">View Paths</h2>
+<p>Callbacks in Disposable implement the <a href="/gems/operation/callback.html">Imperative Callback</a> pattern.</p>
 
-<p>Every cell class can have multiple view paths. However, I advise you not to have more than two, better one, unless you’re imlementing a cell in an engine. This is simply to prevent unexpected behavior.</p>
+<h2 id="declarative-api">Declarative API</h2>
 
-<p>View paths are set via the <code>::view_paths</code> method.</p>
+<p>A <code>Callback::Group</code> allows defining nested callbacks.</p>
 
-<pre><code>class Cell::ViewModel
-  self.view_paths = ["app/cells"]
+<pre><code>class Group &lt; Disposable::Callback::Group
+  on_change :change!
+
+  collection :songs do
+    on_add :notify_album!
+  end
+
+  # on_change :rehash_name!, property: :title
+end
 </code></pre>
 
-<p>Use the setter to override the view paths entirely, or append as follows.</p>
+<p>Per default, callback methods will be invoked on the respective group. In nested setups, this means you also need to nest the method implementation.</p>
 
-<pre><code>class Shopify::CartCell
-  self.view_paths &lt;&lt; "/var/shopify/app/cells"
+<pre><code>class Group &lt; Disposable::Callback::Group
+  on_change :change!
+
+  def change!(twin, options)
+    options[:string] &lt;&lt; "change!"
+  end
+
+  collection :songs do
+    on_add :notify_album!
+
+    def notify_album!(twin, options)
+      options[:string] &lt;&lt; "notify_album!"
+    end
+  end
+end
 </code></pre>
 
-<p>The <code>view_paths</code> variable is an inheritable array.</p>
+<h2 id="invocation">Invocation</h2>
 
-<p>A trick to quickly find out about the directory lookup list is to inspect the <code>::prefixes</code> class method of your particular cell.</p>
+<p>A group is invoked using <code>call</code>.</p>
 
-<pre><code>puts Shopify::CartCell.prefixes
-#=&gt; ["app/cells/shopify/cart", "/var/shopify/app/cells/shopify/cart"]
+<pre><code>Group.new(twin).()
 </code></pre>
 
-<p>This is the authorative list when finding templates. It will include inherited cell’s directories as well when you used inheritance. The list is traversed from left to right.</p>
+<h2 id="context">Context</h2>
 
-<h2 id="partials">Partials</h2>
+<p>You can use an arbitrary context object to implement the callback methods.</p>
 
-<p>Even considered a taboo, you may render global partials from Cells.</p>
+<pre><code>class CallbackImplementation
+  def change!(twin, options)
+    options[:string] &lt;&lt; "change!"
+  end
 
-<pre><code>SongCell &lt; Cell::ViewModel
-  include Partial
+  def notify_album!(twin, options)
+    options[:string] &lt;&lt; "notify_album!"
+  end
+end
+</code></pre>
 
-  def show
-    render partial: "../views/shared/sidebar.html"
+<p>When invoking, specify it using the <code>:context</code> option.</p>
+
+<pre><code>Group.new(twin).(context: CallbackImplementation.new)
+</code></pre>
+
+<p>This allows leaving the <code>Group</code> free of implementation, as a pure definition of events, only. Also, note that you don’t have any nesting with a context object, all methods are implemented on the same level in a simple object.</p>
+
+<h2 id="options">Options</h2>
+
+<p>You may pass arbitrary options to all callback methods.</p>
+
+<pre><code>Group.new(twin).(context: CallbackImplementation.new, string: "")
+</code></pre>
+
+<p>This allows injecting dependencies without global state.</p>
+
+<pre><code>class CallbackImplementation
+  def change!(twin, options)
+    options[:string] &lt;&lt; "change!"
   end
 </code></pre>
-
-<p>Make sure to use the <code>:partial</code> option and specify a path relative to the cell’s view path. Cells will automatically add the format and the terrible underscore, resulting in <code>"../views/shared/_sidebar.html.erb"</code>.</p>
 
       </div>
     </div>
@@ -252,6 +292,7 @@
 <script src="/javascripts/plugins.js"></script>
 <script src="/bower_components/foundation/js/foundation.min.js"></script>
 <script src="/javascripts/script.js"></script>
+
 
   </body>
 </html>
