@@ -1,0 +1,30 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    {% include head.html %}
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    {% include nav.html %}
+
+    {{ content }}
+
+    <!-- Testimonials -->
+    <section class="sub-section testimonials">
+      <div class="row">
+        <div class="columns">
+          {% include testimonials.html %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    {% include footer.html %}
+
+    {% include scripts.html %}
+
+    <script>
+        $(document).foundation();
+    </script>
+</html>
