@@ -159,14 +159,14 @@ Comment::Create.(comment: {}) #=&gt; exception raised!
 
 <h2 id="run-style">Run Style</h2>
 
-<p>The <em>run style</em> returns a result set <code>[result, operation]</code> in both cases.</p>
+<p>The <em>run style</em> returns a result set <code>[result, operation]</code> for both valid and invalid invocation.</p>
 
 <pre><code>res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
 </code></pre>
 
-<p>However, it also accepts a block that’s run in case of a <em>successful validation</em>.</p>
+<p>However, it also accepts a block that’s run in case of a <em>successful validation</em>. When run with block, only the operation instance is returned as the block represents a valid state.</p>
 
-<pre><code>res, operation = Comment::Create.run(comment: {}) do |op|
+<pre><code>operation = Comment::Create.run(comment: {}) do |op|
   puts "Hey, #{op.model} was created!" and return # not run.
 end
 
