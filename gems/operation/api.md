@@ -23,16 +23,16 @@ The call style is popular for tests and on the console.
 
 ## Run Style
 
-The _run style_ returns a result set `[result, operation]` in both cases.
+The _run style_ returns a result set `[result, operation]` for both valid and invalid invocation.
 
 
     res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
 
 
-However, it also accepts a block that's run in case of a _successful validation_.
+However, it also accepts a block that's run in case of a _successful validation_. When run with block, only the operation instance is returned as the block represents a valid state.
 
 
-    res, operation = Comment::Create.run(comment: {}) do |op|
+    operation = Comment::Create.run(comment: {}) do |op|
       puts "Hey, #{op.model} was created!" and return # not run.
     end
 
