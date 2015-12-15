@@ -30,7 +30,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
     <p>In chapter 2, <b>The Trailblazer Architectural Style</b>, we discuss implementation concepts, file structuring and how Trailblazer solves problems from conventional MVC frameworks such as Rails.</p>
 
-    <p>The next chapter <b>Operations and Forms</b> will introduce you how Trailblazer introduces a new abstraction layer <em>Operation</em> that embraces the business logic. We learn how to benefit from the operation's internal form object, so that you can start applying this pattern to your existing software.</p>
+    <p>The next chapter <b>Operations and Forms</b> will illustrate how Trailblazer introduces a new abstraction layer <em>Operation</em> that embraces the business logic. We learn how to benefit from the operation's internal form object, so that you can start applying this pattern to your existing software.</p>
 
     <p>After learning the basics, we dive into <b>Cells</b> and explore how to use view components in Trailblazer to build a grid-based homepage. The following <b>Nested Forms</b> chapter goes into more details of operations and how they interact with <b>Reform</b>. To round this up, the learnt concepts about view models and forms are combined in the <b>Composed Views</b> chapter.</p>
 
