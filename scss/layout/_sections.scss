@@ -23,3 +23,24 @@
 .gems {
   background: $vapor;
 }
+
+.marketing-book {
+  padding: 4em 0;
+  @media #{$small-only} {
+    padding: 2em 0;
+  }
+  width: 100%;
+  h2 {
+    margin-bottom: 1em;
+    @media #{$small-only} {
+      margin-bottom: 1em;
+    }
+  }
+  h3 {
+   margin-bottom: 1em; 
+  }
+  img {
+    margin: 0 auto 2em auto;
+    display: block;
+  }
+}

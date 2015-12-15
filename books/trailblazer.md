@@ -4,11 +4,11 @@ title: "A New Architecture For Rails"
 description: "Trailblazer introduces additional abstraction layers into Ruby frameworks. Operations, form objects, view models, policies, domain objects, representers and more cover every aspect of business in web apps. And developers finally know where to put their code. This book shows you how."
 ---
 
-<section class="sub-section book">
+<section class="marketing-book book">
   <div class="row">
     <div class="columns">
         <a name="book" />
-<div class="row the-book">
+<div class="row">
   <div class="columns medium-9 medium-centered">
     <a href="https://leanpub.com/trailblazer">
     <img src="/images/3dbuch-freigestellt.png" />
@@ -16,7 +16,8 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   </div>
 
   <div class="columns medium-9 medium-centered">
-  <h2>Trailblazer - A New Architecture For Rails</h2>
+  <h1>Trailblazer</h1>
+  <h2 class="subheader">A New Architecture For Rails</h2>
 
     <p>Written by the creator of Trailblazer, this book gives you <b>300 pages full of wisdom about Trailblazer</b> and its gems, such as Reform, Cells and Roar.</p>
 
@@ -25,7 +26,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
     <p> In the book, <b>we build a realistic Rails application with Trailblazer</b> that discusses convoluted requirements such as dynamic forms, polymorphic rendering and processing for signed-in users, file uploads, pagination, a JSON document API sitting on top of that, and many more problems you run into when building web applications.</p>
 
     <h3>
-    Here's an overview of the 13 chapters.</h3>
+    Here's an overview of the 13 chapters</h3>
 
     <p>In chapter 2, <b>The Trailblazer Architectural Style</b>, we discuss implementation concepts, file structuring and how Trailblazer solves problems from conventional MVC frameworks such as Rails.</p>
 
