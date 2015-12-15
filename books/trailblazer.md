@@ -9,13 +9,13 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
     <div class="columns">
         <a name="book" />
 <div class="row the-book">
-  <div class="columns medium-3">
+  <div class="columns medium-9 medium-centered">
     <a href="https://leanpub.com/trailblazer">
     <img src="/images/3dbuch-freigestellt.png" />
     </a>
   </div>
 
-  <div class="columns medium-9">
+  <div class="columns medium-9 medium-centered">
   <h2>Trailblazer - A New Architecture For Rails</h2>
 
     <p>Written by the creator of Trailblazer, this book gives you <b>300 pages full of wisdom about Trailblazer</b> and its gems, such as Reform, Cells and Roar.</p>
@@ -43,7 +43,6 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
     <a href="https://leanpub.com/trailblazer" class="button radius">Buy it!</a>
   </div>
 </div>
-
     </div>
   </div>
 </section>
