@@ -375,7 +375,7 @@ end
 
 <p>This will add a container for rendering and parsing.</p>
 
-<pre><code>song.extend(SongRepresenter).to_json
+<pre><code>SongRepresenter.new(song).to_json
 #=&gt; {"song":{"title":"Fallout","id":1}}
 </code></pre>
 
@@ -390,6 +390,29 @@ end
 
 <pre><code>decorator.to_json(user_options: { my_wrap: "hit" })
 </code></pre>
+
+<h3 id="suppressing-nested-wraps">Suppressing Nested Wraps</h3>
+
+<p>When reusing a representer for a nested document, you might want to suppress its <code>representation_wrap=</code> for the nested fragment.</p>
+
+<p>Reusing <code>SongRepresenter</code> from the last section in a nested setup allows suppressing the wrap via the <code>:wrap</code> option.</p>
+
+<pre><code class="language-ruby">module AlbumRepresenter
+  include Representable::JSON
+
+  collection :songs,
+    decorator: SongRepresenter, # SongRepresenter defines representation_wrap.
+     wrap:     false            # turn off :song wrap.
+end
+</code></pre>
+
+<p>The <code>representation_wrap</code> from the nested representer now won’t be rendered and parsed.</p>
+
+<pre><code class="language-ruby">AlbumRepresenter.new(album).to_json
+#=&gt; "{\"songs\": [{\"name\": \"Roxanne\"}]}"
+</code></pre>
+
+<p>Note that this only works for JSON and Hash at the moment.</p>
 
 <h3 id="inheritance">Inheritance</h3>
 
@@ -524,6 +547,106 @@ end
 <p>This renames the property but still inherits all the inlined configuration.</p>
 
 <p>Basically, <code>:inherit</code> copies the configuration from the parent property, then merges in your options from the inheriting representer. It exposes the same behaviour as <code>super</code> in Ruby - when using <code>:inherit</code> the property must exist in the parent representer.</p>
+
+<h2 id="feature">Feature</h2>
+
+<p>If you need to include modules in all inline representers automatically, register it as a feature.</p>
+
+<pre><code class="language-ruby">class AlbumRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+  feature Link # imports ::link
+
+  link "/album/1"
+
+  property :hit do
+    link "/hit/1" # link method imported automatically.
+  end
+</code></pre>
+
+<p>Nested representers will <code>include</code> the provided module automatically.</p>
+
+<h2 id="execution-context">Execution Context</h2>
+
+<p>Readers and Writers for properties will usually be called on the <code>represented</code> object. If you want to change that, so the accessors get called on the decorator instead, use <code>:exec_context</code>.</p>
+
+<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
+  property :title, exec_context: :decorator
+
+  def title
+    represented.name
+  end
+end
+</code></pre>
+
+<h2 id="callable-options">Callable Options</h2>
+
+<p>While lambdas are one option for dynamic options, you might also pass a “callable” object to a directive.</p>
+
+<pre><code class="language-ruby">class Sanitizer
+  include Uber::Callable
+
+  def call(represented, fragment, doc, *args)
+    fragment.sanitize
+  end
+end
+</code></pre>
+
+<p>Note how including <code>Uber::Callable</code> marks instances of this class as callable. No <code>respond_to?</code> or other magic takes place here.</p>
+
+<pre><code class="language-ruby">property :title, parse_filter: Santizer.new
+</code></pre>
+
+<p>This is enough to have the <code>Sanitizer</code> class run with all the arguments that are usually passed to the lambda (preceded by the represented object as first argument).</p>
+
+<h2 id="readwrite-restrictions">Read/Write Restrictions</h2>
+
+<p>Using the <code>:readable</code> and <code>:writeable</code> options access to properties can be restricted.</p>
+
+<pre><code class="language-ruby">property :title, readable: false
+</code></pre>
+
+<p>This will leave out the <code>title</code> property in the rendered document. Vice-versa, <code>:writeable</code> will skip the property when parsing and does not assign it.</p>
+
+<h2 id="coercion">Coercion</h2>
+
+<p>If you need coercion when parsing a document you can use the Coercion module which uses <a href="https://github.com/solnic/virtus">virtus</a> for type conversion.</p>
+
+<p>Include Virtus in your Gemfile, first.</p>
+
+<pre><code class="language-ruby">gem 'virtus', "&gt;= 0.5.0"
+</code></pre>
+
+<p>Use the <code>:type</code> option to specify the conversion target. Note that <code>:default</code> still works.</p>
+
+<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+  include Representable::Coercion
+
+  property :recorded_at, type: DateTime, default: "May 12th, 2012"
+end
+</code></pre>
+
+<p>Coercing values only happens when rendering or parsing a document. Representable does not create accessors in your model as <code>virtus</code> does.</p>
+
+<p>Note that we think coercion in the representer is wrong, and should happen on the underlying object. We have a rich <a href="/gems/disposable/coercion.html">coercion/constraint API for twins</a>.</p>
+
+<h2 id="symbol-keys">Symbol Keys</h2>
+
+<p>When parsing, Representable reads properties from hashes using their string keys.</p>
+
+<pre><code class="language-ruby">song.from_hash("title" =&gt; "Road To Never")
+</code></pre>
+
+<p>To allow symbol keys also include the <code>AllowSymbols</code> module.</p>
+
+<pre><code class="language-ruby">module SongRepresenter
+  include Representable::Hash
+  include Representable::Hash::AllowSymbols
+  # ..
+end
+</code></pre>
+
+<p>This will give you a behavior close to Rails’ <code>HashWithIndifferentAccess</code> by stringifying the incoming hash internally.</p>
 
 <h2 id="defaults">Defaults</h2>
 
