@@ -397,7 +397,7 @@ end
 
 <p>Reusing <code>SongRepresenter</code> from the last section in a nested setup allows suppressing the wrap via the <code>:wrap</code> option.</p>
 
-<pre><code class="language-ruby">module AlbumRepresenter
+<pre><code class="language-ruby">class AlbumRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   collection :songs,
@@ -639,7 +639,7 @@ end
 
 <p>To allow symbol keys also include the <code>AllowSymbols</code> module.</p>
 
-<pre><code class="language-ruby">module SongRepresenter
+<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
   include Representable::Hash
   include Representable::Hash::AllowSymbols
   # ..
