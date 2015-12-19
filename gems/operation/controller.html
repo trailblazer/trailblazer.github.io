@@ -371,6 +371,16 @@ end
 
 <h2 id="normalizing-params">Normalizing Params</h2>
 
+<p>Override <code>#params!</code> to return an arbitrary params object. This is called in <code>#run</code>, <code>#respond</code>, <code>#present</code> and <code>#form</code> before the operation is called.</p>
+
+<pre><code>class CommentsController &lt; ApplicationController
+private
+  def params!(params)
+    params.to_h # return arbitrary object.
+  end
+end
+</code></pre>
+
 <p>Override <code>#process_params!</code> to add or remove values to params before the operation is run. This is called in <code>#run</code>, <code>#respond</code>, <code>#present</code> and <code>#form</code>.</p>
 
 <pre><code>class CommentsController &lt; ApplicationController
@@ -381,7 +391,7 @@ private
 end
 </code></pre>
 
-<p>This centralizes params normalization and doesn’t require you to do that in every action manually.</p>
+<p>Note that this is a mutual method where you’re changing the <code>params</code> object.</p>
 
       </div>
     </div>
