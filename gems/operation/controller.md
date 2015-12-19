@@ -220,6 +220,15 @@ You can instruct Trailblazer not to do that and pass in the normal `params` hash
 
 ## Normalizing Params
 
+Override `#params!` to return an arbitrary params object. This is called in `#run`, `#respond`, `#present` and `#form` before the operation is called.
+
+    class CommentsController < ApplicationController
+    private
+      def params!(params)
+        params.to_h # return arbitrary object.
+      end
+    end
+
 Override `#process_params!` to add or remove values to params before the operation is run. This is called in `#run`, `#respond`, `#present` and `#form`.
 
     class CommentsController < ApplicationController
@@ -229,4 +238,4 @@ Override `#process_params!` to add or remove values to params before the operati
       end
     end
 
-This centralizes params normalization and doesn't require you to do that in every action manually.
+Note that this is a mutual method where you're changing the `params` object.
