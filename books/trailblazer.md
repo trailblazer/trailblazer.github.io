@@ -32,7 +32,7 @@ imageurl: "http://trailblazer.to/images/3dbuch-freigestellt.png"
 
           <p>The next chapter <b>Operations and Forms</b> will illustrate how Trailblazer introduces a new abstraction layer <em>Operation</em> that embraces the business logic. We learn how to benefit from the operation's internal form object, so that you can start applying this pattern to your existing software.</p>
 
-          <img src="/images/books/trb-page-with-diagram.png" style="width: 210px; float:left; margin-right: 18px;"/>
+          <!-- <img src="/images/books/trb-page-with-diagram.png" style="width: 210px; float:left; margin-right: 18px;"/> -->
 
           <p>After learning the basics, we dive into <b>Cells</b> and explore how to use view components in Trailblazer to build a grid-based homepage. The following <b>Nested Forms</b> chapter goes into more details of operations and how they interact with <b>Reform</b>. To round this up, the learnt concepts about view models and forms are combined in the <b>Composed Views</b> chapter.</p>
 
