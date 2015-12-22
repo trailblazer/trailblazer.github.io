@@ -1,6 +1,5 @@
 ---
 layout: reform
-permalink: /gems/reform/populators.html
 title: "Reform Populators"
 ---
 
