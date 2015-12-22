@@ -66,7 +66,7 @@ Reform now creates a `Song` instance and nests it in the form since it couldn't 
 
 Note that the matching from fragment to form works by index, any additional matching heuristic has to be implemented manually.
 
-### Populate_if_empty: Custom
+## Populate_if_empty: Custom
 
 You can also create the object yourself and leverage data from the traversed fragment, for instance, to try to find a `Song` object by name, first, before creating a new one.
 
@@ -92,7 +92,7 @@ You can also provide an instance method on the respective form.
         Song.find_by(name: fragment["name"]) or Song.new
       end
 
-### Populate_if_empty: Arguments
+## Populate_if_empty: Arguments
 
 The only argument passed to `:populate_if_empty` block or method is an options hash. It contains currently traversed `:fragment`, the `:index` (collections, only) and several more options.
 
