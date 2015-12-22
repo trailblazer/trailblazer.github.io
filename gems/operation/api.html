@@ -151,7 +151,7 @@
 
 <p>The <em>call style</em>  returns the operation when the validation was successful. With invalid data, it will raise an <code>InvalidContract</code> exception.</p>
 
-<pre><code>Comment::Create.(comment: {body: "MVC is so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
+<pre><code>Comment::Create.(comment: {body: "MVC's so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
 Comment::Create.(comment: {}) #=&gt; exception raised!
 </code></pre>
 
