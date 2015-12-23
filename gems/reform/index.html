@@ -143,27 +143,800 @@
       <div class="columns medium-9 code-content">
         <h1 id="reform">Reform</h1>
 
-<h2 id="associations">Associations</h2>
+<p>Reform provides form objects that maintain validations for one or multiple models, where a <em>model</em> can be any kind of Ruby object. It is completely framework-agnostic and doesn’t care about your database.</p>
 
-<p><em>“How do I map <code>has_many</code> associations to my form?”</em></p>
+<h2 id="form-definition">Form Definition</h2>
 
-<h2 id="workflow">Workflow</h2>
+<p>Forms are defined in separate classes. Often, these classes partially map to a model.</p>
 
-<p>new<br />
-prepopulate!<br />
-Rendering: form.title<br />
-validate<br />
-  populate<br />
-  validate<br />
-sync<br />
-save</p>
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+  validates :title, presence: true
+end
+</code></pre>
+
+<p>Fields are declared using <code>::property</code>. Validations work almost exactly as you know it from Rails or other frameworks. Note that validations no longer go into the model.</p>
+
+<h2 id="api">API</h2>
+
+<p>Forms have a ridiculously simple API with only a handful of public methods.</p>
+
+<ol>
+  <li><code>#initialize</code> always requires a model that the form represents.</li>
+  <li><code>#validate(params)</code> updates the form’s fields with the input data (only the form, <em>not</em> the model) and then runs all validations. The return value is the boolean result of the validations.</li>
+  <li><code>#errors</code> returns validation messages in a classic ActiveModel style.</li>
+  <li><code>#sync</code> writes form data back to the model. This will only use setter methods on the model(s).</li>
+  <li><code>#save</code> (optional) will call <code>#save</code> on the model and nested models. Note that this implies a <code>#sync</code> call.</li>
+  <li><code>#prepopulate!</code> (optional) will run pre-population hooks to “fill out” your form before rendering.</li>
+</ol>
+
+<p>In addition to the main API, forms expose accessors to the defined properties. This is used for rendering or manual operations.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>In your controller or operation you create a form instance and pass in the models you want to work on.</p>
+
+<p>class AlbumsController<br />
+    def new<br />
+      @form = AlbumForm.new(Album.new)<br />
+    end</p>
+
+<p>This will also work as an editing form with an existing album.</p>
+
+<pre><code>def edit
+  @form = AlbumForm.new(Album.find(1))
+end
+</code></pre>
+
+<p>Reform will read property values from the model in setup. In our example, the <code>AlbumForm</code> will call <code>album.title</code> to populate the <code>title</code> field.</p>
+
+<h2 id="rendering-forms">Rendering Forms</h2>
+
+<p>Your <code>@form</code> is now ready to be rendered, either do it yourself or use something like Rails’ <code>#form_for</code>, <code>simple_form</code> or <code>formtastic</code>.</p>
+
+<pre><code>= form_for @form do |f|
+  = f.input :title
+</code></pre>
+
+<p>Nested forms and collections can be easily rendered with <code>fields_for</code>, etc. Note that you no longer pass the model to the form builder, but the Reform instance.</p>
+
+<p>Optionally, you might want to use the <code>#prepopulate!</code> method to pre-populate fields and prepare the form for rendering.</p>
+
+<h2 id="validation">Validation</h2>
+
+<p>After form submission, you need to validate the input.</p>
+
+<pre><code>class SongsController
+  def create
+    @form = SongForm.new(Song.new)
+
+    #=&gt; params: {song: {title: "Rio", length: "366"}}
+
+    if @form.validate(params[:song])
+</code></pre>
+
+<p>The <code>#validate</code> method first updates the values of the form - the underlying model is still treated as immutuable and <em>remains unchanged</em>. It then runs all validations you provided in the form.</p>
+
+<p>It’s the only entry point for updating the form. This is per design, as separating writing and validation doesn’t make sense for a form.</p>
+
+<p>This allows rendering the form after <code>validate</code> with the data that has been submitted. However, don’t get confused, the model’s values are still the old, original values and are only changed after a <code>#save</code> or <code>#sync</code> operation.</p>
+
+<h2 id="syncing-back">Syncing Back</h2>
+
+<p>After validation, you have two choices: either call <code>#save</code> and let Reform sort out the rest. Or call <code>#sync</code>, which will write all the properties back to the model. In a nested form, this works recursively, of course.</p>
+
+<p>It’s then up to you what to do with the updated models - they’re still unsaved.</p>
+
+<h2 id="saving-forms">Saving Forms</h2>
+
+<p>The easiest way to save the data is to call <code>#save</code> on the form.</p>
+
+<pre><code>if @form.validate(params[:song])
+  @form.save  #=&gt; populates album with incoming data
+              #   by calling @form.album.title=.
+else
+  # handle validation errors.
+end
+</code></pre>
+
+<p>This will sync the data to the model and then call <code>album.save</code>.</p>
+
+<p>Sometimes, you need to do saving manually.</p>
+
+<h2 id="saving-forms-manually">Saving Forms Manually</h2>
+
+<p>Calling <code>#save</code> with a block will provide a nested hash of the form’s properties and values. This does <strong>not call <code>#save</code> on the models</strong> and allows you to implement the saving yourself.</p>
+
+<p>The block parameter is a nested hash of the form input.</p>
+
+<pre><code>@form.save do |hash|
+  hash      #=&gt; {title: "Greatest Hits"}
+  Album.create(hash)
+end
+</code></pre>
+
+<p>You can always access the form’s model. This is helpful when you were using populators to set up objects when validating.</p>
+
+<pre><code>@form.save do |hash|
+  album = @form.model
+
+  album.update_attributes(hash[:album])
+end
+</code></pre>
 
 <h2 id="container">Container</h2>
 
 <p>While a form object will drastically improve your application architecture as a stand-alone object, forms work best in containers like Trailblazer’s operation.</p>
 
-<p>the semantics are important: “this object is invalidation” conceptualization led to AM::Validations.<br />
-@realntl @<em>solnic</em> Ah OK, I understand you now! Well, in Reform/TRB validation is a function that gets applied to an object graph. Better?</p>
+<h2 id="disposable">Disposable</h2>
+
+<p>Every form in Reform is a <em>twin</em>. Twins are non-persistent domain objects from the <a href="https://github.com/apotonick/disposable">Disposable gem</a>. All features of Disposable, like renaming fields, change tracking, etc. are available in Reform, too.</p>
+
+<h2 id="nesting">Nesting</h2>
+
+<p>Reform provides support for nested objects. Let’s say the <code>Album</code> model keeps some associations.</p>
+
+<pre><code>class Album &lt; ActiveRecord::Base
+  has_one  :artist
+  has_many :songs
+end
+</code></pre>
+
+<p>The implementation details do not really matter here, as long as your album exposes readers and writes like <code>Album#artist</code> and <code>Album#songs</code>, this allows you to define nested forms.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+  validates :title, presence: true
+
+  property :artist do
+    property :full_name
+    validates :full_name, presence: true
+  end
+
+  collection :songs do
+    property :name
+  end
+end
+</code></pre>
+
+<p>You can also reuse an existing form from elsewhere using <code>:form</code>.</p>
+
+<pre><code>property :artist, form: ArtistForm
+</code></pre>
+
+<h2 id="nested-setup">Nested Setup</h2>
+
+<p>Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.</p>
+
+<pre><code>album.songs #=&gt; [&lt;Song name:"Run To The Hills"&gt;]
+
+form = AlbumForm.new(album)
+form.songs[0] #=&gt; &lt;SongForm model: &lt;Song name:"Run To The Hills"&gt;&gt;
+form.songs[0].name #=&gt; "Run To The Hills"
+</code></pre>
+
+<h3 id="nested-rendering">Nested Rendering</h3>
+
+<p>When rendering a nested form you can use the form’s readers to access the nested forms.</p>
+
+<pre><code>= text_field :title,         @form.title
+= text_field "artist[name]", @form.artist.name
+</code></pre>
+
+<p>Or use something like <code>#fields_for</code> in a Rails environment.</p>
+
+<pre><code>= form_for @form do |f|
+  = f.text_field :title
+
+  = f.fields_for :artist do |a|
+    = a.text_field :name
+</code></pre>
+
+<h2 id="nested-processing">Nested Processing</h2>
+
+<p><code>validate</code> will assign values to the nested forms. <code>sync</code> and <code>save</code> work analogue to the non-nested form, just in a recursive way.</p>
+
+<p>The block form of <code>#save</code> would give you the following data.</p>
+
+<pre><code>@form.save do |nested|
+  nested #=&gt; {title:  "Greatest Hits",
+         #    artist: {name: "Duran Duran"},
+         #    songs: [{title: "Hungry Like The Wolf"},
+         #            {title: "Last Chance On The Stairways"}]
+         #   }
+  end
+</code></pre>
+
+<p>The manual saving with block is not encouraged. You should rather check the Disposable docs to find out how to implement your manual tweak with the official API.</p>
+
+<h2 id="populating-forms">Populating Forms</h2>
+
+<p>Very often, you need to give Reform some information how to create or find nested objects when <code>validate</code>ing. This directive is called <em>populator</em> and <a href="http://trailblazer.to/gems/reform/populator.html">documented here</a>.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add this line to your Gemfile:</p>
+
+<p>gem ‘reform’</p>
+
+<p>Reform works fine with Rails 3.1-4.2. However, inheritance of validations with <code>ActiveModel::Validations</code> is broken in Rails 3.2 and 4.0.</p>
+
+<p>Since Reform 2.0 you need to specify which <strong>validation backend</strong> you want to use (unless you’re in a Rails environment where ActiveModel will be used).</p>
+
+<p>To use ActiveModel (not recommended as it doesn’t support removing validations).</p>
+
+<pre><code>require "reform/form/active_model/validations"
+Reform::Form.class_eval do
+  include Reform::Form::ActiveModel::Validations
+end
+</code></pre>
+
+<p>To use dry-validation (recommended).</p>
+
+<pre><code>require "reform/form/dry"
+Reform::Form.class_eval do
+  include Reform::Form::Dry
+end
+</code></pre>
+
+<p>Put this in an initializer or on top of your script.</p>
+
+<h2 id="compositions">Compositions</h2>
+
+<p>Reform allows to map multiple models to one form. The <a href="https://github.com/apotonick/disposable#composition">complete documentation</a> is here, however, this is how it works.</p>
+
+<pre><code>class AlbumTwin &lt; Reform::Form
+  include Composition
+
+  property :id,    on: :album
+  property :title, on: :album
+  property :songs, on: :cd
+  property :cd_id, on: :cd, from: :id
+end
+</code></pre>
+
+<p>When initializing a composition, you have to pass a hash that contains the composees.</p>
+
+<pre><code>AlbumForm.new(album: album, cd: CD.find(1))
+</code></pre>
+
+<h2 id="more">More</h2>
+
+<p>Reform comes many more optional features, like hash fields, coercion, virtual fields, and so on. Check the <a href="http://trailblazer.to/gems/reform">full documentation here</a>.</p>
+
+<p>=&gt; rendering<br />
+=&gt; sync with block</p>
+
+<h2 id="hash-fields">Hash Fields</h2>
+
+<p>Reform can also handle deeply nested hash fields from serialized hash columns. This is <a href="https://github.com/apotonick/disposable#struct">documented here</a>.</p>
+
+<h2 id="validation-shortform">Validation Shortform</h2>
+
+<p>Luckily, this can be shortened as follows.</p>
+
+<p>class SongForm &lt; Reform::Form<br />
+  property :title, validates: {presence: true}<br />
+  property :length, validates: {numericality: true}<br />
+end</p>
+
+<p>Use <code>properties</code> to bulk-specify fields.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  properties :title, :length, validates: {presence: true} # both required!
+  validates :length, numericality: true
+end
+</code></pre>
+
+<p>If the form wraps multiple models, via <a href="#compositions">composition</a>, you can access them like this:</p>
+
+<pre><code>@form.save do |nested|
+  song = @form.model[:song]
+  label = @form.model[:label]
+end
+</code></pre>
+
+<p>Note that you can call <code>#sync</code> and <em>then</em> call <code>#save { |hsh| }</code> to save models yourself.</p>
+
+<h3 id="turning-off-autosave">Turning Off Autosave</h3>
+
+<p>You can assign Reform to <em>not</em> call <code>save</code> on a particular nested model (per default, it is called automatically on all nested models).</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  # ...
+
+  collection :songs, save: false do
+    # ..
+  end
+</code></pre>
+
+<p>The <code>:save</code> options set to false won’t save models.</p>
+
+<h2 id="compositions-1">Compositions</h2>
+
+<p>Sometimes you might want to embrace two (or more) unrelated objects with a single form. While you could write a simple delegating composition yourself, reform comes with it built-in.</p>
+
+<p>Say we were to edit a song and the label data the record was released from. Internally, this would imply working on the <code>songs</code> table and the <code>labels</code> table.</p>
+
+<pre><code>class SongWithLabelForm &lt; Reform::Form
+  include Composition
+
+  property :title, on: :song
+  property :city,  on: :label
+
+  model :song # only needed in ActiveModel context.
+
+  validates :title, :city, presence: true
+end
+</code></pre>
+
+<p>Note that reform needs to know about the owner objects of properties. You can do so by using the <code>on:</code> option.</p>
+
+<p>Also, the form needs to have a main object configured. This is where ActiveModel-methods like <code>#persisted?</code> or ‘#id’ are delegated to. Use <code>::model</code> to define the main object.</p>
+
+<h3 id="composition-setup">Composition: Setup</h3>
+
+<p>The constructor slightly differs.</p>
+
+<pre><code>@form = SongWithLabelForm.new(song: Song.new, label: Label.new)
+</code></pre>
+
+<h3 id="composition-rendering">Composition: Rendering</h3>
+
+<p>After you configured your composition in the form, reform hides the fact that you’re actually showing two different objects.</p>
+
+<pre><code>= form_for @form do |f|
+  Song:     = f.input :title
+  Label in: = f.input :city
+</code></pre>
+
+<h3 id="composition-processing">Composition: Processing</h3>
+
+<p>When using `#save’ without a block reform will use writer methods on the different objects to push validated data to the properties.</p>
+
+<p>Here’s what the block parameters look like.</p>
+
+<pre><code>@form.save do |nested|
+
+  nested #=&gt; {
+         #   song:  {title: "Rio"}
+         #   label: {city: "London"}
+         #   }
+end
+</code></pre>
+
+<h2 id="forms-in-modules">Forms In Modules</h2>
+
+<p>To maximize reusability, you can also define forms in modules and include them in other modules or classes.</p>
+
+<pre><code>module SongsForm
+  include Reform::Form::Module
+
+  collection :songs do
+    property :title
+    validates :title, presence: true
+  end
+end
+</code></pre>
+
+<p>This can now be included into a real form.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  include SongsForm
+end
+</code></pre>
+
+<p>Note that you can also override properties <a href="#inheritance">using inheritance</a> in Reform.</p>
+
+<p>When using coercion, make sure the including form already contains the <code>Coercion</code> module.</p>
+
+<h2 id="inheritance">Inheritance</h2>
+
+<p>Forms can be derived from other forms and will inherit all properties and validations.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  collection :songs do
+    property :title
+
+    validates :title, presence: true
+  end
+end
+</code></pre>
+
+<p>Now, a simple inheritance can add fields.</p>
+
+<pre><code>class CompilationForm &lt; AlbumForm
+  property :composers do
+    property :name
+  end
+end
+</code></pre>
+
+<p>This will <em>add</em> <code>composers</code> to the existing fields.</p>
+
+<p>You can also partially override fields using <code>:inherit</code>.</p>
+
+<pre><code>class CompilationForm &lt; AlbumForm
+  property :songs, inherit: true do
+    property :band_id
+    validates :band_id, presence: true
+  end
+end
+</code></pre>
+
+<p>Using <code>inherit:</code> here will extend the existing <code>songs</code> form with the <code>band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
+
+<h2 id="coercion">Coercion</h2>
+
+<p>Often you want incoming form data to be converted to a type, like timestamps. Reform uses <a href="https://github.com/solnic/virtus">virtus</a> for coercion, the DSL is seamlessly integrated into Reform with the <code>:type</code> option.</p>
+
+<h3 id="virtus-coercion">Virtus Coercion</h3>
+
+<p>Be sure to add <code>virtus</code> to your Gemfile.</p>
+
+<pre><code>require 'reform/form/coercion'
+
+class SongForm &lt; Reform::Form
+  include Coercion
+
+  property :written_at, type: DateTime
+end
+
+form.validate("written_at" =&gt; "26 September")
+</code></pre>
+
+<p>Coercion only happens in <code>#validate</code>.</p>
+
+<pre><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
+</code></pre>
+
+<h3 id="manual-coercing-values">Manual Coercing Values</h3>
+
+<p>If you need to filter values manually, you can override the setter in the form.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  property :title
+
+  def title=(value)
+    super sanitize(value) # value is raw form input.
+  end
+end
+</code></pre>
+
+<p>As with the built-in coercion, this setter is only called in <code>#validate</code>.</p>
+
+<h2 id="virtual-attributes">Virtual Attributes</h2>
+
+<p>Virtual fields come in handy when there’s no direct mapping to a model attribute or when you plan on displaying but not processing a value.</p>
+
+<h3 id="virtual-fields">Virtual Fields</h3>
+
+<p>Often, fields like <code>password_confirmation</code> should neither be read from nor written back to the model. Reform comes with the <code>:virtual</code> option to handle that case.</p>
+
+<pre><code>class PasswordForm &lt; Reform::Form
+  property :password
+  property :password_confirmation, virtual: true
+</code></pre>
+
+<p>Here, the model won’t be queried for a <code>password_confirmation</code> field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.</p>
+
+<pre><code>form.validate("password" =&gt; "123", "password_confirmation" =&gt; "321")
+
+form.password_confirmation #=&gt; "321"
+</code></pre>
+
+<p>The nested hash in the block-<code>#save</code> provides the same value.</p>
+
+<pre><code>form.save do |nested|
+  nested[:password_confirmation] #=&gt; "321"
+</code></pre>
+
+<h3 id="read-only-fields">Read-Only Fields</h3>
+
+<p>When you want to show a value but skip processing it after submission the <code>:writeable</code> option is your friend.</p>
+
+<pre><code>class ProfileForm &lt; Reform::Form
+  property :country, writeable: false
+</code></pre>
+
+<p>This time reform will query the model for the value by calling <code>model.country</code>.</p>
+
+<p>You want to use this to display an initial value or to further process this field with JavaScript. However, after submission, the field is no longer considered: it won’t be written to the model when saving.</p>
+
+<p>It is still readable in the nested hash and through the form itself.</p>
+
+<pre><code>form.save do |nested|
+  nested[:country] #=&gt; "Australia"
+</code></pre>
+
+<h3 id="write-only-fields">Write-Only Fields</h3>
+
+<p>A third alternative is to hide a field’s value but write it to the database when syncing. This can be achieved using the <code>:readable</code> option.</p>
+
+<pre><code>property :credit_card_number, readable: false
+</code></pre>
+
+<h2 id="validations-from-models">Validations From Models</h2>
+
+<p>Sometimes when you still keep validations in your models (which you shouldn’t) copying them to a form might not feel right. In that case, you can let Reform automatically copy them.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  property :title
+
+  extend ActiveModel::ModelValidations
+  copy_validations_from Song
+end
+</code></pre>
+
+<p>Note how <code>copy_validations_from</code> copies over the validations allowing you to stay DRY.</p>
+
+<p>This also works with Composition.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include Composition
+  # ...
+
+  extend ActiveModel::ModelValidations
+  copy_validations_from song: Song, band: Band
+end
+</code></pre>
+
+<h2 id="agnosticism-mapping-data">Agnosticism: Mapping Data</h2>
+
+<p>Reform doesn’t really know whether it’s working with a PORO, an <code>ActiveRecord</code> instance or a <code>Sequel</code> row.</p>
+
+<p>When rendering the form, reform calls readers on the decorated model to retrieve the field data (<code>Song#title</code>, <code>Song#length</code>).</p>
+
+<p>When syncing a submitted form, the same happens using writers. Reform simply calls <code>Song#title=(value)</code>. No knowledge is required about the underlying database layer.</p>
+
+<p>The same applies to saving: Reform will call <code>#save</code> on the main model and nested models.</p>
+
+<p>Nesting forms only requires readers for the nested properties as <code>Album#songs</code>.</p>
+
+<h2 id="rails-integration">Rails Integration</h2>
+
+<p>Rails and Reform work together out-of-the-box.</p>
+
+<p>However, you should know about two things.</p>
+
+<ol>
+  <li>In case you explicitely <em>don’t</em> want to have automatic support for <code>ActiveRecord</code> or <code>Mongoid</code> and form builder: <code>require reform/form</code>, only.</li>
+  <li>In some setups around Rails 4 the <code>Form::ActiveRecord</code> module is not loaded properly, usually triggering a <code>NoMethodError</code> saying <code>undefined method 'model'</code>. If that happened to you, <code>require 'reform/rails'</code> manually at the bottom of your <code>config/application.rb</code>.</li>
+  <li>Mongoid form gets loaded with the gem if <code>Mongoid</code> constant is defined.</li>
+</ol>
+
+<h2 id="activerecord-compatibility">ActiveRecord Compatibility</h2>
+
+<p>Reform provides the following <code>ActiveRecord</code> specific features. They’re mixed in automatically in a Rails/AR setup.</p>
+
+<ul>
+  <li>Uniqueness validations. Use <code>validates_uniqueness_of</code> in your form.</li>
+</ul>
+
+<p>As mentioned in the <a href="https://github.com/apotonick/reform#rails-integration">Rails Integration</a> section some Rails 4 setups do not properly load.</p>
+
+<p>You may want to include the module manually then.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveRecord
+</code></pre>
+
+<h2 id="mongoid-compatibility">Mongoid Compatibility</h2>
+
+<p>Reform provides the following <code>Mongoid</code> specific features. They’re mixed in automatically in a Rails/Mongoid setup.</p>
+
+<ul>
+  <li>Uniqueness validations. Use <code>validates_uniqueness_of</code> in your form.</li>
+</ul>
+
+<p>You may want to include the module manually then.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include Reform::Form::Mongoid
+</code></pre>
+
+<h2 id="uniqueness-validation">Uniqueness Validation</h2>
+
+<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support from the model class when you use <code>validates_uniqueness_of</code>. They will provide options like <code>:scope</code>, etc.</p>
+
+<p>You’re encouraged to use Reform’s non-writing <code>unique: true</code> validation, though. <a href="http://trailblazer.to/gems/reform/validation.html">Learn more</a></p>
+
+<h2 id="activemodel-compliance">ActiveModel Compliance</h2>
+
+<p>Forms in Reform can easily be made ActiveModel-compliant.</p>
+
+<p>Note that this step is <em>not</em> necessary in a Rails environment.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+end
+</code></pre>
+
+<p>If you’re not happy with the <code>model_name</code> result, configure it manually via <code>::model</code>.</p>
+
+<pre><code>class CoverSongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+
+  model :song
+end
+</code></pre>
+
+<p><code>::model</code> will configure ActiveModel’s naming logic. With <code>Composition</code>, this configures the main model of the form and should be called once.</p>
+
+<p>This is especially helpful when your framework tries to render <code>cover_song_path</code> although you want to go with <code>song_path</code>.</p>
+
+<h2 id="formbuilder-support">FormBuilder Support</h2>
+
+<p>To make your forms work with all the form gems like <code>simple_form</code> or Rails <code>form_for</code> you need to include another module.</p>
+
+<p>Again, this step is implicit in Rails and you don’t need to do it manually.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+  include Reform::Form::ActiveModel::FormBuilderMethods
+end
+</code></pre>
+
+<h3 id="simple-form">Simple Form</h3>
+
+<p>If you want full support for <code>simple_form</code> do as follows.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  include ActiveModel::ModelReflections
+</code></pre>
+
+<p>Including this module will add <code>#column_for_attribute</code> and other methods need by form builders to automatically guess the type of a property.</p>
+
+<h2 id="validations-for-file-uploads">Validations For File Uploads</h2>
+
+<p>In case you’re processing uploaded files with your form using CarrierWave, Paperclip, Dragonfly or Paperdragon we recommend using the awesome <a href="https://github.com/musaffa/file_validators">file_validators</a> gem for file type and size validations.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  property :image
+
+  validates :image, file_size: {less_than: 2.megabytes},
+    file_content_type: {allow: ['image/jpeg', 'image/png', 'image/gif']}
+</code></pre>
+
+<h2 id="multiparameter-dates">Multiparameter Dates</h2>
+
+<p>Composed multi-parameter dates as created by the Rails date helper are processed automatically when <code>multi_params: true</code> is set for the date property and the <code>MultiParameterAttributes</code> feature is included. As soon as Reform detects an incoming <code>release_date(i1)</code> or the like it is gonna be converted into a date.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  feature Reform::Form::ActiveModel::FormBuilderMethods
+  feature Reform::Form::MultiParameterAttributes
+
+  collection :songs do
+    feature Reform::Form::ActiveModel::FormBuilderMethods
+    property :title
+    property :release_date, :multi_params =&gt; true
+    validates :title, :presence =&gt; true
+  end
+end
+</code></pre>
+
+<p>Note that the date will be <code>nil</code> when one of the components (year/month/day) is missing.</p>
+
+<h2 id="security">Security</h2>
+
+<p>By explicitely defining the form layout using <code>::property</code> there is no more need for protecting from unwanted input. <code>strong_parameter</code> or <code>attr_accessible</code> become obsolete. Reform will simply ignore undefined incoming parameters.</p>
+
+<h2 id="nesting-without-inline-representers">Nesting Without Inline Representers</h2>
+
+<p>When nesting form, you usually use a so-called inline form doing <code>property :song do .. end</code>.</p>
+
+<p>Sometimes you want to specify an explicit form rather than using an inline form. Use the <code>form:</code> option here.</p>
+
+<pre><code>property :song, form: SongForm
+</code></pre>
+
+<p>The nested <code>SongForm</code> is a stand-alone form class you have to provide.</p>
+
+<h2 id="default-values-for-presentation">Default Values For Presentation</h2>
+
+<p>In case you want to change a value for presentation or provide a default value, override the reader. This is only considered when the form is rendered (e.g. in <code>form_for</code>).</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  property :genre
+
+  def genre
+    super || 'Punkrock'
+  end
+end
+</code></pre>
+
+<p>This will now be used when rendering the view.</p>
+
+<pre><code>= f.input :genre # calls form.genre which provides default.
+</code></pre>
+
+<h2 id="dirty-tracker">Dirty Tracker</h2>
+
+<p>Every form tracks changes in <code>#validate</code> and allows to check if a particular property value has changed using <code>#changed?</code>.</p>
+
+<pre><code>form.title =&gt; "Button Up"
+
+form.validate("title" =&gt; "Just Kiddin'")
+form.changed?(:title) #=&gt; true
+</code></pre>
+
+<p>When including <code>Sync::SkipUnchanged</code>, the form won’t assign unchanged values anymore in <code>#sync</code>.</p>
+
+<h2 id="deserializing-and-population">Deserializing and Population</h2>
+
+<p>A form object is just a twin. In <code>validate</code>, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.</p>
+
+<p>Representers can be inferred from the contract automatically using <code>Disposable::Schema</code>. You may then extend your representer with hypermedia, etc. in order to render documents. Check out the Trailblazer book (chapter Hypermedia APIs) for a full explanation.</p>
+
+<p>You can even write your own deserializer code in case you dislike Representable.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  # ..
+
+  def deserialize!(document)
+    hash = YAML.parse(document)
+
+    self.title  = hash[:title]
+    self.artist = Artist.new if hash[:artist]
+  end
+end
+</code></pre>
+
+<p>The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.</p>
+
+<h3 id="skipping-properties-when-validating">Skipping Properties when Validating</h3>
+
+<p>In <code>#validate</code>, you can ignore properties now using <code>:skip_if</code> for deserialization.</p>
+
+<pre><code>property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
+</code></pre>
+
+<p>This works for both properties and nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.</p>
+
+<p>For nested properties you can use <code>:skip_if: :all_blank</code> as a macro to ignore a nested form if all values are blank.</p>
+
+<p>Note that this still runs validations for the property, though.</p>
+
+<h3 id="prepopulating-forms">Prepopulating Forms</h3>
+
+<p>Docs: http://trailblazer.to/gems/reform/prepopulator.html</p>
+
+<p>You can also pass options to <code>#prepopulate</code>.</p>
+
+<p>Only do this for forms that are about to get rendered, though.</p>
+
+<p>Collections and partial collection population is covered in chapter 5.</p>
+
+<h3 id="populator">Populator</h3>
+
+<p>Docs: http://trailblazer.to/gems/reform/populator.html</p>
+
+<p>You can run your very own populator logic if you’re keen (and you know what you’re doing).</p>
+
+<p>class AlbumForm &lt; Reform::Form<br />
+  # …</p>
+
+<p>collection :songs, populator: lambda { |fragment, args| args.binding[:form].new(Song.find fragment[:id]) } do<br />
+    # ..<br />
+  end</p>
+
+<h3 id="property-inflections">Property Inflections</h3>
+
+<p>When rendering a form you might need to access the options you provided to <code>property</code>.</p>
+
+<pre><code>property :title, type: String
+</code></pre>
+
+<p>You can do this using <code>#options_for</code>.</p>
+
+<pre><code>form.options_for(:title) # =&gt; {:readable=&gt;true, :coercion_type=&gt;String}
+</code></pre>
+
+<p>Note that Reform renames some options (e.g. <code>:type</code> internally becomes <code>:coercion_type</code>). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you’re forward-compatible.</p>
 
       </div>
     </div>
