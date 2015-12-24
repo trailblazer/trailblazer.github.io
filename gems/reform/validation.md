@@ -5,10 +5,68 @@ title: "Reform Validation"
 
 # Validation
 
-Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `Lotus::Validations`.
+Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`.
 
-Reform will at some point drop ActiveModel-support in favor of a clean, fast, maintainable, and simple validations implementation as found in [lotus-validations](https://github.com/lotus/validations).
+Reform 2.2 will drop ActiveModel-support. You can still use it, but we won't be actively maintaining it anymore.
 
+## Overview
+
+Validation in Reform works by invoking `validate` and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.
+
+`Form#validate` will return the result boolean, and provide potential errors via `Form#errors`.
+
+## Dry-validation
+
+Dry-validation is the preferred backend for defining and executing validations.
+
+The purest form of defining validations with this backend is by using a [validation group](#validation-group). A group provides the exact same API as a `Dry::Validation::Schema`. You can learn all the details on the [gem's website](https://github.com/dryrb/dry-validation).
+
+    class AlbumForm < Reform::Form
+      include Reform::Form::Dry
+
+      property :title
+
+      validation :default do
+        key(:title, &:filled?)
+      end
+    end
+
+Custom predicates have to be defined in the validation group.
+
+    validation :default do
+      key(:title) { |title| title.filled? & title.unique? }
+
+      def unique?(value)
+        Album.find_by(title: value).nil?
+      end
+    end
+
+In addition to dry-validation's API, you have access to the form that contains the group via `form`.
+
+    validation :default do
+      key(:confirm_password, &:same_password?)
+
+      def same_password?(value)
+        value == form.password
+      end
+    end
+
+Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.
+
+### Dry: Error Messages
+
+You need to provide custom error messages via dry-validation mechanics.
+
+    validation :default do
+      configure { |config|
+        config.messages_file = 'config/error_messages.yml'
+      }
+
+A simple error messages file might look as follows.
+
+    en:
+      errors:
+        same_password?: "passwords not equal"
 
 ## ActiveModel
 
@@ -23,27 +81,39 @@ In other frameworks, you need to include `Reform::Form::ActiveModel::Validations
       include Reform::Form::ActiveModel::Validations
     end
 
+## Validation Group
 
+Grouping validataions allows running them conditionally. You can use `:if` to specify what group had to be successful validated.
 
-## Lotus
-
-To use Lotus validations (recommended).
-
-
-    require "reform/form/lotus"
-
-    Reform::Form.class_eval do
-      include Reform::Form::Lotus
+    validation :default do
+      key(:title, &:filled?)
     end
 
+    validation :unique, if: :default do
+      key(:title, &:unique?)
 
-Put this into an initializer or on top of your script.
+      def unique?(value)
+      # ..
+    end
 
-If you forget doing so, the following exception will remind you.
+This will only run the database-consuming `:unique` validation group if the `:default` group was valid.
 
+Chaining groups works via the `:after` option. This will run the group regardless of the former result. Note that it still can be combined with `:if`.
 
-    `validates': [Reform] Please include either Reform::Form::ActiveModel::Validations or Reform::Form::Lotus in your form class. (RuntimeError)
+    validation :email, after: :default do
+      key(:email, &:email?)
 
+      def email?(value)
+      # ..
+    end
+
+At any time you can extend an existing group using `:inherit`.
+
+    validation :email, inherit: true do
+      key(:email, &:filled?)
+    end
+
+This appends validations to the existing `:email` group.
 
 ## Uniqueness Validation
 
