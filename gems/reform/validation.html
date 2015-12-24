@@ -143,9 +143,73 @@
       <div class="columns medium-9 code-content">
         <h1 id="validation">Validation</h1>
 
-<p>Since Reform 2.0, you can pick your validation backend. This can either be <code>ActiveModel::Validations</code> or <code>Lotus::Validations</code>.</p>
+<p>Since Reform 2.0, you can pick your validation backend. This can either be <code>ActiveModel::Validations</code> or <code>dry-validation</code>.</p>
 
-<p>Reform will at some point drop ActiveModel-support in favor of a clean, fast, maintainable, and simple validations implementation as found in <a href="https://github.com/lotus/validations">lotus-validations</a>.</p>
+<p>Reform 2.2 will drop ActiveModel-support. You can still use it, but we won’t be actively maintaining it anymore.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>Validation in Reform works by invoking <code>validate</code> and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.</p>
+
+<p><code>Form#validate</code> will return the result boolean, and provide potential errors via <code>Form#errors</code>.</p>
+
+<h2 id="dry-validation">Dry-validation</h2>
+
+<p>Dry-validation is the preferred backend for defining and executing validations.</p>
+
+<p>The purest form of defining validations with this backend is by using a <a href="#validation-group">validation group</a>. A group provides the exact same API as a <code>Dry::Validation::Schema</code>. You can learn all the details on the <a href="https://github.com/dryrb/dry-validation">gem’s website</a>.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  include Reform::Form::Dry
+
+  property :title
+
+  validation :default do
+    key(:title, &amp;:filled?)
+  end
+end
+</code></pre>
+
+<p>Custom predicates have to be defined in the validation group.</p>
+
+<pre><code>validation :default do
+  key(:title) { |title| title.filled? &amp; title.unique? }
+
+  def unique?(value)
+    Album.find_by(title: value).nil?
+  end
+end
+</code></pre>
+
+<p>In addition to dry-validation’s API, you have access to the form that contains the group via <code>form</code>.</p>
+
+<pre><code>validation :default do
+  key(:confirm_password, &amp;:same_password?)
+
+  def same_password?(value)
+    value == form.password
+  end
+end
+</code></pre>
+
+<p>Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.</p>
+
+<h3 id="dry-error-messages">Dry: Error Messages</h3>
+
+<p>You need to provide custom error messages via dry-validation mechanics.</p>
+
+<pre><code>validation :default do
+  configure { |config|
+    config.messages_file = 'config/error_messages.yml'
+  }
+</code></pre>
+
+<p>A simple error messages file might look as follows.</p>
+
+<pre><code>en:
+  errors:
+    same_password?: "passwords not equal"
+</code></pre>
 
 <h2 id="activemodel">ActiveModel</h2>
 
@@ -160,23 +224,42 @@ Reform::Form.class_eval do
 end
 </code></pre>
 
-<h2 id="lotus">Lotus</h2>
+<h2 id="validation-group">Validation Group</h2>
 
-<p>To use Lotus validations (recommended).</p>
+<p>Grouping validataions allows running them conditionally. You can use <code>:if</code> to specify what group had to be successful validated.</p>
 
-<pre><code>require "reform/form/lotus"
+<pre><code>validation :default do
+  key(:title, &amp;:filled?)
+end
 
-Reform::Form.class_eval do
-  include Reform::Form::Lotus
+validation :unique, if: :default do
+  key(:title, &amp;:unique?)
+
+  def unique?(value)
+  # ..
 end
 </code></pre>
 
-<p>Put this into an initializer or on top of your script.</p>
+<p>This will only run the database-consuming <code>:unique</code> validation group if the <code>:default</code> group was valid.</p>
 
-<p>If you forget doing so, the following exception will remind you.</p>
+<p>Chaining groups works via the <code>:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code>:if</code>.</p>
 
-<pre><code>`validates': [Reform] Please include either Reform::Form::ActiveModel::Validations or Reform::Form::Lotus in your form class. (RuntimeError)
+<pre><code>validation :email, after: :default do
+  key(:email, &amp;:email?)
+
+  def email?(value)
+  # ..
+end
 </code></pre>
+
+<p>At any time you can extend an existing group using <code>:inherit</code>.</p>
+
+<pre><code>validation :email, inherit: true do
+  key(:email, &amp;:filled?)
+end
+</code></pre>
+
+<p>This appends validations to the existing <code>:email</code> group.</p>
 
 <h2 id="uniqueness-validation">Uniqueness Validation</h2>
 
