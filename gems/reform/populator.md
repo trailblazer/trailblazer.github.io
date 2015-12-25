@@ -229,6 +229,11 @@ You can implement your own deletion.
 
 You can delete items from the graph using `delete`. To avoid this fragment being further deserialized, use `return skip!` to stop processing for this fragment.
 
+Note that you can also use the twin's `Collection` API for finding nested twins by any field.
+
+    populator: ->(fragment:, **) {
+      item = songs.find_by(id: fragment["id"])
+
 ## Skip
 
 Since Reform 2.1, populators can skip processing of a fragment by returning `skip!`. This will ignore this fragment as if it wasn't present in the incoming hash.
