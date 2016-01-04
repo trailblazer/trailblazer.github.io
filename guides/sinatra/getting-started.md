@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: "Getting Started: Sinatra and Trailblazer"
+title: "Getting Started with Sinatra and Trailblazer"
 ---
 
 # Getting Started with Sinatra and Trailblazer

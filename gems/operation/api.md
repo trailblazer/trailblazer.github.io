@@ -15,7 +15,7 @@ This document discusses the callstack from top to bottom.
 The _call style_  returns the operation when the validation was successful. With invalid data, it will raise an `InvalidContract` exception.
 
 
-    Comment::Create.(comment: {body: "MVC is so 90s."}) #=> <Comment::Create @model=..>
+    Comment::Create.(comment: {body: "MVC's so 90s."}) #=> <Comment::Create @model=..>
     Comment::Create.(comment: {}) #=> exception raised!
 
 
