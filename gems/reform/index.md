@@ -39,10 +39,10 @@ In addition to the main API, forms expose accessors to the defined properties. T
 In your controller or operation you create a form instance and pass in the models you want to work on.
 
 
-  class AlbumsController
-    def new
-      @form = AlbumForm.new(Album.new)
-    end
+    class AlbumsController
+      def new
+        @form = AlbumForm.new(Album.new)
+      end
 
 
 This will also work as an editing form with an existing album.
