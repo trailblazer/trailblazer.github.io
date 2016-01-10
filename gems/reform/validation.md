@@ -7,7 +7,7 @@ title: "Reform Validation"
 
 Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`.
 
-Reform 2.2 will drop ActiveModel-support. You can still use it, but we won't be actively maintaining it anymore.
+Reform 2.2 will drop ActiveModel-support. You can still use it (and it will work!), but we won't be actively maintaining it anymore. In other words, `ActiveModel::Validations` and Reform should be working until at least Reform 3.0.
 
 ## Overview
 
@@ -20,6 +20,8 @@ Validation in Reform works by invoking `validate` and passing in a hash. This ha
 Dry-validation is the preferred backend for defining and executing validations.
 
 The purest form of defining validations with this backend is by using a [validation group](#validation-group). A group provides the exact same API as a `Dry::Validation::Schema`. You can learn all the details on the [gem's website](https://github.com/dryrb/dry-validation).
+
+    require "reform/form/dry"
 
     class AlbumForm < Reform::Form
       include Reform::Form::Dry
