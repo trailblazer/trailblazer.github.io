@@ -4,9 +4,11 @@ permalink: /gems/reform/
 title: "Reform"
 ---
 
-# Reform
+# Overview
 
 Reform provides form objects that maintain validations for one or multiple models, where a _model_ can be any kind of Ruby object. It is completely framework-agnostic and doesn't care about your database.
+
+A *form* doesn't have to be a UI component, necessarily! It can be an intermediate validation before writing data to the persistence layer. While form objects may be used to render graphical web forms, Reform is used in many pure-API applications for deserialization and validation.
 
 ## Form Definition
 
@@ -39,10 +41,10 @@ In addition to the main API, forms expose accessors to the defined properties. T
 In your controller or operation you create a form instance and pass in the models you want to work on.
 
 
-  class AlbumsController
-    def new
-      @form = AlbumForm.new(Album.new)
-    end
+    class AlbumsController
+      def new
+        @form = AlbumForm.new(Album.new)
+      end
 
 
 This will also work as an editing form with an existing album.
@@ -217,7 +219,7 @@ Very often, you need to give Reform some information how to create or find neste
 
 Add this line to your Gemfile:
 
-  gem 'reform'
+    gem 'reform'
 
 Reform works fine with Rails 3.1-4.2. However, inheritance of validations with `ActiveModel::Validations` is broken in Rails 3.2 and 4.0.
 
@@ -272,10 +274,10 @@ Reform can also handle deeply nested hash fields from serialized hash columns. T
 
 Luckily, this can be shortened as follows.
 
-class SongForm < Reform::Form
-  property :title, validates: {presence: true}
-  property :length, validates: {numericality: true}
-end
+    class SongForm < Reform::Form
+      property :title, validates: {presence: true}
+      property :length, validates: {numericality: true}
+    end
 
 Use `properties` to bulk-specify fields.
 
@@ -749,16 +751,6 @@ Collections and partial collection population is covered in chapter 5.
 
 Docs: http://trailblazer.to/gems/reform/populator.html
 
-
-You can run your very own populator logic if you're keen (and you know what you're doing).
-
-class AlbumForm < Reform::Form
-  # ...
-
-  collection :songs, populator: lambda { |fragment, args| args.binding[:form].new(Song.find fragment[:id]) } do
-    # ..
-  end
-
 ### Property Inflections
 
 When rendering a form you might need to access the options you provided to `property`.
@@ -770,3 +762,8 @@ You can do this using `#options_for`.
     form.options_for(:title) # => {:readable=>true, :coercion_type=>String}
 
 Note that Reform renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you're forward-compatible.
+
+
+
+
+it's like that: your form gets a minimal set of input, and then transforms that into an object graph. don't add public properties just to satisfy AR, solve that in the form
