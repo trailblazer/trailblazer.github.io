@@ -145,7 +145,22 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h2 id="initialize">Initialize</h2>
+        <h2 id="cell-class">Cell Class</h2>
+
+<p>Every fragment is represented by a cell class. Following the Trailblazer convention, the <code>Comment::Cell</code> sits in <code>app/concepts/comment/cell.rb</code>.</p>
+
+<pre><code class="language-ruby">class Comment::Cell &lt; Cell::ViewModel
+  def show
+    render # renders app/concepts/comment/view[s]/show.haml.
+  end
+end
+</code></pre>
+
+<p>A cell has to define at least one method that returns the fragment. Per convention, this is <code>show</code>. In the public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
+
+<p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
+
+<h2 id="initialize">Initialize</h2>
 
 <p>In most cases, you instantiate cells with the <code>concept</code> or <code>cell</code> helper.</p>
 
