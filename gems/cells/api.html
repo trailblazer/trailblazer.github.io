@@ -149,7 +149,7 @@
       <div class="columns medium-9 code-content">
         <h2 id="initialize">Initialize</h2>
 
-<p>Normally, you instantiate cells with the <code>concept</code> or <code>cell</code> helper.</p>
+<p>In most cases, you instantiate cells with the <code>concept</code> or <code>cell</code> helper.</p>
 
 <pre><code>cell = concept("comment/cell", comment)
 </code></pre>
@@ -164,18 +164,21 @@ cell.(:javascript)
 
 <h2 id="call">Call</h2>
 
+<p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
+
 <pre><code>concept("comment/cell", comment).(:show)
 </code></pre>
 
-<p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
+<p>This will call the cell’s <code>show</code> method and return the rendered fragment.</p>
 
-<p>The <code>#call</code> method also accepts a block and yields <code>self</code> (the cell instance) to it. This is extremely helpful for using <code>content_for</code> outside of the cell.</p>
+<p>Note that you can invoke more than one state on a cell, if desired.</p>
 
-<pre><code>  = cell(:song, Song.last).call(:show) do |cell|
-    content_for :footer, cell.footer
+<pre><code class="language-ruby">- cell = concept("comment/cell", Song.last) # instantiate.
+= cell.call(:show)                          # render main fragment.
+= content_for :footer, cell.(:footer)       # render footer.
 </code></pre>
 
-<p>Note how the block is run in the global view’s context, allowing you to use global helpers like <code>content_for</code>.</p>
+<p>See how you can combine cells with global helpers like <code>content_for</code>?</p>
 
 <h2 id="options">Options</h2>
 
@@ -228,11 +231,34 @@ end
 <pre><code>&lt;%= title(escape: false) %&gt;
 </code></pre>
 
-<h2 id="av">AV</h2>
-
-<p>clean encap, no global access, interfaces</p>
-
 <h2 id="nesting">Nesting</h2>
+
+<h2 id="view-inheritance">View Inheritance</h2>
+
+<p>Cells can inherit code from each other with Ruby’s inheritance.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+end
+
+class PostCell &lt; CommentCell
+end
+</code></pre>
+
+<p>Even cooler, <code>PostCell</code> will now inherit views from <code>CommentCell</code>.</p>
+
+<pre><code class="language-ruby">PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
+</code></pre>
+
+<p>When views can be found in the local <code>post</code> directory, they will be looked up in <code>comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
+
+<p>If you only want to inherit views, not the entire class, use <code>::inherit_views</code>.</p>
+
+<pre><code class="language-ruby">class PostCell &lt; Cell::ViewModel
+  inherit_views Comment::Cell
+end
+
+PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
+</code></pre>
 
 <h1 id="collections">Collections</h1>
 
@@ -240,6 +266,97 @@ end
 
 <pre><code>Comment.(comment, style: "awesome", volume: "loud")
 </code></pre>
+
+<h2 id="caching">Caching</h2>
+
+<p>Cells allow you to cache per state. It’s simple: the rendered result of a state method is cached and expired as you configure it.</p>
+
+<p>To cache forever, don’t configure anything</p>
+
+<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
+  cache :show
+
+  def show
+    render
+  end
+</code></pre>
+
+<p>This will run <code>#show</code> only once, after that the rendered view comes from the cache.</p>
+
+<h2 id="cache-options">Cache Options</h2>
+
+<p>Note that you can pass arbitrary options through to your cache store. Symbols are evaluated as instance methods, callable objects (e.g. lambdas) are evaluated in the cell instance context allowing you to call instance methods and access instance variables. All arguments passed to your state (e.g. via <code>render_cell</code>) are propagated to the block.</p>
+
+<pre><code class="language-ruby">cache :show, :expires_in =&gt; 10.minutes
+</code></pre>
+
+<p>If you need dynamic options evaluated at render-time, use a lambda.</p>
+
+<pre><code class="language-ruby">cache :show, :tags =&gt; lambda { |*args| tags }
+</code></pre>
+
+<p>If you don’t like blocks, use instance methods instead.</p>
+
+<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
+  cache :show, :tags =&gt; :cache_tags
+
+  def cache_tags(*args)
+    # do your magic..
+  end
+</code></pre>
+
+<h2 id="conditional-caching">Conditional Caching</h2>
+
+<p>The <code>:if</code> option lets you define a condition. If it doesn’t return a true value, caching for that state is skipped.</p>
+
+<pre><code class="language-ruby">cache :show, :if =&gt; lambda { |*| has_changed? }
+</code></pre>
+
+<h2 id="cache-keys">Cache Keys</h2>
+
+<p>You can expand the state’s cache key by appending a versioner block to the <code>::cache</code> call. This way you can expire state caches yourself.</p>
+
+<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
+  cache :show do |options|
+    order.id
+  end
+</code></pre>
+
+<p>The versioner block is executed in the cell instance context, allowing you to access all stakeholder objects you need to compute a cache key. The return value is appended to the state key: <code>"cells/cart/show/1"</code>.</p>
+
+<p>As everywhere in Rails, you can also return an array.</p>
+
+<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
+  cache :show do |options|
+    [id, options[:items].md5]
+  end
+</code></pre>
+
+<p>Resulting in: <code>"cells/cart/show/1/0ecb1360644ce665a4ef"</code>.</p>
+
+<h2 id="debugging-cache">Debugging Cache</h2>
+
+<p>When caching is turned on, you might wanna see notifications. Just like a controller, Cells gives you the following notifications.</p>
+
+<ul>
+  <li><code>write_fragment.action_controller</code> for cache miss.</li>
+  <li><code>read_fragment.action_controller</code> for cache hits.</li>
+</ul>
+
+<p>To activate notifications, include the <code>Notifications</code> module in your cell.</p>
+
+<pre><code class="language-ruby">class Comment::Cell &lt; Cell::Rails
+  include Cell::Caching::Notifications
+</code></pre>
+
+<h2 id="cache-inheritance">Cache Inheritance</h2>
+
+<p>Cache configuration is inherited to derived cells.</p>
+
+<h2 id="testing-caching">Testing Caching</h2>
+
+<p>If you want to test it in <code>development</code>, you need to put <code>config.action_controller.perform_caching = true</code> in <code>development.rb</code> to see the effect.</p>
+
 
       </div>
     </div>
