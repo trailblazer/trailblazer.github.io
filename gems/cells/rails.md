@@ -65,3 +65,42 @@ You need to compile assets using this command, which is [explained here](http://
 
 	rake assets:precompile:all RAILS_ENV=development RAILS_GROUPS=assets
 
+
+## Global Partials
+
+Although not recommended, you can also render global partials from a cell. Be warned, though, that they will be rendered using our stack, and you might have to include helpers into your view model.
+
+This works by including `Partial` and the corresponding `:partial` option.
+
+```ruby
+class Cell < Cell::ViewModel
+  include Partial
+
+  def show
+    render partial: "../views/shared/map.html" # app/views/shared/map.html.haml
+  end
+```
+
+The provided path is relative to your cell's `::view_paths` directory. The format has to be added to the file name, the template engine suffix will be used from the cell.
+
+You can provide the format in the `render` call, too.
+
+```ruby
+render partial: "../views/shared/map", formats: [:html]
+```
+
+This was mainly added to provide compatibility with 3rd-party gems like [Kaminari and Cells](https://github.com/apotonick/kaminari-cells) that rely on rendering partials within a cell.
+
+## Generators
+
+In Rails, you can generate cells and concept cells.
+
+```
+rails generate cell comment
+```
+
+Or, TRB-style concept cells.
+
+```
+rails generate concept comment
+```
