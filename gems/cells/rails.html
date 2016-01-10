@@ -101,11 +101,9 @@
     <li><a href="/gems/cells/api.html">API</a></li>
     <li><a href="/gems/cells/testing.html">Testing</a></li>
     <li><a href="/gems/cells/render.html">Rendering</a></li>
-    <li><a href="/gems/cells/engine.html">Engine Cells</a></li>
     <li><a href="/gems/cells/rails.html">Rails</a></li>
     <li><a href="/gems/cells/helpers.html">Helpers</a></li>
     <li><a href="/gems/cells/templates.html">Templates</a></li>
-    <li><a href="/gems/cells/caching.html">Caching</a></li>
     <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
     <li class="divider"></li>
 
@@ -235,6 +233,48 @@
 <p>Or, TRB-style concept cells.</p>
 
 <pre><code>rails generate concept comment
+</code></pre>
+
+<h2 id="engine-cells">Engine Cells</h2>
+
+<p>You can bundle cells into Rails engines and maximize a clean, component architecture by making your view models easily distributable and overridable.</p>
+
+<p>This pretty much works out-of-the-box, you write cells and push them into an engine. The only thing differing is that engine cells have to set their <code>view_paths</code> manually to point to the gem directory.</p>
+
+<h2 id="engine-view-paths">Engine View Paths</h2>
+
+<p>Each engine cell has to set its <code>view_paths</code>.</p>
+
+<p>The easiest way is to do this in a base cell in your engine.</p>
+
+<pre><code>module MyEngine
+  class Cell &lt; Cell::Concept
+    view_paths = ["#{MyEngine::Engine.root}/app/concepts"]
+  end
+end
+</code></pre>
+
+<p>The <code>view_paths</code> is inherited, you only have to define it once when using inheritance within your engine.</p>
+
+<pre><code>module MyEngine
+  class Song::Cell &lt; Cell # inherits from MyEngine::Cell
+</code></pre>
+
+<p>This will <em>not</em> allow overriding views of this engine cell in <code>app/cells</code> as it is not part of the engine cell’s <code>view_paths</code>. When rendering <code>MyEngine::User::Cell</code> or a subclass, it will <em>not</em> look in <code>app/cells</code>.</p>
+
+<p>To achieve just that, you may append the engine’s view path instead of overwriting it.</p>
+
+<pre><code>class MyEngine::User::Cell &lt; Cell::Concept
+  view_paths &lt;&lt; "#{MyEngine::Engine.root}/app/concepts"
+end
+</code></pre>
+
+<h2 id="engine-render-problems">Engine Render problems</h2>
+
+<p>You might have to include cells’ template gem into your <strong>application’s</strong> <code>Gemfile</code>. This will properly require the extension.</p>
+
+<pre><code># application Gemfile
+gem "cells-erb"
 </code></pre>
 
       </div>
