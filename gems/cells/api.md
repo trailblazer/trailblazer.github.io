@@ -3,6 +3,22 @@ layout: cells
 title: "Cells API"
 ---
 
+## Cell Class
+
+Every fragment is represented by a cell class. Following the Trailblazer convention, the `Comment::Cell` sits in `app/concepts/comment/cell.rb`.
+
+```ruby
+class Comment::Cell < Cell::ViewModel
+  def show
+    render # renders app/concepts/comment/view[s]/show.haml.
+  end
+end
+```
+
+A cell has to define at least one method that returns the fragment. Per convention, this is `show`. In the public method, you may compile arbitrary strings or `render` a cell view.
+
+The return value of this public method (also called _state_) is what will be the rendered in the view using the cell.
+
 ## Initialize
 
 In most cases, you instantiate cells with the `concept` or `cell` helper.
