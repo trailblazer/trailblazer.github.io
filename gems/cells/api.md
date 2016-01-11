@@ -15,24 +15,53 @@ class Comment::Cell < Cell::ViewModel
 end
 ```
 
-A cell has to define at least one method that returns the fragment. Per convention, this is `show`. In the public method, you may compile arbitrary strings or `render` a cell view.
+A cell has to define at least one method which in turn has to return the fragment. Per convention, this is `show`. In the public method, you may compile arbitrary strings or `render` a cell view.
 
 The return value of this public method (also called _state_) is what will be the rendered in the view using the cell.
 
+## Manual Invocation
+
+Without using any helpers and in its purest form, a cell can be rendered as follows.
+
+```ruby
+Comment::Cell.new(comment).(:show) #=> "fragment string"
+```
+
+This can be split up into two steps: initialization and invocation.
+
 ## Initialize
 
-In most cases, you instantiate cells with the `concept` or `cell` helper.
+While you will mostly use the `concept` or `cell` helper in views and controllers, you may instantiate cells manually.
+
+```ruby
+cell = Comment::Cell.new(comment)
+```
+
+This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a `Lotus::Action`.
+
+You can also pass arbitrary options into the cell, for example the controller.
+
+```ruby
+cell = Comment::Cell.new(comment, parent_controller: self)
+```
+
+However, in most cases you instantiate cells with the `concept` or `cell` helper which internally does exactly the same.
 
 	cell = concept("comment/cell", comment)
 
-This gives you the cell instance. Although not encouraged, you could call multiple methods on it.
+As always in Ruby, instantiation returns the cell instance.
 
+## Invocation
+
+Once you got the cell instance, you may call the rendering state.
 
 	cell.(:show)
-	cell.(:javascript)
 
+Since `show` is the default state, you may simple _call_ the cell without arguments.
 
-Normally, you will want to run the `show` method, only. In controller views, this will be called automatically. However, you could do that manually as follows.
+	cell.() #=> cell.(:show)
+
+Note that in Rails controller views, this will be called automatically via cell's `ViewModel#to_s` method.
 
 ## Call
 
