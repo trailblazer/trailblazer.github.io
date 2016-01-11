@@ -160,6 +160,15 @@ end
 
 <p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
 
+<h2 id="manual-invocation">Manual Invocation</h2>
+
+<p>Without using any helpers and in its purest form, a cell can be rendered as follows.</p>
+
+<pre><code class="language-ruby">Comment::Cell.new(comment).(:show) #=&gt; "fragment string"
+</code></pre>
+
+<p>This can be split up into two steps: initialization and invocation.</p>
+
 <h2 id="initialize">Initialize</h2>
 
 <p>While you will mostly use the <code>concept</code> or <code>cell</code> helper in views and controllers, you may instantiate cells manually.</p>
