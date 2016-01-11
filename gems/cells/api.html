@@ -156,24 +156,44 @@
 end
 </code></pre>
 
-<p>A cell has to define at least one method that returns the fragment. Per convention, this is <code>show</code>. In the public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
+<p>A cell has to define at least one method which in turn has to return the fragment. Per convention, this is <code>show</code>. In the public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
 
 <p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
 
 <h2 id="initialize">Initialize</h2>
 
-<p>In most cases, you instantiate cells with the <code>concept</code> or <code>cell</code> helper.</p>
+<p>While you will mostly use the <code>concept</code> or <code>cell</code> helper in views and controllers, you may instantiate cells manually.</p>
+
+<pre><code class="language-ruby">cell = Comment::Cell.new(comment)
+</code></pre>
+
+<p>This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a <code>Lotus::Action</code>.</p>
+
+<p>You can also pass arbitrary options into the cell, for example the controller.</p>
+
+<pre><code class="language-ruby">cell = Comment::Cell.new(comment, parent_controller: self)
+</code></pre>
+
+<p>However, in most cases you instantiate cells with the <code>concept</code> or <code>cell</code> helper which internally does exactly the same.</p>
 
 <pre><code>cell = concept("comment/cell", comment)
 </code></pre>
 
-<p>This gives you the cell instance. Although not encouraged, you could call multiple methods on it.</p>
+<p>As always in Ruby, instantiation returns the cell instance.</p>
+
+<h2 id="invocation">Invocation</h2>
+
+<p>Once you got the cell instance, you may call the rendering state.</p>
 
 <pre><code>cell.(:show)
-cell.(:javascript)
 </code></pre>
 
-<p>Normally, you will want to run the <code>show</code> method, only. In controller views, this will be called automatically. However, you could do that manually as follows.</p>
+<p>Since <code>show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
+
+<pre><code>cell.() #=&gt; cell.(:show)
+</code></pre>
+
+<p>Note that in Rails controller views, this will be called automatically via cell’s <code>ViewModel#to_s</code> method.</p>
 
 <h2 id="call">Call</h2>
 
