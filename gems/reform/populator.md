@@ -53,7 +53,7 @@ You need to configure a populator to engage Reform in the proper deserialization
 To let Reform create a new model wrapped by a nested form for you use `:populate_if_empty`. That's the easiest form of population.
 
     class AlbumForm < Reform::Form
-      property :songs, populate_if_empty: Song do
+      collection :songs, populate_if_empty: Song do
         property :name
       end
     end
@@ -72,7 +72,7 @@ You can also create the object yourself and leverage data from the traversed fra
 
 
     class AlbumForm < Reform::Form
-      property :songs,
+      collection :songs,
         populate_if_empty: ->(fragment:, **) do
           Song.find_by(name: fragment["name"]) or Song.new
         end
@@ -84,7 +84,7 @@ You can also provide an instance method on the respective form.
 
 
     class AlbumForm < Reform::Form
-      property :songs, populate_if_empty: :populate_songs! do
+      collection :songs, populate_if_empty: :populate_songs! do
         property :name
       end
 
@@ -182,7 +182,7 @@ Per default, Reform matches incoming hash fragments and nested forms by their or
 
 You can use `:populator` to write your own matching for IDs.
 
-    property :songs,
+    collection :songs,
       populator: ->(fragment:, **) {
         # find out if incoming song is already added.
         item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
@@ -214,7 +214,7 @@ Populators can not only create, but also destroy. Let's say the following input 
 
 You can implement your own deletion.
 
-    property :songs,
+    collection :songs,
       populator: ->(fragment:, **) {
         # find out if incoming song is already added.
         item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
@@ -238,7 +238,7 @@ Note that you can also use the twin's `Collection` API for finding nested twins 
 
 Since Reform 2.1, populators can skip processing of a fragment by returning `skip!`. This will ignore this fragment as if it wasn't present in the incoming hash.
 
-    property :songs,
+    collection :songs,
       populator: ->(fragment:, **) do
         return skip! if fragment["id"]
         # ..
