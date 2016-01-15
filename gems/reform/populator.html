@@ -197,7 +197,7 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 <p>To let Reform create a new model wrapped by a nested form for you use <code>:populate_if_empty</code>. That’s the easiest form of population.</p>
 
 <pre><code>class AlbumForm &lt; Reform::Form
-  property :songs, populate_if_empty: Song do
+  collection :songs, populate_if_empty: Song do
     property :name
   end
 end
@@ -217,7 +217,7 @@ end
 <p>You can also create the object yourself and leverage data from the traversed fragment, for instance, to try to find a <code>Song</code> object by name, first, before creating a new one.</p>
 
 <pre><code>class AlbumForm &lt; Reform::Form
-  property :songs,
+  collection :songs,
     populate_if_empty: -&gt;(fragment:, **) do
       Song.find_by(name: fragment["name"]) or Song.new
     end
@@ -228,7 +228,7 @@ end
 <p>You can also provide an instance method on the respective form.</p>
 
 <pre><code>class AlbumForm &lt; Reform::Form
-  property :songs, populate_if_empty: :populate_songs! do
+  collection :songs, populate_if_empty: :populate_songs! do
     property :name
   end
 
@@ -332,7 +332,7 @@ end
 
 <p>You can use <code>:populator</code> to write your own matching for IDs.</p>
 
-<pre><code>property :songs,
+<pre><code>collection :songs,
   populator: -&gt;(fragment:, **) {
     # find out if incoming song is already added.
     item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
@@ -367,7 +367,7 @@ end
 
 <p>You can implement your own deletion.</p>
 
-<pre><code>property :songs,
+<pre><code>collection :songs,
   populator: -&gt;(fragment:, **) {
     # find out if incoming song is already added.
     item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
@@ -393,7 +393,7 @@ end
 
 <p>Since Reform 2.1, populators can skip processing of a fragment by returning <code>skip!</code>. This will ignore this fragment as if it wasn’t present in the incoming hash.</p>
 
-<pre><code>property :songs,
+<pre><code>collection :songs,
   populator: -&gt;(fragment:, **) do
     return skip! if fragment["id"]
     # ..
