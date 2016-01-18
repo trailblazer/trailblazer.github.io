@@ -164,7 +164,7 @@
 <pre><code>require "reform/form/dry"
 
 class AlbumForm &lt; Reform::Form
-  include Reform::Form::Dry
+  feature Reform::Form::Dry
 
   property :title
 
@@ -224,7 +224,7 @@ end
 <pre><code>require "reform/form/active_model/validations"
 
 Reform::Form.class_eval do
-  include Reform::Form::ActiveModel::Validations
+  feature Reform::Form::ActiveModel::Validations
 end
 </code></pre>
 
