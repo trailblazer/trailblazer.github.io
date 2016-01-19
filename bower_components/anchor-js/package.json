@@ -1,0 +1,57 @@
+{
+  "name": "anchor-js",
+  "version": "2.0.0",
+  "author": {
+    "name": "bryanbraun",
+    "url": "https://github.com/bryanbraun"
+  },
+  "description": "A Javscript utility for adding deep anchor links to online docs.",
+  "homepage": "https://github.com/bryanbraun/anchorjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bryanbraun/anchorjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bryanbraun/anchorjs/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint anchor.js test/spec/AnchorSpec.js",
+    "jasmine": "karma start test/config.js --single-run",
+    "release": "uglifyjs anchor.js --compress --mangle --screw-ie8 --comments \"/Copyright/\" -o anchor.min.js",
+    "test": "npm run lint && npm run jasmine"
+  },
+  "devDependencies": {
+    "eslint": "~1.9.0",
+    "jasmine-core": "~2.3.4",
+    "karma": "~0.13.15",
+    "karma-cli": "~0.1.1",
+    "karma-jasmine": "~0.3.6",
+    "karma-phantomjs-launcher": "~0.2.1",
+    "phantomjs": "~1.9.18",
+    "uglify-js": "~2.5.0"
+  },
+  "gitHead": "7e53087f945cf8da7905d254f6fbba6d67df273d",
+  "_id": "anchor-js@2.0.0",
+  "_shasum": "60b4f0b5a61f1cb046d9bfcda00a610866837f2b",
+  "_from": "anchor-js@",
+  "_npmVersion": "2.7.3",
+  "_nodeVersion": "0.12.1",
+  "_npmUser": {
+    "name": "bryanbraun",
+    "email": "bbraun7@gmail.com"
+  },
+  "dist": {
+    "shasum": "60b4f0b5a61f1cb046d9bfcda00a610866837f2b",
+    "tarball": "http://registry.npmjs.org/anchor-js/-/anchor-js-2.0.0.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "bryanbraun",
+      "email": "bbraun7@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/anchor-js/-/anchor-js-2.0.0.tgz",
+  "readme": "ERROR: No README data found!"
+}
