@@ -1,0 +1,382 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Newsletter January 2016</title>
+<meta name="description" content="Newsletter January 2016 - Trailblazer" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords" content=", " />
+
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="shortcut icon" href="/favicon.ico">
+
+<link rel="stylesheet" href="/css/dark.css">
+<script src="/javascripts/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="/bower_components/modernizr/modernizr.js"></script>
+
+<meta property="og:title" content="Newsletter January 2016"/>
+<meta property="og:site_name" content="Trailblazer"/>
+<meta property="og:url" content="http://trailblazer.to"/>
+<meta property="og:description" content="January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia."/>
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Newsletter January 2016">
+<meta name="twitter:description" content="January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia.">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="/newsletter/"><img alt="TRB Newsletter" src="https://img.shields.io/badge/TRB-newsletter-lightgrey.svg"></a></li>
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>
+    </ul>
+  </section>
+</nav>
+
+
+    <section class="marketing-book book">
+  <div class="row">
+    <div class="columns">
+      <div class="row">
+        <div class="columns medium-9 medium-centered">
+          <h1 id="january-2016">January 2016</h1>
+
+<p>Dear Readers of this newsletter,<br />
+Hello, and Hi from the Trailblazer team!</p>
+
+<p>Thank you for your interest in the Trailblazer project. We hope your new year 2016 started off great and you’re already working on fantastic new software!</p>
+
+<p>The Trailblazer newsletter is going to be a monthly buzz that telling you what has changed in the Trailblazer gems, Cells, Reform, Roar and Representable, and Formular, what new features were released and what cool upcoming stuff to expect.</p>
+
+<p>This is newsletter no. 1, the first ever, and I’m excited to tell you what has happened the last few months!</p>
+
+<h3 id="formular---a-new-form-builder-for-ruby">Formular - A New Form Builder for Ruby</h3>
+
+<p>One of the coolest projects we’ve been working on the last weeks is the <a href="https://github.com/apotonick/formular">Formular gem</a>, a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.</p>
+
+<p>Formular is built without using any outdated Rails helpers, making it insanely fast and usable in many frameworks, namely Rails, Hanami, or Sinatra. Its API is following the best practices established by existing form builders, without inheriting all the problems originating from strong coupling.</p>
+
+<pre><code class="language-ruby">= form(model.contract, url) do |f|
+  = f.input :url_slug, placeholder: "URL slug"
+  .form-group
+    = f.checkbox :is_public, label: "Public?"
+  .form-group
+    = f.radio :owner, label: "Flori", value: 1
+    = f.radio :owner, label: "Konsti", value: 2
+</code></pre>
+
+<p>It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended <a href="https://github.com/apotonick/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb">with plain Ruby classes</a>. It is incredibly simple to add new frontends or extend existing behavior.</p>
+
+<p>Formular will be released soon after a beta-test phase. Please contact us on our <a href="http://gitter.im/trailblazer/chat">Gitter channel</a> if you’re interested in giving Formular a go!</p>
+
+<h3 id="dry-validation-and-reform">Dry-Validation and Reform</h3>
+
+<p>The <a href="https://github.com/apotonick/reform">Reform gem</a> is gaining more and more popularity and is a essential building block in Trailblazer. Its basic validation implementation comes from <code>ActiveModel::Validations</code>. While this makes the transition from model validations to form ojects very straight-forward, it brings a lot of legacy problems into Reform.</p>
+
+<p>To keep moving forward, we integrated the excellent <a href="https://github.com/dryrb/dry-validation">Dry-Validation</a> gem into Reform, allowing to use this brand-new validation gem as a replacement for ActiveModel.</p>
+
+<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
+  property :title
+  property :url_slug
+
+  include Reform::Form::Dry::Validations
+
+  validation :default do
+    key(:title, &amp;:filled?)
+    key(:url_slug) { |slug| slug.format?(/^[\w-]+$/) &amp; slug.unique? }
+    key(:content) { |content| content.max_size?(10000) }
+
+    def unique?(value)
+      form.model.class[url_slug: value].nil?
+    end
+  end
+end
+</code></pre>
+
+<p>You can now use Dry-Validation’s predicate logic to write your validation code, which is richer and makes it easier to write complex validations and dependent rules.</p>
+
+<p>While there’s still moving parts, several companies switched to this validation engine, already, and they’re very happy with it. Another nicety is that you now can use Reform in other Ruby frameworks like Sinatra without any <code>Active*</code> Rails gem dependencies.</p>
+
+<p>Wanna see that in action? Check out the <a href="https://github.com/apotonick/gemgem-sinatra/blob/1cfc38533e3cbf7be380d7afacd6c5580cb18614/concepts/post/operation/create.rb#L11">Gemgem-Sinatra example application</a>!</p>
+
+<h3 id="sinatra-and-trailblazer">Sinatra and Trailblazer</h3>
+
+<p>A project that was a pleasure to work on is the new <a href="https://github.com/apotonick/gemgem-sinatra">Gemgem-Sinatra example </a> app - both because it shows how cool Trailblazer works with frameworks other than Rails, and also because it is <em>insanely fast</em>.</p>
+
+<pre><code class="language-ruby">├── app.rb
+├── concepts
+│   └── post
+│       ├── cell
+│       │   ├── new.rb
+│       │   └── show.rb
+│       ├── operation
+│       │   ├── create.rb
+│       │   └── update.rb
+│       └── view
+│           ├── new.slim
+│           └── show.slim
+├── config
+│   ├── init.rb
+│   └── migrations.rb
+├── Gemfile
+├── Gemfile.lock
+├── models
+│   └── post.rb
+</code></pre>
+
+<p>We basically rebuild the Gemgem project from the Trailblazer book, using Sequel as a replacement for ActiveRecord and Sinatra as the underlying infrastructure framework.</p>
+
+<p>In the course of working on this project, I seriously started questioning myself why I’d ever use Rails again. Definitely check it out, Sinatra (or Padrino) with Trailblazer is extremely cool!</p>
+
+<h3 id="arbitrary-options-for-reform">Arbitrary Options for Reform</h3>
+
+<p>Did you know that you can inject arbitrary objects besides the model into a Reform form instance? This is super helpful when you need dependencies other than your model’s attributes, e.g. the current user.</p>
+
+<p>Simply pass the additional objects in a hash via the constructor.</p>
+
+<pre><code class="language-ruby">Form.new(post, current_user: current_user)
+</code></pre>
+
+<p>To make Reform understand that this is a dependency, you have to define a virtual property, too!</p>
+
+<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
+  property :title                       # from model
+  property :url_slug                    # from model
+  property :current_user, virtual: true # via constructor
+</code></pre>
+
+<p>You can now access the current user in validations or other accessors.</p>
+
+<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
+  validates do
+    errors.add(:auth, "no current user") if current_user.nil?
+  end
+</code></pre>
+
+<p>As most of Reform is implemented via Disposable’s Twin, you can find the logic that gives you the described <em>options semantic</em> <a href="https://github.com/apotonick/disposable/blob/3270bd16b0105cc48eb5c414f94b0003e04e78ac/lib/disposable/twin/setup.rb#L27">in the Disposable gem</a>.</p>
+
+<h3 id="accessing-the-parent-form">Accessing The Parent Form</h3>
+
+<p>Another addition to Disposable is the new <code>Parent</code> module, which allows accessing the parent form in a Reform instance. This is necessary when you have nested forms that need dependencies from an upper form, for instance a nested comment validation requiring the parent post’s ID.</p>
+
+<p>Simply require and include the <code>Parent</code> extension in your form.</p>
+
+<pre><code class="language-ruby">require "disposable/twin/parent"
+
+class Post::Form &lt; Reform::Form
+  feature Disposable::Twin::Parent
+</code></pre>
+
+<p>You can then use the parent form in nested instances.</p>
+
+<pre><code class="language-ruby">  property :comment do
+    property :body
+
+    validates do
+      if parent.model.id &gt; 0 ...
+      # ..
+    end
+  end
+</code></pre>
+
+<p>A very helpful new addition that many users have asked for. Well, here it is!</p>
+
+<h3 id="trailblazer-book-and-trailblazer-primer">Trailblazer Book and Trailblazer Primer</h3>
+
+<p>The <a href="http://trailblazer.to/books/trailblazer">Trailblazer book</a> was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don’t have it yet, <a href="http://leanpub.com/trailblazer/c/EPIgtwW2WG0z">grab it now and get a $10 discount</a> until Feb 4!</p>
+
+<p>It will teach you everything about engineering complex Rails applications with Trailblazer from authorization, validations, operations and persistence to hypermedia API parsing and rendering.</p>
+
+<p>While this book focuses on a Rails scenario, it can easily be adapted to other frameworks.</p>
+
+<p>Many future users have asked for a “quicker, more compressed” way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the <a href="http://trailblazer.to/books/trailblazer-primer">Trailblazer Primer</a>, a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.</p>
+
+<h3 id="cells-and-hamlit">Cells and Hamlit</h3>
+
+<p><a href="https://github.com/k0kubun/hamlit">Hamlit</a> is a super fast implementation of Haml written by Takashi Kokubun.</p>
+
+<p>I <a href="http://nicksda.apotomo.de/2016/01/cells-hamlit-the-fastest-view-engine-around/">blogged about the Cells integration</a> a few days ago and show how Cells and Hamlit speed up rendering dramatically and wins over Slim and Haml.</p>
+
+<p>Many thanks go out to Takashi for all the support and help when integrating the two projects.</p>
+
+<h3 id="next-newsletter--talks">Next Newsletter + Talks</h3>
+
+<p>The next newsletter will be out in late February or early March, where I hopefully have some good stories about TRB talks I’ll be giving in Europe in February.</p>
+
+<ul>
+  <li>Feb 17: <a href="http://www.colognerb.de/">cologne.rb</a> Köln, Germany</li>
+  <li>Feb 23: <a href="http://www.meetup.com/brug__/events/228240599/">BRUG</a> Brussels, Belgium</li>
+  <li>Feb 25: <a href="http://www.meetup.com/groningen-rb/">groningen.rb</a> Groningen, Netherlands</li>
+</ul>
+
+<p>Also, if you happen to come to <a href="http://rubyconf.org.au/2016">RubyConf Australia</a> Febuary 10-13 - which you totally should!!! - there will be a <a href="http://lanyrd.com/2016/rubyconf-au/sdxmxp/">one-day TRB workshop</a> with Nick Kirkwood and myself!</p>
+
+<p>It would be great to see you in February! Cheers!</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Footer -->
+<section class="sub-section top-footer">
+  <div class="row">
+	<div class="columns medium-6">
+		<h3>Newsletter</h3>
+		<p>
+			Stay on top of what’s happening in Trailblazer.
+		</p>
+			<div class="row">
+				<div id="mc_embed_signup">
+		     	<form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+						<div class="columns large-9 medium-12 ">
+							<div class="row collapse prefix-radius">
+				        <div class="small-8 medium-7 large-8 columns">
+				        	<div id="mc_embed_signup_scroll">
+				        		<div class="mc-field-group">
+									  	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+									  </div>
+									  <div id="mce-responses" class="clear">
+									    <div class="response" id="mce-error-response" style="display:none"></div>
+									    <div class="response" id="mce-success-response" style="display:none"></div>
+									  </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+									  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+				        	</div>
+				        </div>
+				        <div class="small-4 medium-5 large-4 columns">
+				          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+				        </div>
+				      </div>
+						</div>
+					</form>
+				</div>
+				<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+			</div>
+		<p>
+			And check out the <a href="/newsletter/">archive of newsletters</a>!
+		</p>
+
+
+	</div>
+	<div class="columns medium-6">
+		<h3>The Book</h3>
+		<p>Learn how to built a Rails app with Trailblazer, step-by-step.</p>
+		<a href="/books/trailblazer.html" class="button radius tiny secondary">Check Out Book!</a>
+	</div>
+</div>
+
+
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+<script src="/bower_components/anchor-js/anchor.js"></script>
+<script>
+  anchors.add(".code-content h2, .sub-section h2");
+</script>
+
+
+<script>
+  $(document).foundation();
+</script>
+
+  </body>
+</html>
