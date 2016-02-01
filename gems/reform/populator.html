@@ -248,6 +248,8 @@ end
 
 <p>While the <code>:populate_if_empty</code> option is only called when no matching form was found for the input, the <code>:populator</code> option is always invoked and gives you maximum flexibility for population. They’re exclusive, you can only use one of the two.</p>
 
+<p>Note that populators won’t be invoked if there’s no incoming fragment(s) for the populator’s property.</p>
+
 <h2 id="populator-collections">Populator: Collections</h2>
 
 <p>A <code>:populator</code> for collections is executed for every collection fragment in the incoming hash.</p>
