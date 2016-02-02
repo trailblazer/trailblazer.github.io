@@ -218,7 +218,9 @@ end
 
 <h2 id="guard">Guard</h2>
 
-<p>Instead of using policies, you can also use a simple guard. A guard is like an inline policy that doesn’t require you to define a policy class. It is run in <code>#setup!</code>, too, like a real policy, but isn’t accessable in the operation after that.</p>
+<p>Instead of using policies, you can also use a simple guard.</p>
+
+<p>A guard is like an inline policy that doesn’t require you to define a policy class. It is run in <code>#setup!</code>, too, like a real policy, but isn’t accessable in the operation after that.</p>
 
 <pre><code>class Thing::Create &lt; Trailblazer::Operation
   include Policy::Guard
@@ -227,6 +229,26 @@ end
     params[:current_user].present? # true when present.
   end
 </code></pre>
+
+<p>If you prefer a separate class as your guard, you can provide a <code>Callable</code> object.</p>
+
+<pre><code>class Thing::Authorization
+  include Uber::Callable # marks instance as callable.
+
+  def call(operation, params)
+    params[:current_user].present?
+  end
+end
+</code></pre>
+
+<p>Pass the guard <em>instance</em> to <code>Operation::policy</code> to register it.</p>
+
+<pre><code>class Thing::Create &lt; Trailblazer::Operation
+  include Policy::Guard
+  policy Authorization.new
+</code></pre>
+
+<p>The same works with <code>Proc</code>, which will receive <code>params</code> only but is executed in operation context (subject to change).</p>
 
 <p>Note that you can’t mix <code>Policy</code> and guards in one class.</p>
 
