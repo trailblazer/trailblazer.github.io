@@ -193,6 +193,19 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 
 <p>You need to configure a populator to engage Reform in the proper deserialization.</p>
 
+<h3 id="populator-invocation">Populator Invocation</h3>
+
+<p>Regardless of the populator type, keep in mind that a populator is only called if an incoming fragment for that property is present.</p>
+
+<pre><code>form.validate({songs: [{name: "Midnight Rendezvous"}]}) # songs present.
+</code></pre>
+
+<p>Running with our example, the following validation will <em>not</em> trigger any populator.</p>
+
+<pre><code>form.validate({})          # empty.
+form.validate({songs: []}) # not empty, but no items!
+</code></pre>
+
 <h2 id="populateifempty">Populate_if_empty</h2>
 
 <p>To let Reform create a new model wrapped by a nested form for you use <code>:populate_if_empty</code>. That’s the easiest form of population.</p>
@@ -248,7 +261,7 @@ end
 
 <p>While the <code>:populate_if_empty</code> option is only called when no matching form was found for the input, the <code>:populator</code> option is always invoked and gives you maximum flexibility for population. They’re exclusive, you can only use one of the two.</p>
 
-<p>Note that populators won’t be invoked if there’s no incoming fragment(s) for the populator’s property.</p>
+<p>Aain, note that populators won’t be invoked if there’s no incoming fragment(s) for the populator’s property.</p>
 
 <h2 id="populator-collections">Populator: Collections</h2>
 
