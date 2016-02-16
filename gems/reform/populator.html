@@ -112,7 +112,6 @@
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
-    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider"></li>
 
@@ -193,19 +192,6 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 
 <p>You need to configure a populator to engage Reform in the proper deserialization.</p>
 
-<h3 id="populator-invocation">Populator Invocation</h3>
-
-<p>Regardless of the populator type, keep in mind that a populator is only called if an incoming fragment for that property is present.</p>
-
-<pre><code>form.validate({songs: [{name: "Midnight Rendezvous"}]}) # songs present.
-</code></pre>
-
-<p>Running with our example, the following validation will <em>not</em> trigger any populator.</p>
-
-<pre><code>form.validate({})          # empty.
-form.validate({songs: []}) # not empty, but no items!
-</code></pre>
-
 <h2 id="populateifempty">Populate_if_empty</h2>
 
 <p>To let Reform create a new model wrapped by a nested form for you use <code>:populate_if_empty</code>. That’s the easiest form of population.</p>
@@ -260,8 +246,6 @@ end
 <h2 id="populator">Populator</h2>
 
 <p>While the <code>:populate_if_empty</code> option is only called when no matching form was found for the input, the <code>:populator</code> option is always invoked and gives you maximum flexibility for population. They’re exclusive, you can only use one of the two.</p>
-
-<p>Aain, note that populators won’t be invoked if there’s no incoming fragment(s) for the populator’s property.</p>
 
 <h2 id="populator-collections">Populator: Collections</h2>
 
@@ -494,10 +478,8 @@ form  = AlbumForm.new(album)
 				</div>
 				<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
 			</div>
-		<p>
-			And check out the <a href="/newsletter/">archive of newsletters</a>!
-		</p>
 
+			And check out the <a href="/newsletter/">archive of newsletters</a>!
 
 	</div>
 	<div class="columns medium-6">
