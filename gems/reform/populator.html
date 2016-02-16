@@ -333,7 +333,7 @@ end
 <pre><code>class AlbumForm &lt; Reform::Form
   property :composer,
     populator: -&gt; (model:, **) do
-      model || self.composer= Artist.new }
+      model || self.composer= Artist.new
     end
 </code></pre>
 
