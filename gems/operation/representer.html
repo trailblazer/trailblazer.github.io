@@ -248,6 +248,42 @@ end
 
 <p>To learn how Representable processes options, read <a href="/gems/representable/3.0/api.html#user-options">the docs</a>.</p>
 
+<h2 id="input-and-output-representers">Input and Output Representers</h2>
+
+<p>The idea when including <code>Representer</code> is that you want the same representer to deserialize input and render the response document.</p>
+
+<p>Sometimes, this is not desired, and you want to use different representers for handling input and output.</p>
+
+<p>To use a representer for rendering, only, include <code>Rendering</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Representer::DSL
+  include Representer::Rendering
+
+  representer do # will be used in #to_json.
+    property :genre, as: :songGenre
+  end
+</code></pre>
+
+<p>This will only add <code>Operation#to_json</code>. Parsing will still be done without a representer.</p>
+
+<p>Alternatively, you can implement the rendering yourself by only including a <code>Deserializer</code> module.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Representer::DSL
+  include Representer::Deserializer::Hash
+
+  representer do # will be used in #validate.
+    property :genre, as: :songGenre
+  end
+
+  def to_json(*)
+    Create::Representer.new(model).to_json
+  end
+</code></pre>
+
+<p>Note that you need to always extend <code>Representer::DSL</code> to import the <code>representer</code> block.</p>
+
 <h2 id="composable-interface">Composable Interface</h2>
 
 <p>You can set your own representer class if you don’t want it to be inferred.</p>
