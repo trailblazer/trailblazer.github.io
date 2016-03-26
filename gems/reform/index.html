@@ -107,6 +107,7 @@
     <li class="divider"></li>
 
     <li class="heading"><a href="/gems/reform">Reform</a></li>
+    <li><a href="/gems/reform/api.html">API</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
     <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
@@ -519,71 +520,6 @@ end
          #   }
 end
 </code></pre>
-
-<h2 id="forms-in-modules">Forms In Modules</h2>
-
-<p>To maximize reusability, you can also define forms in modules and include them in other modules or classes.</p>
-
-<pre><code>module SongsForm
-  include Reform::Form::Module
-
-  collection :songs do
-    property :title
-    validates :title, presence: true
-  end
-end
-</code></pre>
-
-<p>This can now be included into a real form.</p>
-
-<pre><code>class AlbumForm &lt; Reform::Form
-  property :title
-
-  include SongsForm
-end
-</code></pre>
-
-<p>Note that you can also override properties <a href="#inheritance">using inheritance</a> in Reform.</p>
-
-<p>When using coercion, make sure the including form already contains the <code>Coercion</code> module.</p>
-
-<h2 id="inheritance">Inheritance</h2>
-
-<p>Forms can be derived from other forms and will inherit all properties and validations.</p>
-
-<pre><code>class AlbumForm &lt; Reform::Form
-  property :title
-
-  collection :songs do
-    property :title
-
-    validates :title, presence: true
-  end
-end
-</code></pre>
-
-<p>Now, a simple inheritance can add fields.</p>
-
-<pre><code>class CompilationForm &lt; AlbumForm
-  property :composers do
-    property :name
-  end
-end
-</code></pre>
-
-<p>This will <em>add</em> <code>composers</code> to the existing fields.</p>
-
-<p>You can also partially override fields using <code>:inherit</code>.</p>
-
-<pre><code>class CompilationForm &lt; AlbumForm
-  property :songs, inherit: true do
-    property :band_id
-    validates :band_id, presence: true
-  end
-end
-</code></pre>
-
-<p>Using <code>inherit:</code> here will extend the existing <code>songs</code> form with the <code>band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
 
 <h2 id="coercion">Coercion</h2>
 

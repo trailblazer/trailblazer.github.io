@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Cells Troubleshooting</title>
-<meta name="description" content="Cells Troubleshooting - Trailblazer" />
+<title>Trailblazer: Reform: API</title>
+<meta name="description" content="Reform: API - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -19,22 +19,22 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Cells Troubleshooting"/>
+<meta property="og:title" content="Reform: API"/>
 <meta property="og:site_name" content="Trailblazer"/>
-<meta property="og:url" content="http://trailblazer.to/gems/cells/troubleshooting.html"/>
+<meta property="og:url" content="http://trailblazer.to/gems/reform/api.html"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Cells Troubleshooting">
+<meta name="twitter:title" content="Reform: API">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
 
-  <body class="cells-body">
-    <!-- Top Bar -->
-    <nav class="top-bar" data-topbar role="navigation">
+  <body class="reform-body">
+
+      <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
     <li class="name">
       <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
@@ -68,19 +68,17 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero cells-hero">
+    <div class="hero gems-hero reform-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
-            <h1 id="project_title">
-              Cells
+            <h1>
+              Reform
             </h1>
           </div>
         </div>
       </div>
     </div>
-
-
 
     <div class="row">
       <div class="columns large-3 sidebar">
@@ -146,26 +144,108 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="troubleshooting">Troubleshooting</h1>
+        <h1 id="reform-api">Reform: API</h1>
 
-<h2 id="helper-inclusion-order">Helper Inclusion Order</h2>
+<h2 id="inheritance">Inheritance</h2>
 
-<p>One of the many problems with Rails helper implementation is that the inclusion order matters. This can lead to problems with the following exception.</p>
+<p>Forms can be derived from other forms and will inherit all properties and validations.</p>
 
-<pre><code>undefined method `output_buffer=' for #&lt;Comment::Cell:0xb518d8cc&gt;
-</code></pre>
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
 
-<p>Usually, the problem arises when you have initializers to setup your application cell. When including helpers here, they might be included before the <code>cells</code> gem has a chance to include its fixes.</p>
+  collection :songs do
+    property :title
 
-<p>Please include your template engine module explicitly then, <em>after</em> your standard helper inclusions.</p>
-
-<pre><code># config/initializers/trailblazer.rb
-
-Cell::Concept.class_eval do
-  include ActionView::Helpers::TranslationHelpers # include your helpers here.
-  include Cell::Erb # or Cell::Slim, or Cell::Haml after that
+    validates :title, presence: true
+  end
 end
 </code></pre>
+
+<p>Now, a simple inheritance can add fields.</p>
+
+<pre><code>class CompilationForm &lt; AlbumForm
+  property :composers do
+    property :name
+  end
+end
+</code></pre>
+
+<p>This will <em>add</em> <code>composers</code> to the existing fields.</p>
+
+<p>You can also partially override fields using <code>:inherit</code>.</p>
+
+<pre><code>class CompilationForm &lt; AlbumForm
+  property :songs, inherit: true do
+    property :band_id
+    validates :band_id, presence: true
+  end
+end
+</code></pre>
+
+<p>Using <code>inherit:</code> here will extend the existing <code>songs</code> form with the <code>band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
+
+<h2 id="overriding-accessors">Overriding Accessors</h2>
+
+<p>You’re free to override form accessors for presentation and coercion.</p>
+
+<pre><code>class SongForm &lt; Reform::Form
+  property :title
+
+  def title
+    super.capitalize
+  end
+end
+</code></pre>
+
+<p>As always, use <code>super</code> for the original method.</p>
+
+<h2 id="forms-in-modules">Forms In Modules</h2>
+
+<p>To maximize reusability, you can also define forms in modules and include them in other modules or classes.</p>
+
+<pre><code>module SongsForm
+  include Reform::Form::Module
+
+  collection :songs do
+    property :title
+    validates :title, presence: true
+  end
+end
+</code></pre>
+
+<p>This can now be included into a real form.</p>
+
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  include SongsForm
+end
+</code></pre>
+
+<p>Note that you can also override properties <a href="#inheritance">using inheritance</a> in Reform.</p>
+
+<p>When using coercion, make sure the including form already contains the <code>Coercion</code> module.</p>
+
+<p>If you want to provide accessors in the module, you have to define them in the <code>InstanceMethods</code> module.</p>
+
+<pre><code>module SongForm
+  include Reform::Form::Module
+
+  property :title
+
+  module InstanceMethods
+    def title=(v)
+      super(v.trim)
+    end
+  end
+end
+</code></pre>
+
+<p>This is important so Reform can add your accessors after defining the default ones.</p>
+
+<h1 id="injecting-objects">Injecting Objects</h1>
+
+<p>safe args can be passed in constructor</p>
 
       </div>
     </div>
