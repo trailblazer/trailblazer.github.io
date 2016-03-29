@@ -146,7 +146,386 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h2 id="change-tracking">Change Tracking</h2>
+        <h1 id="twin-api">Twin API</h1>
+
+<p><strong>A twin is an intermediate object</strong> that usually sits between persistence layer and your application code. It’s a <em>domain object</em> that helps you model your application domain. Sometimes this is called <em>decorator</em>.</p>
+
+<p>Often, a twin maps directly to one persistent <em>“model”</em>. However, twins are absolutely not limited to your database layout - the opposite is the case. One twin can be a composition of many underlying models, with renaming, delegating, and more mapping features, that allow you modelling objects for your application, and not objects dictated by your database layout.</p>
+
+<h2 id="declarative-api">Declarative API</h2>
+
+<p>Every twin is based on a schema which comes in form of a <code>Disposable::Twin</code> class.</p>
+
+<pre><code>class AlbumTwin &lt; Disposable::Twin
+  property :title
+
+  collection :songs do
+    property :name
+    property :index
+  end
+
+  property :artist do
+    property :full_name
+  end
+end
+</code></pre>
+
+<p>The self-explaining DSL known from many Trailblazer gems allows to define flat or nested twins.</p>
+
+<h2 id="public-api">Public API</h2>
+
+<p>The public twin API is unbelievably simple.</p>
+
+<ol>
+  <li><code>Twin::new</code> creates and populates the twin.</li>
+  <li><code>Twin#"reader"</code> returns the value or nested twin of the property.</li>
+  <li><code>Twin#"writer"=(v)</code> writes the value to the twin, not the model.</li>
+  <li><code>Twin#sync</code> writes all values to the model.</li>
+  <li><code>Twin#save</code> writes all values to the model and calls <code>save</code> on configured models.</li>
+</ol>
+
+<h2 id="constructor">Constructor</h2>
+
+<p>Twins get populated from the decorated models.</p>
+
+<pre><code class="language-ruby">Song   = Struct.new(:name, :index)
+Artist = Struct.new(:full_name)
+Album  = Struct.new(:title, :songs, :artist)
+</code></pre>
+
+<p>You need to pass model and the facultative options to the twin constructor.</p>
+
+<pre><code class="language-ruby">album = Album.new("Nice Try")
+twin  = AlbumTwin.new(album, playable?: current_user.can?(:play))
+</code></pre>
+
+<h2 id="readers">Readers</h2>
+
+<p>This will create a composition object of the actual model and the hash.</p>
+
+<pre><code class="language-ruby">twin.title     #=&gt; "Nice Try"
+twin.playable? #=&gt; true
+</code></pre>
+
+<p>You can also override <code>property</code> values in the constructor:</p>
+
+<pre><code class="language-ruby">twin = AlbumTwin.new(album, title: "Plasticash")
+twin.title #=&gt; "Plasticash"
+</code></pre>
+
+<h2 id="writers">Writers</h2>
+
+<p>Writers change values on the twin and are <em>not</em> propagated to the model.</p>
+
+<pre><code class="language-ruby">twin.title = "Skamobile"
+twin.title  #=&gt; "Skamobile"
+album.title #=&gt; "Nice Try"
+</code></pre>
+
+<p>Writers on nested twins will “twin” the value.</p>
+
+<pre><code class="language-ruby">twin.songs #=&gt; []
+twin.songs &lt;&lt; Song.new("Adondo", 1)
+twin.songs  #=&gt; [&lt;Twin::Song name="Adondo" index=1 model=&lt;Song ..&gt;&gt;]
+album.songs #=&gt; []
+</code></pre>
+
+<p>The added twin is <em>not</em> passed to the model. Note that the nested song is a twin, not the model itself.</p>
+
+<h2 id="sync">Sync</h2>
+
+<p>Given the above state change on the twin, here is what happens after calling <code>#sync</code>.</p>
+
+<pre><code class="language-ruby">album.title  #=&gt; "Nice Try"
+album.songs #=&gt; []
+
+twin.sync
+
+album.title  #=&gt; "Skamobile"
+album.songs #=&gt; [&lt;Song name="Adondo" index=1&gt;]
+</code></pre>
+
+<p><code>#sync</code> writes all configured attributes back to the models using public setters as <code>album.name=</code> or <code>album.songs=</code>. This is recursive and will sync the entire object graph.</p>
+
+<p>Note that <code>sync</code> might already trigger saving the model as persistence layers like ActiveRecord can’t deal with <code>collection= []</code> and instantly persist that.</p>
+
+<p>You may implement your syncing manually by passing a block to <code>sync</code>.</p>
+
+<pre><code class="language-ruby">twin.sync do |hash|
+  hash #=&gt; {
+  #  "title"     =&gt; "Skamobile",
+  #  "playable?" =&gt; true,
+  #  "songs"     =&gt; [{"name"=&gt;"Adondo"...}..]
+  # }
+end
+</code></pre>
+
+<p>Invoking <code>sync</code> with block will <em>not</em> write anything to the models.</p>
+
+<p>Needs to be included explicitly (<code>Sync</code>).</p>
+
+<h2 id="save">Save</h2>
+
+<p>Calling <code>#save</code> will do <code>sync</code> plus calling <code>save</code> on all nested models. This implies that the models need to implement <code>#save</code>.</p>
+
+<pre><code class="language-ruby">twin.save
+#=&gt; album.save
+#=&gt;      .songs[0].save
+
+</code></pre>
+
+<p>Needs to be included explicitly (<code>Save</code>).</p>
+
+<h2 id="nested-twin">Nested Twin</h2>
+
+<p>Nested objects can be declared with an inline twin.</p>
+
+<pre><code class="language-ruby">property :artist do
+  property :full_name
+end
+</code></pre>
+
+<p>The setter will automatically “twin” the model.</p>
+
+<pre><code class="language-ruby">twin.artist = Artist.new
+twin.artist #=&gt; &lt;Twin::Artist model=&lt;Artist ..&gt;&gt;
+</code></pre>
+
+<p>You can also specify nested objects with an explicit class.</p>
+
+<pre><code class="language-ruby">property :artist, twin: TwinArtist
+</code></pre>
+
+<h2 id="features">Features</h2>
+
+<p>You can simply <code>include</code> feature modules into twins. If you want a feature to be included into all inline twins of your schema, use <code>::feature</code>.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Coercion
+
+  property :artist do
+    # this will now include Coercion, too.
+</code></pre>
+
+<h2 id="coercion">Coercion</h2>
+
+<p>Twins can use <a href="https://github.com/dry-rb/dry-types">dry-types</a> coercion. This will override the setter in your twin, coerce the incoming value, and call the original setter. <em>Nothing more</em> will happen.</p>
+
+<p>Disposable already defines a module <code>Disposable::Twin::Coercion::Types</code> with all the Dry::Types built-in types. So you can use any of the <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented types</a>.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Coercion
+
+  property :id, type: Types::Form::Int
+</code></pre>
+
+<p>The <code>:type</code> option defines the coercion type. You may incluce <code>Setup::SkipSetter</code>, too, as otherwise the coercion will happen at initialization time and in the setter.</p>
+
+<pre><code class="language-ruby">twin.id = "1"
+twin.id #=&gt; 1
+</code></pre>
+
+<p>Again, coercion only happens in the setter.</p>
+
+<h2 id="nilify">Nilify</h2>
+
+<p>Coercion also supports the conversion of blank strings (<code>""</code>) into <code>nil</code>. This is known as <em>nilify</em> and provided via the <code>:nilify</code> option.</p>
+
+<pre><code>property :id, type: Types::Form::Int, nilify: true
+</code></pre>
+
+<p>This will result in the following behavior.</p>
+
+<pre><code>twin.id = ""
+twin.id #=&gt; nil
+</code></pre>
+
+<h2 id="defaults">Defaults</h2>
+
+<p>Default values can be set via <code>:default</code>.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Default
+
+  property :title, default: "The Greatest Songs Ever Written"
+  property :composer, default: Composer.new do
+    property :name, default: -&gt; { "Object-#{id}" }
+  end
+end
+</code></pre>
+
+<p>Default value is applied when the model’s getter returns <code>nil</code> when <em>initializing</em> the twin.</p>
+
+<p>Note that <code>:default</code> also works with <code>:virtual</code> and <code>readable: false</code>. <code>:default</code> can also be a lambda which is then executed in twin context.</p>
+
+<h2 id="collections">Collections</h2>
+
+<p>Collections can be defined analogue to <code>property</code>. The exposed API is the <code>Array</code> API.</p>
+
+<ul>
+  <li><code>twin.songs = [..]</code> will override the existing value and “twin” every item.</li>
+  <li><code>twin.songs &lt;&lt; Song.new</code> will add and twin.</li>
+  <li><code>twin.insert(0, Song.new)</code> will insert at the specified position and twin.</li>
+</ul>
+
+<p>You can also delete, replace and move items.</p>
+
+<ul>
+  <li><code>twin.songs.delete( twin.songs[0] )</code></li>
+</ul>
+
+<p>None of these operations are propagated to the model.</p>
+
+<h2 id="collection-semantics">Collection Semantics</h2>
+
+<p>In addition to the standard <code>Array</code> API the collection adds a handful of additional semantics.</p>
+
+<ul>
+  <li><code>songs=</code>, <code>songs&lt;&lt;</code> and <code>songs.insert</code> track twin via <code>#added</code>.</li>
+  <li><code>songs.delete</code> tracks via <code>#deleted</code>.</li>
+  <li><code>twin.destroy( twin.songs[0] )</code> deletes the twin and marks it for destruction in <code>#to_destroy</code>.</li>
+  <li><code>twin.songs.save</code> will call <code>destroy</code> on all models marked for destruction in <code>to_destroy</code>. Tracks destruction via <code>#destroyed</code>.</li>
+</ul>
+
+<p>Again, the model is left alone until you call <code>sync</code> or <code>save</code>.</p>
+
+<h2 id="twin-collections">Twin Collections</h2>
+
+<p>To twin a collection of models, you can use <code>::from_collection</code>.</p>
+
+<pre><code class="language-ruby">SongTwin.from_collection([song, song])
+</code></pre>
+
+<p>This will decorate every song instance using a fresh twin.</p>
+
+<h2 id="renaming">Renaming</h2>
+
+<p>The <code>Expose</code> module allows renaming properties.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Expose
+
+  property :song_title, from: :title
+</code></pre>
+
+<p>The public accessor is now <code>song_title</code> whereas the model’s accessor needs to be <code>title</code>.</p>
+
+<pre><code class="language-ruby">album = OpenStruct.new(title: "Run For Cover")
+AlbumTwin.new(album).song_title #=&gt; "Run For Cover"
+</code></pre>
+
+<h2 id="composition">Composition</h2>
+
+<p>Compositions of objects can be mapped, too.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  include Composition
+
+  property :id,    on: :album
+  property :title, on: :album
+  property :songs, on: :cd
+  property :cd_id, on: :cd, from: :id
+</code></pre>
+
+<p>When initializing a composition, you have to pass a hash that contains the composees.</p>
+
+<pre><code class="language-ruby">AlbumTwin.new(album: album, cd: CD.find(1))
+</code></pre>
+
+<p>Note that renaming works here, too.</p>
+
+<h2 id="struct">Struct</h2>
+
+<p>Twins can also map hash properties, e.g. from a deeply nested serialized JSON column.</p>
+
+<pre><code class="language-ruby">album.permissions #=&gt; {admin: {read: true, write: true}, user: {destroy: false}}
+</code></pre>
+
+<p>Map that using the <code>Struct</code> module.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  property :permissions do
+     include Struct
+    property :admin do
+      include Struct
+      property :read
+      property :write
+    end
+
+    property :user # you don't have to use Struct everywhere!
+  end
+</code></pre>
+
+<p>You get fully object-oriented access to your properties.</p>
+
+<pre><code class="language-ruby">twin.permissions.admin.read #=&gt; true
+</code></pre>
+
+<p>Note that you do not have to use <code>Struct</code> everywhere.</p>
+
+<pre><code class="language-ruby">twin.permissions.user #=&gt; {destroy: false}
+</code></pre>
+
+<p>Of course, this works for writing, too.</p>
+
+<pre><code class="language-ruby">twin.permissions.admin.read = :MAYBE
+</code></pre>
+
+<p>After <code>sync</code>ing, you will find a hash in the model.</p>
+
+<pre><code class="language-ruby">album.permissions #=&gt; {admin: {read: :MAYBE, write: true}, user: {destroy: false}}
+</code></pre>
+
+<h2 id="with-representers">With Representers</h2>
+
+<p>they indirect data, the twin’s attributes get assigned without writing to the persistence layer, yet.</p>
+
+<h2 id="with-contracts">With Contracts</h2>
+
+<h2 id="overriding-getter-for-presentation">Overriding Getter for Presentation</h2>
+
+<p>You can override getters for presentation.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+    property :title
+
+    def title
+      super.upcase
+    end
+  end
+</code></pre>
+
+<p>Be careful, though. The getter normally is also called in <code>sync</code> when writing properties to the models.</p>
+
+<p>You can skip invocation of getters in <code>sync</code> and read values from <code>@fields</code> directly by including <code>Sync::SkipGetter</code>.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Sync
+  feature Sync::SkipGetter
+</code></pre>
+
+<h2 id="manual-coercion">Manual Coercion</h2>
+
+<p>You can override setters for manual coercion.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+    property :title
+
+    def title=(v)
+      super(v.trim)
+    end
+  end
+</code></pre>
+
+<p>Be careful, though. The setter normally is also called in <code>setup</code> when copying properties from the models to the twin.</p>
+
+<p>Analogue to <code>SkipGetter</code>, include <code>Setup::SkipSetter</code> to write values directly to <code>@fields</code>.</p>
+
+<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
+  feature Setup::SkipSetter
+</code></pre>
+
+<h2 id="change-tracking">Change Tracking</h2>
 
 <p>The <code>Changed</code> module will allow tracking of state changes in all properties, even nested structures.</p>
 
