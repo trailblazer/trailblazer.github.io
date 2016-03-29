@@ -146,6 +146,20 @@
       <div class="columns medium-9 code-content">
         <h1 id="reform-api">Reform: API</h1>
 
+<h2 id="disposable-api">Disposable API</h2>
+
+<p>Every Reform form object inherits from <code>Disposable::Twin</code>, making every form a twin and giving each form the entire twin API such as.</p>
+
+<ul>
+  <li>Defaults using <code>:default</code>.</li>
+  <li>Coercion using <code>:type</code> and <code>:nilify</code>.</li>
+  <li>Nesting</li>
+  <li>Composition</li>
+  <li>Hash fields</li>
+</ul>
+
+<p>If you’re looking for a specific feature, make sure to check the <a href="/gems/disposable/api.html">Disposable documentation</a></p>
+
 <h2 id="inheritance">Inheritance</h2>
 
 <p>Forms can be derived from other forms and will inherit all properties and validations.</p>
