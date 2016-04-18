@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Representable: Getting Started</title>
-<meta name="description" content="Representable: Getting Started - Trailblazer" />
+<title>Trailblazer: Grape and Trailblazer</title>
+<meta name="description" content="Grape and Trailblazer - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -19,20 +19,20 @@
 
 <script src="/bower_components/modernizr/modernizr.js"></script>
 
-<meta property="og:title" content="Representable: Getting Started"/>
+<meta property="og:title" content="Grape and Trailblazer"/>
 <meta property="og:site_name" content="Trailblazer"/>
-<meta property="og:url" content="http://trailblazer.to/gems/representable/getting-started.html"/>
+<meta property="og:url" content="http://trailblazer.to/guides/grape.html"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Representable: Getting Started">
+<meta name="twitter:title" content="Grape and Trailblazer">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
 
-  <body class="representable-body">
+  <body class="operation-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -68,12 +68,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero representable-hero">
+    <div class="hero gems-hero operation-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
             <h1>
-              Representable
+              Operation
             </h1>
           </div>
         </div>
@@ -147,19 +147,25 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="getting-started-with-representable">Getting Started with Representable</h1>
+        <h1 id="grape-and-trailblazer">Grape and Trailblazer</h1>
 
-<h2 id="debugging">Debugging</h2>
+<p>A sample application can be found <a href="https://github.com/apotonick/gemgem-grape">on Github</a>.</p>
 
-<p>Representable is a generic mapper using recursions, pipelines and things that might be hard to understand from the outside. That’s why we got the <code>Debug</code> module which will give helpful output about what it’s doing when parsing or rendering.</p>
+<h2 id="summary">Summary</h2>
 
-<p>You can extend objects on the run to see what they’re doing.</p>
+<p>As Trailblazer provides <code>Operation</code> to encapsulate the business logic, and representers for rendering and parsing documents, Grape ends up being leveraged as a routing layer that dispatches to operations.</p>
 
-<pre><code>SongRepresenter.new(song).extend(Representable::Debug).from_json("..")
-SongRepresenter.new(song).extend(Representable::Debug).to_json
+<pre><code class="language-ruby">module API
+  class Application &lt; Grape::API
+    format :json
+
+    version :v1 do
+      get("posts")  { run!(Post::Show, request) }
+      post("posts") { run!(Post::Create, request) }
+    end
+  end
+end
 </code></pre>
-
-<p>It’s probably a good idea not to do this in production.</p>
 
       </div>
     </div>
