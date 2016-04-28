@@ -221,6 +221,37 @@
  */
 </code></pre>
 
+<h2 id="asset-pipeline-with-trailblazer">Asset Pipeline With Trailblazer</h2>
+
+<p>With Trailblazer, cells follow a different naming structure.</p>
+
+<pre><code>├── concepts
+│   │   └── comment
+│   │       ├── cell
+│   │       │   ├── index.rb
+│   │       │   └── show.rb
+│   │       └── view
+│   │           ├── index.haml
+│   │           ├── show.haml
+│   │           └── comment.scss
+</code></pre>
+
+<p>The <code>comment</code> concept here will provide <code>Comment::Cell::Index</code> and <code>Comment::Cell::Show</code>. Both bundle their assets in the <code>comment/view</code> directory.</p>
+
+<p>To add this to Rails’ asset pipeline, you need to reference one of the cell classes in <code>config/application.rb</code>.</p>
+
+<pre><code>class Application &lt; Rails::Application
+  # ..
+  config.cells.with_assets = ["comment/cell/index"] # one of the two is ok.
+</code></pre>
+
+<p>You still need to <code>require</code> the JS and CSS files. Here’s an example for <code>app/assets/application.css</code>.</p>
+
+<pre><code>/*
+ *= require comment # refers to concepts/comment/view/comment.scss
+ */
+</code></pre>
+
 <h2 id="assets-troubleshooting">Assets Troubleshooting</h2>
 
 <p>The Asset Pipeline is a complex system. If your assets are not compiled, start debugging in <a href="https://github.com/apotonick/cells/blob/master/lib/cell/railtie.rb">Cells’ railtie</a> and uncomment the <code>puts</code> in the <code>cells.update_asset_paths</code> initializer to see what directories get added.</p>
