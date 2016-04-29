@@ -188,37 +188,37 @@
 
 <p>Regardless of your test environment (Rspec, MiniTest, etc.) the following methods are available.</p>
 
-<pre><code>  module Testing
-    concept(name, *args) # instantiates Cell::Concept subclass.
-    cell(name, *args) # instantiates Cell::ViewModel subclass.
-  end
+<pre><code>module Testing
+  concept(name, *args) # instantiates Cell::Concept subclass.
+  cell(name, *args) # instantiates Cell::ViewModel subclass.
+end
 </code></pre>
 
 <p>Calling the two helpers does exactly the same it does in a controller or a view.</p>
 
 <p>Usually, this will give you the cell instance. It’s your job to invoke a state using <code>#call</code>.</p>
 
-<pre><code>  it "renders cell" do
-    cell(:song, @song).() #=&gt; HTML / Capybara::Node::Simple
-  end
+<pre><code>it "renders cell" do
+  cell(:song, @song).() #=&gt; HTML / Capybara::Node::Simple
+end
 </code></pre>
 
 <p>However, when invoked with <code>:collection</code>, it will render the cell collection for you. In that case, <code>#cell</code>/<code>#concept</code> will return a string of markup.</p>
 
-<pre><code>  it "renders collection" do
-    cell(:song, collection: [@song, @song]) #=&gt; HTML
-  end
+<pre><code>it "renders collection" do
+  cell(:song, collection: [@song, @song]) #=&gt; HTML
+end
 </code></pre>
 
 <h2 id="minitest-testunit">MiniTest, Test::Unit</h2>
 
 <p>In case you’re <em>not</em> using Rspec, derive your tests from <code>Cell::TestCase</code>.</p>
 
-<pre><code>  class SongCellTest &lt; Cell::TestCase
-    it "renders" do
-      cell(:song, @song).().must_have_selector "b"
-    end
+<pre><code>class SongCellTest &lt; Cell::TestCase
+  it "renders" do
+    cell(:song, @song).().must_have_selector "b"
   end
+end
 </code></pre>
 
 <p>You can also include <code>Cell::Testing</code> into an arbitrary test class if you’re not happy with <code>Cell::TestCase</code>.</p>
@@ -227,8 +227,8 @@
 
 <p>If your cells have a controller dependency, you can set it using <code>::controller</code>.</p>
 
-<pre><code>  class SongCellTest &lt; Cell::TestCase
-    controller SongsController
+<pre><code>class SongCellTest &lt; Cell::TestCase
+  controller SongsController
 </code></pre>
 
 <p>This will provide a testable controller via <code>#controller</code>, which is automatically used in <code>Testing#concept</code> and <code>Testing#cell</code>.</p>
@@ -237,41 +237,65 @@
 
 <p>Rspec works out of the box. You can use the <code>#cell</code> and <code>#concept</code> builders in your specs.</p>
 
-<pre><code>  describe SongCell, type: :cell do
-    subject { cell(:song, Song.new).(:show) }
+<pre><code>describe SongCell, type: :cell do
+  subject { cell(:song, Song.new).(:show) }
 
-    it { expect(subject).to have_content "Song#show" }
-  end
+  it { expect(subject).to have_content "Song#show" }
+end
 </code></pre>
 
 <h3 id="optional-controller-1">Optional Controller</h3>
 
 <p>If your cells have a controller dependency, you can set it using <code>::controller</code>.</p>
 
-<pre><code>  describe SongCell do
-    controller SongsController
+<pre><code>describe SongCell do
+  controller SongsController
 </code></pre>
 
 <p>This will provide a testable controller via <code>#controller</code>.</p>
 
 <h2 id="capybara-support">Capybara Support</h2>
 
-<p>Per default, Capybara support is enabled in <code>Cell::TestCase</code> when the Capybara gem is loaded.</p>
+<p>Per default, Capybara support is enabled in <code>Cell::TestCase</code> when the Capybara gem is loaded. This works for both Minitest and Rspec.</p>
 
-<p>The only extension is that the result of <code>Cell#call</code> is wrapped into a <code>Capybara::Node::Simple</code> instance, which allows to call matchers on the result.</p>
+<p>The only changed behavior will be that the result of <code>Cell#call</code> is wrapped into a <code>Capybara::Node::Simple</code> instance, which allows to call matchers on the result.</p>
 
-<pre><code>  cell(:song, @song).().must_have_selector "b" # example for MiniTest::Spec.
+<pre><code>cell(:song, @song).().must_have_selector "b" # example for MiniTest::Spec.
 </code></pre>
 
 <p>In case you need access to the actual markup string, use <code>#to_s</code>. Note that this is a Cells-specific extension.</p>
 
-<pre><code>  cell(:song, @song).().to_s.must_match "by SNFU" # example for MiniTest::Spec.
+<pre><code>cell(:song, @song).().to_s.must_match "by SNFU" # example for MiniTest::Spec.
 </code></pre>
 
 <p>You can disable Capybara for Cells even when the gem is loaded.</p>
 
-<pre><code>  Cell::Testing.capybara = false
+<pre><code>Cell::Testing.capybara = false
 </code></pre>
+
+<h2 id="capybara-with-minitest">Capybara with Minitest</h2>
+
+<p>With Minitest, the recommended approach is to use the <code>minitest-rails-capybara</code> gem.</p>
+
+<pre><code>group :test do
+  gem "minitest-rails-capybara"
+end
+</code></pre>
+
+<p>You also have to include certain Capybara modules into your test case. It’s a good idea to do this in your app-wide <code>test_helper.rb</code>.</p>
+
+<pre><code class="language-ruby">Cell::TestCase.class_eval do
+  include ::Capybara::DSL
+  include ::Capybara::Assertions
+end
+</code></pre>
+
+<p>If you miss to do so, you will get an exception similar to the following.</p>
+
+<pre><code class="language-ruby">NoMethodError: undefined method `must_have_css' for #&lt;User::Cell::Index:0xb5a6c&gt;
+</code></pre>
+
+<p>Here’s an example <a href="https://github.com/apotonick/gemgem-trbrb/blob/7cc8c7a0de78ba00092957a32d8cd234f102c73f/test/test_helper.rb#L19">how we do it</a> in Gemgem.</p>
 
       </div>
     </div>
