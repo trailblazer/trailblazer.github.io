@@ -114,6 +114,7 @@
         </a>
     </li>
     <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
     <li><a href="/gems/cells/testing.html">Testing</a></li>
     <li><a href="/gems/cells/render.html">Rendering</a></li>
     <li><a href="/gems/cells/rails.html">Rails</a></li>
@@ -180,16 +181,7 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h2 id="cell-class">Cell Class</h2>
-
-<p>Every fragment is represented by a cell class. Following the Trailblazer convention, the <code>Comment::Cell</code> sits in <code>app/concepts/comment/cell.rb</code>.</p>
-
-<pre><code class="language-ruby">class Comment::Cell &lt; Cell::ViewModel
-  def show
-    render # renders app/concepts/comment/view[s]/show.haml.
-  end
-end
-</code></pre>
+        <h1 id="cells-api">Cells: API</h1>
 
 <p>A cell has to define at least one method which in turn has to return the fragment. Per convention, this is <code>show</code>. In the public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
 
@@ -220,8 +212,7 @@ end
 
 <p>However, in most cases you instantiate cells with the <code>concept</code> or <code>cell</code> helper which internally does exactly the same.</p>
 
-<pre><code>cell = concept("comment/cell", comment)
-</code></pre>
+<p>cell = concept(“comment/cell”, comment)</p>
 
 <p>As always in Ruby, instantiation returns the cell instance.</p>
 
@@ -229,13 +220,11 @@ end
 
 <p>Once you got the cell instance, you may call the rendering state.</p>
 
-<pre><code>cell.(:show)
-</code></pre>
+<p>cell.(:show)</p>
 
 <p>Since <code>show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
 
-<pre><code>cell.() #=&gt; cell.(:show)
-</code></pre>
+<p>cell.() #=&gt; cell.(:show)</p>
 
 <p>Note that in Rails controller views, this will be called automatically via cell’s <code>ViewModel#to_s</code> method.</p>
 
@@ -243,8 +232,7 @@ end
 
 <p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
 
-<pre><code>concept("comment/cell", comment).(:show)
-</code></pre>
+<p>concept(“comment/cell”, comment).(:show)</p>
 
 <p>This will call the cell’s <code>show</code> method and return the rendered fragment.</p>
 
@@ -261,17 +249,15 @@ end
 
 <p>A cell can wrap more than one model. This can be handy to pass in additional data you need for presentation.</p>
 
-<pre><code>concept("comment/cell", comment, admin: true)
-</code></pre>
+<p>concept(“comment/cell”, comment, admin: true)</p>
 
 <p>Inside the cell, the additional options are available via <code>#options</code>.</p>
 
-<pre><code>class Comment::Cell &lt; Cell::ViewModel
-  def show
-    return render :admin if options[:admin]
-    render
-  end
-</code></pre>
+<p>class Comment::Cell &lt; Cell::ViewModel<br />
+    def show<br />
+      return render :admin if options[:admin]<br />
+      render<br />
+    end</p>
 
 <p>Class.()</p>
 
@@ -285,28 +271,25 @@ end
 
 <p>Include <code>Escaped</code> to make property readers return escaped strings.</p>
 
-<pre><code>class CommentCell &lt; Cell::ViewModel
-  include Escaped
-  property :title
-end
+<p>class CommentCell &lt; Cell::ViewModel<br />
+    include Escaped<br />
+    property :title<br />
+  end</p>
 
-song.title                 #=&gt; "&lt;script&gt;Dangerous&lt;/script&gt;"
-Comment::Cell.(song).title #=&gt; &amp;lt;script&amp;gt;Dangerous&amp;lt;/script&amp;gt;
-</code></pre>
+<p>song.title                 #=&gt; “<script>Dangerous</script>”<br />
+  Comment::Cell.(song).title #=&gt; &lt;script&gt;Dangerous&lt;/script&gt;</p>
 
 <p>Only strings will be escaped via the property reader.</p>
 
 <p>You can suppress escaping manually.</p>
 
-<pre><code>def raw_title
-  "#{title(escape: false)} on the edge!"
-end
-</code></pre>
+<p>def raw_title<br />
+    “#{title(escape: false)} on the edge!”<br />
+  end</p>
 
 <p>Of course, this works in views, too.</p>
 
-<pre><code>&lt;%= title(escape: false) %&gt;
-</code></pre>
+<p>&lt;%= title(escape: false) %&gt;</p>
 
 <h2 id="nesting">Nesting</h2>
 
@@ -337,12 +320,20 @@ end
 PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
 </code></pre>
 
-<h1 id="collections">Collections</h1>
+<h1 id="collection">Collection</h1>
+
+<p><strong>Note:</strong> This section is v4.1.</p>
+
+<p>Pass the method name to <code>call</code> when you want to invoke a state different to <code>show</code>.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: Comment.all).(:item)
+</code></pre>
+
+<p>This calls <code>#item</code> on every collection cell.</p>
 
 <p>This will instantiate each collection cell as follows.</p>
 
-<pre><code>Comment.(comment, style: "awesome", volume: "loud")
-</code></pre>
+<p>Comment.(comment, style: “awesome”, volume: “loud”)</p>
 
 <h2 id="caching">Caching</h2>
 
@@ -433,7 +424,6 @@ PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
 <h2 id="testing-caching">Testing Caching</h2>
 
 <p>If you want to test it in <code>development</code>, you need to put <code>config.action_controller.perform_caching = true</code> in <code>development.rb</code> to see the effect.</p>
-
 
       </div>
     </div>
