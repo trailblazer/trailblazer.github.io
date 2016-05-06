@@ -183,44 +183,116 @@
       <div class="columns medium-9 code-content">
         <h1 id="cells-api">Cells: API</h1>
 
-<p>A cell has to define at least one method which in turn has to return the fragment. Per convention, this is <code>show</code>. In the public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
+<p>A cell is an object that can render views. It represents a fragment of the page, or the entire page.</p>
+
+<p>Sometimes they’re also called <em>object-oriented partials</em>.</p>
+
+<p>The object has to define at least one method which in turn has to return the fragment. Per convention, this is <code>#show</code>. In this public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
 
 <p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
 
+<h2 id="anatomy">Anatomy</h2>
+
+<p>Cells are usually derived from <code>Cell::ViewModel</code>.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  def show
+    render # renders app/cells/comment/show.haml
+  end
+end
+</code></pre>
+
+<p>When the <code>CommentCell</code> cell is invoked, its <code>show</code> method is called, the view is rendered, and returned as a HTML string.</p>
+
+<p>This snippet illustrates a <em>suffix cell</em>, because it is following the outdated Rails-style naming and file structure. We encourage you to use <a href="trailblazer.html">Trailblazer cells</a>. However, this document mostly specifies generic API.</p>
+
+<h2 id="show">Show</h2>
+
+<p>As per convention, <code>#show</code> is the only public method of a cell class.</p>
+
+<p>The return value of this method is what gets rendered as the cell.</p>
+
+<pre><code class="language-ruby">def show
+  "I don't like templates!"
+end
+</code></pre>
+
+<p>You’re free to use return whatever string you desire, use your own rendering engine, or use cells <code>render</code> for templates.</p>
+
 <h2 id="manual-invocation">Manual Invocation</h2>
 
-<p>Without using any helpers and in its purest form, a cell can be rendered as follows.</p>
+<p>In its purest form, a cell can be rendered as follows.</p>
 
-<pre><code class="language-ruby">Comment::Cell.new(comment).(:show) #=&gt; "fragment string"
+<pre><code class="language-ruby">Comment::Cell.new(comment).() #=&gt; "I don't like templates!"
 </code></pre>
 
 <p>This can be split up into two steps: initialization and invocation.</p>
 
 <h2 id="initialize">Initialize</h2>
 
-<p>While you will mostly use the <code>concept</code> or <code>cell</code> helper in views and controllers, you may instantiate cells manually.</p>
+<p>You may instantiate cells manually, wherever you want.</p>
 
 <pre><code class="language-ruby">cell = Comment::Cell.new(comment)
 </code></pre>
 
 <p>This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a <code>Lotus::Action</code>.</p>
 
-<p>You can also pass arbitrary options into the cell, for example the controller.</p>
+<p>Note that usually you pass in an arbitrary object into the cell, the <em>“model”</em>. Here, this is the <code>comment</code> instance.</p>
 
-<pre><code class="language-ruby">cell = Comment::Cell.new(comment, parent_controller: self)
+<h2 id="model">Model</h2>
+
+<p>The model you pass into the cell’s constructor is completely up to you! It could be an ActiveRecord instance, a <code>Struct</code>, or an array of items.</p>
+
+<p>The model is available via the <code>model</code> reader.</p>
+
+<pre><code class="language-ruby">def show
+  model.rude? "Offensive content." : render
+end
 </code></pre>
 
-<p>However, in most cases you instantiate cells with the <code>concept</code> or <code>cell</code> helper which internally does exactly the same.</p>
+<p>The term <em>model</em> is really not to be confused with the way Rails uses it - it can be just anything.</p>
 
-<p>cell = concept(“comment/cell”, comment)</p>
+<h2 id="property">Property</h2>
 
-<p>As always in Ruby, instantiation returns the cell instance.</p>
+<p>Cells allow a short form to access model’s attributes using the <code>property</code> class method.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  property :email #=&gt; model.email
+
+  def show
+    model.email #=&gt; "s@trb.to"
+    email #=&gt; "s@trb.to"
+  end
+end
+</code></pre>
+
+<p>Using <code>::property</code> will create a convenient reader method for you to the model.</p>
+
+<h2 id="options">Options</h2>
+
+<p>Along with the model, you may also pass arbitrary options into the cell, for example the current user.</p>
+
+<pre><code class="language-ruby">cell = Comment::Cell.new(comment, current_user: current_user)
+</code></pre>
+
+<p>In the cell, you can access any options using  the <code>options</code> reader.</p>
+
+<pre><code class="language-ruby">def show
+  options[:current_user] ? render : "Not logged in!"
+end
+</code></pre>
 
 <h2 id="invocation">Invocation</h2>
 
-<p>Once you got the cell instance, you may call the rendering state.</p>
+<p>Once you got the cell instance, you may call the rendering state. This happens via <code>ViewModel#call</code>.</p>
 
-<p>cell.(:show)</p>
+<pre><code class="language-ruby">cell.call(:show)
+</code></pre>
+
+<p>It’s a common idiom in Ruby to skip the explicit <code>call</code> method name. The next snippet does the same as the above.</p>
+
+<pre><code class="language-ruby">cell.(:show)
+</code></pre>
 
 <p>Since <code>show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
 
@@ -232,34 +304,133 @@
 
 <p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
 
-<p>concept(“comment/cell”, comment).(:show)</p>
+<p>CommentCell.new(comment).(:show)</p>
 
-<p>This will call the cell’s <code>show</code> method and return the rendered fragment.</p>
+<p>As discussed, this will call the cell’s <code>show</code> method and return the rendered fragment.</p>
 
 <p>Note that you can invoke more than one state on a cell, if desired.</p>
 
-<pre><code class="language-ruby">- cell = concept("comment/cell", Song.last) # instantiate.
+<pre><code class="language-ruby">- cell = CommentCell.new(Comment.last)      # instantiate.
 = cell.call(:show)                          # render main fragment.
 = content_for :footer, cell.(:footer)       # render footer.
 </code></pre>
 
 <p>See how you can combine cells with global helpers like <code>content_for</code>?</p>
 
-<h2 id="options">Options</h2>
+<p>You can also provide additional arguments to <code>call</code>.</p>
 
-<p>A cell can wrap more than one model. This can be handy to pass in additional data you need for presentation.</p>
+<pre><code class="language-ruby">cell.(:show, Time.now)
+</code></pre>
 
-<p>concept(“comment/cell”, comment, admin: true)</p>
+<p>All arguments after the method name are passed to the invoked method.</p>
 
-<p>Inside the cell, the additional options are available via <code>#options</code>.</p>
+<pre><code class="language-ruby">def show(when)
+  when #=&gt; Now!
+end
+</code></pre>
 
-<p>class Comment::Cell &lt; Cell::ViewModel<br />
-    def show<br />
-      return render :admin if options[:admin]<br />
-      render<br />
-    end</p>
+<p>Even blocks are allowed.</p>
 
-<p>Class.()</p>
+<pre><code class="language-ruby">cell.(:show) { "Yay!" }
+</code></pre>
+
+<p>Again, the block is passed through to the invoked method.</p>
+
+<pre><code class="language-ruby">def show(&amp;block)
+  yield #=&gt; "Yay!"
+end
+</code></pre>
+
+<p>This is particularly interesting when passing the block to <code>render</code> and using <code>yield</code> in the view. See <a href="#render">render</a>’s docs for that.</p>
+
+<h2 id="default-show">Default Show</h2>
+
+<p>Per default, every cell derived from <code>Cell::ViewModel</code> has a built-in <code>show</code> method.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  # #show is inherited.
+end
+</code></pre>
+
+<p>The implementation looks as follows.</p>
+
+<pre><code class="language-ruby">def show(&amp;block)
+  render &amp;block
+end
+</code></pre>
+
+<p>An optional block is always passed to the <code>render</code> method.</p>
+
+<p>Of course, you’re free to override <code>show</code> to do whatever it needs to do.</p>
+
+<h2 id="instantiation-helper">Instantiation Helper</h2>
+
+<p>In most environments you will instantiate cells with the <code>concept</code> or <code>cell</code> helper which internally does exactly the same as the manual invocation.</p>
+
+<pre><code class="language-ruby">cell = cell(:comment, comment)
+</code></pre>
+
+<p>This is identical to</p>
+
+<pre><code class="language-ruby">cell = CommentCell.new(comment)
+</code></pre>
+
+<p>Depending on your environment, the <code>cell</code> helper might inject dependencies into the created cell. For example, in Rails, the controller is passed on into the cell behind the scenes. When manually instantiating cells, you must not forget to do so, too.</p>
+
+<p>The <code>cell</code> helper also allows passing in the cell constant. This means, it won’t try to infer the class constant name.</p>
+
+<pre><code class="language-ruby">cell = cell(CommentCell, comment)
+</code></pre>
+
+<h2 id="file-structure">File Structure</h2>
+
+<p>Having a cell to represent a fragment of your page is one thing. The real power, whatsoever, comes when rendering templates in cells. The <code>render</code> method does just that.</p>
+
+<p>In a suffix environment, Cells expects the following file layout.</p>
+
+<pre><code>├── app
+│   ├── cells
+│   │   └── comment_cell.rb
+│   │   └── comment
+│   │       └── show.haml
+</code></pre>
+
+<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code>comment</code>). Views do only have one extension to identify the template’s format (show.haml). Again, you’re free to provide arbitrary additional extensions.</p>
+
+<p>Note that the <em>suffix</em> style is getting superseded by the <a href="trailblazer.html">Trailblazer</a>-style naming and file structure.</p>
+
+<h2 id="render">Render</h2>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  def show
+    render # renders show.haml.
+  end
+end
+</code></pre>
+
+<p>A simple <code>render</code> will implicitly figure out the method (or state) name and attempt to render that view. Here, the file will be resolved to <code>app/cells/comment/show.haml</code>.</p>
+
+<p>You can provide an explicit view name as the first argument.</p>
+
+<pre><code class="language-ruby">def show
+  render :item # renders item.haml
+end
+</code></pre>
+
+<p>When providing more than one argument to <code>render</code>, you have to use the <code>:view</code> option.</p>
+
+<pre><code class="language-ruby">def show
+  render view: :item # renders item.haml
+end
+</code></pre>
+
+<p>show.html.haml</p>
+
+<p>view_paths</p>
+
+<h2 id="yield">Yield</h2>
+
+<p>Erb, Haml, etc.</p>
 
 <p>Class.build (no def args)</p>
 
