@@ -340,6 +340,21 @@ end
 
 <p>You might have to include cells’ template gem into your <strong>application’s</strong> <code>Gemfile</code>. This will properly require the extension.</p>
 
+<h2 id="engine-namespace-helpers">Engine Namespace Helpers</h2>
+
+<p>If you need namespaced helpers, include the respective helper in your engine cell.</p>
+
+<pre><code class="language-ruby">module MyEngine
+  class CommentCell &lt; Cell::ViewModel
+    include Engine.routes.url_helpers
+
+    def comment_url
+      link_to model.title, engine_specific_path_without_any_namespaces_needed
+    end
+  end
+end
+</code></pre>
+
 <pre><code># application Gemfile
 gem "cells-erb"
 </code></pre>

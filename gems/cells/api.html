@@ -296,7 +296,8 @@ end
 
 <p>Since <code>show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
 
-<p>cell.() #=&gt; cell.(:show)</p>
+<pre><code>cell.() #=&gt; cell.(:show)
+</code></pre>
 
 <p>Note that in Rails controller views, this will be called automatically via cell’s <code>ViewModel#to_s</code> method.</p>
 
@@ -304,7 +305,8 @@ end
 
 <p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
 
-<p>CommentCell.new(comment).(:show)</p>
+<pre><code>CommentCell.new(comment).(:show)
+</code></pre>
 
 <p>As discussed, this will call the cell’s <code>show</code> method and return the rendered fragment.</p>
 
@@ -395,7 +397,7 @@ end
 │   │       └── show.haml
 </code></pre>
 
-<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code>comment</code>). Views do only have one extension to identify the template’s format (show.haml). Again, you’re free to provide arbitrary additional extensions.</p>
+<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code>comment</code>). Views do only have one extension to identify the template’s format (<code>show.haml</code>). Again, you’re free to provide arbitrary additional extensions.</p>
 
 <p>Note that the <em>suffix</em> style is getting superseded by the <a href="trailblazer.html">Trailblazer</a>-style naming and file structure.</p>
 
@@ -409,6 +411,13 @@ end
 </code></pre>
 
 <p>A simple <code>render</code> will implicitly figure out the method (or state) name and attempt to render that view. Here, the file will be resolved to <code>app/cells/comment/show.haml</code>.</p>
+
+<p>Note that <code>render</code> literally renders the template and returns the HTML string. This allows you to call render multiple times, concatenate, and so on.</p>
+
+<pre><code class="language-ruby">def show
+  render + render(:footer) + "&lt;hr/&gt;"
+end
+</code></pre>
 
 <p>You can provide an explicit view name as the first argument.</p>
 
@@ -424,17 +433,167 @@ end
 end
 </code></pre>
 
-<p>show.html.haml</p>
+<p>If you like the clunky Rails-style file naming, you’re free to add a format to the view.</p>
 
-<p>view_paths</p>
+<pre><code class="language-ruby">render "shot.html" # renders show.html.haml
+</code></pre>
+
+<p>You can pass locals to the view using <code>:locals</code>.</p>
+
+<pre><code class="language-ruby">render locals: { logged_in: options[:current_user] }
+</code></pre>
+
+<h2 id="instance-methods">Instance Methods</h2>
+
+<p>While it is fine to use locals or instance variables in the view to access data, the preferred way is invoking instance methods in the view.</p>
+
+<pre><code>%h1 Show comment
+
+= body
+= author_link
+</code></pre>
+
+<p>Every method call in the view is dispatched to the cell instance. You have to define your “helpers” there.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  property :body # creates #body reader.
+
+  def author_link
+    url_for model.author.name, model.author
+  end
+end
+</code></pre>
+
+<p>This allows slim, logic-less views.</p>
+
+<p>Note that you can use Rails in the instance level, too, if you’re in a Rails environment.</p>
 
 <h2 id="yield">Yield</h2>
 
-<p>Erb, Haml, etc.</p>
+<p>A block passed to the cell constructor is passed on to the state method.</p>
 
-<p>Class.build (no def args)</p>
+<pre><code class="language-ruby">CommentCell.new(comment) { "Yay!" }
+cell(:comment, comment)  { "Yay!" }
+</code></pre>
 
-<p>ViewModel::cell()</p>
+<p>It’s up to you if you want to use this block, or provide your own.</p>
+
+<pre><code class="language-ruby">def show(&amp;block)
+  render(&amp;block)
+end
+</code></pre>
+
+<p>Passing the block <code>render</code> allows yielding it in the view.</p>
+
+<pre><code>%h1 Comment
+
+= yield
+</code></pre>
+
+<h2 id="collection">Collection</h2>
+
+<p>Instead of manually iterating an array of models and concatenating the output of the item cell, you can use the <code>:collection</code> feature.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: Comment.all).()
+</code></pre>
+
+<p>This will instantiate a cell per iterated model, invoke <code>call</code> and join the output into one fragment.</p>
+
+<p>Pass the method name to <code>call</code> when you want to invoke a state different to <code>show</code>.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: Comment.all).(:item)
+</code></pre>
+
+<p>You’re free to pass additional options to the call.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: comments, size: comments.size).()
+</code></pre>
+
+<p>This instantiates each collection cell as follows.</p>
+
+<pre><code class="language-ruby">CommentCell.new(comment, size: 9)
+</code></pre>
+
+<p>The <code>join</code> method allows to customize the cell invocation. The block’s return value is autmatically joined.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: Comment.all).join do |cell, i|
+  i.odd? cell.(:odd) : cell(:even)
+end
+</code></pre>
+
+<p>An optional separator string can be passed to <code>join</code> when it concatenates the item fragments.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: Comment.all).join("&lt;hr/&gt;") do |cell, i|
+</code></pre>
+
+<h2 id="external-layout">External Layout</h2>
+
+<p>Since Cells 4.1, you can instruct your cell to use a second cell as a wrapper. This will first render your actual content cell, then pass the content via a block to the layout cell.</p>
+
+<p>Cells desiring to be wrapped in a layout have to include <code>Layout::External</code>.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  include Layout::External
+end
+</code></pre>
+
+<p>The layout cell usually can be an empty subclass.</p>
+
+<pre><code class="language-ruby">class LayoutCell &lt; Cell::ViewModel
+end
+</code></pre>
+
+<p>Its <code>show</code> view must contain a <code>yield</code> to insert the content.</p>
+
+<pre><code>!!!
+%html
+  %head
+    %title= "Gemgem"
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+  %body
+    = yield
+</code></pre>
+
+<p>The layout cell class is then injected into the actual invocation using <code>:layout</code>.</p>
+
+<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell)
+</code></pre>
+
+<p>The context object will automatically be passed to the layout cell.</p>
+
+<p>Note that <code>:layout</code> also works in combination with <code>:collection</code>.</p>
+
+<h2 id="view-paths">View Paths</h2>
+
+<p>Per default, the cell’s view path is set to <code>app/cells</code>. You can set any number of view paths for the template file lookup.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  self.view_paths = ["app/views"]
+</code></pre>
+
+<h2 id="template-formats">Template Formats</h2>
+
+<p>Cells provides a handful of popular Erb, Haml, etc.</p>
+
+<p>Various template engines are supported but need to be added to your Gemfile.</p>
+
+<ul>
+  <li><a href="https://github.com/trailblazer/cells-erb">cells-erb</a></li>
+  <li><a href="https://github.com/trailblazer/cells-hamlit">cells-hamlit</a> We strongly recommend using <a href="https://github.com/k0kubun/hamlit">Hamlit</a> as a Haml replacement.</li>
+  <li><a href="https://github.com/trailblazer/cells-haml">cells-haml</a> Make sure to bundle Haml 4.1: <code>gem "haml", github: "haml/haml", ref: "7c7c169"</code>. Use <code>cells-hamlit</code> instead.</li>
+  <li><a href="https://github.com/trailblazer/cells-slim">cells-slim</a></li>
+</ul>
+
+<pre><code class="language-ruby">gem "cells-erb"
+</code></pre>
+
+<p>In Rails, this is all you need to do. In other environments, you need to include the respective module into your cells.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  include ::Cell::Erb # or Cell::Hamlit, or Cell::Haml, or Cell::Slim
+end
+</code></pre>
 
 <h2 id="html-escaping">HTML Escaping</h2>
 
@@ -462,7 +621,34 @@ end
 
 <p>&lt;%= title(escape: false) %&gt;</p>
 
+<h2 id="context-object">Context Object</h2>
+
+<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object is passed on automatically. To add objects to the context, use the <code>:context</code> option.</p>
+
+<pre><code class="language-ruby">cell("comment", comment, context: { user: current_user })
+</code></pre>
+
+<p>Reading from the context works via the <code>context</code> method.</p>
+
+<pre><code class="language-ruby">def show
+  context[:user] #=&gt; &lt;User ..&gt;
+  # ..
+end
+</code></pre>
+
+<p>The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.</p>
+
 <h2 id="nesting">Nesting</h2>
+
+<p>You can invoke cells in cells. This happens with the <code>cell</code> helper.</p>
+
+<pre><code class="language-ruby">def show
+  html = cell(:comment_detail, model)
+  # ..
+end
+</code></pre>
+
+<p>The <code>cell</code> helper will automatically pass the context object to the nested cell.</p>
 
 <h2 id="view-inheritance">View Inheritance</h2>
 
@@ -490,21 +676,6 @@ end
 
 PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
 </code></pre>
-
-<h1 id="collection">Collection</h1>
-
-<p><strong>Note:</strong> This section is v4.1.</p>
-
-<p>Pass the method name to <code>call</code> when you want to invoke a state different to <code>show</code>.</p>
-
-<pre><code class="language-ruby">cell(:comment, collection: Comment.all).(:item)
-</code></pre>
-
-<p>This calls <code>#item</code> on every collection cell.</p>
-
-<p>This will instantiate each collection cell as follows.</p>
-
-<p>Comment.(comment, style: “awesome”, volume: “loud”)</p>
 
 <h2 id="caching">Caching</h2>
 
