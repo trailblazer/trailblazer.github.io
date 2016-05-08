@@ -601,25 +601,28 @@ end
 
 <p>Include <code>Escaped</code> to make property readers return escaped strings.</p>
 
-<p>class CommentCell &lt; Cell::ViewModel<br />
-    include Escaped<br />
-    property :title<br />
-  end</p>
+<pre><code>class CommentCell &lt; Cell::ViewModel
+  include Escaped
+  property :title
+end
 
-<p>song.title                 #=&gt; “<script>Dangerous</script>”<br />
-  Comment::Cell.(song).title #=&gt; &lt;script&gt;Dangerous&lt;/script&gt;</p>
+song.title                 #=&gt; "&lt;script&gt;Dangerous&lt;/script&gt;"
+Comment::Cell.(song).title #=&gt; &amp;lt;script&amp;gt;Dangerous&amp;lt;/script&amp;gt;
+</code></pre>
 
 <p>Only strings will be escaped via the property reader.</p>
 
 <p>You can suppress escaping manually.</p>
 
-<p>def raw_title<br />
-    “#{title(escape: false)} on the edge!”<br />
-  end</p>
+<pre><code>def raw_title
+  "#{title(escape: false)} on the edge!"
+end
+</code></pre>
 
 <p>Of course, this works in views, too.</p>
 
-<p>&lt;%= title(escape: false) %&gt;</p>
+<pre><code>&lt;%= title(escape: false) %&gt;
+</code></pre>
 
 <h2 id="context-object">Context Object</h2>
 
