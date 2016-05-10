@@ -286,6 +286,12 @@ end
 
 <p>This will render the <code>Comment::Cell::New</code>, instantiate <code>Gemgem::Cell::Layout</code> and pass through the context object, then render the layout around it.</p>
 
+<p>Make sure the content cell is prepared to use the layout cell.</p>
+
+<pre><code class="language-ruby">class Comment::Cell::New &lt; Trailblazer::Cell
+  include Layout::External
+</code></pre>
+
       </div>
     </div>
 
