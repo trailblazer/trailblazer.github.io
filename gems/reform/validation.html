@@ -317,6 +317,8 @@ end
 
 <p>This is not Reform’s fault but a design flaw in ActiveRecord’s validators.</p>
 
+<h1 id="unique-validation">Unique Validation</h1>
+
 <p>You’re encouraged to use Reform’s non-writing <code>unique: true</code> validation, though.</p>
 
 <pre><code>require "reform/form/validation/unique_validator"
@@ -327,7 +329,14 @@ class SongForm &lt; Reform::Form
 end
 </code></pre>
 
-<p>This will only validate the uniqueness of <code>title</code>. Other options are not supported, yet. Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
+<p>This will only validate the uniqueness of <code>title</code>.</p>
+
+<p>For uniqueness validation of multiple fields, use the <code>:scope</code> option.</p>
+
+<pre><code class="language-ruby">validates :user_id, unique: { scope: [:user_id, :song_id] }
+</code></pre>
+
+<p>Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
 
 <h2 id="confirm-validation">Confirm Validation</h2>
 
