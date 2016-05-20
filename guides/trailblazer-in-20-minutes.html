@@ -225,7 +225,7 @@
   </div>
 </div>
 
-<p>A vertical <em>Authentication</em> layer allows to involve policies at every point in your code.</p>
+<p>A vertical <em>Authorization</em> layer allows to involve policies at every point in your code.</p>
 
 <p>Following that approach will lead to controllers being empty HTTP endpoints, lean models with persistence-relevant scopes, finders and associations, only, and a handful of new, innovating objects helping you to implement the business.</p>
 
@@ -254,7 +254,7 @@
 
 <p>Trailblazer leverages Ruby’s namespacing the way it was intended to be used. This is why the operation’s constant name is <code>Comment::Create</code>.</p>
 
-<p>Another confusing “dialect” is the way objects are invoked in Trailblazer. <code>Create.(params)</code> is also known as the <em>call style</em>, as it resolves to <code>Create.call(params)</code>.</p>
+<p>Each operation has only one responsibility and exposes only one public method: <code>call</code>. Ruby automatically invokes the <code>call</code> method when the method name is omitted, giving the handily abbreviated style: <code>Create.(params)</code> rather than <code>Create.call(params)</code>.</p>
 
 <p>You might have noticed that there’s no instantiation of the operation happening. This is done internally. Exposing only one public method is a concept adopted from functional programming: Since there’s only one way to invoke an operation, you simply can’t confuse method orders or mess with internal state.</p>
 
@@ -329,7 +329,7 @@ end
 
 <p>The operation’s <code>validate</code> first instantiates the contract, which is really just a Reform object. Then, the incoming data is written to the contract object (this is called <em>deserialization</em>) and afterwards, validation of the entire object graph is performed using the Reform API.</p>
 
-<p>The whole process of validation happens internally, but can be easily customized. An important fact here is that the contract graph is an intermediate object - <strong>instead of writing input to the model, this all happens on the contract</strong>. The model is not accessed at all for validation.</p>
+<p>The whole process of validation happens internally, but can be easily customized. An important fact here is that the contract is an intermediate object - <strong>instead of writing input to the model, this all happens on the contract</strong>. The model is not accessed at all for validation.</p>
 
 <p>Having a dedicated contract object sitting between operation and model is why your model classes will end up as a pure persistence layer.</p>
 
@@ -381,7 +381,7 @@ end
 
 private
   def after_save!
-    Comment::Notifier.mail(model)
+    CommentNotifier.daily_digest(model).deliver_later
   end
 </code></pre>
 
@@ -437,13 +437,13 @@ let(:comment) { Comment::Create.(comment: { body: "Yo!", author_id: user.id} ) }
 
 <p>While the operation is the pivotal element for the business processing, Trailblazer also comes with a drop-in replacement for views. This is completely optional, and you are free to use your framework’s views, such as <code>ActionView</code>.</p>
 
-<p>Object-oriented <a href="/gems/cells">view models</a> encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
+<p>Object-oriented view models are provided by the <a href="/gems/cells">Cells gem</a>. They encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
 
 <p>Those <em>cells</em> are usually rendered from the controller.</p>
 
 <pre><code class="language-ruby">class CommentsController &lt; ApplicationController
   def show
-    comment = Comment::Cell.present(params)
+    comment = Comment::Create.present(params)
 
     render Comment::Cell::New, comment, layout: Application::Layout
   end
