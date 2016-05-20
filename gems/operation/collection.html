@@ -200,21 +200,20 @@ end
 
 <h2 id="presenting-collections">Presenting Collections</h2>
 
-<p>You can either instantiate the collection operation manually.</p>
+<p>You can instantiate the collection operation manually.</p>
 
 <pre><code>op = Comment::Index.present(params)
 op.model #=&gt; [&lt;Comment&gt;, ..]
 </code></pre>
 
-<p>Or you can use the <code>Controller#collection</code> helper to do that in the controller.</p>
+<p>Or use the <code>present</code> controller helper.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
-  def index
-    collection Comment::Index
-  end
+<pre><code class="language-ruby">def index
+  present Comment::Index
+end
 </code></pre>
 
-<p>This will set the <code>@collection</code> instance variable.</p>
+<p>This will set the <code>@model</code> instance variable to your collection.</p>
 
 <h2 id="pagination">Pagination</h2>
 
