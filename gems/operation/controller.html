@@ -222,7 +222,7 @@ end
 end
 </code></pre>
 
-<p>This <em>runs</em> the operation with <code>params</code>, sets <code>@operation</code> and <code>@model</code> on the controller instance, and returns the operation instance.</p>
+<p>This <em>runs</em> the operation with <code>params</code>, sets <code>@operation</code>, <code>@model</code> and <code>@form</code> on the controller instance, and returns the operation instance.</p>
 
 <p>Note that you can grab the operation and reassign it to another instance variable if you have multiple operation invocations.</p>
 
@@ -240,6 +240,7 @@ end
   result, op = Comment::Create.run(params)
   @operation = op
   @model     = op.model
+  @form      = op.contract
 </code></pre>
 
 <p>First, you have the chance to normalize parameters. The controller’s <code>params</code> hash is then passed into the operation run. After that, operation and model are assigned to controller instance variables.</p>
@@ -297,7 +298,7 @@ end
 <p>To render the operation’s form, use <code>#form</code>. This is identical to <code>#present</code> with two additional steps.</p>
 
 <pre><code>class CommentsController &lt; ApplicationController
-  def show
+  def new
     form Comment::Create
   end
 end

@@ -214,7 +214,7 @@ end
 <p>Use <code>::policy</code> to hook the policy class along with a query action into your operation.</p>
 
 <pre><code>class Thing::Create &lt; Trailblazer::Operation
-  include Policy
+  include Trailblazer::Operation::Policy
 
   policy Thing::Policy, :create?
 </code></pre>
@@ -245,7 +245,8 @@ end
 <p>Pundit policy classes can be used directly in operations.</p>
 
 <pre><code>class Thing::Create &lt; Trailblazer::Operation
-  include Policy
+  include Trailblazer::Operation::Policy
+
   policy ThingPolicy, :create?
 </code></pre>
 
