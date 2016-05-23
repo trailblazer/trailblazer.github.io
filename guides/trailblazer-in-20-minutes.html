@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Trailblazer In 20 Minutes (Maybe Less)</title>
-<meta name="description" content="Trailblazer In 20 Minutes (Maybe Less) - Trailblazer" />
+<title>Trailblazer: Trailblazer In 20 Minutes (Actually, Even Less)</title>
+<meta name="description" content="Trailblazer In 20 Minutes (Actually, Even Less) - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -21,14 +21,14 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
-<meta property="og:title" content="Trailblazer In 20 Minutes (Maybe Less)"/>
+<meta property="og:title" content="Trailblazer In 20 Minutes (Actually, Even Less)"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to/guides/trailblazer-in-20-minutes.html"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Trailblazer In 20 Minutes (Maybe Less)">
+<meta name="twitter:title" content="Trailblazer In 20 Minutes (Actually, Even Less)">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -174,6 +174,7 @@
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
         </a>
     </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
     <li><a href="/guides/sinatra/getting-started.html">Sinatra: Getting Started</a></li>
     <li><a href="/guides/grape.html">Grape</a></li>
   </ul>
@@ -181,7 +182,7 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="trailblazer-in-20-minutes-maybe-less">Trailblazer In 20 Minutes (Maybe Less)</h1>
+        <h1 id="trailblazer-in-20-minutes-actually-even-less">Trailblazer In 20 Minutes (Actually, Even Less)</h1>
 
 <p>Understanding the essential elements of Trailblazer and its <em>high-level architecture</em> doesn’t take longer than 20 minutes. Once you leave the “MVC” mindset and allow Trailblazer to show how it restructures applications, defines strong conventions where code should sit, and how objects interact, it is just another stack in your repertoire.</p>
 
@@ -365,7 +366,7 @@ end
 
 <h2 id="callback">Callback</h2>
 
-<p>Often after persisting, additional logic needs to be executed. This is known as <em>post-processing</em> or <em>callbacks</em> in Trailblazer. Instead of polluting the model or controller with this code, callbacks live in the operation.</p>
+<p>Often after persisting, additional logic needs to be executed. This is known as <em>post-processing</em> or <em>callbacks</em> in Trailblazer. Instead of polluting the model or controller with this code, <strong>callbacks live in the operation</strong>.</p>
 
 <p>They are literally called when you need them.</p>
 
@@ -437,7 +438,7 @@ let(:comment) { Comment::Create.(comment: { body: "Yo!", author_id: user.id} ) }
 
 <p>While the operation is the pivotal element for the business processing, Trailblazer also comes with a drop-in replacement for views. This is completely optional, and you are free to use your framework’s views, such as <code>ActionView</code>.</p>
 
-<p>Object-oriented view models are provided by the <a href="/gems/cells">Cells gem</a>. They encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
+<p>Object-oriented <em>view models</em> are provided by the <a href="/gems/cells">Cells gem</a>. They encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
 
 <p>Those <em>cells</em> are usually rendered from the controller.</p>
 
@@ -472,13 +473,86 @@ end
   = author_name
 </code></pre>
 
-<p>View models in Trailblazer are provided by the <a href="/gems/cells">Cells gem</a> which is completely decoupled from Trailblazer. It also works fine in other frameworks like Hanami or Sinatra.</p>
+<p>Again, view models in Trailblazer are provided by the <a href="/gems/cells">Cells gem</a> which is completely decoupled from Trailblazer. It also works fine in other frameworks like Hanami or Sinatra.</p>
 
 <h2 id="policy">Policy</h2>
 
+<p>Trailblazer makes authorization a first-class citizen. Operations define policy objects that can be accessed and queried throughout the stack for deciding about access control.</p>
+
+<p>The simplest form is a <em>guard</em> policy you can embedd straight into the operation.</p>
+
+<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
+  policy do |params|
+    params[:current_user].present?
+  end
+</code></pre>
+
+<p>Policies will be evaluated when the operation is instantiated and <strong>allow denying the execution of code for specific environments</strong>, plus they can be reused at any later point. This includes queries in the view layer.</p>
+
+<p>Also, they are not limited to blocks. Trailblazer allows <a href="http://trailblazer.to/">Pundit-style policies</a>, too.</p>
+
 <h2 id="representer">Representer</h2>
 
-<h2 id="where-to-go-from-here">Where To Go From Here</h2>
+<p>While operations are extremely helpful for processing form submissions, they can also be used in the exact same way for document APIs, e.g. with JSON or XML. This works by <strong>using <em>representers</em> to parse input and render the response document</strong>.</p>
+
+<p>Representers can be defined inline in the operation.</p>
+
+<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
+  representer do
+    include Roar::JSON
+    include Roar::Hypermedia
+
+    property :id
+    property :body
+    property :author_id
+
+    link(:self) { comment_path(represented.id) }
+  end
+</code></pre>
+
+<p>The operation is now aware the input and output document is not a hash anymore but a JSON document. It will use the representer to parse the incoming document, and provide a <code>to_json</code> method for the controller to render the response.</p>
+
+<pre><code class="language-ruby">Comment::Create.('{"body": "Solnic rules!"}').to_json
+#=&gt; '{"body": "Solnic rules!", "id":1, link: {"rel":"self", "href":"/comments/1"}}'
+</code></pre>
+
+<p>Representers in Trailblazer are provided by the <a href="/gems/roar">Roar gem</a> and are completely optional.</p>
+
+<h2 id="what-we-didnt-talk-about">What We Didn’t Talk About</h2>
+
+<p>Trailblazer has many more features that will help writing better software.</p>
+
+<p>If you don’t like contracts, policies or representers inline, you can instruct the operation to use an external class, too. The composable interface allows that.</p>
+
+<p>You may also leverage operations in render-only requests and use the contract object with your form rendering helper.</p>
+
+<p>Trailblazer’s polymorphic interface allows to handle edge cases cleanly in small subclasses without the need for <code>if</code>s and <code>else</code> throughout your code base.</p>
+
+<p>And, there’s more optimizations coming every day. We love working on Trailblazer and making life for programmers simpler.</p>
+
+<div class="row guide">
+  <div class="column medium-4">
+    <div class="content">
+      <p>
+        <a href="/newsletter">→ Join our Trailblazer newsletter</a> and stay up-to-date what's new in the community and the gems.
+      </p>
+
+      <p>Our <a href="http://gitter.im/trailblazer/chat">Gitter chat channel</a> is the perfect source for instant help!</p>
+    </div>
+  </div>
+
+  <div class="column medium-8">
+    <a href="http://leanpub.com/trailblazer">
+      <img src="/images/3dbuch-freigestellt.png" id="book-teaser" />
+    </a>
+
+    <p>
+      Check out the sample application's <a href="http://github.com/apotonick/gemgem-trbrb">repository</a> for some teaser code or <a href="http://leanpub.com/trailblazer">→ buy the book</a> and learn everything about Trailblazer.
+    </p>
+
+    <p>Or browse our <a href="/gems/operation">extensive documentation</a> online!</p>
+  </div>
+</div>
 
       </div>
     </div>
