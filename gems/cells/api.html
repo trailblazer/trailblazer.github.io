@@ -681,6 +681,29 @@ end
 PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
 </code></pre>
 
+<h2 id="builder">Builder</h2>
+
+<p>Often, it is good practice to replace decider code from views or classes into separate sub-cells. Or in case you want to render a polymorphic collection, builders come in handy.</p>
+
+<p>Builders allow instantiating different cell classes for different models and options.</p>
+
+<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
+  builds do |model, options|
+    PostCell       if model.is_a?(Post)
+    CommentCell    if model.is_a?(Comment)
+  end
+end
+</code></pre>
+<p>The <code>#cell</code> helper takes care of instantiating the right cell class for you.</p>
+
+<pre><code class="language-ruby">cell(:comment, Post.find(1)) #=&gt; creates a PostCell.
+</code></pre>
+<p>This also works with collections.</p>
+
+<pre><code class="language-ruby">cell(:comment, collection: [@post, @comment]) #=&gt; renders PostCell, then CommentCell.
+</code></pre>
+<p>Multiple calls to <code>::builds</code> will be ORed. If no block returns a class, the original class will be used (<code>CommentCell</code>). Builders are inherited.</p>
+
 <h2 id="caching">Caching</h2>
 
 <p>Cells allow you to cache per state. It’s simple: the rendered result of a state method is cached and expired as you configure it.</p>
