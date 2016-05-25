@@ -1,0 +1,344 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Newsletter March 2016</title>
+<meta name="description" content="Newsletter March 2016 - Trailblazer" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords" content=", " />
+
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="shortcut icon" href="/favicon.ico">
+
+<link rel="stylesheet" href="/css/dark.css">
+<script src="/javascripts/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="/bower_components/modernizr/modernizr.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+<meta property="og:title" content="Newsletter March 2016"/>
+<meta property="og:site_name" content="Trailblazer"/>
+<meta property="og:url" content="http://trailblazer.to/newsletter/2016-may.html"/>
+<meta property="og:description" content="The May 2016 newsletter discusses Cells 4.1, how it simplifies layouts and makes ActionView redundant, TRB and Hanami's increasing gravity and what's been happening in the Ruby community this month."/>
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Newsletter March 2016">
+<meta name="twitter:description" content="The May 2016 newsletter discusses Cells 4.1, how it simplifies layouts and makes ActionView redundant, TRB and Hanami's increasing gravity and what's been happening in the Ruby community this month.">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li><a href="/newsletter/"><img alt="TRB Newsletter" src="https://img.shields.io/badge/TRB-newsletter-lightgrey.svg"></a></li>
+    <li class="divider"></li>
+    <li><a href="https://gitter.im/trailblazer/chat">Support chat</a></li>
+    <li class="divider"></li>
+    <li><a href="/guides">Guides</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">Gems</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">Cells</a></li>
+          <li class=""><a href="/gems/operation">Operation</a></li>
+          <li class=""><a href="/gems/reform">Reform</a></li>
+          <li class=""><a href="/gems/representable">Representable</a></li>
+          <li class=""><a href="/gems/roar">Roar</a></li>
+          <li class=""><a href="/gems/disposable">Disposable</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">Get the book</a>
+      </li>
+    </ul>
+  </section>
+</nav>
+
+
+    <section class="marketing-book book">
+  <div class="row">
+    <div class="columns">
+      <div class="row">
+        <div class="columns medium-9 medium-centered">
+          <h1 id="may-2016">May 2016</h1>
+
+<p>Greetings, my Trailblazer friends!</p>
+
+<p>Winter is coming down here in Australia and it’s getting a bit colder - the perfect excuse for us to work more on the Trailblazer project.</p>
+
+<p>Here’s what happened during the past couple of weeks. We had some exciting new releases and discussed a bunch of interesting opportunities for the project and its community.</p>
+
+<h2 id="our-gitter-channel">Our Gitter Channel</h2>
+
+<p>It is a great thing for OSS authors to see a community evolve around projects. Our Gitter channel is growing every day and seems to be a great place for support, even if it’s just “a little thing” you’re stuck with. Come <a href="https://gitter.im/trailblazer/chat">join the community today</a> - we love helping each other and often, there’s intense debates about software architecture, programming languages or wine tastings going on. Luckily, you can turn off notifications. ;)</p>
+
+<h2 id="cells-41-released">Cells 4.1 Released</h2>
+
+<p>We’re super excited to announce the release of Cells 4.1. This version cleans up the core even more and paves the way for a super fast Cells 5.0 that we’re planning. It also got rid of <em>any Rails dependencies</em>, so Cells 4.1 won’t import or need anything of Rails and works perfectly fine in Sinatra or Hanami.</p>
+
+<p>I’ve written a <a href="nicksda.apotomo.de/2016/05/cells-4-1-block-support-better-collections-external-layouts/">blog post about Cells 4.1</a> and all the features, but here’s a few canapés for you.</p>
+
+<h2 id="layouts">Layouts</h2>
+
+<p>My absolute favorite addition is that every cell can now have an external layout cell. While the actual <em>content cell</em> is responsible to represent the fragment, the <em>layout cell</em> will present the outer container. This is very similar to how Rails or other frameworks handle layouts around content.</p>
+
+<p>Instead of configuring the content cell on the class level, you can inject the layout cell. This allows a more flexible way of handling layouts, and can easily be abstracted in the <code>ApplicationController</code>.</p>
+
+<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell)
+</code></pre>
+
+<p>The <code>LayoutCell</code> is a simplistic cell class and <code>yield</code>s the content in its view.</p>
+
+<pre><code>!!!
+%html
+  %head
+    %title= "Gemgem"
+    = stylesheet_link_tag 'application', media: 'all'
+  %body
+    = yield
+</code></pre>
+
+<p>What’s pretty awesome about this: It now, finally, allows to complete ditch ActionView and use Cells for everything. Great, isn’t it?</p>
+
+<p>Hand in hand with the layout comes the <em>context object</em> in Cells 4.1. We now maintain a special object that is automatically being passed from cell to cell and allows to propagate “global” objects such as the current user or helper objects via a clean, explicit mechanism.</p>
+
+<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell, context: { user: current_user })
+</code></pre>
+
+<p>Both content and layout will have access to the user via <code>context[:user]</code> now. This also works “downwards” when nesting cells into cells.</p>
+
+<h2 id="trailblazercell">Trailblazer::Cell</h2>
+
+<p>As a logical conclusion, we’ve released the <a href="https://github.com/trailblazer/trailblazer-cells">trailblazer-cells</a> which helps you using the Trailblazer file structure and optimized semantics in your project. It really is a very thin “reconfiguration” of the Cells gem, only.</p>
+
+<p>Cell classes now have a very constrained naming scheme which greatly improves productivity as you don’t have to think about cell names anymore.</p>
+
+<pre><code class="language-ruby">module Comment::Cell
+  class Show &lt; Trailblazer::Cell
+  end
+end
+</code></pre>
+
+<p>Ideally, cell classes can be empty as the <code>show</code> method is automatically added. In Trailblazer cells, views are resolved differently. In this class, the looked up view will be expected in <code>app/concepts/comment/view/show.haml</code>. Note that the cell’s class name dictates the view name, and not the state.</p>
+
+<p>The new behavior introduces very strong conventions and many Trailblazer users love it already. You should try it out if you’re using Cells.</p>
+
+<h2 id="gemgem-hanami">Gemgem-Hanami</h2>
+
+<p>In my spare free time, I started working on an example application that shows how <a href="hanamirb.org">Hanami</a> and Trailblazer work together. It is so much fun <a href="https://github.com/apotonick/gemgem-hanami">working on this project</a> and the two fit together just great.</p>
+
+<p>I use <code>Trailblazer::Cell</code> for the views and let operations handle the business logic in <code>Hanami::Action</code>s - fantastic stuff!</p>
+
+<p>The project also plays with some advanced features such as Postgres’ <code>JSONB</code> columns for complex data types to be used within the operation and contract. We will surely write about this once it’s a bit more, well, let’s say <em>readable</em>.</p>
+
+<p>Also, a new gem trailblazer-hanami will soon be pushed. It won’t be more than a few dozens lines of code, but simplifies the workflow of using Trailblazer in Hanami.</p>
+
+<h2 id="blog-posts">Blog Posts</h2>
+
+<p>In the past months I’ve started writing some articles for Sitepoint. <a href="www.sitepoint.com/introduction-to-cells-a-better-view-layer-for-rails/">The first article</a> introduces Cells, <a href="https://www.sitepoint.com/cells-a-deeper-look-into-dependency-injection-and-testing/">the second speaks</a> about advanced features such as dependency injections or testing in Cells.</p>
+
+<p>Especially the first post has been the most popular Ruby post for many days and generated a lot of comments around Cells - it’s worth a read!</p>
+
+<h2 id="new-20-minutes-guide">New 20-Minutes Guide</h2>
+
+<p>After around two years of trailblazing I finally managed to write up a very brief guide what is Trailblazer and how does it work. Check out the <a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a> article, it actually takes only 12 minutes.</p>
+
+<p>We’re confident that this short guide will help many more people to get onboard and understand Trailblazer and its architecture within a few minutes, without having to read an entire book.</p>
+
+<h2 id="trailblazer-pro">Trailblazer Pro</h2>
+
+<p>We are currently discussing how to “professionalize” Trailblazer and support. We’re thinking about offering a monthly <em>Trailblazer Pro</em> plan soon, which will give clients access to a private chat channel and ticket system for instant response support, and a new premium documentation area with cookbook recipes (for Trailblazer, not spaghetti bolognese), curated content and screencasts.</p>
+
+<p>We are very interested in hearing your opinions about that and what you would like to see happening in Trailblazer, such as an LTS version, a <code>trailblazer-enterprise</code> project with higher-level building blocks, and so on. Please <a href="https://gitter.im/trailblazer/chat">let us know what you think</a>.</p>
+
+<h2 id="ruby-tapas">Ruby Tapas</h2>
+
+<p>While we’re at it: since living off Open Source is extremely hard and involves a lot of work, I’d like to mention my friend Avdi Grimm, an absolute Ruby legend and inspiration for the community with his books, talks, blog posts and screencasts for years.</p>
+
+<p>He is kindly asking to <a href="https://twitter.com/avdi/status/734743580934344704">help him not go broke</a> by subscribing to his incredibly cool Ruby Tapas screencast. If you’re interested in learning about programming from him, <a href="http://www.rubytapas.com/">join the Tapas gourmet’s circle</a>.</p>
+
+<h2 id="rails-criticism-everywhere">Rails-Criticism Everywhere</h2>
+
+<p>Waves of controversy were being generated by my friend Piotr Solnica’s blog post <a href="http://solnic.eu/2016/05/22/my-time-with-rails-is-up.html">My Time With Rails Is Up</a>. He explains why it is incredibly hard for alternative Ruby library authors like us to work in the Rails environment and criticises workflows in and around Rails core. A justified standpoint and a really good post that every Ruby developer should read.</p>
+
+<p>A fantastic follow-up post was then published by our best Fabio Akita. In his post <a href="http://www.akitaonrails.com/2016/05/23/rails-has-won-the-elephant-in-the-room">Rails Has Won: The Elephant In The Room</a> he seconds many of Piotr’s statements but also explains why we can’t get around Rails at the moment.</p>
+
+<p>You can spend several hours going through all the comments on the posts, Reddit, Twitter, and so on.</p>
+
+<p>I’ve tried to stay out the conversation wherever possible, though, since my opinion about the problems with Rails’ lack of innovation are well known. I think we’re doing a good job in providing an alternative architecture with Trailblazer, and thanks goes out to the two bloggers and friends for mentioning us in both articles!</p>
+
+<h2 id="conferences">Conferences</h2>
+
+<p>A bunch of hand-selected conference talks are coming up this (northern-hemisphere) summer! I will be talking about Trailblazer, the problems with Rails and why sticking to 10-years old APIs is the opposition of stability.</p>
+
+<p>Come and join us if you can!</p>
+
+<ul>
+  <li><a href="riseconf.com">RISE</a> in Hong Kong, I’ll be speaking June 2, but have several “mentor hours” (whatever that is).</li>
+  <li><a href="http://isoc.hk/wids2016/">WIDS</a> in Hong Kong is on 7-8 June. There will be a talk about Trailblazer and Rails, and a Trailblazer workshop.</li>
+  <li>I will then attend the <a href="http://www.meetup.com/ruby-lviv/">Pivorak RUG meetup</a> in Ukraine July 22. Most probably, there will be a free TRB workshop on Saturday. This is still a secret and I’m not supposed to talk about it.</li>
+  <li>A full-day TRB workshop is happening at <a href="http://www.deccanrubyconf.org/">Deccan RubyConf</a> in Pune, India on August 7.</li>
+  <li>September 2-3, I’ll be at <a href="http://www.rubyconf.co/">Rubyconf Colombia</a> in Medellín. Very excited since I’ve never been to Colombia!</li>
+  <li>After years, I’m finally speaking again at <a href="http://euruko2016.org/">Euruko</a> in Sofia, Bulgaria this year’s 23-24 September. The line-up looks massive already.</li>
+  <li>14 November it’s time for <a href="https://railsisrael2016.events.co.il/home">Rails Israel</a> which is another country I haven’t visited so far and can’t wait to go.</li>
+</ul>
+
+<p>It would be great to see you at one or more of those events!</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+  <li>A <a href="http://rubythursday.com/talks/ruby-roundtable-trailblazer">pretty cool talk by Matthew Jording</a> about Trailblazer at the Ruby Roundtable.</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Footer -->
+<section class="sub-section top-footer">
+  <div class="row">
+	<div class="columns medium-6">
+		<h3>Newsletter</h3>
+		<p>
+			Stay on top of what’s happening in Trailblazer.
+		</p>
+			<div class="row">
+				<div id="mc_embed_signup">
+		     	<form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+						<div class="columns large-9 medium-12 ">
+							<div class="row collapse prefix-radius">
+				        <div class="small-8 medium-7 large-8 columns">
+				        	<div id="mc_embed_signup_scroll">
+				        		<div class="mc-field-group">
+									  	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+									  </div>
+									  <div id="mce-responses" class="clear">
+									    <div class="response" id="mce-error-response" style="display:none"></div>
+									    <div class="response" id="mce-success-response" style="display:none"></div>
+									  </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+									  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+				        	</div>
+				        </div>
+				        <div class="small-4 medium-5 large-4 columns">
+				          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+				        </div>
+				      </div>
+						</div>
+					</form>
+				</div>
+				<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+			</div>
+		<p>
+			And check out the <a href="/newsletter/">archive of newsletters</a>!
+		</p>
+
+
+	</div>
+	<div class="columns medium-6">
+		<h3>The Book</h3>
+		<p>Learn how to built a Rails app with Trailblazer, step-by-step.</p>
+		<a href="/books/trailblazer.html" class="button radius tiny secondary">Check Out Book!</a>
+	</div>
+</div>
+
+
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/bower_components/jquery/jquery.js"><\/script>')</script>
+<script src="/javascripts/plugins.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/javascripts/script.js"></script>
+
+<script src="/bower_components/anchor-js/anchor.js"></script>
+<script>
+  anchors.add(".code-content h2, .sub-section h2");
+</script>
+
+
+<script>
+  $(document).foundation();
+</script>
+
+  </body>
+</html>
