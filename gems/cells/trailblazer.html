@@ -231,6 +231,37 @@ end
 
 <p>This is different to old suffix-cells. While the <code>show</code> method still is the public method, calling <code>render</code> will use the <code>new.haml</code> view, as inferred from the cell’s last class constant segment (<code>New</code>).</p>
 
+<h2 id="default-show">Default Show</h2>
+
+<p>Note that you don’t have to provide a <code>show</code> method, it is created automatically.</p>
+
+<pre><code class="language-ruby">class Comment::Cell::New &lt; Trailblazer::Cell
+end
+</code></pre>
+
+<p>You’re free to override <code>show</code>, though.</p>
+
+<h2 id="view-names">View Names</h2>
+
+<p>Per default, the view name is computed from the cell’s class name.</p>
+
+<pre><code class="language-ruby">Comment::Cell::New #=&gt; "new.haml"
+Comment::Cell::Themed::New #=&gt; "themed/new.haml"
+</code></pre>
+
+<p>Note that the entire path after <code>Cell::</code> is considered, resulting in a hierarchical view name.</p>
+
+<p>Use <code>ViewName::Flat</code> if you prefer a flat view name.</p>
+
+<pre><code class="language-ruby">class Comment::Cell::Themed::New &lt; Trailblazer::Cell
+  extend ViewName::Flat
+end
+
+Comment::Cell::Themed::New #=&gt; "new.haml"
+</code></pre>
+
+<p>This will always result in a flat name where the view name is inferred from the last segment of the cell constant.</p>
+
 <h2 id="invocation">Invocation</h2>
 
 <p>Manual invocation is always possible as discussed here.</p>
