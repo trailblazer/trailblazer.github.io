@@ -331,7 +331,30 @@ end
 
 <h2 id="responder">Responder</h2>
 
-<p>The <code>Operation::Responder</code> module uses <code>Representer</code> and allows using an operation instance directly with Rails responders.</p>
+<p>The <code>Operation::Responder</code> module adds methods to use an operation instance directly with Rails responders. This is why this module comes from the <code>traiblazer-rails</code> gem.</p>
+
+<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
+  include Responder
+  include Representer
+
+  representer ..
+end
+</code></pre>
+
+<p>The operation can now be passed to <code>respond_to</code>.</p>
+
+<pre><code class="language-ruby">def create
+  op = Comment::Create.(params)
+  respond_to op
+end
+</code></pre>
+
+<p>This is done automatically when using <code>Trailblazer::Controller#respond</code>.</p>
+
+<pre><code class="language-ruby">def create
+  respond Comment::Create
+end
+</code></pre>
 
       </div>
     </div>
