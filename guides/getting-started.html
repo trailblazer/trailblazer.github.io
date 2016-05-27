@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Reform Validation</title>
-<meta name="description" content="Reform Validation - Trailblazer" />
+<title>Trailblazer: Getting Started</title>
+<meta name="description" content="Getting Started - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -21,22 +21,22 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
-<meta property="og:title" content="Reform Validation"/>
+<meta property="og:title" content="Getting Started"/>
 <meta property="og:site_name" content="Trailblazer"/>
-<meta property="og:url" content="http://trailblazer.to/gems/reform/validation.html"/>
+<meta property="og:url" content="http://trailblazer.to/guides/getting-started.html"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Reform Validation">
+<meta name="twitter:title" content="Getting Started">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
 
-  <body class="reform-body">
-
-      <nav class="top-bar" data-topbar role="navigation">
+  <body>
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
     <li class="name">
       <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
@@ -73,17 +73,19 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero reform-hero">
+    <div class="hero little-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
             <h1>
-              Reform
+              Guides
             </h1>
           </div>
         </div>
       </div>
     </div>
+
+
 
     <div class="row">
       <div class="columns large-3 sidebar">
@@ -181,181 +183,49 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="validation">Validation</h1>
+        <h1 id="getting-started-with-trailblazer">Getting Started With Trailblazer</h1>
 
-<p>Since Reform 2.0, you can pick your validation backend. This can either be <code>ActiveModel::Validations</code> or <code>dry-validation</code>.</p>
+<p>This document lists all steps necessary to get Trailblazer up and running in new or existing applications.</p>
 
-<p>Reform 2.2 will drop ActiveModel-support. You can still use it (and it will work!), but we won’t be actively maintaining it anymore. In other words, <code>ActiveModel::Validations</code> and Reform should be working until at least Reform 3.0.</p>
+<h2 id="gems">Gems</h2>
 
-<h2 id="overview">Overview</h2>
+<p>As Trailblazer is highly modular, you have to make sure you include the correct gems in your <code>Gemfile</code>.</p>
 
-<p>Validation in Reform works by invoking <code>validate</code> and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.</p>
+<p>Here’s a <code>Gemfile</code> example for a Rails application.</p>
 
-<p><code>Form#validate</code> will return the result boolean, and provide potential errors via <code>Form#errors</code>.</p>
+<pre><code class="language-ruby">gem "trailblazer"
+gem "trailblazer-rails"
 
-<h2 id="dry-validation">Dry-validation</h2>
+gem "reform", "2.2.0"    # optional, allows to specify specific version.
+gem "reform-rails"
 
-<p>Dry-validation is the preferred backend for defining and executing validations.</p>
+# optional, in case you want Cells.
+gem "trailblazer-cells"
+gem "cells-erb"         # Or cells-haml, cells-slim, cells-hamlit.
+gem "cells-rails"
+</code></pre>
 
-<p>The purest form of defining validations with this backend is by using a <a href="#validation-group">validation group</a>. A group provides the exact same API as a <code>Dry::Validation::Schema</code>. You can learn all the details on the <a href="https://github.com/dryrb/dry-validation">gem’s website</a>.</p>
+<h2 id="other-frameworks">Other Frameworks</h2>
 
-<pre><code>require "reform/form/dry"
+<p>Here’s a sample <code>Gemfile</code> for a non-Rails project that doesn’t use <code>Active*</code>.</p>
 
-class AlbumForm &lt; Reform::Form
-  feature Reform::Form::Dry
+<pre><code class="language-ruby">gem "trailblazer"
+gem "trailblazer-loader" # optional, if you want us to load your concepts.
 
-  property :title
+gem "reform", "2.2.0"
+gem "dry-validation", "&gt;= 0.7.0"
 
-  validation :default do
-    key(:title, &amp;:filled?)
-  end
+# optional, in case you want Cells.
+gem "trailblazer-cells"
+gem "cells-erb"         # Or cells-haml, cells-slim, cells-hamlit.
+</code></pre>
+
+<p>Note that you need to invoke the loader manually. Usually, this would happen in an initializer.</p>
+
+<pre><code class="language-ruby">Trailblazer::Loader.new.(concepts_root: "./concepts/") do |file|
+  require_relative(file)
 end
 </code></pre>
-
-<p>Custom predicates have to be defined in the validation group.</p>
-
-<pre><code>validation :default do
-  key(:title) { |title| title.filled? &amp; title.unique? }
-
-  def unique?(value)
-    Album.find_by(title: value).nil?
-  end
-end
-</code></pre>
-
-<p>In addition to dry-validation’s API, you have access to the form that contains the group via <code>form</code>.</p>
-
-<pre><code>validation :default do
-  key(:confirm_password, &amp;:same_password?)
-
-  def same_password?(value)
-    value == form.password
-  end
-end
-</code></pre>
-
-<p>Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.</p>
-
-<h3 id="dry-error-messages">Dry: Error Messages</h3>
-
-<p>You need to provide custom error messages via dry-validation mechanics.</p>
-
-<pre><code>validation :default do
-  configure { |config|
-    config.messages_file = 'config/error_messages.yml'
-  }
-</code></pre>
-
-<p>A simple error messages file might look as follows.</p>
-
-<pre><code>en:
-  errors:
-    same_password?: "passwords not equal"
-</code></pre>
-
-<h2 id="activemodel">ActiveModel</h2>
-
-<p>In Rails environments, the AM support will be automatically loaded.</p>
-
-<p>In other frameworks, you need to include <code>Reform::Form::ActiveModel::Validations</code> either into a particular form class, or simply into <code>Reform::Form</code> and make it available for all subclasses.</p>
-
-<pre><code>require "reform/form/active_model/validations"
-
-Reform::Form.class_eval do
-  feature Reform::Form::ActiveModel::Validations
-end
-</code></pre>
-
-<h2 id="validation-group">Validation Group</h2>
-
-<p>Grouping validataions allows running them conditionally. You can use <code>:if</code> to specify what group had to be successful validated.</p>
-
-<pre><code>validation :default do
-  key(:title, &amp;:filled?)
-end
-
-validation :unique, if: :default do
-  key(:title, &amp;:unique?)
-
-  def unique?(value)
-  # ..
-end
-</code></pre>
-
-<p>This will only run the database-consuming <code>:unique</code> validation group if the <code>:default</code> group was valid.</p>
-
-<p>Chaining groups works via the <code>:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code>:if</code>.</p>
-
-<pre><code>validation :email, after: :default do
-  key(:email, &amp;:email?)
-
-  def email?(value)
-  # ..
-end
-</code></pre>
-
-<p>At any time you can extend an existing group using <code>:inherit</code>.</p>
-
-<pre><code>validation :email, inherit: true do
-  key(:email, &amp;:filled?)
-end
-</code></pre>
-
-<p>This appends validations to the existing <code>:email</code> group.</p>
-
-<h2 id="uniqueness-validation">Uniqueness Validation</h2>
-
-<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support where the validation is basically delegated to the “real” model class. This happens when you use <code>validates_uniqueness_of</code> and will respect options like <code>:scope</code>, etc.</p>
-
-<pre><code>class SongForm &lt; Reform::Form
-  include Reform::Form::ActiveRecord
-  model :song
-
-  property :title
-  validates_uniqueness_of :title, scope: [:album_id, :artist_id]
-</code></pre>
-
-<p>Be warned, though, that those validators write to the model instance. Even though this <em>usually</em> is not persisted, this will mess up your application state, as in case of an invalid validation your model will have unexpected values.</p>
-
-<p>This is not Reform’s fault but a design flaw in ActiveRecord’s validators.</p>
-
-<h1 id="unique-validation">Unique Validation</h1>
-
-<p>You’re encouraged to use Reform’s non-writing <code>unique: true</code> validation, though.</p>
-
-<pre><code>require "reform/form/validation/unique_validator"
-
-class SongForm &lt; Reform::Form
-  property :title
-  validates :title, unique: true
-end
-</code></pre>
-
-<p>This will only validate the uniqueness of <code>title</code>.</p>
-
-<p>For uniqueness validation of multiple fields, use the <code>:scope</code> option.</p>
-
-<pre><code class="language-ruby">validates :user_id, unique: { scope: [:user_id, :song_id] }
-</code></pre>
-
-<p>Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
-
-<h2 id="confirm-validation">Confirm Validation</h2>
-
-<p>Likewise, the <code>confirm: true</code> validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.</p>
-
-<p>Instead, use your own virtual fields.</p>
-
-<pre><code>class SignInForm &lt; Reform::Form
-  property :password, virtual: true
-  property :password_confirmation, virtual: true
-
-  validate :passwork_ok? do
-    errors.add(:password, "Password mismatch") if password != password_confirmation
-  end
-</code></pre>
-
-<p>This is discussed in the <em>Authentication</em> chapter of the <a href="https://leanpub.com/trailblazer">Trailblazer book</a>.</p>
 
       </div>
     </div>
