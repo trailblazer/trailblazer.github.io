@@ -297,7 +297,7 @@ end
 
 <h2 id="form">Form</h2>
 
-<p>To render the operation’s form, use <code>#form</code>. This is identical to <code>#present</code> with two additional steps.</p>
+<p>To render the operation’s form, use <code>#form</code>. This is identical to <code>#present</code> plus the contract is being instantiated.</p>
 
 <pre><code>class CommentsController &lt; ApplicationController
   def new
@@ -307,6 +307,8 @@ end
 </code></pre>
 
 <p>This <em>instantiates</em> the operation with <code>params</code> and then sets <code>@operation</code>, <code>@model</code> and <code>@form</code> on the controller instance. After that, the form’s <code>prepopulate!</code> method is called and the form is ready for rendering.</p>
+
+<p>The <code>#form</code> helper <strong>does not run</strong> <code>#process</code>.</p>
 
 <p>It returns the <em>form</em> instance.</p>
 
