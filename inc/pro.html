@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation API</title>
-<meta name="description" content="Operation API - Trailblazer" />
+<title>Trailblazer: Pro Plan</title>
+<meta name="description" content="Pro Plan - Trailblazer" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="keywords" content=", " />
 
@@ -21,20 +21,20 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
-<meta property="og:title" content="Operation API"/>
+<meta property="og:title" content="Pro Plan"/>
 <meta property="og:site_name" content="Trailblazer"/>
-<meta property="og:url" content="http://trailblazer.to/gems/operation/api.html"/>
+<meta property="og:url" content="http://trailblazer.to/inc/pro.html"/>
 <meta property="og:description" content=""/>
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation API">
+<meta name="twitter:title" content="Pro Plan">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
 
-  <body class="operation-body">
+  <body>
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -75,12 +75,12 @@
 
 
     <!-- Hero -->
-    <div class="hero gems-hero operation-hero">
+    <div class="hero little-hero">
       <div class="hero-unit">
         <div class="row">
           <div class="columns">
             <h1>
-              Operation
+              Guides
             </h1>
           </div>
         </div>
@@ -185,260 +185,74 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="operation-api">Operation API</h1>
-
-<p>This document discusses the callstack from top to bottom.</p>
-
-<h2 id="call-style">Call Style</h2>
-
-<p>The <em>call style</em>  returns the operation when the validation was successful. With invalid data, it will raise an <code>InvalidContract</code> exception.</p>
-
-<pre><code>Comment::Create.(comment: {body: "MVC's so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
-Comment::Create.(comment: {}) #=&gt; exception raised!
-</code></pre>
-
-<p>The call style is popular for tests and on the console.</p>
-
-<h2 id="run-style">Run Style</h2>
-
-<p>The <em>run style</em> returns a result set <code>[result, operation]</code> for both valid and invalid invocation.</p>
-
-<pre><code>res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
-</code></pre>
-
-<p>However, it also accepts a block that’s run in case of a <em>successful validation</em>. When run with block, only the operation instance is returned as the block represents a valid state.</p>
-
-<pre><code>operation = Comment::Create.run(comment: {}) do |op|
-  puts "Hey, #{op.model} was created!" and return # not run.
-end
-
-puts "That's wrong: #{operation.errors}"
-</code></pre>
-
-<p>To conveniently handle the inverse case where the block should be run in case of an <em>invalid</em> operation, use <code>::reject</code>.</p>
-
-<pre><code>res, operation = Comment::Create.reject(comment: {}) do |op|
-  puts "this is all wrong! #{operation.errors}"
-end
-</code></pre>
-
-<p>Regardless of the style, you always get the operation instance. This is only for presentation. Please treat it as immutuable.</p>
-
-<h2 id="operations-in-tests">Operations in Tests</h2>
-
-<p>Operations when used test factories are usually invoked with the <em>call</em> style.</p>
-
-<pre><code>let(:comment) { Comment::Create.(valid_comment_params).model }
-</code></pre>
-
-<p>Using operations as test factories is a fundamental concept of Trailblazer to remove buggy redundancy in tests and manual factories. Note that you might use FactoryGirl to create <code>params</code> hashes.</p>
-
-<h2 id="callstack">Callstack</h2>
-
-<p>Here’s the default call stack of methods involved when running an Operation.</p>
-
-<pre><code>::call
-├── ::build_operation
-│   ├── #initialize
-│   │   ├── #setup!
-│   │   │   ├── #assign_params!
-│   │   │   │   │   ├── #params!
-│   │   │   ├── #setup_params!
-│   │   │   ├── #build_model!
-│   │   │   │   ├── #assign_model!
-│   │   │   │   │   ├── #model!
-│   │   │   │   ├── #setup_model!
-│   ├── #run
-│   │   ├── #process
-</code></pre>
-
-<ol>
-  <li>In case of a polymorphic setup when you want different operation classes to handle different contexts, configured <a href="builder.html">builders</a> will be run by <code>::build_operation</code> to figure out the class to instantiate.</li>
-  <li>Override <code>#setup_params!</code> to normalize the incoming parameters. This implies that you have to change the original hash.</li>
-  <li>Override <code>#params</code> if you want to use a different params hash - which you simply return from this method. This allows to keep the original <code>params</code> immutable.</li>
-  <li>Override <code>#model!</code> to compute the operation’s model.</li>
-  <li>Override <code>#setup_model!</code> for tasks such as adding nested models to the operation’s model.</li>
-  <li>Implement <code>#process</code> for your business logic.</li>
-</ol>
-
-<p>The <code>Operation::Model</code> module to <a href="model.html">create/find models automatically</a> hooks into those methods.</p>
-
-<h2 id="process">Process</h2>
-
-<p>The <code>#process</code> method is the pivot of any operation. Here, business logic and validations get executed and dispatched.</p>
-
-<p>Its only argument is the <code>params</code> hash being passed into <code>Op.({..})</code>. Note that you don’t even have to use a contract or a model.</p>
-
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
-  def process(params)
-    # do whatever you feel like.
-  end
-end
-</code></pre>
-
-<h2 id="validate">Validate</h2>
-
-<p>The <code>validate</code> method will instantiate the operation’s Reform form with the model and validate it. If you pass a block to it, this will be executed only if the validation was successful (valid).</p>
-
-<pre><code>class Comment::Update &lt; Trailblazer::Operation
-  contract do
-    property :body, validates: {presence: true}
-  end
-
-  def process(params)
-    manual_model = Comment.find(1)
-
-    validate(params[:comment], manual_model) do
-      contract.save
-    end
-  end
-end
-</code></pre>
-
-<p>Note that when <code>Model</code> is <em>not</em> included, you have to pass in the model as the second argument to <code>#validate</code>.</p>
-
-<p>However, since most operations use <code>Model</code>, we can omit a lot of code here.</p>
-
-<pre><code>class Comment::Update &lt; Trailblazer::Operation
-  include Model
-  model Comment, :update
-
-  contract do
-    property :body, validates: {presence: true}
-  end
-
-  def process(params)
-    validate(params[:comment]) do
-      contract.save
-    end
-  end
-end
-</code></pre>
-
-<p>With <code>Model</code> included, <code>#validate</code> only takes one argument: the <code>params</code> to validate.</p>
-
-<h2 id="validate-internals">Validate Internals</h2>
-
-<p>Internally, this is what happens.</p>
-
-<pre><code>def validate(params)
-  @contract = self.class.contract_class.new(model)
-  @valid = @contract.validate(params)
-end
-</code></pre>
-
-<ol>
-  <li>The contract is instantiated using the operation’s <code>#model</code>. The contract is available via <code>#contract</code> throughout the operation (even before you call <code>#validate</code>, which will use the same instance).</li>
-  <li>It then validates the incoming <code>params</code>, assigns values and errors on the contract object and returns the result.</li>
-</ol>
-
-<h2 id="validate-handling-invalid">Validate: Handling Invalid</h2>
-
-<p>You don’t have to use the block-style <code>#validate</code>. It returns the validation result and allows an <code>if/else</code>, too.</p>
-
-<pre><code>def process(params)
-  if validate(params[:comment])
-    contract.save # success.
-  else
-    notify! # invalid.
-  end
-end
-</code></pre>
-
-<h2 id="contract">Contract</h2>
-
-<p>Normally, the contract is instantiated when calling <code>validate</code>. However, you can access the contract before that. The <code>contract</code> is memoized and <code>validate</code> will use the existing instance.</p>
-
-<pre><code>def process(params)
-  contract.body = "Static"
-  validate(params[:comment]) do # will use above contract.
-    contract.save # also the same as above.
-  end
-end
-</code></pre>
-
-<p>The <code>#contract</code> method always returns the Reform object. It has the <a href="/gems/reform/api.html">identical API</a> and allows to <code>sync</code>, <code>save</code>, etc.</p>
-
-<p>This is not only useful in the <code>validate</code> block, but also afterwards, for example to render the invalid form.</p>
-
-<pre><code>operation = Comment::Create.(params)
-form      = operation.contract
-</code></pre>
-
-<p>Note that you don’t have to <code>run</code> an operation in order to get its form object (which would invoke the <code>#process</code> method). You can <a href="#">use <code>::present</code> instead</a>.</p>
-
-<h2 id="validation-errors">Validation Errors</h2>
-
-<p>You can access the contracts <code>Errors</code> object via <code>Operation#errors</code>.</p>
-
-<h2 id="present">Present</h2>
-
-<p>To grab the operation’s form object for presentation without running <code>process</code>, use <code>::present</code>.</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">op</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="n">present</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-<span class="n">op</span><span class="o">.</span><span class="n">model</span>    <span class="c1">#=&gt; model is available!</span>
-<span class="n">op</span><span class="o">.</span><span class="n">contract</span> <span class="c1">#=&gt; form object, too.</span></code></pre></div>
-
-<p><a href="#callstack">In the callstack</a>, this simply runs <code>#initialize</code>, only.</p>
-
-<p>This is used when presenting the operation’s form or model, for example in <code>new</code>, <code>edit</code> or <code>show</code> actions in a controller.</p>
-
-<h2 id="composable-interface-contract">Composable Interface: Contract</h2>
-
-<p>The operation’s contract is just a plain Reform class and doesn’t know anything about the composing operation.</p>
-
-<p>This is why you may reference arbitrary contract classes using <code>::contract</code>. That’s helpful if you keep contracts in separate files, or reuse them without inheriting from another operation.</p>
-
-<pre><code>class Comment::Delete &lt; Trailblazer::Operation
-  contract CommentForm # a plain Reform::Form class.
-</code></pre>
-
-<p>You can also reference a contract from another operation.</p>
-
-<pre><code>class Comment::Delete &lt; Trailblazer::Operation
-  contract Update.contract
-</code></pre>
-
-<p>Note that <code>::contract</code> will subclass the referenced contract class, making it a copy of the original, allowing you to add and remove fields and validations in the copy.</p>
-
-<p>You can also copy and refine the contract.</p>
-
-<pre><code>class Comment::Delete &lt; Trailblazer::Operation
-  contract Update.contract do
-    property :upvotes
-  end
-</code></pre>
-
-<p>To reference without copying, use <code>Operation::contract_class=(constant)</code></p>
-
-<h2 id="marking-operation-as-invalid">Marking Operation as Invalid</h2>
-
-<p>Sometimes you don’t need a form object but still want the validity behavior of an operation.</p>
-
-<pre><code>def process(params)
-  return invalid! unless params[:id]
-
-  Comment.find(params[:id]).destroy
-  self
-end
-</code></pre>
-
-<h2 id="activemodel-semantics">ActiveModel Semantics</h2>
-
-<p>When using <code>Reform::Form::ActiveModel</code> (which is used automatically in a Rails environment to make form builders work) you need to invoke <code>model Comment</code> in the contract. This can be inferred automatically from the operation by including <code>Model::ActiveModel</code>.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  include Model
-  include Model::ActiveModel
-
-  model Comment
-
-  contract do # no need to call ::model, here.
-    property :text
-  end
-</code></pre>
-
-<p>If you want that in all CRUD operations, check out <a href="https://github.com/apotonick/gemgem-trbrb/blob/chapter-5/config/initializers/trailblazer.rb#L26">how you can include</a> it automatically.</p>
+        <div class="row">
+  <div class="medium-centered medium-6 columns">
+    <img src="/images/pro.png" />
+  </div>
+
+  <div class="medium-centered medium-6 columns">
+    <p>
+      Trailblazer Pro is a monthly subscription plan.
+    </p>
+
+    <p>When subscribing, you will benefit from professional support and help us to make Trailblazer better every day!</p>
+
+    <p> What you'll get.</p>
+
+    <ul class="fa-ul">
+      <li><i class="fa-li fa fa-check-square"></i>
+        <strong>Support tickets</strong>
+        Per month, you can open one support ticket and we'll help you solve it.*
+      </li>
+      <li><i class="fa-li fa fa-check-square"></i>
+        <strong>Private slack channel</strong>
+        For quick questions or support sessions, you can use our chat - we will help within 4 hours.
+      </li>
+      <li><i class="fa-li fa fa-check-square"></i>
+        <strong>Premium docs</strong>
+        You get unlimited access to our curated Trailblazer cookbook. We add recipes every week.
+      </li>
+    </ul>
+
+    <p>
+      * You can purchase more tickets via our credit system.
+    </p>
+
+    <div class="text-center pro-box">
+      <h2>Freelancer</h2>
+
+      <p>The plan for independent developers and freelancers.</p>
+
+      <p>$12/month</p>
+    </div>
+
+    <div class="text-center pro-box">
+      <h2>Company</h2>
+
+      <p>For teams up to 10 developers.</p>
+
+      <p>$29/month</p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="medium-centered medium-6 columns">
+    <img src="/images/credit.png" />
+
+    <p>
+      Trailblazer Credit allows you to purchase credits and trade them in for support or premium documentation whenever you need it.
+    </p>
+
+    <p>No subscription is necessary for this - you decide when you need us!</p>
+
+    <p>
+      Trailblazer Credit will be launched in August 2016.
+    </p>
+  </div>
+</div>
+
+<p>Why Should I Pay For Trailblazer?</p>
 
       </div>
     </div>
