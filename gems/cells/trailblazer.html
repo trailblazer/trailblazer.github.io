@@ -219,9 +219,13 @@
 
 <p>This results in classes such as follows.</p>
 
-<pre><code class="language-ruby">class Comment::Cell::New &lt; Trailblazer::Cell
-  def show
-    render # renders app/concepts/comment/view/new.haml.
+<pre><code class="language-ruby">module Comment # or: Comment &lt; ActiveRecord::Base or alike.
+  module Cell
+    class New &lt; Trailblazer::Cell
+      def show
+        render # renders app/concepts/comment/view/new.haml.
+      end
+    end
   end
 end
 </code></pre>
@@ -232,7 +236,7 @@ end
 
 <p>Note that you don’t have to provide a <code>show</code> method, it is created automatically.</p>
 
-<pre><code class="language-ruby">class Comment::Cell::New &lt; Trailblazer::Cell
+<pre><code class="language-ruby">class New &lt; Trailblazer::Cell
 end
 </code></pre>
 
@@ -250,8 +254,14 @@ Comment::Cell::Themed::New #=&gt; "themed/new.haml"
 
 <p>Use <code>ViewName::Flat</code> if you prefer a flat view name.</p>
 
-<pre><code class="language-ruby">class Comment::Cell::Themed::New &lt; Trailblazer::Cell
-  extend ViewName::Flat
+<pre><code class="language-ruby">module Comment # or: Comment &lt; ActiveRecord::Base or alike.
+  module Cell
+    module Themed
+      class New &lt; Trailblazer::Cell
+        extend ViewName::Flat
+      end
+    end
+  end
 end
 
 Comment::Cell::Themed::New #=&gt; "new.haml"
