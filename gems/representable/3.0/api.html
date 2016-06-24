@@ -709,10 +709,21 @@ end
 <pre><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
-  defaults do |name|
+  defaults do |name, options|
     { as: name.camelize }
   end
 </code></pre>
+
+<p>The <code>options</code> hash combines the user’s and Representable computed options.</p>
+
+<pre><code>property :id, skip: true
+
+defaults do |name, options|
+  options[:skip] ? { as: name.camelize } : {}
+end
+</code></pre>
+
+<p>Note that the dynamic <code>defaults</code> block always has to return a hash.</p>
 
 <p>Combining those two forms also works.</p>
 
