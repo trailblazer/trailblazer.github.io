@@ -829,14 +829,18 @@ SongsRepresenter.new(ary).from_json('[{"title": "Screenager"}]')
 
 <p>Instead of explicitly defining representers for collections using a <a href="#standalone-collection">“lonely collection”</a>, you can let Representable  do that for you.</p>
 
+<p>You define a singular representer, Representable will infer the collection representer.</p>
+
 <p>Rendering a collection of objects comes for free, using <code>for_collection</code>.</p>
 
 <pre><code>songs = Song.all
-SongRepresenter.new(songs).for_collection.to_json
+SongRepresenter.for_collection.new(songs).to_json
 #=&gt; '[{"title": "Sevens"}, {"title": "Eric"}]'
 </code></pre>
 
-<p>For parsing, you need to provide the class for the nested items. This happens via `collection_representer</p>
+<p><code>SongRepresenter.for_collection</code> will return a collection representer class.</p>
+
+<p>For parsing, you need to provide the class for the nested items. This happens via <code>collection_representer</code> in the representer class.</p>
 
 <pre><code class="language-ruby">class SongsRepresenter &lt; Representable::Decorator
   include Representable::JSON
@@ -848,10 +852,9 @@ end
 
 <p>You can now parse collections to <code>Song</code> instances.</p>
 
-<pre><code>songs = Song.all
-json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
+<pre><code>json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
 
-SongRepresenter.new(songs).for_collection).from_json(json)
+SongRepresenter.for_collection.new([]).from_json(json)
 </code></pre>
 
 <p>Note: the implicit collection representer internally is implemented using a lonely collection. Everything you pass to <code>::collection_representer</code> is simply provided to the <code>::items</code> call in the lonely collection. That allows you to use <code>:populator</code> and all the other goodies, too.</p>
