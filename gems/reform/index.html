@@ -396,42 +396,46 @@ form.songs[0].name #=&gt; "Run To The Hills"
 
 <p>Very often, you need to give Reform some information how to create or find nested objects when <code>validate</code>ing. This directive is called <em>populator</em> and <a href="http://trailblazer.to/gems/reform/populator.html">documented here</a>.</p>
 
-<h2 id="installation">Installation</h2>
+<h2 id="installation-dry-validation">Installation: Dry-Validation</h2>
 
-<p>Add this line to your Gemfile:</p>
+<p>Add this your Gemfile.</p>
 
-<pre><code>gem 'reform'
+<pre><code>gem "reform"
 </code></pre>
 
-<p>Reform works fine with Rails 3.1-4.2. However, inheritance of validations with <code>ActiveModel::Validations</code> is broken in Rails 3.2 and 4.0.</p>
-
-<p>Since Reform 2.0 you need to specify which <strong>validation backend</strong> you want to use (unless you’re in a Rails environment where ActiveModel will be used).</p>
-
-<p>To use ActiveModel (not recommended as it doesn’t support removing validations).</p>
-
-<pre><code>require "reform/form/active_model/validations"
-Reform::Form.class_eval do
-  include Reform::Form::ActiveModel::Validations
-end
-</code></pre>
-
-<p>To use dry-validation (recommended).</p>
+<p>Please use <a href="http://dry-rb.org/gems/dry-validation">dry-validation</a>, which is our recommended validation engine. Put the following snippet into an initializer.</p>
 
 <pre><code>require "reform/form/dry"
+
 Reform::Form.class_eval do
   include Reform::Form::Dry
 end
 </code></pre>
 
-<p>Put this in an initializer or on top of your script.</p>
+<h2 id="installation-activemodel">Installation: ActiveModel</h2>
 
-<h2 id="rails-support">Rails Support</h2>
-
-<p>Use <a href="https://github.com/trailblazer/reform-rails">Reform-rails</a> to automatically load and include Reform features for a standard Rails stack, e.g. <code>ActiveModel::Validations</code>.</p>
+<p>Add this to your Gemfile.</p>
 
 <pre><code>gem "reform"
 gem "reform-rails"
 </code></pre>
+
+<p>To use <code>ActiveModel</code> (not recommended as it is way behind).</p>
+
+<pre><code>require "reform/form/active_model/validations"
+
+Reform::Form.class_eval do
+  include Reform::Form::ActiveModel::Validations
+end
+</code></pre>
+
+<p>Things you should know when using ActiveModel with Reform.</p>
+
+<ul>
+  <li><code>ActiveModel</code> support is provided by the <code>reform-rails</code> gem. You have to add it to your <code>Gemfile</code>.</li>
+  <li>The above last step of including <code>ActiveModel::Validations</code> is done automatically in a Rails environment.</li>
+  <li>Reform works fine with Rails 3.1-4.2. However, inheritance of validations with <code>ActiveModel::Validations</code> is broken in Rails 3.2 and 4.0.</li>
+</ul>
 
 <h2 id="composition">Composition</h2>
 
@@ -555,43 +559,6 @@ end
          #   song:  {title: "Rio"}
          #   label: {city: "London"}
          #   }
-end
-</code></pre>
-
-<h2 id="coercion">Coercion</h2>
-
-<p>Often you want incoming form data to be converted to a type, like timestamps. Reform uses <a href="https://github.com/solnic/virtus">virtus</a> for coercion, the DSL is seamlessly integrated into Reform with the <code>:type</code> option.</p>
-
-<h3 id="virtus-coercion">Virtus Coercion</h3>
-
-<p>Be sure to add <code>virtus</code> to your Gemfile.</p>
-
-<pre><code>require 'reform/form/coercion'
-
-class SongForm &lt; Reform::Form
-  include Coercion
-
-  property :written_at, type: DateTime
-end
-
-form.validate("written_at" =&gt; "26 September")
-</code></pre>
-
-<p>Coercion only happens in <code>#validate</code>.</p>
-
-<pre><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
-</code></pre>
-
-<h3 id="manual-coercing-values">Manual Coercing Values</h3>
-
-<p>If you need to filter values manually, you can override the setter in the form.</p>
-
-<pre><code>class SongForm &lt; Reform::Form
-  property :title
-
-  def title=(value)
-    super sanitize(value) # value is raw form input.
-  end
 end
 </code></pre>
 
