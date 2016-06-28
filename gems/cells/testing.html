@@ -276,7 +276,7 @@ end
 <pre><code>Cell::Testing.capybara = false
 </code></pre>
 
-<h2 id="capybara-with-minitest">Capybara with Minitest</h2>
+<h2 id="capybara-with-minitest-rails">Capybara with Minitest (Rails)</h2>
 
 <p>With Minitest, the recommended approach is to use the <code>minitest-rails-capybara</code> gem.</p>
 
@@ -299,6 +299,34 @@ end
 </code></pre>
 
 <p>Here’s an example <a href="https://github.com/apotonick/gemgem-trbrb/blob/7cc8c7a0de78ba00092957a32d8cd234f102c73f/test/test_helper.rb#L19">how we do it</a> in Gemgem.</p>
+
+<h2 id="capybara-with-minitestspec">Capybara with Minitest::Spec</h2>
+
+<p>In a non-Rails environment, the <a href="https://github.com/ordinaryzelig/capybara_minitest_spec">capybara_minitest_spec</a> gem is what we use.</p>
+
+<pre><code>group :test do
+  gem "capybara_minitest_spec"
+end
+</code></pre>
+
+<p>Add the following to your <code>test_helper.rb</code>.</p>
+
+<pre><code>require "capybara_minitest_spec"
+Cell::Testing.capybara = true
+</code></pre>
+
+<p>After including the <code>Testing</code> module, you’re ready to run specs against cells.</p>
+
+<pre><code class="language-ruby">class NavigationCellTest &lt; Minitest::Spec
+  include Cell::Testing
+
+  it "renders avatar when user provided" do
+    html = cell(Pro::Cell::Navigation, user).()
+
+    html.must_have_css "#avatar-signed-in"
+    html.to_s.must_match "Signed in: nick@trb.to"
+  end
+</code></pre>
 
       </div>
     </div>
