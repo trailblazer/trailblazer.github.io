@@ -1,0 +1,467 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Cells: Getting Started</title>
+<meta name="description" content="Cells: Getting Started - Trailblazer" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords" content=", " />
+
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="shortcut icon" href="/favicon.ico">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+<meta property="og:title" content="Cells: Getting Started"/>
+<meta property="og:site_name" content="Trailblazer"/>
+<meta property="og:url" content="http://trailblazer.to/gems/cells/getting_started.html"/>
+<meta property="og:description" content=""/>
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg"/>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Cells: Getting Started">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+
+  <body class="cells-body">
+    <!-- Top Bar -->
+    <nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <ul class="right">
+    <li id="nav-pro">
+      <a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a>
+    </li>
+    <li class="divider"></li>
+    <li><a href="/newsletter/">NEWSLETTER</a></li>
+    <li class="divider"></li>
+    <li><a href="https://gitter.im/trailblazer/chat">CHAT</a></li>
+    <li class="divider"></li>
+    <li><a href="/users.html">USERS</a></li>
+    <li class="divider"></li>
+    <li><a href="/guides">GUIDES</a></li>
+    <li class="divider"></li>
+      <li class="has-dropdown">
+        <a href="#">GEMS</a>
+        <ul class="dropdown">
+          <li class=""><a href="/gems/cells">CELLS</a></li>
+          <li class=""><a href="/gems/operation">OPERATION</a></li>
+          <li class=""><a href="/gems/reform">REFORM</a></li>
+          <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+          <li class=""><a href="/gems/roar">ROAR</a></li>
+          <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+        </ul>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form">
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary">GET THE BOOK</a>
+      </li>
+    </ul>
+  </section>
+</nav>
+
+
+    <!-- Hero -->
+    <div class="hero gems-hero cells-hero">
+      <div class="hero-unit">
+        <div class="row">
+          <div class="columns">
+            <h1 id="project_title">
+              Cells
+            </h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="columns large-3 sidebar">
+        <nav>
+  <ul class="side-nav">
+
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider"></li>
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+  </ul>
+</nav>
+
+      </div>
+      <div class="columns medium-9 code-content">
+        <h1 id="cells-getting-started">Cells: Getting Started</h1>
+
+<p>The <a href="https://github.com/apotonick/cells">Cells</a> gem provides view models for Ruby web applications. View models are plain objects that represent a part of the web page, such as a dashboard widget. View models can also render views, and be nested.</p>
+
+<p>Cells is a replacement for ActionView and used in many Rails projects. However, Cells can be used in any web framework such as Sinatra or Hanami.</p>
+
+<p>This guide discusses how to get started with <code>Trailblazer::Cell</code>, the canonical view model implementation following the Trailblazer file and naming structure. Don’t worry, <code>Trailblazer::Cell</code> can be used without Trailblazer.</p>
+
+<h2 id="refactoring-legacy-views">Refactoring Legacy Views</h2>
+
+<p>When refactoring legacy views into a solid cell architecture, it is often advisable to start with small fragments and extract markup and logic into an object-oriented cell. Afte that is done, you can move up and replace a bigger fragment of the view, and so on.</p>
+
+<p>Given you were running an arbitrary Ruby web application, let’s assume you had a menu bar sitting in your global layout. The menu shows navigation links to pages and - dependent on the login status of the current user - either a miniatur avatar of the latter or a link to sign in.</p>
+
+<p>Since this is quite a bit of logic, it’s a good idea to encapsulate that into an object.</p>
+
+<p>Here’s what the old legacy <code>layout.html.haml</code> looks like.</p>
+
+<pre><code>%html
+  %head
+
+  %body
+    %nav.top-bar
+      %ul
+        %li SUPPORT CHAT
+        %li GUIDES
+        %li
+          - if signed_in?
+            %img{src: avatar_url}
+          - else
+            "SIGN IN"
+</code></pre>
+
+<p>Of course, this navigation bar doesn’t really make sense without any links added. I’ve left that out so we can focus on the structure. We will discuss how helpers work in the per-framework sections below.</p>
+
+<p>In order to convert everything below the <code>&lt;nav&gt;</code> node into a cell, we first need to add this gem to our <code>Gemfile</code>.</p>
+
+<h2 id="extraction">Extraction</h2>
+
+<p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+
+<pre><code>gem "trailblazer-cells"
+gem "cells-hamlit"
+</code></pre>
+
+<p>Please note that <code>trailblazer-cells</code> simply loads the <code>cells</code> gem and then adds some simple semantics on top of it. Also, <a href="api.html#template-formats">Cells supports Haml, Hamlit, ERB, and Slim</a>.</p>
+
+<p>Cut the <code>%nav</code> fragment from the original <code>layout.html.haml</code> and replace it with the cell invocation.</p>
+
+<pre><code>%html
+  %head
+
+  %body
+    = Pro::Cell::Navigation.(nil, current_user: current_user).()
+</code></pre>
+
+<p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Naviation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
+
+<p>The cell is invoked without a <em>model</em>, but we pass in the <code>current_user</code> as an <em>option</em>. This code assumes that the <code>current_user</code> object is available in the layout view. As the current user is passed from your web framework to the cell, this is called an <em>dependency injection</em>.</p>
+
+<p>We will learn what models and options are soon.</p>
+
+<h2 id="navigation-cell">Navigation Cell</h2>
+
+<p>Having extracted the “partial” from the layout, paste it into a new file <code>app/concepts/pro/view/navigation.haml</code>.</p>
+
+<pre><code>%nav.top-bar
+  %ul
+    %li SUPPORT CHAT
+    %li GUIDES
+    %li
+      - if signed_in?
+        %img{src: avatar_url}
+      - else
+        "SIGN IN"
+</code></pre>
+
+<p>Creating a view for the cell in the correct directory is one thing. A cell is more than just a partial, it also needs a class file where the logic sits. This class goes to <code>app/concepts/pro/cell/navigation.rb</code>.</p>
+
+<pre><code class="language-ruby">module Pro
+  module Cell
+    class Navigation &lt; Trailblazer::Cell
+      include ::Cell::Hamlit
+
+      def signed_in?
+        options[:current_user]
+      end
+
+      def email
+        options[:current_user].email
+      end
+
+      def avatar_url
+         hexed = Digest::MD5.hexdigest(email)
+        "https://www.gravatar.com/avatar/#{hexed}?s=36"
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>The reason the cell class lives in the <code>Pro</code> namespace is because that’s the example app’s name and its top-level namespace. Since the navigation cell is an app-wide concept, it is best put into the <code>Pro</code> namespace.</p>
+
+<p>Adding the class is enough to re-render your application, and you will see, the navigation menu now comes from a cell, presenting you with a hip gravatar icon when logged in, or a string to do so otherwise. Congratulations.</p>
+
+<p><img src="/images/guides/cells-nav-bar.jpg" /></p>
+
+<h2 id="discussion-navigation">Discussion: Navigation</h2>
+
+<p>Let’s quickly discuss what happens here in what order. After this section, you will understand how cells work and probably already plan where else to use them. They’re really simple!</p>
+
+<ol>
+  <li>Invoking the cell in the layout via <code>Pro::Cell::Navigation.(nil, current_user: current_user).()</code> will instantiate the cell object and internally invoke the cell’s default rendering method, named <code>show</code>. This method is automatically provided and simply renders the corresponding view.</li>
+  <li>Since the cell class name is <code>Pro::Cell::Navigation</code>, this cell will render the view <code>concepts/pro/view/navigation.haml</code>. This is following the Trailblazer naming style.</li>
+  <li>In the cell’s view, two “helpers” are called: <code>signed_in?</code> and <code>avatar_url</code>. Whatsoever, the concept of a “helper” in Cells doesn’t exist anymore. Any method or variable called in the view must be an <em>instance method</em> on the cell itself. This is why the cell class defines those two methods, and not some arbitrary helper module.</li>
+  <li>Dependencies like the <code>current_user</code> have to get injected from the outer world when invoking the cell. Later, in the cell, those arguments can be accessed using the <code>options</code> cell method.</li>
+</ol>
+
+<p>It is important to understand that the cell has no access to global state. You as the cell author have to define the interface and the dependencies necessary to render the cell.</p>
+
+<p>It is a good idea to write tests for you cell now, to document and assert this very interface you’ve just created.</p>
+
+<h2 id="test-navigation">Test: Navigation</h2>
+
+<p>Testing cells can either happen via full-stack integration tests, or with module cell unit tests. This example illustrates the latter.</p>
+
+<p>A very basic test for a cell with signed in user could looks as follows.</p>
+
+<pre><code class="language-ruby">class NavigationCellTest &lt; Minitest::Spec
+  it "renders avatar when user provided" do
+    html = Pro::Cell::Navigation.(nil, current_user: User.find(1)).()
+
+    html.must_match "Signed in: nick@trb.to"
+  end
+end
+</code></pre>
+
+<p>Likewise, you can easily test the anonymous user case, where no one’s logged in. The unit-test style makes it very easy to simulate that.</p>
+
+<pre><code class="language-ruby">it "renders SIGN IN otherwise" do
+  html = Pro::Cell::Navigation.(nil, current_user: nil).()
+
+  html.must_match "SIGN IN"
+end
+</code></pre>
+
+<p>Make sure to read the <a href="testing.html">full documentation on testing cells</a> for all kinds of environments, including Capybara matchers, Rails and test frameworks such as Minitest and Rspec.</p>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+<section class="sub-section top-footer">
+  <div class="row">
+	<div class="columns medium-6">
+		<h3>Newsletter</h3>
+		<p>
+			Stay on top of what’s happening in Trailblazer.
+		</p>
+			<div class="row">
+				<div id="mc_embed_signup">
+		     	<form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+						<div class="columns large-9 medium-12 ">
+							<div class="row collapse prefix-radius">
+				        <div class="small-8 medium-7 large-8 columns">
+				        	<div id="mc_embed_signup_scroll">
+				        		<div class="mc-field-group">
+									  	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+									  </div>
+									  <div id="mce-responses" class="clear">
+									    <div class="response" id="mce-error-response" style="display:none"></div>
+									    <div class="response" id="mce-success-response" style="display:none"></div>
+									  </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+									  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+				        	</div>
+				        </div>
+				        <div class="small-4 medium-5 large-4 columns">
+				          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+				        </div>
+				      </div>
+						</div>
+					</form>
+				</div>
+				<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+			</div>
+		<p>
+			And check out the <a href="/newsletter/">archive of newsletters</a>!
+		</p>
+
+
+	</div>
+	<div class="columns medium-6">
+		<h3>The Book</h3>
+		<p>Learn how to built a Rails app with Trailblazer, step-by-step.</p>
+		<a href="/books/trailblazer.html" class="button radius tiny secondary">Check Out Book!</a>
+	</div>
+</div>
+
+
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="inline-list">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+
+<script>
+  anchors.add(".code-content h2, .sub-section h2");
+
+  hljs.initHighlightingOnLoad();
+
+  $(document).foundation();
+</script>
+
+
+
+  </body>
+</html>
