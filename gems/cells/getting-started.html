@@ -113,6 +113,7 @@
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
         </a>
     </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started</a></li>
     <li><a href="/gems/cells/api.html">API</a></li>
     <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
     <li><a href="/gems/cells/testing.html">Testing</a></li>
@@ -239,7 +240,7 @@ gem "cells-hamlit"
     = Pro::Cell::Navigation.(nil, current_user: current_user).()
 </code></pre>
 
-<p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Naviation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
+<p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Navigation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
 
 <p>The cell is invoked without a <em>model</em>, but we pass in the <code>current_user</code> as an <em>option</em>. This code assumes that the <code>current_user</code> object is available in the layout view. As the current user is passed from your web framework to the cell, this is called an <em>dependency injection</em>.</p>
 
