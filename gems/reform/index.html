@@ -653,11 +653,42 @@ end
 
 <p>Nesting forms only requires readers for the nested properties as <code>Album#songs</code>.</p>
 
-<h2 id="rails-integration">Rails Integration</h2>
+<h2 id="reform-rails">Reform-Rails</h2>
 
-<p>Rails and Reform work together out-of-the-box.</p>
+<p>The <code>reform</code> gem itself doesn’t contain any Rails-specific code but will still work, e.g. for JSON APIs. For extensive Rails support, add the <a href="https://github.com/trailblazer/reform-rails"><code>reform-rails</code> gem</a>.</p>
 
-<p>However, you should know about two things.</p>
+<pre><code class="language-ruby">gem "reform", "&gt;= 2.2.0"
+gem "reform-rails"
+</code></pre>
+
+<p>Per default, <code>reform-rails</code> will assume you want <code>ActiveModel::Validations</code> as the validation engine. This will include the following into <code>Reform::Form</code>.</p>
+
+<ul>
+  <li><code>Form::ActiveModel</code> for form builder compliance so your form works with <code>form_for</code> and friends.</li>
+  <li><code>Reform::Form::ActiveModel::FormBuilderMethods</code> to make Reform consume Rails form builder’s weird parameters, e.g. <code>{song_attributes: { number: 1 }}</code>.</li>
+  <li>Uniqueness validation for <code>ActiveRecord</code>.</li>
+</ul>
+
+<p>However, you can also use the new, <a href="validation.html#dry-validation">recommended <code>dry-validation</code></a> backend, and you should check that out!</p>
+
+<p>To do so, add the gem to your Gemfile.</p>
+
+<pre><code class="language-ruby">gem "reform", "&gt;= 2.2.0"
+gem "reform-rails"
+gem "dry-validation"
+</code></pre>
+
+<p>And configure Reform in <code>config/application.rb</code> to load the new validation backend.</p>
+
+<pre><code class="language-ruby">class Application &lt; Rails::Application
+  # ..
+  config.reform.validations = :dry
+end
+</code></pre>
+
+<p>Make sure you use the API when writing dry validations.</p>
+
+<h2 id="reform-rails-troubleshooting">Reform-Rails: Troubleshooting</h2>
 
 <ol>
   <li>In case you explicitely <em>don’t</em> want to have automatic support for <code>ActiveRecord</code> or <code>Mongoid</code> and form builder: <code>require reform/form</code>, only.</li>
