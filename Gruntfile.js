@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     sass: {
       options: {
-        includePaths: ['bower_components/foundation/scss']
+        includePaths: ['bower_components/foundation/scss', "bower_components/slick-carousel/slick"]
       },
       dist: {
         options: {
@@ -30,7 +30,8 @@ module.exports = function(grunt) {
             'bower_components/foundation/js/foundation.min.js',
             'bower_components/anchor-js/anchor.js',
             'bower_components/highlightjs/highlight.pack.js',
-            'bower_components/modernizr/modernizr.js'
+            'bower_components/modernizr/modernizr.js',
+            "bower_components/slick-carousel/slick/slick.js",
           ]
         }
       }
