@@ -239,7 +239,14 @@ end
 
 <h2 id="rspec">Rspec</h2>
 
-<p>Rspec works out of the box. You can use the <code>#cell</code> and <code>#concept</code> builders in your specs.</p>
+<p>Rspec works with the <a href="https://github.com/apotonick/rspec-cells"><code>rspec-cells</code> gem</a>.</p>
+
+<p>Make sure to install it.</p>
+
+<pre><code class="language-ruby">gem "rspec-cells"
+</code></pre>
+
+<p>You can use the <code>#cell</code> and <code>#concept</code> builders in your specs.</p>
 
 <pre><code>describe SongCell, type: :cell do
   subject { cell(:song, Song.new).(:show) }
