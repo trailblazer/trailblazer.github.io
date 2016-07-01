@@ -26,6 +26,19 @@
 <meta name="twitter:description" content="Many companies use the Trailblazer architecture in their software. And love it.">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+
+<script>
+  anchors.add(".code-content h2, .sub-section h2");
+
+  hljs.initHighlightingOnLoad();
+
+  $(document).foundation();
+</script>
+
+
+
   </head>
 
   <body>
@@ -370,18 +383,13 @@
 </script>
 
 
-<script src="/javascripts/jquery.min.js"></script>
-<script src="/javascripts/application.min.js"></script>
+<script type="text/javascript">
+$( ".tabs" ).tabs({
+  active: 1
+});
+$(".tabs").removeClass("ui-widget");
 
-<script>
-  anchors.add(".code-content h2, .sub-section h2");
-
-  hljs.initHighlightingOnLoad();
-
-  $(document).foundation();
 </script>
-
-
 
   </body>
 </html>

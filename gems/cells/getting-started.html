@@ -26,6 +26,19 @@
 <meta name="twitter:description" content="Learn how Trailblazer::Cell helps you refactoring legacy views. 4-minutes read.">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+
+<script>
+  anchors.add(".code-content h2, .sub-section h2");
+
+  hljs.initHighlightingOnLoad();
+
+  $(document).foundation();
+</script>
+
+
+
   </head>
 
   <body class="cells-body">
@@ -219,26 +232,60 @@
 
 <p>Of course, this navigation bar doesn’t really make sense without any links added. I’ve left that out so we can focus on the structure. We will discuss how helpers work in the per-framework sections below.</p>
 
-<p>In order to convert everything below the <code>&lt;nav&gt;</code> node into a cell, we first need to add this gem to our <code>Gemfile</code>.</p>
-
 <h2 id="extraction">Extraction</h2>
 
-<p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+<p>In order to convert all markup below the <code>&lt;nav&gt;</code> node into a cell, we first need to add the respective gems to our <code>Gemfile</code>.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#423-Ruby">Ruby</a></li>
+<li><a href="#423-Rails">Rails</a></li>
+  </ul>
+  <div id="423-Ruby"><p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
 
 <pre><code>gem "trailblazer-cells"
 gem "cells-hamlit"
 </code></pre>
+</div>
+<div id="423-Rails"><p>In Rails, you need the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+
+<pre><code>gem "trailblazer-cells"
+gem "cells-hamlit"
+gem "cells-rails"
+</code></pre>
+
+<p>The <code>cells-rails</code> gem will add cell invocation helpers to controllers and views, and supply the URL helpers in cells.</p>
+</div>
+</div>
 
 <p>Please note that <code>trailblazer-cells</code> simply loads the <code>cells</code> gem and then adds some simple semantics on top of it. Also, <a href="api.html#template-formats">Cells supports Haml, Hamlit, ERB, and Slim</a>.</p>
 
 <p>Cut the <code>%nav</code> fragment from the original <code>layout.html.haml</code> and replace it with the cell invocation.</p>
 
-<pre><code>%html
+<div class="tabs">
+  <ul>
+    <li><a href="#345-Ruby">Ruby</a></li>
+<li><a href="#345-Rails">Rails</a></li>
+  </ul>
+  <div id="345-Ruby"><pre><code>%html
   %head
 
   %body
     = Pro::Cell::Navigation.(nil, current_user: current_user).()
 </code></pre>
+
+<p>Cells can be invoked using the call style.</p>
+</div>
+<div id="345-Rails"><pre><code>%html
+  %head
+
+  %body
+    = cell(Pro::Cell::Navigation, nil, current_user: current_user)
+</code></pre>
+
+<p>In Rails, you can use the handy <code>cell</code> helper to invoke the view model.</p>
+</div>
+</div>
 
 <p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Navigation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
 
@@ -331,6 +378,201 @@ end
 </code></pre>
 
 <p>Make sure to read the <a href="testing.html">full documentation on testing cells</a> for all kinds of environments, including Capybara matchers, Rails and test frameworks such as Minitest and Rspec.</p>
+
+<h2 id="url-helpers">URL helpers</h2>
+
+<p>Besides indicating the logged-in status of the use, the <code>Navigation</code> cell should also display real links. This happens with URL helpers in web frameworks.</p>
+
+<p>In <code>app/concepts/pro/view/navigation.haml</code>, add actual links to the view.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#666-Ruby">Ruby</a></li>
+<li><a href="#666-Rails">Rails</a></li>
+  </ul>
+  <div id="666-Ruby"><pre><code>%nav
+  %ul
+    %li SUPPORT CHAT
+      %a{href: "/support"}
+    %li GUIDES
+      %a{href: "/guides"}
+    %li
+      - if signed_in?
+        %img{src: avatar_url}
+      - else
+        "SIGN IN"
+</code></pre>
+
+<p>Without any URL system, you can create links using Haml, or delegate to your own URL objects.</p>
+</div>
+<div id="666-Rails"><pre><code>%nav
+  %ul
+    %li
+      = link_to "SUPPORT CHAT", chat_path
+    %li
+      = link_to "GUIDES", guides_path
+    %li
+      - if signed_in?
+        %img{src: avatar_url}
+      - else
+        "SIGN IN"
+</code></pre>
+
+<p>The <code>cells-rails</code> gem conveniently allows to use URL helpers in cell views.</p>
+</div>
+</div>
+
+<h2 id="content-cell">Content Cell</h2>
+
+<p>View models are not only great to encapsulate small fragments, but also the entire content - which is everything but the wrapping layout. For example, when browsing to <code>/comments/1</code>, the content view usually provided by a controller will now come from the <code>Comment::Cell::Show</code> cell. We call this a <em>content cell</em> in Trailblazer-speak.</p>
+
+<p>In the controller, invoke this new cell instead of letting the framework render the content.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#442-Ruby">Ruby</a></li>
+<li><a href="#442-Rails">Rails</a></li>
+  </ul>
+  <div id="442-Ruby"><pre><code>def show
+  comment = Comment.find(1)
+  html = Comment::Cell::Show.(comment).()
+end
+</code></pre>
+</div>
+<div id="442-Rails"><pre><code>class CommentsController &lt; ApplicationController
+  def show
+    comment = Comment.find(1)
+    render html: cell(Comment::Cell::Show, comment)
+  end
+end
+</code></pre>
+
+<p>This instructs the controller to render the <code>Comment::Cell::Show</code> cell, pass the <code>comment</code> into it, and let Rails wrap it in the application layout.</p>
+</div>
+</div>
+
+<p>Note that we now pass the <code>comment</code> as the cell’s <em>model</em> without passing any additional <em>options</em>.</p>
+
+<p>The new class lives in <code>app/concepts/comment/cell/show.rb</code>.</p>
+
+<pre><code class="language-ruby">module Comment::Cell
+  class Show &lt; Trailblazer::Cell
+    property :body
+  end
+end
+</code></pre>
+
+<p>The <code>property</code> method creates a shortcut to <code>model.body</code>.</p>
+
+<p>The view for this cell goes into <code>app/concepts/comment/view/show.haml</code>.</p>
+
+<pre><code>%h1 Comment #{model.id}
+%p
+  = body
+</code></pre>
+
+<p>In views, you can access the model via the <code>model</code> method. In this example, this is the <code>comment</code> instance we passed into the cell when invoking.</p>
+
+<h2 id="layout-cell">Layout Cell</h2>
+
+<p>To render the entire page with Cells, the last missing piece is the layout. This is still being rendered by the underlying framework.</p>
+
+<p>Again, the layout is represented by a cell. Its code goes to <code>app/concepts/pro/cell/layout.rb</code>.</p>
+
+<pre><code class="language-ruby">module Pro::Cell
+  class Layout &lt; Trailblazer::Cell
+  end
+end
+</code></pre>
+
+<p>Since this cell’s sole purpose is to render a view to wrap dynamic content, no logic is needed.</p>
+
+<p>The view sits at <code>app/concepts/pro/view/layout.haml</code>.</p>
+
+<pre><code>%html
+  %head
+
+  %body
+    = cell(Pro::Cell::Navigation)
+    = yield
+</code></pre>
+
+<p>The content cell’s HTML markup will be passed to the layout cell and can be <code>yield</code>ed (which basically replaces <code>yield</code> with the HTML string).</p>
+
+<h2 id="putting-things-together">Putting Things Together</h2>
+
+<p>In the controller, the content cell needs to get instructed it will be wrapped by a layout cell.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#466-Ruby">Ruby</a></li>
+<li><a href="#466-Rails">Rails</a></li>
+  </ul>
+  <div id="466-Ruby"><pre><code>def show
+  comment = Comment.find(1)
+
+  html = Comment::Cell::Show.(comment,
+    context: { current_user: current_user },
+    layout:  Pro::Cell::Layout).()
+end
+</code></pre>
+</div>
+<div id="466-Rails"><pre><code>class CommentsController &lt; ApplicationController
+def show
+  comment = Comment.find(params[:id])
+
+  render html: cell(Comment::Cell::Show, comment,
+    context: { current_user: current_user },
+    layout:  Pro::Cell::Layout
+    )
+end
+</code></pre>
+</div>
+</div>
+
+<p>The following happens now.</p>
+
+<ol>
+  <li>First, <code>Comment::Cell::Show</code> cell is rendered.</li>
+  <li>Then, <code>Pro::Cell::Layout</code> is invoked and it will yield the content from the show cell.</li>
+  <li>In the <code>layout.haml</code> view, the navigation cell is also rendered. This cell needs a <code>current_user</code> option which is provided by the <em>context object</em>.</li>
+</ol>
+
+<h2 id="context-object">Context Object</h2>
+
+<p>When rendering a hierarchy of cells, it’s often necessary to share generic data across all involved cells. This always happens via dependency injection, no global state is allowed in Trailblazer.</p>
+
+<p>The <code>:context</code> option will create such an object and is automatically being passed to all cells in that render workflow.</p>
+
+<p>In order to access the <code>current_user</code> from the context object, the navigation cell has to be changed slightly.</p>
+
+<pre><code class="language-ruby">module Pro
+  module Cell
+    class Navigation &lt; Trailblazer::Cell
+      include ::Cell::Hamlit
+
+      def signed_in?
+        context[:current_user]
+      end
+
+      def email
+        context[:current_user].email
+      end
+
+      def avatar_url
+         hexed = Digest::MD5.hexdigest(email)
+        "https://www.gravatar.com/avatar/#{hexed}?s=36"
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>Note that <code>:current_user</code> is not an option anymore, but comes from the <code>context</code> object.</p>
+
+<h2 id="success">Success</h2>
+
+<p>As demonstrated in this guide, it’s not really hard to replace the existing rendering stack, whether that’s <code>ActionView</code> or <code>Hanami::View</code> or Sinatra templates, with Cells.</p>
 
       </div>
     </div>
@@ -451,18 +693,13 @@ end
 </script>
 
 
-<script src="/javascripts/jquery.min.js"></script>
-<script src="/javascripts/application.min.js"></script>
+<script type="text/javascript">
+$( ".tabs" ).tabs({
+  active: 1
+});
+$(".tabs").removeClass("ui-widget");
 
-<script>
-  anchors.add(".code-content h2, .sub-section h2");
-
-  hljs.initHighlightingOnLoad();
-
-  $(document).foundation();
 </script>
-
-
 
   </body>
 </html>
