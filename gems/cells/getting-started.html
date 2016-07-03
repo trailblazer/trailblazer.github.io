@@ -203,6 +203,9 @@
 
 <p>Here’s what the old legacy <code>layout.html.haml</code> looks like.</p>
 
+<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-1-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-1-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-1-0-haml">
 <pre><code>%html
   %head
 
@@ -217,6 +220,27 @@
           - else
             "SIGN IN"
 </code></pre>
+</div>
+<div class="content" id="tabs-1-1-erb">
+<pre><code>&lt;html&gt;
+  &lt;head&gt;&lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;nav class="top-bar"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;SUPPORT CHAT&lt;/li&gt;
+        &lt;li&gt;GUIDES&lt;/li&gt;
+        &lt;li&gt;
+          &lt;% if signed_in? %&gt;
+            &lt;img src="&lt;%= avatar_url %&gt;"&gt;
+          &lt;% else %&gt;
+            SIGN IN
+          &lt;% end %&gt;
+        &lt;/li&gt;
+  &lt;/body&gt;
+&lt;/html
+</code></pre>
+</div></div></div>
 
 <p>Of course, this navigation bar doesn’t really make sense without any links added. I’ve left that out so we can focus on the structure. We will discuss how helpers work in the per-framework sections below.</p>
 
@@ -224,18 +248,15 @@
 
 <p>In order to convert all markup below the <code>&lt;nav&gt;</code> node into a cell, we first need to add the respective gems to our <code>Gemfile</code>.</p>
 
-<div class="tabs">
-  <ul>
-    <li><a href="#423-Ruby">Ruby</a></li>
-<li><a href="#423-Rails">Rails</a></li>
-  </ul>
-  <div id="423-Ruby"><p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-2-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-2-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-2-0-ruby"><p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
 
 <pre><code>gem "trailblazer-cells"
 gem "cells-hamlit"
 </code></pre>
 </div>
-<div id="423-Rails"><p>In Rails, you need the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+<div class="content" id="tabs-2-1-rails"><p>In Rails, you need the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
 
 <pre><code>gem "trailblazer-cells"
 gem "cells-hamlit"
@@ -243,37 +264,60 @@ gem "cells-rails"
 </code></pre>
 
 <p>The <code>cells-rails</code> gem will add cell invocation helpers to controllers and views, and supply the URL helpers in cells.</p>
-</div>
-</div>
+</div></div></div>
 
 <p>Please note that <code>trailblazer-cells</code> simply loads the <code>cells</code> gem and then adds some simple semantics on top of it. Also, <a href="api.html#template-formats">Cells supports Haml, Hamlit, ERB, and Slim</a>.</p>
 
 <p>Cut the <code>%nav</code> fragment from the original <code>layout.html.haml</code> and replace it with the cell invocation.</p>
 
-<div class="tabs">
-  <ul>
-    <li><a href="#345-Ruby">Ruby</a></li>
-<li><a href="#345-Rails">Rails</a></li>
-  </ul>
-  <div id="345-Ruby"><pre><code>%html
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-5-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-5-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-5-0-ruby"><div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-3-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-3-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-3-0-haml"><pre><code>%html
   %head
 
   %body
     = Pro::Cell::Navigation.(nil, current_user: current_user).()
 </code></pre>
+</div>
+<div class="content" id="tabs-3-1-erb">
+<pre><code>&lt;html&gt;
+  &lt;head&gt;&lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;%= Pro::Cell::Navigation.(nil, current_user: current_user).() %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</div></div></div>
 
 <p>Cells can be invoked using the call style.</p>
 </div>
-<div id="345-Rails"><pre><code>%html
+<div class="content" id="tabs-5-1-rails">
+<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-4-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-4-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-4-0-haml">
+<pre><code>%html
   %head
 
   %body
     = cell(Pro::Cell::Navigation, nil, current_user: current_user)
 </code></pre>
+</div>
+<div class="content" id="tabs-4-1-erb">
+<pre><code>&lt;html&gt;
+  &lt;head&gt;&lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;%= cell(Pro::Cell::Navigation, nil, current_user: current_user) %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</div></div></div>
 
 <p>In Rails, you can use the handy <code>cell</code> helper to invoke the view model.</p>
-</div>
-</div>
+</div></div></div>
 
 <p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Navigation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
 
@@ -373,12 +417,9 @@ end
 
 <p>In <code>app/concepts/pro/view/navigation.haml</code>, add actual links to the view.</p>
 
-<div class="tabs">
-  <ul>
-    <li><a href="#666-Ruby">Ruby</a></li>
-<li><a href="#666-Rails">Rails</a></li>
-  </ul>
-  <div id="666-Ruby"><pre><code>%nav
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-6-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-6-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-6-0-ruby"><pre><code>%nav
   %ul
     %li SUPPORT CHAT
       %a{href: "/support"}
@@ -393,7 +434,7 @@ end
 
 <p>Without any URL system, you can create links using Haml, or delegate to your own URL objects.</p>
 </div>
-<div id="666-Rails"><pre><code>%nav
+<div class="content" id="tabs-6-1-rails"><pre><code>%nav
   %ul
     %li
       = link_to "SUPPORT CHAT", chat_path
@@ -407,8 +448,7 @@ end
 </code></pre>
 
 <p>The <code>cells-rails</code> gem conveniently allows to use URL helpers in cell views.</p>
-</div>
-</div>
+</div></div></div>
 
 <h2 id="content-cell">Content Cell</h2>
 
@@ -416,18 +456,15 @@ end
 
 <p>In the controller, invoke this new cell instead of letting the framework render the content.</p>
 
-<div class="tabs">
-  <ul>
-    <li><a href="#442-Ruby">Ruby</a></li>
-<li><a href="#442-Rails">Rails</a></li>
-  </ul>
-  <div id="442-Ruby"><pre><code>def show
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-7-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-7-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-7-0-ruby"><pre><code>def show
   comment = Comment.find(1)
   html = Comment::Cell::Show.(comment).()
 end
 </code></pre>
 </div>
-<div id="442-Rails"><pre><code>class CommentsController &lt; ApplicationController
+<div class="content" id="tabs-7-1-rails"><pre><code>class CommentsController &lt; ApplicationController
   def show
     comment = Comment.find(1)
     render html: cell(Comment::Cell::Show, comment)
@@ -436,8 +473,7 @@ end
 </code></pre>
 
 <p>This instructs the controller to render the <code>Comment::Cell::Show</code> cell, pass the <code>comment</code> into it, and let Rails wrap it in the application layout.</p>
-</div>
-</div>
+</div></div></div>
 
 <p>Note that we now pass the <code>comment</code> as the cell’s <em>model</em> without passing any additional <em>options</em>.</p>
 
@@ -491,12 +527,9 @@ end
 
 <p>In the controller, the content cell needs to get instructed it will be wrapped by a layout cell.</p>
 
-<div class="tabs">
-  <ul>
-    <li><a href="#466-Ruby">Ruby</a></li>
-<li><a href="#466-Rails">Rails</a></li>
-  </ul>
-  <div id="466-Ruby"><pre><code>def show
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-8-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-8-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-8-0-ruby"><pre><code>def show
   comment = Comment.find(1)
 
   html = Comment::Cell::Show.(comment,
@@ -505,7 +538,7 @@ end
 end
 </code></pre>
 </div>
-<div id="466-Rails"><pre><code>class CommentsController &lt; ApplicationController
+<div class="content" id="tabs-8-1-rails"><pre><code>class CommentsController &lt; ApplicationController
 def show
   comment = Comment.find(params[:id])
 
@@ -515,8 +548,7 @@ def show
     )
 end
 </code></pre>
-</div>
-</div>
+</div></div></div>
 
 <p>The following happens now.</p>
 

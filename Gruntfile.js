@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     sass: {
       options: {
-        includePaths: ['bower_components/foundation/scss', "bower_components/slick-carousel/slick", "bower_components/jquery-ui/themes/base"]
+        includePaths: ['bower_components/foundation/scss', "bower_components/slick-carousel/slick"]
       },
       dist: {
         options: {
@@ -20,7 +20,7 @@ module.exports = function(grunt) {
     uglify: {
       jquery: {
         files: {
-          'javascripts/jquery.min.js': ['bower_components/jquery/dist/jquery.js', "bower_components/jquery-ui/jquery-ui.js"]
+          'javascripts/jquery.min.js': ['bower_components/jquery/dist/jquery.js']
         }
       },
       application: {
