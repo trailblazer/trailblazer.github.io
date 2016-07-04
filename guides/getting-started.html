@@ -29,7 +29,7 @@
 
   </head>
 
-  <body>
+  <body class="generic-body">
     <!-- Top Bar -->
     <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -185,21 +185,16 @@
 
       </div>
       <div class="columns medium-9 code-content">
-        <h1 id="getting-started-with-trailblazer">Getting Started With Trailblazer</h1>
-
-<p>This document lists all steps necessary to get Trailblazer up and running in new or existing applications.</p>
-
-<h2 id="gems">Gems</h2>
+        <h2 id="installation">Installation</h2>
 
 <p>As Trailblazer is highly modular, you have to make sure you include the correct gems in your <code>Gemfile</code>.</p>
 
-<p>Here’s a <code>Gemfile</code> example for a Rails application.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-81-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-81-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-81-0-rails"><p>Here’s a <code>Gemfile</code> example for a Rails application.</p>
 
-<pre><code class="language-ruby">gem "trailblazer"
+<pre><code>gem "trailblazer"
 gem "trailblazer-rails"
-
-gem "reform", "2.2.0"    # optional, allows to specify specific version.
-gem "reform-rails"
 
 # optional, in case you want Cells.
 gem "trailblazer-cells"
@@ -207,15 +202,15 @@ gem "cells-erb"         # Or cells-haml, cells-slim, cells-hamlit.
 gem "cells-rails"
 </code></pre>
 
-<h2 id="other-frameworks">Other Frameworks</h2>
+<p>This will also load <code>reform</code> and <code>reform-rails</code> making the integration very smooth.</p>
+</div>
+<div class="content" id="tabs-81-1-ruby"><p>Here’s a sample <code>Gemfile</code> for a non-Rails project that doesn’t use <code>Active*</code>.</p>
 
-<p>Here’s a sample <code>Gemfile</code> for a non-Rails project that doesn’t use <code>Active*</code>.</p>
-
-<pre><code class="language-ruby">gem "trailblazer"
+<pre><code>gem "trailblazer"
 gem "trailblazer-loader" # optional, if you want us to load your concepts.
 
-gem "reform", "2.2.0"
-gem "dry-validation", "&gt;= 0.7.0"
+gem "reform", "&gt;= 2.2.0"
+gem "dry-validation", "&gt;= 0.8.0"
 
 # optional, in case you want Cells.
 gem "trailblazer-cells"
@@ -224,10 +219,12 @@ gem "cells-erb"         # Or cells-haml, cells-slim, cells-hamlit.
 
 <p>Note that you need to invoke the loader manually. Usually, this would happen in an initializer.</p>
 
-<pre><code class="language-ruby">Trailblazer::Loader.new.(concepts_root: "./concepts/") do |file|
+<pre><code>Trailblazer::Loader.new.(concepts_root: "./concepts/") do |file|
   require_relative(file)
 end
 </code></pre>
+</div></div></div>
+
 
       </div>
     </div>
