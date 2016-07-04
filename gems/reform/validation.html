@@ -187,7 +187,43 @@
 
 <p>Since Reform 2.0, you can pick your validation backend. This can either be <code>ActiveModel::Validations</code> or <code>dry-validation</code>.</p>
 
-<p>Reform 2.2 will drop ActiveModel-support. You can still use it (and it will work!), but we won’t be actively maintaining it anymore. In other words, <code>ActiveModel::Validations</code> and Reform should be working until at least Reform 3.0.</p>
+<div class="panel">
+  <p>
+    Reform 2.2 drops <code>ActiveModel</code>-support. You can still use it (and it will work!), but we won't maintain it actively, anymore. In other words, <code>ActiveModel::Validations</code> and Reform should be working until at least Reform 4.0.
+  </p>
+</div>
+
+<h2 id="refactoring-legacy-forms">Refactoring Legacy Forms</h2>
+
+<p>Note that you are not limited to one validation backend. When switching from ActiveModel::Validation to dry-validation, you should set the first as the default validation engine.</p>
+
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-233-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-233-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-233-0-rails"><p>The configuration assumes you have <code>reform-rails</code> installed.</p>
+
+<pre><code>config.reform.validations = :active_model
+</code></pre>
+</div>
+<div class="content" id="tabs-233-1-ruby"><p>In a Ruby environment, you’d usually monkey-patch the <code>Form</code> class.</p>
+
+<pre><code>Reform::Form.send(:include, Reform::Form::ActiveModel::Validations)
+</code></pre>
+</div></div></div>
+
+<p>In forms you’re upgrading to dry-validation, you can include the validation module explicitly.</p>
+
+<pre><code>module Album::Contract
+  class Create &lt; Reform::Form
+    feature Reform::Form::Dry # override the default.
+
+    validation do
+      required(:title).filled
+    end
+  end
+end
+</code></pre>
+
+<p>This replaces the ActiveModel backend with dry for this specific form class, only.</p>
 
 <h2 id="overview">Overview</h2>
 
@@ -490,15 +526,6 @@ end
 </script>
 
 
-
-
-<script type="text/javascript">
-$( ".tabs" ).tabs({
-  active: 1
-});
-$(".tabs").removeClass("ui-widget");
-
-</script>
 
   </body>
 </html>
