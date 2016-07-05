@@ -211,6 +211,34 @@ end
 
 <p>The self-explaining DSL known from many Trailblazer gems allows to define flat or nested twins.</p>
 
+<h2 id="unnest">Unnest</h2>
+
+<p>To expose a nested property on an outer level, use <code>::unnest</code>.</p>
+
+<pre><code>class AlbumTwin &lt; Disposable::Twin
+  property :artist do
+    property :email
+  end
+
+  unnest :email, from: :artist
+end
+</code></pre>
+
+<p>The <code>email</code> accessors will now be on top-level, hiding the nested structure to the outside world.</p>
+
+<pre><code>album = Album.find(1)
+twin  = AlbumTwin.new(album)
+
+twin.email #=&gt; "duran@duran.to"
+twin.email = "duran@duran.com"
+</code></pre>
+
+<p>When <code>sync</code>ing, only the nested structure will be considered.</p>
+
+<pre><code>twin.sync
+album.artist.email #=&gt; "duran@duran.com"
+</code></pre>
+
 <h2 id="public-api">Public API</h2>
 
 <p>The public twin API is unbelievably simple.</p>

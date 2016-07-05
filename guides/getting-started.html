@@ -189,9 +189,9 @@
 
 <p>As Trailblazer is highly modular, you have to make sure you include the correct gems in your <code>Gemfile</code>.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-1-0-rails">Rails</a></li>
-<li class="tab-title"><a href="#tabs-1-1-ruby">Ruby</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-1-0-rails"><p>Here’s a <code>Gemfile</code> example for a Rails application.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-34-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-34-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-34-0-rails"><p>Here’s a <code>Gemfile</code> example for a Rails application.</p>
 
 <pre><code>gem "trailblazer"
 gem "trailblazer-rails"
@@ -204,7 +204,7 @@ gem "cells-rails"
 
 <p>This will also load <code>reform</code> and <code>reform-rails</code> making the integration very smooth.</p>
 </div>
-<div class="content" id="tabs-1-1-ruby"><p>Here’s a sample <code>Gemfile</code> for a non-Rails project that doesn’t use <code>Active*</code>.</p>
+<div class="content" id="tabs-34-1-ruby"><p>Here’s a sample <code>Gemfile</code> for a non-Rails project that doesn’t use <code>Active*</code>.</p>
 
 <pre><code>gem "trailblazer"
 gem "trailblazer-loader" # optional, if you want us to load your concepts.
@@ -229,16 +229,16 @@ end
 
 <p>You can configure what validation engine you want to use.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-2-0-rails">Rails</a></li>
-<li class="tab-title"><a href="#tabs-2-1-ruby">Ruby</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-2-0-rails"><p>In Rails, use an initializer, e.g. <code>config/initializer/trailblazer.rb</code> for that.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-35-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-35-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-35-0-rails"><p>In Rails, use an initializer, e.g. <code>config/initializer/trailblazer.rb</code> for that.</p>
 
 <pre><code>Rails.application.config.reform.validations = :dry
 </code></pre>
 
 <p>If omitted, <code>ActiveModel::Validations</code> will be configured, per default.</p>
 </div>
-<div class="content" id="tabs-2-1-ruby">
+<div class="content" id="tabs-35-1-ruby">
 <p>To set the default validation engine, it’s easiest to monkey-patch Reform itself.</p>
 
 <pre><code>Reform::Form.send(:feature, Reform::Form::ActiveModel::Validations)

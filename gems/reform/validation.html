@@ -199,14 +199,14 @@
 
 <p>Note that you are not limited to one validation backend. When switching from ActiveModel::Validation to dry-validation, you should set the first as the default validation engine.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-11-0-rails">Rails</a></li>
-<li class="tab-title"><a href="#tabs-11-1-ruby">Ruby</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-11-0-rails"><p>The configuration assumes you have <code>reform-rails</code> installed.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-44-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-44-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-44-0-rails"><p>The configuration assumes you have <code>reform-rails</code> installed.</p>
 
 <pre><code>config.reform.validations = :active_model
 </code></pre>
 </div>
-<div class="content" id="tabs-11-1-ruby"><p>In a Ruby environment, you’d usually monkey-patch the <code>Form</code> class.</p>
+<div class="content" id="tabs-44-1-ruby"><p>In a Ruby environment, you’d usually monkey-patch the <code>Form</code> class.</p>
 
 <pre><code>Reform::Form.send(:include, Reform::Form::ActiveModel::Validations)
 </code></pre>
