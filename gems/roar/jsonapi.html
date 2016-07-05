@@ -189,13 +189,13 @@
 
 <p>Roar supports rendering and parsing documents using the <a href="http://jsonapi.org/format/">JSON API 1.0</a> specification.</p>
 
-<p>By including <code>Roar::JSON::JSONAPI</code> into your representer a handful of additional DSL methods get imported.</p>
+<p>By including <code class="highlighter-rouge">Roar::JSON::JSONAPI</code> into your representer a handful of additional DSL methods get imported.</p>
 
 <h2 id="overview">Overview</h2>
 
 <p>Here’s a full example of a JSON API representer.</p>
 
-<pre><code>class ArticleDecorator &lt; Roar::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class ArticleDecorator &lt; Roar::Decorator
   include Roar::JSON::JSONAPI
   type :articles
 
@@ -230,6 +230,7 @@
   end
 end
 </code></pre>
+</div>
 
 <h2 id="relationships">Relationships</h2>
 
@@ -239,10 +240,11 @@ end
 
 <h2 id="compound-document">Compound Document</h2>
 
-<p>You can suppress rendering of the compound document using the <code>:included</code> option.</p>
+<p>You can suppress rendering of the compound document using the <code class="highlighter-rouge">:included</code> option.</p>
 
-<pre><code>decorator.to_json(included: false)
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(included: false)
 </code></pre>
+</div>
 
 <h2 id="sparse-fieldsets">Sparse Fieldsets</h2>
 
@@ -250,35 +252,38 @@ end
 
 <p>With Roar, you can do that with all kinds of resource objects: Filtering attributes works for the top “primary data” and for the compound object.</p>
 
-<p>For the primary data, you simply provide what to include via the <code>:include</code> option.</p>
+<p>For the primary data, you simply provide what to include via the <code class="highlighter-rouge">:include</code> option.</p>
 
-<pre><code>decorator.to_hash(
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_hash(
   include: [:title]
 )
 </code></pre>
+</div>
 
-<p>This will only render the two obligatory fields <code>:id</code>, <code>:type</code> and the  <code>:title</code> attribute.</p>
+<p>This will only render the two obligatory fields <code class="highlighter-rouge">:id</code>, <code class="highlighter-rouge">:type</code> and the  <code class="highlighter-rouge">:title</code> attribute.</p>
 
-<pre><code>"data": {
+<div class="highlighter-rouge"><pre class="highlight"><code>"data": {
   "type": "articles",
   "id": "1",
   "attributes": {"title": "My Article"}
 }
 </code></pre>
+</div>
 
-<p>To include particular attributes, only, in the compound document, use <code>:fields</code>.</p>
+<p>To include particular attributes, only, in the compound document, use <code class="highlighter-rouge">:fields</code>.</p>
 
-<pre><code>decorator.to_hash(
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_hash(
   include: [:title, :author],
   fields:  {author: [:email]}
 )
 </code></pre>
+</div>
 
-<p>You can control what types should be included in the compound document by adding them to <code>:include</code>.</p>
+<p>You can control what types should be included in the compound document by adding them to <code class="highlighter-rouge">:include</code>.</p>
 
-<p>The <code>:fields</code> option allows to specify what attributes for what type to include.</p>
+<p>The <code class="highlighter-rouge">:fields</code> option allows to specify what attributes for what type to include.</p>
 
-<pre><code>"data": {
+<div class="highlighter-rouge"><pre class="highlight"><code>"data": {
   "type": "articles",
   "id": "1",
   "attributes": {"title": "My Article"}
@@ -293,10 +298,11 @@ end
   }
 ]
 </code></pre>
+</div>
 
-<p>Note that the <code>author</code> fragment only contains the <code>email</code> in its attributes.</p>
+<p>Note that the <code class="highlighter-rouge">author</code> fragment only contains the <code class="highlighter-rouge">email</code> in its attributes.</p>
 
-<p>The <code>to_json</code> API is designed to be able to process <code>params</code> directly, where JSON API parameters like <code>fields</code> from the request URL are parsed into hashes and arrays.</p>
+<p>The <code class="highlighter-rouge">to_json</code> API is designed to be able to process <code class="highlighter-rouge">params</code> directly, where JSON API parameters like <code class="highlighter-rouge">fields</code> from the request URL are parsed into hashes and arrays.</p>
 
       </div>
     </div>

@@ -191,43 +191,47 @@
 
 <p>In a Rails environment with ActiveModel/ActiveRecord, you have to include the <a href="https://github.com/trailblazer/reform-rails">reform-rails</a> gem.</p>
 
-<pre><code>gem "reform"
+<div class="highlighter-rouge"><pre class="highlight"><code>gem "reform"
 gem "reform-rails"
 </code></pre>
+</div>
 
 <h2 id="to-20">1.2 to 2.0</h2>
 
 <h3 id="validations">Validations</h3>
 
-<p>Validations like <code>validates_acceptance_of</code> are not available anymore, you have to use the new syntax.</p>
+<p>Validations like <code class="highlighter-rouge">validates_acceptance_of</code> are not available anymore, you have to use the new syntax.</p>
 
-<pre><code>validates acceptance: true
+<div class="highlighter-rouge"><pre class="highlight"><code>validates acceptance: true
 </code></pre>
+</div>
 
 <h3 id="formvalid">Form#valid?</h3>
 
-<p>Using <code>form.valid?</code> is a private concept and was never publicly documented. It is still available (private) but you are strongly recommended to use <code>#validate</code> instead.</p>
+<p>Using <code class="highlighter-rouge">form.valid?</code> is a private concept and was never publicly documented. It is still available (private) but you are strongly recommended to use <code class="highlighter-rouge">#validate</code> instead.</p>
 
 <h3 id="formupdate">Form#update!</h3>
 
-<p>Apparently, some people used <code>form.update!({..})</code> to pre-fillout forms. <code>#update!</code> has never been publicly documented and got removed in Reform 2. However, you can achieve the same behavior using the following hack.</p>
+<p>Apparently, some people used <code class="highlighter-rouge">form.update!({..})</code> to pre-fillout forms. <code class="highlighter-rouge">#update!</code> has never been publicly documented and got removed in Reform 2. However, you can achieve the same behavior using the following hack.</p>
 
-<pre><code>Reform::Form.class_eval do
+<div class="highlighter-rouge"><pre class="highlight"><code>Reform::Form.class_eval do
   alias_method :update!, :deserialize
   public :update!
 </code></pre>
+</div>
 
 <h3 id="validation-backend">Validation Backend</h3>
 
-<p>This only is necessary when <em>not</em> using <code>reform/rails</code>, which is automatically loaded in a Rails environment.</p>
+<p>This only is necessary when <em>not</em> using <code class="highlighter-rouge">reform/rails</code>, which is automatically loaded in a Rails environment.</p>
 
-<p>In an initializer, e.g. <code>config/initializers/reform.rb</code>.</p>
+<p>In an initializer, e.g. <code class="highlighter-rouge">config/initializers/reform.rb</code>.</p>
 
-<pre><code>require "reform/form/active_model/validations"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "reform/form/active_model/validations"
 Reform::Form.class_eval do
   include Reform::Form::ActiveModel::Validations
 end
 </code></pre>
+</div>
 
 
       </div>

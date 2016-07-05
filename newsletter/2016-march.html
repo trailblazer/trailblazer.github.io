@@ -121,20 +121,22 @@ The conference itself was amazing and I think everybody really enjoyed the talks
 
 <p>With the deprecation of the Virtus gem, we now use the excellent <a href="https://github.com/dry-rb/dry-types">dry-types</a> gem for coercion in Disposable and Reform. The API has changed slightly, as Dry-types has new type constants.</p>
 
-<pre><code class="language-ruby">class AlbumForm &lt; Reform::Form
-  feature Coercion
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumForm</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">feature</span> <span class="no">Coercion</span>
 
-  property :id, type: Types::Form::Int
-end
+  <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">type: </span><span class="no">Types</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Int</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Simple, isn’t it?</p>
 
-<p>The <code>:type</code> option will instruct Reform to override the <code>#id=</code> setter and coerce the value to integer.</p>
+<p>The <code class="highlighter-rouge">:type</code> option will instruct Reform to override the <code class="highlighter-rouge">#id=</code> setter and coerce the value to integer.</p>
 
-<pre><code class="language-ruby">form.id = "1"
-form.id #=&gt; 1
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">form</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="s2">"1"</span>
+<span class="n">form</span><span class="p">.</span><span class="nf">id</span> <span class="c1">#=&gt; 1</span>
 </code></pre>
+</div>
 
 <p>The coercion semantics are explained in the brand-new <a href="http://trailblazer.to/gems/disposable/api.html">Disposable API docs</a>.</p>
 
@@ -144,61 +146,65 @@ form.id #=&gt; 1
 
 <p>A long-awaited feature is the “nilify” coercion. It finally is implemented in Disposable 0.3.0 using Dry-types.</p>
 
-<p>The <code>:nilify</code> option will coerce blank strings into <code>nil</code>, saving you from annoying persistence layer errors when your ORM tries to save blank strings to associations, and so on.</p>
+<p>The <code class="highlighter-rouge">:nilify</code> option will coerce blank strings into <code class="highlighter-rouge">nil</code>, saving you from annoying persistence layer errors when your ORM tries to save blank strings to associations, and so on.</p>
 
-<pre><code class="language-ruby">property :id, nilify: true
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">property</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">nilify: </span><span class="kp">true</span>
 </code></pre>
+</div>
 
-<pre><code class="language-ruby">form.id = ""
-form.id #=&gt; nil
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">form</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="n">form</span><span class="p">.</span><span class="nf">id</span> <span class="c1">#=&gt; nil</span>
 </code></pre>
+</div>
 
 <p>The nilify feature also works in combination with other coercion types!</p>
 
 <h2 id="compositional-contracts-in-trailblazer">Compositional Contracts in Trailblazer</h2>
 
-<p>With the upcoming Trailblazer 1.2, it is now easily possible to maintain contracts using the <code>Composition</code> feature, and to inject additional options. This either works by overriding <code>Operation#contract!</code> or by using <code>#contract</code> directly in the operation.</p>
+<p>With the upcoming Trailblazer 1.2, it is now easily possible to maintain contracts using the <code class="highlighter-rouge">Composition</code> feature, and to inject additional options. This either works by overriding <code class="highlighter-rouge">Operation#contract!</code> or by using <code class="highlighter-rouge">#contract</code> directly in the operation.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  model Song
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">model</span> <span class="no">Song</span>
 
-  contract do
-    include Reform::Form::Composition
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Composition</span>
 
-    property :id,         on: :song
-    property :album_name, on: :album
-  end
+    <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>         <span class="ss">on: :song</span>
+    <span class="n">property</span> <span class="ss">:album_name</span><span class="p">,</span> <span class="ss">on: :album</span>
+  <span class="k">end</span>
 
-  def process(params)
-    contract(song: model, album: model.album)
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">contract</span><span class="p">(</span><span class="ss">song: </span><span class="n">model</span><span class="p">,</span> <span class="ss">album: </span><span class="n">model</span><span class="p">.</span><span class="nf">album</span><span class="p">)</span>
 
-    validate do
-      # ..
-    end
-  end
+    <span class="n">validate</span> <span class="k">do</span>
+      <span class="c1"># ..</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The <code>contract</code> method now memoizes its return value (but only if desired) and provides an easy way for more complex contract setup. Note that you can also override <code>#contract!</code>. We’re hoping this will help developers to leverage the compositional features of Disposable/Reform better.</p>
+<p>The <code class="highlighter-rouge">contract</code> method now memoizes its return value (but only if desired) and provides an easy way for more complex contract setup. Note that you can also override <code class="highlighter-rouge">#contract!</code>. We’re hoping this will help developers to leverage the compositional features of Disposable/Reform better.</p>
 
 <h2 id="separate-representers-for-operation">Separate Representers For Operation</h2>
 
-<p>So far, when using the <code>Representer</code> feature in an operation, the same representer was used for parsing input and rendering the response document.</p>
+<p>So far, when using the <code class="highlighter-rouge">Representer</code> feature in an operation, the same representer was used for parsing input and rendering the response document.</p>
 
-<p>This is now separated - you can either include <code>Representer</code> and get the old behavior, or only include either <code>Representer::Rendering</code> to use the representer for serialization, or include <code>Representer::Deserializer</code> to parse incoming data using the representer.</p>
+<p>This is now separated - you can either include <code class="highlighter-rouge">Representer</code> and get the old behavior, or only include either <code class="highlighter-rouge">Representer::Rendering</code> to use the representer for serialization, or include <code class="highlighter-rouge">Representer::Deserializer</code> to parse incoming data using the representer.</p>
 
 <p>The details are documented in <a href="http://trailblazer.to/gems/operation/representer.html#input-and-output-representers">our documentation</a>.</p>
 
 <p>Going further, in Trailblazer 1.2, you will be able to specify an arbitrary number of representers using aliases, the same way we already do it with callback objects.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  include Representer
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="kp">include</span> <span class="no">Representer</span>
 
-  representer :parser do
-    property :id
-  end
+  <span class="n">representer</span> <span class="ss">:parser</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:id</span>
+  <span class="k">end</span>
 
-  representer :renderer, Renderer::Create
+  <span class="n">representer</span> <span class="ss">:renderer</span><span class="p">,</span> <span class="no">Renderer</span><span class="o">::</span><span class="no">Create</span>
 </code></pre>
+</div>
 
 <p>As many users have asked for separation of input and output representers, we decided to ship it in Trailblazer 1.2</p>
 
@@ -206,20 +212,21 @@ form.id #=&gt; nil
 
 <p>An annoying problem that occured with Reform 2.1 was that when inheriting forms, custom accessors were reset and had to be redefined. This is fixed with Disposable 0.2.6. The problem was actually located in the <a href="https://github.com/apotonick/declarative">Declarative</a> gem that provides DSL and inheritance mechanics to all TRB gems.</p>
 
-<p>Another related bug was fixed in Reform. When using <code>Form::Module</code>, accessors were overridden, too. You now have to put custom accessors into the <code>InstanceMethods</code> module and everything will work as expected.</p>
+<p>Another related bug was fixed in Reform. When using <code class="highlighter-rouge">Form::Module</code>, accessors were overridden, too. You now have to put custom accessors into the <code class="highlighter-rouge">InstanceMethods</code> module and everything will work as expected.</p>
 
-<pre><code class="language-ruby">module SongForm
-  include Reform::Form::Module
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">SongForm</span>
+  <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Module</span>
 
-  property :title
+  <span class="n">property</span> <span class="ss">:title</span>
 
-  module InstanceMethods
-    def title=(v)
-      super(v.trim)
-    end
-  end
-end
+  <span class="k">module</span> <span class="nn">InstanceMethods</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="o">=</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="nf">trim</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The complete documentation can be found <a href="http://trailblazer.to/gems/reform/api.html#forms-in-modules">here</a>. If you’re still experiencing problems (I’m pretty sure everything is fixed, though), let us know!</p>
 

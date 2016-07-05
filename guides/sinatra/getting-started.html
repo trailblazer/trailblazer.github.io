@@ -199,13 +199,13 @@
 
 <p>Trailblazer makes extensive use of Ruby’s namespaces - a learning from Rails verbose naming madness.</p>
 
-<p>For example, a creating operation for a <code>Post</code> model could be called <code>Post::Create</code>. Likewise, a cell to render the post’s <code>show</code> page could be <code>Post::Cell::Show</code>, an updating contract <code>Post::Contract::Update</code>, and so on.</p>
+<p>For example, a creating operation for a <code class="highlighter-rouge">Post</code> model could be called <code class="highlighter-rouge">Post::Create</code>. Likewise, a cell to render the post’s <code class="highlighter-rouge">show</code> page could be <code class="highlighter-rouge">Post::Cell::Show</code>, an updating contract <code class="highlighter-rouge">Post::Contract::Update</code>, and so on.</p>
 
 <h2 id="file-structure">File Structure</h2>
 
 <p>Many frameworks use a file structure by technology: views, models, and so on, are structured in what they do. In Trailblazer, files are grouped by what they are, what concept they represent.</p>
 
-<pre><code>├── app.rb
+<div class="highlighter-rouge"><pre class="highlight"><code>├── app.rb
 ├── concepts
 │   └── post
 │       ├── cell
@@ -218,6 +218,7 @@
 │           ├── new.slim
 │           └── show.slim
 </code></pre>
+</div>
 
 <p>Files that implement the same group of functions sit in the same directory. This file structure is well-accepted and appreciateed as being more intuitive.</p>
 
@@ -231,9 +232,9 @@
 
 <p>I use a cell and a slim view, instead of Sinatra’s built-in rendering stack. Cells is a very popular view model gem from the Rails eco-system, but it is completely decoupled from Rails. It allows ERB, haml and slim templates.</p>
 
-<p>Here’s the view in <code>concepts/post/view/new.slim</code>.</p>
+<p>Here’s the view in <code class="highlighter-rouge">concepts/post/view/new.slim</code>.</p>
 
-<pre><code>h1 New Post!
+<div class="highlighter-rouge"><pre class="highlight"><code>h1 New Post!
 
 form action="#{url}" method="post"
   .row
@@ -245,25 +246,27 @@ form action="#{url}" method="post"
   .row
     input type="submit"
 </code></pre>
+</div>
 
 <p>A very straight-forward form in <a href="http://slim-lang.com/">my favourite template language</a>. Note that this doesn’t use a form builder, yet, and also does not reference any model.</p>
 
-<p>However, we do use a method <code>url</code> in this template that comes from the cell (line 3).</p>
+<p>However, we do use a method <code class="highlighter-rouge">url</code> in this template that comes from the cell (line 3).</p>
 
 <h2 id="creating-post-form-controller">Creating Post: Form Controller</h2>
 
-<p>To render this template, we need to invoke the cell in a Sinatra endpoint in <code>app.rb</code>.</p>
+<p>To render this template, we need to invoke the cell in a Sinatra endpoint in <code class="highlighter-rouge">app.rb</code>.</p>
 
-<pre><code>get "/posts/new" do
+<div class="highlighter-rouge"><pre class="highlight"><code>get "/posts/new" do
   Post::Cell::New.(nil, url: "/posts").()
 end
 </code></pre>
+</div>
 
-<p>I invoke a cell called <code>Post::Cell::New</code> and pass in a <code>:url</code> key.</p>
+<p>I invoke a cell called <code class="highlighter-rouge">Post::Cell::New</code> and pass in a <code class="highlighter-rouge">:url</code> key.</p>
 
-<p>The cell is implemented in a class and resides in <code>concepts/post/cell/new.rb</code>.</p>
+<p>The cell is implemented in a class and resides in <code class="highlighter-rouge">concepts/post/cell/new.rb</code>.</p>
 
-<pre><code>module Post::Cell
+<div class="highlighter-rouge"><pre class="highlight"><code>module Post::Cell
   class New &lt; Trailblazer::Cell
     def url
       options[:url] || raise("no action URL!")
@@ -271,18 +274,19 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>Here, I implement the <code>url</code> method that is used in the view and this is how the actual form’s <code>action</code> URL finds its way into the rendered view.</p>
+<p>Here, I implement the <code class="highlighter-rouge">url</code> method that is used in the view and this is how the actual form’s <code class="highlighter-rouge">action</code> URL finds its way into the rendered view.</p>
 
-<p>Cells in Trailblazer sit in the concept’s <code>Cell</code> namespace, which is why this particular cells name is <code>Post::Cell::New</code>.</p>
+<p>Cells in Trailblazer sit in the concept’s <code class="highlighter-rouge">Cell</code> namespace, which is why this particular cells name is <code class="highlighter-rouge">Post::Cell::New</code>.</p>
 
 <p>You can now browse to <a href="http://localhost:4567/posts/new">http://localhost:4567/posts/new</a> and you will see the rendered form. Cells are lightning fast and will perform much faster than you might be used from Rails or even from Sinatra.</p>
 
 <h2 id="creating-post-processing-controller">Creating Post: Processing Controller</h2>
 
-<p>When submitting, this form will be POSTed to <code>/posts</code>. We need to add a route for this in <code>app.rb</code>.</p>
+<p>When submitting, this form will be POSTed to <code class="highlighter-rouge">/posts</code>. We need to add a route for this in <code class="highlighter-rouge">app.rb</code>.</p>
 
-<pre><code>post "/posts" do
+<div class="highlighter-rouge"><pre class="highlight"><code>post "/posts" do
   op = Post::Create.run(params) do |op|
     redirect "/posts/#{op.model.id}"
   end
@@ -290,16 +294,17 @@ end
   Post::Cell::New.(op, url: "/posts").()
 end
 </code></pre>
+</div>
 
-<p>First, I invoke the <code>Post::Create</code> operation that processes the incoming form data. Note how I call <code>run</code> and pass in the <code>params</code> hash. The block is only invoked when the operation was successful and will redirect to the newly created post’s show page.</p>
+<p>First, I invoke the <code class="highlighter-rouge">Post::Create</code> operation that processes the incoming form data. Note how I call <code class="highlighter-rouge">run</code> and pass in the <code class="highlighter-rouge">params</code> hash. The block is only invoked when the operation was successful and will redirect to the newly created post’s show page.</p>
 
 <p>If not, the remaining block is executed and will re-render the form cell. Note that I pass in the operation instance into the cell.</p>
 
 <h2 id="creating-post-operation">Creating Post: Operation</h2>
 
-<p>The processing operation is implemented in <code>concepts/post/operation/create.rb</code>.</p>
+<p>The processing operation is implemented in <code class="highlighter-rouge">concepts/post/operation/create.rb</code>.</p>
 
-<pre><code>class Post::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Post::Create &lt; Trailblazer::Operation
   contract do
     property :title
     property :url_slug
@@ -317,30 +322,32 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>An operation always has a contract, which is a <code>Reform::Form</code> object. We could easily extract this contract to a separate file <code>concepts/post/contract/create.rb</code>, but for now, it is perfectly fine inline in the operation.</p>
+<p>An operation always has a contract, which is a <code class="highlighter-rouge">Reform::Form</code> object. We could easily extract this contract to a separate file <code class="highlighter-rouge">concepts/post/contract/create.rb</code>, but for now, it is perfectly fine inline in the operation.</p>
 
 <p>A contract defines fields and validations. We’ll learn about validations soon enough.</p>
 
-<p>The operation can create or find arbitrary models in its <code>model!</code> method. As you can see, this is absolutely not limited to ActiveRecord but can be anything you want.</p>
+<p>The operation can create or find arbitrary models in its <code class="highlighter-rouge">model!</code> method. As you can see, this is absolutely not limited to ActiveRecord but can be anything you want.</p>
 
-<p>In the <code>process</code> method, the incoming <code>params</code> then get validated by the form, values get assigned to the contract object, and then, you can do with that whatever you want.</p>
+<p>In the <code class="highlighter-rouge">process</code> method, the incoming <code class="highlighter-rouge">params</code> then get validated by the form, values get assigned to the contract object, and then, you can do with that whatever you want.</p>
 
-<p>When validating, no data is written to the model. This is all working on the intermediate form twin. Only when you call <code>contract.save</code> will data be pushed to the model and saved.</p>
+<p>When validating, no data is written to the model. This is all working on the intermediate form twin. Only when you call <code class="highlighter-rouge">contract.save</code> will data be pushed to the model and saved.</p>
 
 <h2 id="creating-post-validation">Creating Post: Validation</h2>
 
 <p>Let’s add some validations to the contract now. Again, please be aware that in Trailblazer, validations are considered business logic and do not go into the model.</p>
 
-<p>Here’s how the model looks like, in <code>models/post.rb</code>.</p>
+<p>Here’s how the model looks like, in <code class="highlighter-rouge">models/post.rb</code>.</p>
 
-<pre><code>class Post &lt; Sequel::Model
+<div class="highlighter-rouge"><pre class="highlight"><code>class Post &lt; Sequel::Model
 end
 </code></pre>
+</div>
 
-<p>Validations go into the contract in <code>concepts/post/operation/create.rb</code>.</p>
+<p>Validations go into the contract in <code class="highlighter-rouge">concepts/post/operation/create.rb</code>.</p>
 
-<pre><code>class Post::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Post::Create &lt; Trailblazer::Operation
   contract do
     property :title
     property :url_slug
@@ -356,36 +363,39 @@ end
     end
   end
 </code></pre>
+</div>
 
 <p>Contracts in Trailblazer are Reform objects. Reform allows various validation backends, including the awesome <a href="https://github.com/dryrb/dry-validation">dry-validation</a>, which we use in this application.</p>
 
-<p>I check if the <code>title</code> field is filled out, and if the <code>url_slug</code> has a URL-valid format. Also, I add a simple uniqueness validation. Note how I use Sequel’s API to perform real SQL queries in a validator.</p>
+<p>I check if the <code class="highlighter-rouge">title</code> field is filled out, and if the <code class="highlighter-rouge">url_slug</code> has a URL-valid format. Also, I add a simple uniqueness validation. Note how I use Sequel’s API to perform real SQL queries in a validator.</p>
 
 <h2 id="creating-post-workflow">Creating Post: Workflow</h2>
 
-<p>When submitting an empty form, we can see the erroring form. It contains the invalid data, but we can’t see errors. Let’s quickly add that to the cell view in <code>concepts/post/view/new.slim</code>.</p>
+<p>When submitting an empty form, we can see the erroring form. It contains the invalid data, but we can’t see errors. Let’s quickly add that to the cell view in <code class="highlighter-rouge">concepts/post/view/new.slim</code>.</p>
 
-<pre><code>h1 New Post!
+<div class="highlighter-rouge"><pre class="highlight"><code>h1 New Post!
 
 = model.contract.errors.messages.inspect
 form action="#{url}" method="post"
   # ..
 </code></pre>
+</div>
 
-<p>Since we pass the operation instance to the cell in the <code>POST /posts/</code> endpoint, we can access this object using the cell’s generic <code>model</code> reader. The operation keeps the contract instance, and so on, enough to display an error message telling the user what went wrong.</p>
+<p>Since we pass the operation instance to the cell in the <code class="highlighter-rouge">POST /posts/</code> endpoint, we can access this object using the cell’s generic <code class="highlighter-rouge">model</code> reader. The operation keeps the contract instance, and so on, enough to display an error message telling the user what went wrong.</p>
 
-<p>Once the form is correctly filled out and submitted, we get redirected to <code>/posts/1</code>.</p>
+<p>Once the form is correctly filled out and submitted, we get redirected to <code class="highlighter-rouge">/posts/1</code>.</p>
 
 <h2 id="viewing-post-controller">Viewing Post: Controller</h2>
 
-<p>This needs a new endpoint in <code>app.rb</code>.</p>
+<p>This needs a new endpoint in <code class="highlighter-rouge">app.rb</code>.</p>
 
-<pre><code>get "/posts/:id" do
+<div class="highlighter-rouge"><pre class="highlight"><code>get "/posts/:id" do
   op = Post::Update.present(params)
 
   Post::Cell::Show.(op.model, url: "/posts").()
 end
 </code></pre>
+</div>
 
       </div>
     </div>

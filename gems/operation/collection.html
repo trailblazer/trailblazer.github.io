@@ -187,9 +187,9 @@
       <div class="columns medium-9 code-content">
         <h1 id="collections">Collections</h1>
 
-<p>Operations can also be used to present collections. This is often used in <code>Index</code> operations.</p>
+<p>Operations can also be used to present collections. This is often used in <code class="highlighter-rouge">Index</code> operations.</p>
 
-<pre><code>class Comment::Index &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Index &lt; Trailblazer::Operation
   include Collection
 
   def model!(params)
@@ -197,8 +197,9 @@
   end
 end
 </code></pre>
+</div>
 
-<p>You include the <code>Collection</code> module and override <code>#model!</code> to aggregate the collection of objects.</p>
+<p>You include the <code class="highlighter-rouge">Collection</code> module and override <code class="highlighter-rouge">#model!</code> to aggregate the collection of objects.</p>
 
 <p>This operation won’t need a contract, as it is presentation, only.</p>
 
@@ -206,18 +207,20 @@ end
 
 <p>You can instantiate the collection operation manually.</p>
 
-<pre><code>op = Comment::Index.present(params)
+<div class="highlighter-rouge"><pre class="highlight"><code>op = Comment::Index.present(params)
 op.model #=&gt; [&lt;Comment&gt;, ..]
 </code></pre>
+</div>
 
-<p>Or use the <code>present</code> controller helper.</p>
+<p>Or use the <code class="highlighter-rouge">present</code> controller helper.</p>
 
-<pre><code class="language-ruby">def index
-  present Comment::Index
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">index</span>
+  <span class="n">present</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Index</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>This will set the <code>@model</code> instance variable to your collection.</p>
+<p>This will set the <code class="highlighter-rouge">@model</code> instance variable to your collection.</p>
 
 <h2 id="pagination">Pagination</h2>
 

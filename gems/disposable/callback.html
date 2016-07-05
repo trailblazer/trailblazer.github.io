@@ -191,9 +191,9 @@
 
 <h2 id="declarative-api">Declarative API</h2>
 
-<p>A <code>Callback::Group</code> allows defining nested callbacks.</p>
+<p>A <code class="highlighter-rouge">Callback::Group</code> allows defining nested callbacks.</p>
 
-<pre><code>class Group &lt; Disposable::Callback::Group
+<div class="highlighter-rouge"><pre class="highlight"><code>class Group &lt; Disposable::Callback::Group
   on_change :change!
 
   collection :songs do
@@ -203,10 +203,11 @@
   # on_change :rehash_name!, property: :title
 end
 </code></pre>
+</div>
 
 <p>Per default, callback methods will be invoked on the respective group. In nested setups, this means you also need to nest the method implementation.</p>
 
-<pre><code>class Group &lt; Disposable::Callback::Group
+<div class="highlighter-rouge"><pre class="highlight"><code>class Group &lt; Disposable::Callback::Group
   on_change :change!
 
   def change!(twin, options)
@@ -222,19 +223,21 @@ end
   end
 end
 </code></pre>
+</div>
 
 <h2 id="invocation">Invocation</h2>
 
-<p>A group is invoked using <code>call</code>.</p>
+<p>A group is invoked using <code class="highlighter-rouge">call</code>.</p>
 
-<pre><code>Group.new(twin).()
+<div class="highlighter-rouge"><pre class="highlight"><code>Group.new(twin).()
 </code></pre>
+</div>
 
 <h2 id="context">Context</h2>
 
 <p>You can use an arbitrary context object to implement the callback methods.</p>
 
-<pre><code>class CallbackImplementation
+<div class="highlighter-rouge"><pre class="highlight"><code>class CallbackImplementation
   def change!(twin, options)
     options[:string] &lt;&lt; "change!"
   end
@@ -244,28 +247,32 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>When invoking, specify it using the <code>:context</code> option.</p>
+<p>When invoking, specify it using the <code class="highlighter-rouge">:context</code> option.</p>
 
-<pre><code>Group.new(twin).(context: CallbackImplementation.new)
+<div class="highlighter-rouge"><pre class="highlight"><code>Group.new(twin).(context: CallbackImplementation.new)
 </code></pre>
+</div>
 
-<p>This allows leaving the <code>Group</code> free of implementation, as a pure definition of events, only. Also, note that you don’t have any nesting with a context object, all methods are implemented on the same level in a simple object.</p>
+<p>This allows leaving the <code class="highlighter-rouge">Group</code> free of implementation, as a pure definition of events, only. Also, note that you don’t have any nesting with a context object, all methods are implemented on the same level in a simple object.</p>
 
 <h2 id="options">Options</h2>
 
 <p>You may pass arbitrary options to all callback methods.</p>
 
-<pre><code>Group.new(twin).(context: CallbackImplementation.new, string: "")
+<div class="highlighter-rouge"><pre class="highlight"><code>Group.new(twin).(context: CallbackImplementation.new, string: "")
 </code></pre>
+</div>
 
 <p>This allows injecting dependencies without global state.</p>
 
-<pre><code>class CallbackImplementation
+<div class="highlighter-rouge"><pre class="highlight"><code>class CallbackImplementation
   def change!(twin, options)
     options[:string] &lt;&lt; "change!"
   end
 </code></pre>
+</div>
 
       </div>
     </div>

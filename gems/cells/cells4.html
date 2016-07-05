@@ -12,23 +12,23 @@
 
 <p>Cells per default does <em>not</em> escape HTML. However, you may run into problems when using Rails helpers. Internally, those helpers often blindly escape. This is not Cells’ fault but a design flaw in Rails.</p>
 
-<p>Everything related to <code>#capture</code> will cause problems - check <a href="https://github.com/rails/rails/blob/8469d2f759fcc8644b9bb7fa326dfa62d956992b/actionview/lib/action_view/helpers/capture_helper.rb#L40">this as an example</a>. As you can see, this is Rails swinging the escape hammer. Please don’t blame us for escapes where they shouldn’t be. Rather open an issue on Rails and tell them to make their code better overrideable for us.</p>
+<p>Everything related to <code class="highlighter-rouge">#capture</code> will cause problems - check <a href="https://github.com/rails/rails/blob/8469d2f759fcc8644b9bb7fa326dfa62d956992b/actionview/lib/action_view/helpers/capture_helper.rb#L40">this as an example</a>. As you can see, this is Rails swinging the escape hammer. Please don’t blame us for escapes where they shouldn’t be. Rather open an issue on Rails and tell them to make their code better overrideable for us.</p>
 
 <ol>
   <li>As a first step, try this and see if it helps.</li>
 </ol>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SongCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SongCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
   <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class="o">::</span><span class="no">FormHelper</span>
   <span class="kp">include</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Erb</span> <span class="c1"># include Erb _after_ AV helpers.</span>
 
   <span class="c1"># ..</span>
-<span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></figure>
 
-<p>The same goes for HAML cells, by including <code>Cell::Haml</code>.</p>
+<p>The same goes for HAML cells, by including <code class="highlighter-rouge">Cell::Haml</code>.</p>
 
 <ol>
-  <li>If that doesn’t work, play around with <code>#html_safe</code> on the strings you generate. We know, this sucks, but this is not our fault.</li>
+  <li>If that doesn’t work, play around with <code class="highlighter-rouge">#html_safe</code> on the strings you generate. We know, this sucks, but this is not our fault.</li>
   <li>You can also deep-dive into the Rails helpers and try to patch there. Since Rails 4, the helpers are cleaned up and much better implemented than in 3.x.</li>
   <li>If you’re still having problems, open an issue on <a href="https://github.com/trailblazer/cells-erb/issues">cells-erb</a> or <a href="https://github.com/trailblazer/cells-erb/issues">cells-haml</a>.</li>
 </ol>

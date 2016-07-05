@@ -199,41 +199,44 @@
 
 <h2 id="api">API</h2>
 
-<p>An operation is to be seen as a <em>function</em> as in <em>Functional Programming</em>. You invoke an operation using the implicit <code>::call</code> class method.</p>
+<p>An operation is to be seen as a <em>function</em> as in <em>Functional Programming</em>. You invoke an operation using the implicit <code class="highlighter-rouge">::call</code> class method.</p>
 
-<pre><code>op = Comment::Create.(comment: {body: "MVC is so 90s."})
+<div class="highlighter-rouge"><pre class="highlight"><code>op = Comment::Create.(comment: {body: "MVC is so 90s."})
 </code></pre>
+</div>
 
-<p>This will instantiate the <code>Comment::Create</code> operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.</p>
+<p>This will instantiate the <code class="highlighter-rouge">Comment::Create</code> operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.</p>
 
 <p><strong>Consider this operation instance as a throw-away immutable object.</strong> Don’t use it for anything but presentation or you will have unwanted side-effects.</p>
 
 <h2 id="operation-class">Operation Class</h2>
 
-<p>All you need in an operation is a <code>#process</code> method.</p>
+<p>All you need in an operation is a <code class="highlighter-rouge">#process</code> method.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   def process(params)
     puts params
   end
 end
 </code></pre>
+</div>
 
 <p>Running this operation will result in the following.</p>
 
-<pre><code>Comment::Create.(comment: {body: "MVC is so 90s."})
+<div class="highlighter-rouge"><pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."})
 #=&gt; {comment: {body: "MVC is so 90s."}}
 </code></pre>
+</div>
 
-<p>The params from the invocation get passed into <code>#process</code>.</p>
+<p>The params from the invocation get passed into <code class="highlighter-rouge">#process</code>.</p>
 
 <h2 id="model">Model</h2>
 
-<p>Normally, operations are working on <em>models</em>. This term does absolutely not limit you to ActiveRecord-style ORM models, though, but can be just anything, for example a <code>OpenStruct</code> composition or a ROM model.</p>
+<p>Normally, operations are working on <em>models</em>. This term does absolutely not limit you to ActiveRecord-style ORM models, though, but can be just anything, for example a <code class="highlighter-rouge">OpenStruct</code> composition or a ROM model.</p>
 
-<p>Assigning <code>@model</code> will allow accessing your operation model from the outside.</p>
+<p>Assigning <code class="highlighter-rouge">@model</code> will allow accessing your operation model from the outside.</p>
 
-<pre><code>class Comment::Update &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Update &lt; Trailblazer::Operation
   def process(params)
     @model = Comment.find params[:id]
   end
@@ -242,6 +245,7 @@ end
 op = Comment::Update.(id: 1)
 op.model #=&gt; &lt;Comment id: 1&gt;
 </code></pre>
+</div>
 
 <p>Since every public function in your application is implemented as an operation, you don’t access models directly anymore on the outside.</p>
 
@@ -251,7 +255,7 @@ op.model #=&gt; &lt;Comment id: 1&gt;
 
 <p>This is often done wrong in Rails applications where the controller first instantiates a form and then passes it to a service object. In Trailblazer, the operation is the place for all business logic.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   contract do
     property :body, validates: {presence: true}
   end
@@ -265,20 +269,21 @@ op.model #=&gt; &lt;Comment id: 1&gt;
   end
 end
 </code></pre>
+</div>
 
-<p>Using the <code>::contract</code> block you can define a <code>Reform::Form</code> class that the operation will use for validation (and rendering). <a href="/gems/reform">Any Reform feature</a> like nesting, populators or complex validations can be used here.</p>
+<p>Using the <code class="highlighter-rouge">::contract</code> block you can define a <code class="highlighter-rouge">Reform::Form</code> class that the operation will use for validation (and rendering). <a href="/gems/reform">Any Reform feature</a> like nesting, populators or complex validations can be used here.</p>
 
-<p>The <code>validate</code> block is only executed when the validation was successful and allows you to save the model and run arbitrary post-processing code. Here, we use the contract’s <code>save</code> which will push the validated data to the model and then save it.</p>
+<p>The <code class="highlighter-rouge">validate</code> block is only executed when the validation was successful and allows you to save the model and run arbitrary post-processing code. Here, we use the contract’s <code class="highlighter-rouge">save</code> which will push the validated data to the model and then save it.</p>
 
 <p><a href="/gems/operation/api.html#contract">Learn more</a></p>
 
 <h2 id="operationmodel">Operation::Model</h2>
 
-<p>Normally, a <code>Create</code> operation will instantiate a new model object, whereas <code>Update</code>, <code>Show</code>, or <code>Delete</code> operations need to find a particular model.</p>
+<p>Normally, a <code class="highlighter-rouge">Create</code> operation will instantiate a new model object, whereas <code class="highlighter-rouge">Update</code>, <code class="highlighter-rouge">Show</code>, or <code class="highlighter-rouge">Delete</code> operations need to find a particular model.</p>
 
-<p>This is such a common workflow for CRUD operations that it is built into Trailblazer in the <code>Operation::Model</code> module.</p>
+<p>This is such a common workflow for CRUD operations that it is built into Trailblazer in the <code class="highlighter-rouge">Operation::Model</code> module.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   include Model
   model Comment, :create
 
@@ -293,11 +298,13 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>Now, the operation takes care of creating the model in <code>validate</code>. Note that there is zero coupling to ActiveRecord: <code>Model</code> will only call <code>Comment.new</code> or <code>Comment.find(id)</code> on the configured model class to accomplish its job, allowing any kind of persistence layer with that API.</p>
+<p>Now, the operation takes care of creating the model in <code class="highlighter-rouge">validate</code>. Note that there is zero coupling to ActiveRecord: <code class="highlighter-rouge">Model</code> will only call <code class="highlighter-rouge">Comment.new</code> or <code class="highlighter-rouge">Comment.find(id)</code> on the configured model class to accomplish its job, allowing any kind of persistence layer with that API.</p>
 
-<pre><code>Comment::Create.(comment: {body: "MVC is so 90s."}).model #=&gt; &lt;Comment body="MVC .."&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."}).model #=&gt; &lt;Comment body="MVC .."&gt;
 </code></pre>
+</div>
 
 <p><a href="model.html">Learn more</a></p>
 
@@ -305,28 +312,31 @@ end
 
 <p>There’s two different invocation styles.</p>
 
-<p>The <strong>call style</strong> will return the operation when the validation was successful. With invalid data, it will raise an <code>InvalidContract</code> exception.</p>
+<p>The <strong>call style</strong> will return the operation when the validation was successful. With invalid data, it will raise an <code class="highlighter-rouge">InvalidContract</code> exception.</p>
 
-<pre><code>Comment::Create.(comment: {body: "MVC is so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
 Comment::Create.(comment: {}) #=&gt; exception raised!
 </code></pre>
+</div>
 
 <p>The call style is popular for tests and on the console.</p>
 
-<p>The <strong>run style</strong> returns a result set <code>[result, operation]</code> in both cases.</p>
+<p>The <strong>run style</strong> returns a result set <code class="highlighter-rouge">[result, operation]</code> in both cases.</p>
 
-<pre><code>res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
+<div class="highlighter-rouge"><pre class="highlight"><code>res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
 </code></pre>
+</div>
 
 <p>However, it also accepts a block that’s run in case of a <em>successful validation</em>.</p>
 
-<pre><code>res, operation = Comment::Create.run(comment: {}) do |op|
+<div class="highlighter-rouge"><pre class="highlight"><code>res, operation = Comment::Create.run(comment: {}) do |op|
   # this is not run, because validation not successful.
   puts "Hey, #{op.model} was created!" and return
 end
 
 puts "That's wrong: #{operation.errors}"
 </code></pre>
+</div>
 
 <p>This style is often used in framework bindings for Rails, Lotus or Roda when hooking the operation call into the endpoint.</p>
 
@@ -340,19 +350,20 @@ puts "That's wrong: #{operation.errors}"
 
 <p>Operations are incredibly simple to test. All edge-cases can cleanly be tested in unit tests, without the HTTP overhead.</p>
 
-<pre><code>describe Comment::Create do
+<div class="highlighter-rouge"><pre class="highlight"><code>describe Comment::Create do
   it "works" do
     comment = Comment::Create.(comment: {body: "Operation rules!"}).model
     expect(comment.body).to eq("Operation rules!")
   end
 end
 </code></pre>
+</div>
 
 <h2 id="testing-with-operations">Testing With Operations</h2>
 
 <p>Another huge advantage is: operations can be used in any environment like scripts, background jobs and will do the exact same as in a controller. This is extremely helpful to use operations as a replacement for test factories.</p>
 
-<pre><code>describe Comment::Update do
+<div class="highlighter-rouge"><pre class="highlight"><code>describe Comment::Update do
   it "updates" do
     comment = Comment::Create.(..) # this is a factory.
 
@@ -361,30 +372,34 @@ end
   end
 end
 </code></pre>
+</div>
 
 <h2 id="presenting-operations">Presenting Operations</h2>
 
 <p>The operation is not only helpful for validating and processing data, it can also be used when rendering the form.</p>
 
-<pre><code>operation = Comment::Update.present(id: 1)
+<div class="highlighter-rouge"><pre class="highlight"><code>operation = Comment::Update.present(id: 1)
 </code></pre>
+</div>
 
-<p><code>Comment::Update</code> will now run the model-finding logic and create the form object for you. It will <em>not</em> run <code>#process</code>.</p>
+<p><code class="highlighter-rouge">Comment::Update</code> will now run the model-finding logic and create the form object for you. It will <em>not</em> run <code class="highlighter-rouge">#process</code>.</p>
 
-<pre><code># Operation finds the model..
+<div class="highlighter-rouge"><pre class="highlight"><code># Operation finds the model..
 operation.model #=&gt; &lt;Comment body="FTW!"&gt;
 # and provides the Reform object.
 @form = operation.contract #=&gt; &lt;Reform::Form ..&gt;
 </code></pre>
+</div>
 
 <p>As Reform works with most form builders out-of-the-box, you can pass the form right into it.</p>
 
-<pre><code>= simple_form_for @form do |f|
+<div class="highlighter-rouge"><pre class="highlight"><code>= simple_form_for @form do |f|
   = f.input :body
   = f.button :submit
 </code></pre>
+</div>
 
-<p>This normally covers the logic for two controller actions, e.g. <code>new</code> and <code>create</code>.</p>
+<p>This normally covers the logic for two controller actions, e.g. <code class="highlighter-rouge">new</code> and <code class="highlighter-rouge">create</code>.</p>
 
 <h2 id="more">More</h2>
 

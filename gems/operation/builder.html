@@ -187,11 +187,11 @@
       <div class="columns medium-9 code-content">
         <h1 id="builder">Builder</h1>
 
-<p>Different contexts like <em>“admin user”</em> vs. <em>“signed in”</em> can be handled in the same code asset along with countless <code>if</code>s and <code>else</code>s. Or, you can use polymorphism as it is encouraged by Trailblazer.</p>
+<p>Different contexts like <em>“admin user”</em> vs. <em>“signed in”</em> can be handled in the same code asset along with countless <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">else</code>s. Or, you can use polymorphism as it is encouraged by Trailblazer.</p>
 
 <p>The easiest way is to use normal inheritance for context-specific operations.</p>
 
-<pre><code>class Thing::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
   # generic code, contracts, etc.
 
   class SignedIn &lt; self
@@ -199,46 +199,51 @@
   end
 end
 </code></pre>
+</div>
 
-<p>A <code>builds</code> block allows to let the operation class take care of the instantiation process.</p>
+<p>A <code class="highlighter-rouge">builds</code> block allows to let the operation class take care of the instantiation process.</p>
 
-<pre><code>class Thing::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
   builds -&gt; (params) do
     return SignedIn if params[:current_user]
   end
 </code></pre>
+</div>
 
-<p>When running the top-level operation, the builder will instantiate the correct subclass according to the <code>params</code> environment.</p>
+<p>When running the top-level operation, the builder will instantiate the correct subclass according to the <code class="highlighter-rouge">params</code> environment.</p>
 
-<pre><code>op = Thing::Create.(current_user: admin)
+<div class="highlighter-rouge"><pre class="highlight"><code>op = Thing::Create.(current_user: admin)
 op.class #=&gt; Thing::Create::SignedIn
 </code></pre>
+</div>
 
-<p>If the <code>builds</code> block doesn’t return a constant, the original constant will be used for instantiation. In our example, this would resolve to <code>Thing::Create</code>.</p>
+<p>If the <code class="highlighter-rouge">builds</code> block doesn’t return a constant, the original constant will be used for instantiation. In our example, this would resolve to <code class="highlighter-rouge">Thing::Create</code>.</p>
 
 <h2 id="shared-builders">Shared Builders</h2>
 
-<p><code>builds</code> blocks are <em>not inherited</em>. You can copy them to other classes, though.</p>
+<p><code class="highlighter-rouge">builds</code> blocks are <em>not inherited</em>. You can copy them to other classes, though.</p>
 
-<pre><code>class Thing::Update &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Update &lt; Trailblazer::Operation
   self.builder_class = Create.builder_class
 </code></pre>
+</div>
 
 <p>Be careful about constant resolving here: the block you copied has to have runtime evaluation of constants.</p>
 
-<pre><code>class Thing::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
   builds -&gt; (params) do
     return self::SignedIn if # ...
   end
 </code></pre>
+</div>
 
-<p>Now, the block can safely be copied to other classes where <code>SignedIn</code> will be resolved in the new context.</p>
+<p>Now, the block can safely be copied to other classes where <code class="highlighter-rouge">SignedIn</code> will be resolved in the new context.</p>
 
 <h2 id="resolver">Resolver</h2>
 
 <p>A resolver allows you to use both the operation model and the policy in the builder.</p>
 
-<pre><code>class Thing::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
   include Resolver
 
   policy Thing::Policy, :create?
@@ -249,14 +254,15 @@ op.class #=&gt; Thing::Create::SignedIn
     return SignedIn if params[:current_user]
   end
 </code></pre>
+</div>
 
-<p>Please note that the <code>builds</code> block is run in class context, no operation instance is available, yet. It is important to understand that <code>Resolver</code> also changes the way the operation’s model is created/found. This, too, happens on the class layer, now.</p>
+<p>Please note that the <code class="highlighter-rouge">builds</code> block is run in class context, no operation instance is available, yet. It is important to understand that <code class="highlighter-rouge">Resolver</code> also changes the way the operation’s model is created/found. This, too, happens on the class layer, now.</p>
 
-<p>You have to configure the CRUD module using <code>::model</code> so the operation can instantiate the correct model for the builder.</p>
+<p>You have to configure the CRUD module using <code class="highlighter-rouge">::model</code> so the operation can instantiate the correct model for the builder.</p>
 
 <p>If you want to change the way the model is created, you have to do so on the class level.</p>
 
-<pre><code>class Thing::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
   include Resolver
   # ..
 
@@ -264,8 +270,9 @@ op.class #=&gt; Thing::Create::SignedIn
     Thing.find_by(slug: params[:slug])
   end
 </code></pre>
+</div>
 
-<p>Do <em>not</em> include <code>CRUD</code> when using <code>Resolver</code>.</p>
+<p>Do <em>not</em> include <code class="highlighter-rouge">CRUD</code> when using <code class="highlighter-rouge">Resolver</code>.</p>
 
       </div>
     </div>

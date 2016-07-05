@@ -189,13 +189,14 @@
 
 <h2 id="debugging">Debugging</h2>
 
-<p>Representable is a generic mapper using recursions, pipelines and things that might be hard to understand from the outside. That’s why we got the <code>Debug</code> module which will give helpful output about what it’s doing when parsing or rendering.</p>
+<p>Representable is a generic mapper using recursions, pipelines and things that might be hard to understand from the outside. That’s why we got the <code class="highlighter-rouge">Debug</code> module which will give helpful output about what it’s doing when parsing or rendering.</p>
 
 <p>You can extend objects on the run to see what they’re doing.</p>
 
-<pre><code>SongRepresenter.new(song).extend(Representable::Debug).from_json("..")
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).extend(Representable::Debug).from_json("..")
 SongRepresenter.new(song).extend(Representable::Debug).to_json
 </code></pre>
+</div>
 
 <p>It’s probably a good idea not to do this in production.</p>
 

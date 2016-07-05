@@ -187,11 +187,11 @@
       <div class="columns medium-9 code-content">
         <h1 id="twin-default">Twin: Default</h1>
 
-<p>Twins allow default values to be set on the twin. This is provided by the <code>Default</code> module.</p>
+<p>Twins allow default values to be set on the twin. This is provided by the <code class="highlighter-rouge">Default</code> module.</p>
 
-<p>Default values can be set via <code>:default</code>.</p>
+<p>Default values can be set via <code class="highlighter-rouge">:default</code>.</p>
 
-<pre><code>class AlbumTwin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
   feature Default
 
   property :title, default: "The Greatest Songs Ever Written"
@@ -200,16 +200,17 @@
   end
 end
 </code></pre>
+</div>
 
-<p>The default value is applied when the model’s getter returns <code>nil</code> in <code>Setup</code>.</p>
+<p>The default value is applied when the model’s getter returns <code class="highlighter-rouge">nil</code> in <code class="highlighter-rouge">Setup</code>.</p>
 
 <p>Note that this also works for nested properties.</p>
 
 <h2 id="struct-defaults">Struct Defaults</h2>
 
-<p>Defaults also work for <code>Struct</code>.</p>
+<p>Defaults also work for <code class="highlighter-rouge">Struct</code>.</p>
 
-<pre><code>class AlbumTwin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
   feature Default
 
   property :settings, default: Hash.new do
@@ -223,22 +224,25 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>You can now access nested hashes even if they were not present initially.</p>
 
-<pre><code>album = Album.new
+<div class="highlighter-rouge"><pre class="highlight"><code>album = Album.new
 album.settings #=&gt; nil
 
 twin = AlbumTwin.new(album)
 twin.settings.enabled #=&gt; "yes"
 twin.settings.roles.admin #=&gt; "maybe"
 </code></pre>
+</div>
 
-<p>Naturally, this will then write a valid hash back in <code>sync</code>.</p>
+<p>Naturally, this will then write a valid hash back in <code class="highlighter-rouge">sync</code>.</p>
 
-<pre><code>twin.sync
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.sync
 album.settings #=&gt; {"enabled"=&gt;"yes", "roles"=&gt;{"admin"=&gt;"maybe"}}
 </code></pre>
+</div>
 
       </div>
     </div>

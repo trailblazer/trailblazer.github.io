@@ -195,42 +195,46 @@
 
 <p>It works with both engine cells and application cells.</p>
 
-<pre><code>├── cells
+<div class="highlighter-rouge"><pre class="highlight"><code>├── cells
 │   ├── comment_cell.rb
 │   ├── comment
 │   │   ├── show.haml
 │   │   ├── comment.css
 │   │   ├── comment.coffee
 </code></pre>
+</div>
 
-<p>You need to register the cells with bundled assets. Preferably, this happens in <code>config/application.rb</code> of the main application.</p>
+<p>You need to register the cells with bundled assets. Preferably, this happens in <code class="highlighter-rouge">config/application.rb</code> of the main application.</p>
 
-<pre><code>class Application &lt; Rails::Application
+<div class="highlighter-rouge"><pre class="highlight"><code>class Application &lt; Rails::Application
   # ..
   config.cells.with_assets = ["comment_cell"]
 </code></pre>
+</div>
 
-<p>The names added to <code>with_assets</code> have to be the fully qualified, underscored cell name. They will get <code>constantize</code>d to find the cell name at runtime.</p>
+<p>The names added to <code class="highlighter-rouge">with_assets</code> have to be the fully qualified, underscored cell name. They will get <code class="highlighter-rouge">constantize</code>d to find the cell name at runtime.</p>
 
-<p>If using namespaces, this might be something along <code>config.cells.with_assets = ["my_engine/song/cell"]</code>.</p>
+<p>If using namespaces, this might be something along <code class="highlighter-rouge">config.cells.with_assets = ["my_engine/song/cell"]</code>.</p>
 
-<p>In <code>app/assets/application.js</code>, you need to add the cell JavaScript assets manually.</p>
+<p>In <code class="highlighter-rouge">app/assets/application.js</code>, you need to add the cell JavaScript assets manually.</p>
 
-<pre><code>//=# require comments
+<div class="highlighter-rouge"><pre class="highlight"><code>//=# require comments
 </code></pre>
+</div>
 
-<p>Likewise, you have to reference the cell’s CSS files in <code>app/assets/application.css</code>.</p>
+<p>Likewise, you have to reference the cell’s CSS files in <code class="highlighter-rouge">app/assets/application.css</code>.</p>
 
-<pre><code>/*
+<div class="highlighter-rouge"><pre class="highlight"><code>/*
  *= require comment
  */
 </code></pre>
+</div>
 
 <h2 id="asset-pipeline-with-trailblazer">Asset Pipeline With Trailblazer</h2>
 
 <p>With Trailblazer, cells follow a different naming structure.</p>
 
-<pre><code>├── concepts
+<div class="highlighter-rouge"><pre class="highlight"><code>├── concepts
 │   │   └── comment
 │   │       ├── cell
 │   │       │   ├── index.rb
@@ -240,57 +244,64 @@
 │   │           ├── show.haml
 │   │           └── comment.scss
 </code></pre>
+</div>
 
-<p>The <code>comment</code> concept here will provide <code>Comment::Cell::Index</code> and <code>Comment::Cell::Show</code>. Both bundle their assets in the <code>comment/view</code> directory.</p>
+<p>The <code class="highlighter-rouge">comment</code> concept here will provide <code class="highlighter-rouge">Comment::Cell::Index</code> and <code class="highlighter-rouge">Comment::Cell::Show</code>. Both bundle their assets in the <code class="highlighter-rouge">comment/view</code> directory.</p>
 
-<p>To add this to Rails’ asset pipeline, you need to reference one of the cell classes in <code>config/application.rb</code>.</p>
+<p>To add this to Rails’ asset pipeline, you need to reference one of the cell classes in <code class="highlighter-rouge">config/application.rb</code>.</p>
 
-<pre><code>class Application &lt; Rails::Application
+<div class="highlighter-rouge"><pre class="highlight"><code>class Application &lt; Rails::Application
   # ..
   config.cells.with_assets = ["comment/cell/index"] # one of the two is ok.
 </code></pre>
+</div>
 
-<p>You still need to <code>require</code> the JS and CSS files. Here’s an example for <code>app/assets/application.css</code>.</p>
+<p>You still need to <code class="highlighter-rouge">require</code> the JS and CSS files. Here’s an example for <code class="highlighter-rouge">app/assets/application.css</code>.</p>
 
-<pre><code>/*
+<div class="highlighter-rouge"><pre class="highlight"><code>/*
  *= require comment # refers to concepts/comment/view/comment.scss
  */
 </code></pre>
+</div>
 
 <h2 id="assets-troubleshooting">Assets Troubleshooting</h2>
 
-<p>The Asset Pipeline is a complex system. If your assets are not compiled, start debugging in <a href="https://github.com/apotonick/cells/blob/master/lib/cell/railtie.rb">Cells’ railtie</a> and uncomment the <code>puts</code> in the <code>cells.update_asset_paths</code> initializer to see what directories get added.</p>
+<p>The Asset Pipeline is a complex system. If your assets are not compiled, start debugging in <a href="https://github.com/apotonick/cells/blob/master/lib/cell/railtie.rb">Cells’ railtie</a> and uncomment the <code class="highlighter-rouge">puts</code> in the <code class="highlighter-rouge">cells.update_asset_paths</code> initializer to see what directories get added.</p>
 
-<p>Cell classes need to be loaded when precompiling assets! Make sure your <code>application.rb</code> contains the following setting (per default, this is turned <em>on</em>).</p>
+<p>Cell classes need to be loaded when precompiling assets! Make sure your <code class="highlighter-rouge">application.rb</code> contains the following setting (per default, this is turned <em>on</em>).</p>
 
-<pre><code>config.assets.initialize_on_precompile = true
+<div class="highlighter-rouge"><pre class="highlight"><code>config.assets.initialize_on_precompile = true
 </code></pre>
+</div>
 
 <p>You need to compile assets using this command, which is <a href="http://stackoverflow.com/a/12167790/465070">explained here</a>.</p>
 
-<pre><code>rake assets:precompile:all RAILS_ENV=development RAILS_GROUPS=assets
+<div class="highlighter-rouge"><pre class="highlight"><code>rake assets:precompile:all RAILS_ENV=development RAILS_GROUPS=assets
 </code></pre>
+</div>
 
 <h2 id="global-partials">Global Partials</h2>
 
 <p>Although not recommended, you can also render global partials from a cell. Be warned, though, that they will be rendered using our stack, and you might have to include helpers into your view model.</p>
 
-<p>This works by including <code>Partial</code> and the corresponding <code>:partial</code> option.</p>
+<p>This works by including <code class="highlighter-rouge">Partial</code> and the corresponding <code class="highlighter-rouge">:partial</code> option.</p>
 
-<pre><code class="language-ruby">class Cell &lt; Cell::ViewModel
-  include Partial
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="no">Partial</span>
 
-  def show
-    render partial: "../views/shared/map.html" # app/views/shared/map.html.haml
-  end
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="ss">partial: </span><span class="s2">"../views/shared/map.html"</span> <span class="c1"># app/views/shared/map.html.haml</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The provided path is relative to your cell’s <code>::view_paths</code> directory. The format has to be added to the file name, the template engine suffix will be used from the cell.</p>
+<p>The provided path is relative to your cell’s <code class="highlighter-rouge">::view_paths</code> directory. The format has to be added to the file name, the template engine suffix will be used from the cell.</p>
 
-<p>You can provide the format in the <code>render</code> call, too.</p>
+<p>You can provide the format in the <code class="highlighter-rouge">render</code> call, too.</p>
 
-<pre><code class="language-ruby">render partial: "../views/shared/map", formats: [:html]
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">render</span> <span class="ss">partial: </span><span class="s2">"../views/shared/map"</span><span class="p">,</span> <span class="ss">formats: </span><span class="p">[</span><span class="ss">:html</span><span class="p">]</span>
 </code></pre>
+</div>
 
 <p>This was mainly added to provide compatibility with 3rd-party gems like <a href="https://github.com/apotonick/kaminari-cells">Kaminari and Cells</a> that rely on rendering partials within a cell.</p>
 
@@ -298,76 +309,83 @@
 
 <p>In Rails, you can generate cells and concept cells.</p>
 
-<pre><code>rails generate cell comment
+<div class="highlighter-rouge"><pre class="highlight"><code>rails generate cell comment
 </code></pre>
+</div>
 
 <p>Or, TRB-style concept cells.</p>
 
-<pre><code>rails generate concept comment
+<div class="highlighter-rouge"><pre class="highlight"><code>rails generate concept comment
 </code></pre>
+</div>
 
 <h2 id="engine-cells">Engine Cells</h2>
 
 <p>You can bundle cells into Rails engines and maximize a clean, component architecture by making your view models easily distributable and overridable.</p>
 
-<p>This pretty much works out-of-the-box, you write cells and push them into an engine. The only thing differing is that engine cells have to set their <code>view_paths</code> manually to point to the gem directory.</p>
+<p>This pretty much works out-of-the-box, you write cells and push them into an engine. The only thing differing is that engine cells have to set their <code class="highlighter-rouge">view_paths</code> manually to point to the gem directory.</p>
 
 <h2 id="engine-view-paths">Engine View Paths</h2>
 
-<p>Each engine cell has to set its <code>view_paths</code>.</p>
+<p>Each engine cell has to set its <code class="highlighter-rouge">view_paths</code>.</p>
 
 <p>The easiest way is to do this in a base cell in your engine.</p>
 
-<pre><code>module MyEngine
+<div class="highlighter-rouge"><pre class="highlight"><code>module MyEngine
   class Cell &lt; Cell::Concept
     view_paths = ["#{MyEngine::Engine.root}/app/concepts"]
   end
 end
 </code></pre>
+</div>
 
-<p>The <code>view_paths</code> is inherited, you only have to define it once when using inheritance within your engine.</p>
+<p>The <code class="highlighter-rouge">view_paths</code> is inherited, you only have to define it once when using inheritance within your engine.</p>
 
-<pre><code>module MyEngine
+<div class="highlighter-rouge"><pre class="highlight"><code>module MyEngine
   class Song::Cell &lt; Cell # inherits from MyEngine::Cell
 </code></pre>
+</div>
 
-<p>This will <em>not</em> allow overriding views of this engine cell in <code>app/cells</code> as it is not part of the engine cell’s <code>view_paths</code>. When rendering <code>MyEngine::User::Cell</code> or a subclass, it will <em>not</em> look in <code>app/cells</code>.</p>
+<p>This will <em>not</em> allow overriding views of this engine cell in <code class="highlighter-rouge">app/cells</code> as it is not part of the engine cell’s <code class="highlighter-rouge">view_paths</code>. When rendering <code class="highlighter-rouge">MyEngine::User::Cell</code> or a subclass, it will <em>not</em> look in <code class="highlighter-rouge">app/cells</code>.</p>
 
 <p>To achieve just that, you may append the engine’s view path instead of overwriting it.</p>
 
-<pre><code>class MyEngine::User::Cell &lt; Cell::Concept
+<div class="highlighter-rouge"><pre class="highlight"><code>class MyEngine::User::Cell &lt; Cell::Concept
   view_paths &lt;&lt; "#{MyEngine::Engine.root}/app/concepts"
 end
 </code></pre>
+</div>
 
 <h2 id="engine-render-problems">Engine Render problems</h2>
 
-<p>You might have to include cells’ template gem into your <strong>application’s</strong> <code>Gemfile</code>. This will properly require the extension.</p>
+<p>You might have to include cells’ template gem into your <strong>application’s</strong> <code class="highlighter-rouge">Gemfile</code>. This will properly require the extension.</p>
 
 <h2 id="engine-namespace-helpers">Engine Namespace Helpers</h2>
 
 <p>If you need namespaced helpers, include the respective helper in your engine cell.</p>
 
-<pre><code class="language-ruby">module MyEngine
-  class CommentCell &lt; Cell::ViewModel
-    include Engine.routes.url_helpers
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">MyEngine</span>
+  <span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+    <span class="kp">include</span> <span class="no">Engine</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">url_helpers</span>
 
-    def comment_url
-      link_to model.title, engine_specific_path_without_any_namespaces_needed
-    end
-  end
-end
+    <span class="k">def</span> <span class="nf">comment_url</span>
+      <span class="n">link_to</span> <span class="n">model</span><span class="p">.</span><span class="nf">title</span><span class="p">,</span> <span class="n">engine_specific_path_without_any_namespaces_needed</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<pre><code># application Gemfile
+<div class="highlighter-rouge"><pre class="highlight"><code># application Gemfile
 gem "cells-erb"
 </code></pre>
+</div>
 
 <h2 id="translation-and-i18n-helper">Translation and I18N Helper</h2>
 
-<p>You can use the <code>#t</code> helper.</p>
+<p>You can use the <code class="highlighter-rouge">#t</code> helper.</p>
 
-<pre><code>require "cell/translation"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "cell/translation"
 
 class Admin::Comment::Cell &lt; Cell::Concept
   include ActionView::Helpers::TranslationHelper
@@ -378,25 +396,28 @@ class Admin::Comment::Cell &lt; Cell::Concept
   end
 end
 </code></pre>
+</div>
 
-<p>This will lookup the I18N path <code>admin.comment.greeting</code>.</p>
+<p>This will lookup the I18N path <code class="highlighter-rouge">admin.comment.greeting</code>.</p>
 
-<p>Setting a differing translation path works with <code>::translation_path</code>.</p>
+<p>Setting a differing translation path works with <code class="highlighter-rouge">::translation_path</code>.</p>
 
-<pre><code>class Admin::Comment::Cell &lt; Cell::Concept
+<div class="highlighter-rouge"><pre class="highlight"><code>class Admin::Comment::Cell &lt; Cell::Concept
   include Cell::Translation
   self.translation_path = "cell.admin"
 </code></pre>
+</div>
 
-<p>The lookup will now be <code>cell.admin.greeting</code>.</p>
+<p>The lookup will now be <code class="highlighter-rouge">cell.admin.greeting</code>.</p>
 
 <h2 id="asset-helper">Asset Helper</h2>
 
-<p>When using asset path helpers like <code>image_tag</code> that render different paths in production, please simply delegate to the controller.</p>
+<p>When using asset path helpers like <code class="highlighter-rouge">image_tag</code> that render different paths in production, please simply delegate to the controller.</p>
 
-<pre><code>class Comment::Cell &lt; Cell::Concept
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Cell &lt; Cell::Concept
   delegates :parent_controller, :image_tag
 </code></pre>
+</div>
 
 <p>The delegation fixes the <a href="https://github.com/apotonick/cells/issues/214">well-known problem</a> of the cell rendering the “wrong” path when using Sprockets. Please note that this fix is necessary due to the way Rails includes helpers and accesses global data.</p>
 

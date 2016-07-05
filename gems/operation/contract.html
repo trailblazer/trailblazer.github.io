@@ -195,62 +195,65 @@
 
 <p>Contracts don’t have to map to one model, only.</p>
 
-<p>If your contract embraces several models using <code>Composition</code>, you can easily pass the composition hash via <code>validate</code>. Note that composition is a <a href="/gems/reform/#composition">Reform feature</a>. Do not forget the <code>on:</code> option when defining your compositional mapping.</p>
+<p>If your contract embraces several models using <code class="highlighter-rouge">Composition</code>, you can easily pass the composition hash via <code class="highlighter-rouge">validate</code>. Note that composition is a <a href="/gems/reform/#composition">Reform feature</a>. Do not forget the <code class="highlighter-rouge">on:</code> option when defining your compositional mapping.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  contract do
-    include Reform::Form::Composition
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Composition</span>
 
-    property :id,   on: :comment
-    property :name, on: :author
-  end
+    <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>   <span class="ss">on: :comment</span>
+    <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">on: :author</span>
+  <span class="k">end</span>
 
-  def process(params)
-    comment = Comment.find(params[:id])
-    author  = comment.author
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="no">Comment</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+    <span class="n">author</span>  <span class="o">=</span> <span class="n">comment</span><span class="p">.</span><span class="nf">author</span>
 
-    validate(params, comment: comment, author: author)
-  end
-end
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">comment: </span><span class="n">comment</span><span class="p">,</span> <span class="ss">author: </span><span class="n">author</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The second argument to <code>validate</code> is the contract’s model. As per Reform’s API, for compositions this must be a hash.</p>
+<p>The second argument to <code class="highlighter-rouge">validate</code> is the contract’s model. As per Reform’s API, for compositions this must be a hash.</p>
 
 <h2 id="injection">Injection</h2>
 
-<p>It is possible to inject additional dependencies into the contract, which are not part of the original model(s). This often is a <code>current_user</code> or the operation instance itself.</p>
+<p>It is possible to inject additional dependencies into the contract, which are not part of the original model(s). This often is a <code class="highlighter-rouge">current_user</code> or the operation instance itself.</p>
 
-<p>Those dependencies have to be virtual properties in the contract. They can then be passed as the third argument to <code>validate</code>.</p>
+<p>Those dependencies have to be virtual properties in the contract. They can then be passed as the third argument to <code class="highlighter-rouge">validate</code>.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  contract do
-    property :current_user, virtual: true
-    property :operation,    virtual: true
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:current_user</span><span class="p">,</span> <span class="ss">virtual: </span><span class="kp">true</span>
+    <span class="n">property</span> <span class="ss">:operation</span><span class="p">,</span>    <span class="ss">virtual: </span><span class="kp">true</span>
+  <span class="k">end</span>
 
-  def process(params)
-    validate(params, model,
-      current_user: params[:current_user],
-      operation:    self) do |f|
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span>
+      <span class="ss">current_user: </span><span class="n">params</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">],</span>
+      <span class="ss">operation:    </span><span class="nb">self</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
 
-    end
-  end
-end
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The same semantics apply to <code>contract</code>.</p>
+<p>The same semantics apply to <code class="highlighter-rouge">contract</code>.</p>
 
 <h2 id="contract-method">contract! Method</h2>
 
-<p>To automate injection or composition, you can override <code>Operation#contract!</code>.</p>
+<p>To automate injection or composition, you can override <code class="highlighter-rouge">Operation#contract!</code>.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
 
-private
-  def contract!(model, options, contract_class)
-    contract_class.new(model, current_user: @current_user)
-  end
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">contract!</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">contract_class</span><span class="p">)</span>
+    <span class="n">contract_class</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="ss">current_user: </span><span class="vi">@current_user</span><span class="p">)</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
       </div>
     </div>

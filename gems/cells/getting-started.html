@@ -191,7 +191,7 @@
 
 <p>Cells is a replacement for ActionView and used in many Rails projects. However, Cells can be used in any web framework such as Sinatra or Hanami.</p>
 
-<p>This guide discusses how to get started with <code>Trailblazer::Cell</code>, the canonical view model implementation following the Trailblazer file and naming structure. Don’t worry, <code>Trailblazer::Cell</code> can be used without Trailblazer.</p>
+<p>This guide discusses how to get started with <code class="highlighter-rouge">Trailblazer::Cell</code>, the canonical view model implementation following the Trailblazer file and naming structure. Don’t worry, <code class="highlighter-rouge">Trailblazer::Cell</code> can be used without Trailblazer.</p>
 
 <h2 id="refactoring-legacy-views">Refactoring Legacy Views</h2>
 
@@ -201,11 +201,11 @@
 
 <p>Since this is quite a bit of logic, it’s a good idea to encapsulate that into an object.</p>
 
-<p>Here’s what the old legacy <code>layout.html.haml</code> looks like.</p>
+<p>Here’s what the old legacy <code class="highlighter-rouge">layout.html.haml</code> looks like.</p>
 
-<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-36-0-haml">HAML</a></li>
-<li class="tab-title"><a href="#tabs-36-1-erb">ERB</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-36-0-haml">
+<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-1-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-1-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-1-0-haml">
 <pre><code>%html
   %head
 
@@ -221,7 +221,7 @@
             "SIGN IN"
 </code></pre>
 </div>
-<div class="content" id="tabs-36-1-erb">
+<div class="content" id="tabs-1-1-erb">
 <pre><code>&lt;html&gt;
   &lt;head&gt;&lt;/head&gt;
 
@@ -246,17 +246,17 @@
 
 <h2 id="extraction">Extraction</h2>
 
-<p>In order to convert all markup below the <code>&lt;nav&gt;</code> node into a cell, we first need to add the respective gems to our <code>Gemfile</code>.</p>
+<p>In order to convert all markup below the <code class="highlighter-rouge">&lt;nav&gt;</code> node into a cell, we first need to add the respective gems to our <code class="highlighter-rouge">Gemfile</code>.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-37-0-ruby">Ruby</a></li>
-<li class="tab-title"><a href="#tabs-37-1-rails">Rails</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-37-0-ruby"><p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-2-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-2-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-2-0-ruby"><p>For now, all you need is the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
 
 <pre><code>gem "trailblazer-cells"
 gem "cells-hamlit"
 </code></pre>
 </div>
-<div class="content" id="tabs-37-1-rails"><p>In Rails, you need the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
+<div class="content" id="tabs-2-1-rails"><p>In Rails, you need the <code>trailblazer-cells</code> gem and the Cells template engine.</p>
 
 <pre><code>gem "trailblazer-cells"
 gem "cells-hamlit"
@@ -266,22 +266,22 @@ gem "cells-rails"
 <p>The <code>cells-rails</code> gem will add cell invocation helpers to controllers and views, and supply the URL helpers in cells.</p>
 </div></div></div>
 
-<p>Please note that <code>trailblazer-cells</code> simply loads the <code>cells</code> gem and then adds some simple semantics on top of it. Also, <a href="api.html#template-formats">Cells supports Haml, Hamlit, ERB, and Slim</a>.</p>
+<p>Please note that <code class="highlighter-rouge">trailblazer-cells</code> simply loads the <code class="highlighter-rouge">cells</code> gem and then adds some simple semantics on top of it. Also, <a href="api.html#template-formats">Cells supports Haml, Hamlit, ERB, and Slim</a>.</p>
 
-<p>Cut the <code>%nav</code> fragment from the original <code>layout.html.haml</code> and replace it with the cell invocation.</p>
+<p>Cut the <code class="highlighter-rouge">%nav</code> fragment from the original <code class="highlighter-rouge">layout.html.haml</code> and replace it with the cell invocation.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-40-0-ruby">Ruby</a></li>
-<li class="tab-title"><a href="#tabs-40-1-rails">Rails</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-40-0-ruby"><div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-38-0-haml">HAML</a></li>
-<li class="tab-title"><a href="#tabs-38-1-erb">ERB</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-38-0-haml"><pre><code>%html
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-3-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-3-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-3-0-ruby"><div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-4-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-4-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-4-0-haml"><pre><code>%html
   %head
 
   %body
     = Pro::Cell::Navigation.(nil, current_user: current_user).()
 </code></pre>
 </div>
-<div class="content" id="tabs-38-1-erb">
+<div class="content" id="tabs-4-1-erb">
 <pre><code>&lt;html&gt;
   &lt;head&gt;&lt;/head&gt;
 
@@ -294,10 +294,10 @@ gem "cells-rails"
 
 <p>Cells can be invoked using the call style.</p>
 </div>
-<div class="content" id="tabs-40-1-rails">
-<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-39-0-haml">HAML</a></li>
-<li class="tab-title"><a href="#tabs-39-1-erb">ERB</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-39-0-haml">
+<div class="content" id="tabs-3-1-rails">
+<div class="tabs-container code-only"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-5-0-haml">HAML</a></li>
+<li class="tab-title"><a href="#tabs-5-1-erb">ERB</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-5-0-haml">
 <pre><code>%html
   %head
 
@@ -305,7 +305,7 @@ gem "cells-rails"
     = cell(Pro::Cell::Navigation, nil, current_user: current_user)
 </code></pre>
 </div>
-<div class="content" id="tabs-39-1-erb">
+<div class="content" id="tabs-5-1-erb">
 <pre><code>&lt;html&gt;
   &lt;head&gt;&lt;/head&gt;
 
@@ -319,17 +319,17 @@ gem "cells-rails"
 <p>In Rails, you can use the handy <code>cell</code> helper to invoke the view model.</p>
 </div></div></div>
 
-<p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code>Pro::Cell::Navigation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
+<p>Instead of keeping navigation view code in the layout, or rendering a partial, the <code class="highlighter-rouge">Pro::Cell::Navigation</code> cell is now responsible to provide the HTML fragment representing the menu bar.</p>
 
-<p>The cell is invoked without a <em>model</em>, but we pass in the <code>current_user</code> as an <em>option</em>. This code assumes that the <code>current_user</code> object is available in the layout view. As the current user is passed from your web framework to the cell, this is called an <em>dependency injection</em>.</p>
+<p>The cell is invoked without a <em>model</em>, but we pass in the <code class="highlighter-rouge">current_user</code> as an <em>option</em>. This code assumes that the <code class="highlighter-rouge">current_user</code> object is available in the layout view. As the current user is passed from your web framework to the cell, this is called an <em>dependency injection</em>.</p>
 
 <p>We will learn what models and options are soon.</p>
 
 <h2 id="navigation-cell">Navigation Cell</h2>
 
-<p>Having extracted the “partial” from the layout, paste it into a new file <code>app/concepts/pro/view/navigation.haml</code>.</p>
+<p>Having extracted the “partial” from the layout, paste it into a new file <code class="highlighter-rouge">app/concepts/pro/view/navigation.haml</code>.</p>
 
-<pre><code>%nav.top-bar
+<div class="highlighter-rouge"><pre class="highlight"><code>%nav.top-bar
   %ul
     %li SUPPORT CHAT
     %li GUIDES
@@ -339,32 +339,34 @@ gem "cells-rails"
       - else
         "SIGN IN"
 </code></pre>
+</div>
 
-<p>Creating a view for the cell in the correct directory is one thing. A cell is more than just a partial, it also needs a class file where the logic sits. This class goes to <code>app/concepts/pro/cell/navigation.rb</code>.</p>
+<p>Creating a view for the cell in the correct directory is one thing. A cell is more than just a partial, it also needs a class file where the logic sits. This class goes to <code class="highlighter-rouge">app/concepts/pro/cell/navigation.rb</code>.</p>
 
-<pre><code class="language-ruby">module Pro
-  module Cell
-    class Navigation &lt; Trailblazer::Cell
-      include ::Cell::Hamlit
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Pro</span>
+  <span class="k">module</span> <span class="nn">Cell</span>
+    <span class="k">class</span> <span class="nc">Navigation</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+      <span class="kp">include</span> <span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Hamlit</span>
 
-      def signed_in?
-        options[:current_user]
-      end
+      <span class="k">def</span> <span class="nf">signed_in?</span>
+        <span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span>
+      <span class="k">end</span>
 
-      def email
-        options[:current_user].email
-      end
+      <span class="k">def</span> <span class="nf">email</span>
+        <span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">].</span><span class="nf">email</span>
+      <span class="k">end</span>
 
-      def avatar_url
-         hexed = Digest::MD5.hexdigest(email)
-        "https://www.gravatar.com/avatar/#{hexed}?s=36"
-      end
-    end
-  end
-end
+      <span class="k">def</span> <span class="nf">avatar_url</span>
+         <span class="n">hexed</span> <span class="o">=</span> <span class="no">Digest</span><span class="o">::</span><span class="no">MD5</span><span class="p">.</span><span class="nf">hexdigest</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+        <span class="s2">"https://www.gravatar.com/avatar/</span><span class="si">#{</span><span class="n">hexed</span><span class="si">}</span><span class="s2">?s=36"</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The reason the cell class lives in the <code>Pro</code> namespace is because that’s the example app’s name and its top-level namespace. Since the navigation cell is an app-wide concept, it is best put into the <code>Pro</code> namespace.</p>
+<p>The reason the cell class lives in the <code class="highlighter-rouge">Pro</code> namespace is because that’s the example app’s name and its top-level namespace. Since the navigation cell is an app-wide concept, it is best put into the <code class="highlighter-rouge">Pro</code> namespace.</p>
 
 <p>Adding the class is enough to re-render your application, and you will see, the navigation menu now comes from a cell, presenting you with a hip gravatar icon when logged in, or a string to do so otherwise. Congratulations.</p>
 
@@ -375,10 +377,10 @@ end
 <p>Let’s quickly discuss what happens here in what order. After this section, you will understand how cells work and probably already plan where else to use them. They’re really simple!</p>
 
 <ol>
-  <li>Invoking the cell in the layout via <code>Pro::Cell::Navigation.(nil, current_user: current_user).()</code> will instantiate the cell object and internally invoke the cell’s default rendering method, named <code>show</code>. This method is automatically provided and simply renders the corresponding view.</li>
-  <li>Since the cell class name is <code>Pro::Cell::Navigation</code>, this cell will render the view <code>concepts/pro/view/navigation.haml</code>. This is following the Trailblazer naming style.</li>
-  <li>In the cell’s view, two “helpers” are called: <code>signed_in?</code> and <code>avatar_url</code>. Whatsoever, the concept of a “helper” in Cells doesn’t exist anymore. Any method or variable called in the view must be an <em>instance method</em> on the cell itself. This is why the cell class defines those two methods, and not some arbitrary helper module.</li>
-  <li>Dependencies like the <code>current_user</code> have to get injected from the outer world when invoking the cell. Later, in the cell, those arguments can be accessed using the <code>options</code> cell method.</li>
+  <li>Invoking the cell in the layout via <code class="highlighter-rouge">Pro::Cell::Navigation.(nil, current_user: current_user).()</code> will instantiate the cell object and internally invoke the cell’s default rendering method, named <code class="highlighter-rouge">show</code>. This method is automatically provided and simply renders the corresponding view.</li>
+  <li>Since the cell class name is <code class="highlighter-rouge">Pro::Cell::Navigation</code>, this cell will render the view <code class="highlighter-rouge">concepts/pro/view/navigation.haml</code>. This is following the Trailblazer naming style.</li>
+  <li>In the cell’s view, two “helpers” are called: <code class="highlighter-rouge">signed_in?</code> and <code class="highlighter-rouge">avatar_url</code>. Whatsoever, the concept of a “helper” in Cells doesn’t exist anymore. Any method or variable called in the view must be an <em>instance method</em> on the cell itself. This is why the cell class defines those two methods, and not some arbitrary helper module.</li>
+  <li>Dependencies like the <code class="highlighter-rouge">current_user</code> have to get injected from the outer world when invoking the cell. Later, in the cell, those arguments can be accessed using the <code class="highlighter-rouge">options</code> cell method.</li>
 </ol>
 
 <p>It is important to understand that the cell has no access to global state. You as the cell author have to define the interface and the dependencies necessary to render the cell.</p>
@@ -391,35 +393,37 @@ end
 
 <p>A very basic test for a cell with signed in user could looks as follows.</p>
 
-<pre><code class="language-ruby">class NavigationCellTest &lt; Minitest::Spec
-  it "renders avatar when user provided" do
-    html = Pro::Cell::Navigation.(nil, current_user: User.find(1)).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NavigationCellTest</span> <span class="o">&lt;</span> <span class="no">Minitest</span><span class="o">::</span><span class="no">Spec</span>
+  <span class="n">it</span> <span class="s2">"renders avatar when user provided"</span> <span class="k">do</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="no">Pro</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Navigation</span><span class="o">.</span><span class="p">(</span><span class="kp">nil</span><span class="p">,</span> <span class="ss">current_user: </span><span class="no">User</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="p">()</span>
 
-    html.must_match "Signed in: nick@trb.to"
-  end
-end
+    <span class="n">html</span><span class="p">.</span><span class="nf">must_match</span> <span class="s2">"Signed in: nick@trb.to"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Likewise, you can easily test the anonymous user case, where no one’s logged in. The unit-test style makes it very easy to simulate that.</p>
 
-<pre><code class="language-ruby">it "renders SIGN IN otherwise" do
-  html = Pro::Cell::Navigation.(nil, current_user: nil).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">it</span> <span class="s2">"renders SIGN IN otherwise"</span> <span class="k">do</span>
+  <span class="n">html</span> <span class="o">=</span> <span class="no">Pro</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Navigation</span><span class="o">.</span><span class="p">(</span><span class="kp">nil</span><span class="p">,</span> <span class="ss">current_user: </span><span class="kp">nil</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
 
-  html.must_match "SIGN IN"
-end
+  <span class="n">html</span><span class="p">.</span><span class="nf">must_match</span> <span class="s2">"SIGN IN"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Make sure to read the <a href="testing.html">full documentation on testing cells</a> for all kinds of environments, including Capybara matchers, Rails and test frameworks such as Minitest and Rspec.</p>
 
 <h2 id="url-helpers">URL helpers</h2>
 
-<p>Besides indicating the logged-in status of the use, the <code>Navigation</code> cell should also display real links. This happens with URL helpers in web frameworks.</p>
+<p>Besides indicating the logged-in status of the use, the <code class="highlighter-rouge">Navigation</code> cell should also display real links. This happens with URL helpers in web frameworks.</p>
 
-<p>In <code>app/concepts/pro/view/navigation.haml</code>, add actual links to the view.</p>
+<p>In <code class="highlighter-rouge">app/concepts/pro/view/navigation.haml</code>, add actual links to the view.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-41-0-ruby">Ruby</a></li>
-<li class="tab-title"><a href="#tabs-41-1-rails">Rails</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-41-0-ruby"><pre><code>%nav
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-6-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-6-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-6-0-ruby"><pre><code>%nav
   %ul
     %li SUPPORT CHAT
       %a{href: "/support"}
@@ -434,7 +438,7 @@ end
 
 <p>Without any URL system, you can create links using Haml, or delegate to your own URL objects.</p>
 </div>
-<div class="content" id="tabs-41-1-rails"><pre><code>%nav
+<div class="content" id="tabs-6-1-rails"><pre><code>%nav
   %ul
     %li
       = link_to "SUPPORT CHAT", chat_path
@@ -452,19 +456,19 @@ end
 
 <h2 id="content-cell">Content Cell</h2>
 
-<p>View models are not only great to encapsulate small fragments, but also the entire content - which is everything but the wrapping layout. For example, when browsing to <code>/comments/1</code>, the content view usually provided by a controller will now come from the <code>Comment::Cell::Show</code> cell. We call this a <em>content cell</em> in Trailblazer-speak.</p>
+<p>View models are not only great to encapsulate small fragments, but also the entire content - which is everything but the wrapping layout. For example, when browsing to <code class="highlighter-rouge">/comments/1</code>, the content view usually provided by a controller will now come from the <code class="highlighter-rouge">Comment::Cell::Show</code> cell. We call this a <em>content cell</em> in Trailblazer-speak.</p>
 
 <p>In the controller, invoke this new cell instead of letting the framework render the content.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-42-0-ruby">Ruby</a></li>
-<li class="tab-title"><a href="#tabs-42-1-rails">Rails</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-42-0-ruby"><pre><code>def show
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-7-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-7-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-7-0-ruby"><pre><code>def show
   comment = Comment.find(1)
   html = Comment::Cell::Show.(comment).()
 end
 </code></pre>
 </div>
-<div class="content" id="tabs-42-1-rails"><pre><code>class CommentsController &lt; ApplicationController
+<div class="content" id="tabs-7-1-rails"><pre><code>class CommentsController &lt; ApplicationController
   def show
     comment = Comment.find(1)
     render html: cell(Comment::Cell::Show, comment)
@@ -475,61 +479,65 @@ end
 <p>This instructs the controller to render the <code>Comment::Cell::Show</code> cell, pass the <code>comment</code> into it, and let Rails wrap it in the application layout.</p>
 </div></div></div>
 
-<p>Note that we now pass the <code>comment</code> as the cell’s <em>model</em> without passing any additional <em>options</em>.</p>
+<p>Note that we now pass the <code class="highlighter-rouge">comment</code> as the cell’s <em>model</em> without passing any additional <em>options</em>.</p>
 
-<p>The new class lives in <code>app/concepts/comment/cell/show.rb</code>.</p>
+<p>The new class lives in <code class="highlighter-rouge">app/concepts/comment/cell/show.rb</code>.</p>
 
-<pre><code class="language-ruby">module Comment::Cell
-  class Show &lt; Trailblazer::Cell
-    property :body
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment::Cell</span>
+  <span class="k">class</span> <span class="nc">Show</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The <code>property</code> method creates a shortcut to <code>model.body</code>.</p>
+<p>The <code class="highlighter-rouge">property</code> method creates a shortcut to <code class="highlighter-rouge">model.body</code>.</p>
 
-<p>The view for this cell goes into <code>app/concepts/comment/view/show.haml</code>.</p>
+<p>The view for this cell goes into <code class="highlighter-rouge">app/concepts/comment/view/show.haml</code>.</p>
 
-<pre><code>%h1 Comment #{model.id}
+<div class="highlighter-rouge"><pre class="highlight"><code>%h1 Comment #{model.id}
 %p
   = body
 </code></pre>
+</div>
 
-<p>In views, you can access the model via the <code>model</code> method. In this example, this is the <code>comment</code> instance we passed into the cell when invoking.</p>
+<p>In views, you can access the model via the <code class="highlighter-rouge">model</code> method. In this example, this is the <code class="highlighter-rouge">comment</code> instance we passed into the cell when invoking.</p>
 
 <h2 id="layout-cell">Layout Cell</h2>
 
 <p>To render the entire page with Cells, the last missing piece is the layout. This is still being rendered by the underlying framework.</p>
 
-<p>Again, the layout is represented by a cell. Its code goes to <code>app/concepts/pro/cell/layout.rb</code>.</p>
+<p>Again, the layout is represented by a cell. Its code goes to <code class="highlighter-rouge">app/concepts/pro/cell/layout.rb</code>.</p>
 
-<pre><code class="language-ruby">module Pro::Cell
-  class Layout &lt; Trailblazer::Cell
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Pro::Cell</span>
+  <span class="k">class</span> <span class="nc">Layout</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Since this cell’s sole purpose is to render a view to wrap dynamic content, no logic is needed.</p>
 
-<p>The view sits at <code>app/concepts/pro/view/layout.haml</code>.</p>
+<p>The view sits at <code class="highlighter-rouge">app/concepts/pro/view/layout.haml</code>.</p>
 
-<pre><code>%html
+<div class="highlighter-rouge"><pre class="highlight"><code>%html
   %head
 
   %body
     = cell(Pro::Cell::Navigation)
     = yield
 </code></pre>
+</div>
 
-<p>The content cell’s HTML markup will be passed to the layout cell and can be <code>yield</code>ed (which basically replaces <code>yield</code> with the HTML string).</p>
+<p>The content cell’s HTML markup will be passed to the layout cell and can be <code class="highlighter-rouge">yield</code>ed (which basically replaces <code class="highlighter-rouge">yield</code> with the HTML string).</p>
 
 <h2 id="putting-things-together">Putting Things Together</h2>
 
 <p>In the controller, the content cell needs to get instructed it will be wrapped by a layout cell.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-43-0-ruby">Ruby</a></li>
-<li class="tab-title"><a href="#tabs-43-1-rails">Rails</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-43-0-ruby"><pre><code>def show
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-8-0-ruby">Ruby</a></li>
+<li class="tab-title"><a href="#tabs-8-1-rails">Rails</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-8-0-ruby"><pre><code>def show
   comment = Comment.find(1)
 
   html = Comment::Cell::Show.(comment,
@@ -538,7 +546,7 @@ end
 end
 </code></pre>
 </div>
-<div class="content" id="tabs-43-1-rails"><pre><code>class CommentsController &lt; ApplicationController
+<div class="content" id="tabs-8-1-rails"><pre><code>class CommentsController &lt; ApplicationController
 def show
   comment = Comment.find(params[:id])
 
@@ -553,46 +561,47 @@ end
 <p>The following happens now.</p>
 
 <ol>
-  <li>First, <code>Comment::Cell::Show</code> cell is rendered.</li>
-  <li>Then, <code>Pro::Cell::Layout</code> is invoked and it will yield the content from the show cell.</li>
-  <li>In the <code>layout.haml</code> view, the navigation cell is also rendered. This cell needs a <code>current_user</code> option which is provided by the <em>context object</em>.</li>
+  <li>First, <code class="highlighter-rouge">Comment::Cell::Show</code> cell is rendered.</li>
+  <li>Then, <code class="highlighter-rouge">Pro::Cell::Layout</code> is invoked and it will yield the content from the show cell.</li>
+  <li>In the <code class="highlighter-rouge">layout.haml</code> view, the navigation cell is also rendered. This cell needs a <code class="highlighter-rouge">current_user</code> option which is provided by the <em>context object</em>.</li>
 </ol>
 
 <h2 id="context-object">Context Object</h2>
 
 <p>When rendering a hierarchy of cells, it’s often necessary to share generic data across all involved cells. This always happens via dependency injection, no global state is allowed in Trailblazer.</p>
 
-<p>The <code>:context</code> option will create such an object and is automatically being passed to all cells in that render workflow.</p>
+<p>The <code class="highlighter-rouge">:context</code> option will create such an object and is automatically being passed to all cells in that render workflow.</p>
 
-<p>In order to access the <code>current_user</code> from the context object, the navigation cell has to be changed slightly.</p>
+<p>In order to access the <code class="highlighter-rouge">current_user</code> from the context object, the navigation cell has to be changed slightly.</p>
 
-<pre><code class="language-ruby">module Pro
-  module Cell
-    class Navigation &lt; Trailblazer::Cell
-      include ::Cell::Hamlit
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Pro</span>
+  <span class="k">module</span> <span class="nn">Cell</span>
+    <span class="k">class</span> <span class="nc">Navigation</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+      <span class="kp">include</span> <span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Hamlit</span>
 
-      def signed_in?
-        context[:current_user]
-      end
+      <span class="k">def</span> <span class="nf">signed_in?</span>
+        <span class="n">context</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span>
+      <span class="k">end</span>
 
-      def email
-        context[:current_user].email
-      end
+      <span class="k">def</span> <span class="nf">email</span>
+        <span class="n">context</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">].</span><span class="nf">email</span>
+      <span class="k">end</span>
 
-      def avatar_url
-         hexed = Digest::MD5.hexdigest(email)
-        "https://www.gravatar.com/avatar/#{hexed}?s=36"
-      end
-    end
-  end
-end
+      <span class="k">def</span> <span class="nf">avatar_url</span>
+         <span class="n">hexed</span> <span class="o">=</span> <span class="no">Digest</span><span class="o">::</span><span class="no">MD5</span><span class="p">.</span><span class="nf">hexdigest</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+        <span class="s2">"https://www.gravatar.com/avatar/</span><span class="si">#{</span><span class="n">hexed</span><span class="si">}</span><span class="s2">?s=36"</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Note that <code>:current_user</code> is not an option anymore, but comes from the <code>context</code> object.</p>
+<p>Note that <code class="highlighter-rouge">:current_user</code> is not an option anymore, but comes from the <code class="highlighter-rouge">context</code> object.</p>
 
 <h2 id="success">Success</h2>
 
-<p>As demonstrated in this guide, it’s not really hard to replace the existing rendering stack, whether that’s <code>ActionView</code> or <code>Hanami::View</code> or Sinatra templates, with Cells.</p>
+<p>As demonstrated in this guide, it’s not really hard to replace the existing rendering stack, whether that’s <code class="highlighter-rouge">ActionView</code> or <code class="highlighter-rouge">Hanami::View</code> or Sinatra templates, with Cells.</p>
 
       </div>
     </div>

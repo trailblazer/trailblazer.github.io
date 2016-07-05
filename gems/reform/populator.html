@@ -185,9 +185,9 @@
       <div class="columns medium-9 code-content">
         <h1 id="populating">Populating</h1>
 
-<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code>validate</code>.</p>
+<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code class="highlighter-rouge">validate</code>.</p>
 
-<p><a href="/gems/reform/prepopulator.html">Prepopulating</a> is helpful when you want to fill out fields (aka. <em>defaults</em>) or add nested forms before rendering. <a href="/gems/reform/populators.html">Populating</a> is invoked in <code>validate</code> and will add nested forms depending on the incoming hash.</p>
+<p><a href="/gems/reform/prepopulator.html">Prepopulating</a> is helpful when you want to fill out fields (aka. <em>defaults</em>) or add nested forms before rendering. <a href="/gems/reform/populators.html">Populating</a> is invoked in <code class="highlighter-rouge">validate</code> and will add nested forms depending on the incoming hash.</p>
 
 <p>This page discusses the latter.</p>
 
@@ -197,36 +197,40 @@
 
 <p>Populators in Reform are only involved when validating the form.</p>
 
-<p>In <code>#validate</code>, you pass a nested hash to the form. Reform per default will try to match nested hashes to nested forms. But often the incoming hash and the existing object graph are not matching 1-to-1. That’s where populators enter the stage.</p>
+<p>In <code class="highlighter-rouge">#validate</code>, you pass a nested hash to the form. Reform per default will try to match nested hashes to nested forms. But often the incoming hash and the existing object graph are not matching 1-to-1. That’s where populators enter the stage.</p>
 
 <p>Let’s say you have the following model.</p>
 
-<pre><code>album = Album.new(songs: [])
+<div class="highlighter-rouge"><pre class="highlight"><code>album = Album.new(songs: [])
 </code></pre>
+</div>
 
 <p>The album contains an empty songs collection.</p>
 
 <p>Your form looks like this.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs do
     property :name
   end
 end
 </code></pre>
+</div>
 
 <p>Here’s how you’d typically validate an incoming hash.</p>
 
-<pre><code>form = AlbumForm.new(album)
+<div class="highlighter-rouge"><pre class="highlight"><code>form = AlbumForm.new(album)
 form.validate({songs: [{name: "Midnight Rendezvous"}]})
 </code></pre>
+</div>
 
-<p>Reform will now try to deserialize every nested <code>songs</code> item to a nested form. So, in pseudo-code, this happens in <code>validate</code>.</p>
+<p>Reform will now try to deserialize every nested <code class="highlighter-rouge">songs</code> item to a nested form. So, in pseudo-code, this happens in <code class="highlighter-rouge">validate</code>.</p>
 
-<pre><code>form.songs[0].validate({name: "Midnight Rendezvous"})
+<div class="highlighter-rouge"><pre class="highlight"><code>form.songs[0].validate({name: "Midnight Rendezvous"})
 </code></pre>
+</div>
 
-<p>Intuitively, you will expect Reform to create an additional song with the name “Midnight Rendevouz”.  However, this is not how it works and will crash, since <code>songs[0]</code> doesn’t exist. There is no nested form to represent that fragment, yet, since the original <code>songs</code> collection in the model was empty!</p>
+<p>Intuitively, you will expect Reform to create an additional song with the name “Midnight Rendevouz”.  However, this is not how it works and will crash, since <code class="highlighter-rouge">songs[0]</code> doesn’t exist. There is no nested form to represent that fragment, yet, since the original <code class="highlighter-rouge">songs</code> collection in the model was empty!</p>
 
 <p>Reform per design makes no assumptions about how to create nested models. You have to tell it what to do in this <em>out-of-sync</em> case.</p>
 
@@ -236,51 +240,56 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 
 <p>Regardless of the populator type, keep in mind that a populator is only called if an incoming fragment for that property is present.</p>
 
-<pre><code>form.validate({songs: [{name: "Midnight Rendezvous"}]}) # songs present.
+<div class="highlighter-rouge"><pre class="highlight"><code>form.validate({songs: [{name: "Midnight Rendezvous"}]}) # songs present.
 </code></pre>
+</div>
 
 <p>Running with our example, the following validation will <em>not</em> trigger any populator.</p>
 
-<pre><code>form.validate({})          # empty.
+<div class="highlighter-rouge"><pre class="highlight"><code>form.validate({})          # empty.
 form.validate({songs: []}) # not empty, but no items!
 </code></pre>
+</div>
 
 <h2 id="populateifempty">Populate_if_empty</h2>
 
-<p>To let Reform create a new model wrapped by a nested form for you use <code>:populate_if_empty</code>. That’s the easiest form of population.</p>
+<p>To let Reform create a new model wrapped by a nested form for you use <code class="highlighter-rouge">:populate_if_empty</code>. That’s the easiest form of population.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs, populate_if_empty: Song do
     property :name
   end
 end
 </code></pre>
+</div>
 
-<p>When traversing the incoming <code>songs:</code> collection, fragments without a counterpart nested form will be created for you with a new <code>Song</code> object.</p>
+<p>When traversing the incoming <code class="highlighter-rouge">songs:</code> collection, fragments without a counterpart nested form will be created for you with a new <code class="highlighter-rouge">Song</code> object.</p>
 
-<pre><code>form.validate({songs: [{name: "Midnight Rendezvous"}]})
+<div class="highlighter-rouge"><pre class="highlight"><code>form.validate({songs: [{name: "Midnight Rendezvous"}]})
 </code></pre>
+</div>
 
-<p>Reform now creates a <code>Song</code> instance and nests it in the form since it couldn’t find <code>form.songs[0]</code>.</p>
+<p>Reform now creates a <code class="highlighter-rouge">Song</code> instance and nests it in the form since it couldn’t find <code class="highlighter-rouge">form.songs[0]</code>.</p>
 
 <p>Note that the matching from fragment to form works by index, any additional matching heuristic has to be implemented manually.</p>
 
 <h2 id="populateifempty-custom">Populate_if_empty: Custom</h2>
 
-<p>You can also create the object yourself and leverage data from the traversed fragment, for instance, to try to find a <code>Song</code> object by name, first, before creating a new one.</p>
+<p>You can also create the object yourself and leverage data from the traversed fragment, for instance, to try to find a <code class="highlighter-rouge">Song</code> object by name, first, before creating a new one.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs,
     populate_if_empty: -&gt;(fragment:, **) do
       Song.find_by(name: fragment["name"]) or Song.new
     end
 </code></pre>
+</div>
 
 <p>The result from this block will be automatically added to the form graph.</p>
 
 <p>You can also provide an instance method on the respective form.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs, populate_if_empty: :populate_songs! do
     property :name
   end
@@ -289,34 +298,36 @@ end
     Song.find_by(name: fragment["name"]) or Song.new
   end
 </code></pre>
+</div>
 
 <h2 id="populateifempty-arguments">Populate_if_empty: Arguments</h2>
 
-<p>The only argument passed to <code>:populate_if_empty</code> block or method is an options hash. It contains currently traversed <code>:fragment</code>, the <code>:index</code> (collections, only) and several more options.</p>
+<p>The only argument passed to <code class="highlighter-rouge">:populate_if_empty</code> block or method is an options hash. It contains currently traversed <code class="highlighter-rouge">:fragment</code>, the <code class="highlighter-rouge">:index</code> (collections, only) and several more options.</p>
 
-<p>The result of the block will be automatically assigned to the form for you. Note that you can’t use the twin API in here, for example to reorder a collection. If you want more flexibility, use <code>:populator</code>.</p>
+<p>The result of the block will be automatically assigned to the form for you. Note that you can’t use the twin API in here, for example to reorder a collection. If you want more flexibility, use <code class="highlighter-rouge">:populator</code>.</p>
 
 <h2 id="populator">Populator</h2>
 
-<p>While the <code>:populate_if_empty</code> option is only called when no matching form was found for the input, the <code>:populator</code> option is always invoked and gives you maximum flexibility for population. They’re exclusive, you can only use one of the two.</p>
+<p>While the <code class="highlighter-rouge">:populate_if_empty</code> option is only called when no matching form was found for the input, the <code class="highlighter-rouge">:populator</code> option is always invoked and gives you maximum flexibility for population. They’re exclusive, you can only use one of the two.</p>
 
 <p>Again, note that populators won’t be invoked if there’s no incoming fragment(s) for the populator’s property.</p>
 
 <h2 id="populator-collections">Populator: Collections</h2>
 
-<p>A <code>:populator</code> for collections is executed for every collection fragment in the incoming hash.</p>
+<p>A <code class="highlighter-rouge">:populator</code> for collections is executed for every collection fragment in the incoming hash.</p>
 
-<pre><code>form.validate({
+<div class="highlighter-rouge"><pre class="highlight"><code>form.validate({
   songs: [
     {name: "Midnight Rendezvous"},
     {name: "Information Error"}
   ]
 })
 </code></pre>
+</div>
 
-<p>The following <code>:populator</code> will be executed twice.</p>
+<p>The following <code class="highlighter-rouge">:populator</code> will be executed twice.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs,
     populator: -&gt; (collection:, index:, **) do
       if item = collection[index]
@@ -326,20 +337,21 @@ end
       end
     end
 </code></pre>
+</div>
 
-<p>This populator checks if a nested form is already existing by using <code>collection[index]</code>. While the <code>index</code> keyword argument represents where we are in the incoming array traversal, <code>collection</code> is a convenience from Reform, and is identical to <code>self.songs</code>.</p>
+<p>This populator checks if a nested form is already existing by using <code class="highlighter-rouge">collection[index]</code>. While the <code class="highlighter-rouge">index</code> keyword argument represents where we are in the incoming array traversal, <code class="highlighter-rouge">collection</code> is a convenience from Reform, and is identical to <code class="highlighter-rouge">self.songs</code>.</p>
 
 <p>Note that you manually have to check whether or not a nested form is already available (by index or ID) and then need to add it using the form API writers.</p>
 
-<p>BTW, the <code>:populator</code> option accepts blocks and instance method names.</p>
+<p>BTW, the <code class="highlighter-rouge">:populator</code> option accepts blocks and instance method names.</p>
 
 <h2 id="populator-return-value">Populator: Return Value</h2>
 
-<p>It is very important that each <code>:populator</code> invocation returns the <em>form</em> that represents the fragment, and not the model. Otherwise, deserialization will fail.</p>
+<p>It is very important that each <code class="highlighter-rouge">:populator</code> invocation returns the <em>form</em> that represents the fragment, and not the model. Otherwise, deserialization will fail.</p>
 
 <p>Here are some return values.</p>
 
-<pre><code>populator: -&gt; (collection:, index:, **) do
+<div class="highlighter-rouge"><pre class="highlight"><code>populator: -&gt; (collection:, index:, **) do
   songs[index]              # works, unless nil
   collection[index]         # identical to above
   songs.insert(1, Song.new) # works, returns form
@@ -347,14 +359,15 @@ end
   Song.new                  # crashes, that's no form
   Song.find(1)              # crashes, that's no form
 </code></pre>
+</div>
 
 <p>Always make sure you return a form object, and not a model.</p>
 
 <h2 id="populator-avoiding-index">Populator: Avoiding Index</h2>
 
-<p>In many ORMs, the order of has_many associations doesn’t matter, and you don’t need to use the <code>index</code> for appending.</p>
+<p>In many ORMs, the order of has_many associations doesn’t matter, and you don’t need to use the <code class="highlighter-rouge">index</code> for appending.</p>
 
-<pre><code>collection :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>collection :songs,
   populator: -&gt; (collection:, index:, **) do
     if item = collection[index]
       item
@@ -363,21 +376,23 @@ end
     end
   end
 </code></pre>
+</div>
 
 <p>Often, it is better to <a href="#populator-match-by-id">match by ID</a> instead of indexes.</p>
 
 <h2 id="populator-single-property">Populator: Single Property</h2>
 
-<p>Naturally, a <code>:populator</code> for a single property is only called once.</p>
+<p>Naturally, a <code class="highlighter-rouge">:populator</code> for a single property is only called once.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   property :composer,
     populator: -&gt; (model:, **) do
       model || self.composer= Artist.new
     end
 </code></pre>
+</div>
 
-<p>A single populator works identical to a collection one, except for the <code>model</code> argument, which is equally to <code>self.composer</code>.</p>
+<p>A single populator works identical to a collection one, except for the <code class="highlighter-rouge">model</code> argument, which is equally to <code class="highlighter-rouge">self.composer</code>.</p>
 
 <h2 id="populator-match-by-id">Populator: Match by ID</h2>
 
@@ -385,9 +400,9 @@ end
 
 <p>Per default, Reform matches incoming hash fragments and nested forms by their order. It doesn’t know anything about IDs, UUIDs or other persistence mechanics.</p>
 
-<p>You can use <code>:populator</code> to write your own matching for IDs.</p>
+<p>You can use <code class="highlighter-rouge">:populator</code> to write your own matching for IDs.</p>
 
-<pre><code>collection :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>collection :songs,
   populator: -&gt;(fragment:, **) {
     # find out if incoming song is already added.
     item = songs.find { |song| song.id == fragment["id"].to_i }
@@ -395,34 +410,37 @@ end
     item ? item : songs.append(Song.new)
   }
 </code></pre>
+</div>
 
-<p>Note that a <code>:populator</code> requires you to add/replace/update/delete the model yourself. You have access to the form API here since the block is executed in form instance context.</p>
+<p>Note that a <code class="highlighter-rouge">:populator</code> requires you to add/replace/update/delete the model yourself. You have access to the form API here since the block is executed in form instance context.</p>
 
 <p>Again, it is important to <a href="#populator-return-value">return the new form</a> and not the model.</p>
 
 <p>This naturally works for single properties, too.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   populator: -&gt;(fragment:, **) {
     artist ? artist : self.artist = Artist.find_by(id: fragment["id"])
   }
 </code></pre>
+</div>
 
 <h2 id="delete">Delete</h2>
 
 <p>Populators can not only create, but also destroy. Let’s say the following input is passed in.</p>
 
-<pre><code>form.validate({
+<div class="highlighter-rouge"><pre class="highlight"><code>form.validate({
   songs: [
     {"name"=&gt;"Midnight Rendezvous", "id"=&gt;2, "delete"=&gt;"1"},
     {"name"=&gt;"Information Error"}
   ]
 })
 </code></pre>
+</div>
 
 <p>You can implement your own deletion.</p>
 
-<pre><code>collection :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>collection :songs,
   populator: -&gt;(fragment:, **) {
     # find out if incoming song is already added.
     item = songs.find { |song| song.id.to_s == fragment["id"].to_s }
@@ -435,33 +453,36 @@ end
     item ? item : songs.append(Song.new)
   }
 </code></pre>
+</div>
 
-<p>You can delete items from the graph using <code>delete</code>. To avoid this fragment being further deserialized, use <code>return skip!</code> to stop processing for this fragment.</p>
+<p>You can delete items from the graph using <code class="highlighter-rouge">delete</code>. To avoid this fragment being further deserialized, use <code class="highlighter-rouge">return skip!</code> to stop processing for this fragment.</p>
 
-<p>Note that you can also use the twin’s <code>Collection</code> API for finding nested twins by any field.</p>
+<p>Note that you can also use the twin’s <code class="highlighter-rouge">Collection</code> API for finding nested twins by any field.</p>
 
-<pre><code>populator: -&gt;(fragment:, **) {
+<div class="highlighter-rouge"><pre class="highlight"><code>populator: -&gt;(fragment:, **) {
   item = songs.find_by(id: fragment["id"])
 </code></pre>
+</div>
 
 <h2 id="skip">Skip</h2>
 
-<p>Since Reform 2.1, populators can skip processing of a fragment by returning <code>skip!</code>. This will ignore this fragment as if it wasn’t present in the incoming hash.</p>
+<p>Since Reform 2.1, populators can skip processing of a fragment by returning <code class="highlighter-rouge">skip!</code>. This will ignore this fragment as if it wasn’t present in the incoming hash.</p>
 
-<pre><code>collection :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>collection :songs,
   populator: -&gt;(fragment:, **) do
     return skip! if fragment["id"]
     # ..
   end
 </code></pre>
+</div>
 
-<p>This won’t process items that have an <code>"id"</code> field in their corresponding fragment.</p>
+<p>This won’t process items that have an <code class="highlighter-rouge">"id"</code> field in their corresponding fragment.</p>
 
 <h2 id="uninitialized-collections">Uninitialized Collections</h2>
 
-<p>A problem with populators can be an uninitialized <code>collection</code> property.</p>
+<p>A problem with populators can be an uninitialized <code class="highlighter-rouge">collection</code> property.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   collection :songs, populate_if_empty: Song do
     property :title
   end
@@ -476,22 +497,24 @@ form.songs  #=&gt; nil
 form.validate(songs: [{title: "Friday"}])
 #=&gt; NoMethodError: undefined method `original' for nil:NilClass
 </code></pre>
+</div>
 
 <p>What happens is as follows.</p>
 
 <ol>
-  <li>In <code>validate</code>, the form can’t find a corresponding nested songs form and calls the <code>populate_if_empty</code> code.</li>
-  <li>The populator will create a <code>Song</code> model and assign it to the parent form via <code>form.songs &lt;&lt; Song.new</code>.</li>
-  <li>This crashes, as <code>form.songs</code> is <code>nil</code>.</li>
+  <li>In <code class="highlighter-rouge">validate</code>, the form can’t find a corresponding nested songs form and calls the <code class="highlighter-rouge">populate_if_empty</code> code.</li>
+  <li>The populator will create a <code class="highlighter-rouge">Song</code> model and assign it to the parent form via <code class="highlighter-rouge">form.songs &lt;&lt; Song.new</code>.</li>
+  <li>This crashes, as <code class="highlighter-rouge">form.songs</code> is <code class="highlighter-rouge">nil</code>.</li>
 </ol>
 
 <p>The solution is to initialize your object correctly. This is per design. It is your job to do that as Reform/Disposable is likely to do it wrong.</p>
 
-<pre><code>album = Album.new(songs: [])
+<div class="highlighter-rouge"><pre class="highlight"><code>album = Album.new(songs: [])
 form  = AlbumForm.new(album)
 </code></pre>
+</div>
 
-<p>With ORMs, the setup happens automatically, this only appears when using <code>Struct</code> or other POROs as models.</p>
+<p>With ORMs, the setup happens automatically, this only appears when using <code class="highlighter-rouge">Struct</code> or other POROs as models.</p>
 
 
       </div>

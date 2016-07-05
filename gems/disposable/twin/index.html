@@ -187,61 +187,70 @@
       <div class="columns medium-9 code-content">
         <h1 id="twin">Twin</h1>
 
-<pre><code>class Song::Twin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class Song::Twin &lt; Disposable::Twin
   property :title
 end
 </code></pre>
+</div>
 
 <p>A twin decorates objects. It doesn’t matter whether this is an ActiveRecord instance, a ROM model or a PORO.</p>
 
-<pre><code>song = OpenStruct.new(title: "Solitaire")
+<div class="highlighter-rouge"><pre class="highlight"><code>song = OpenStruct.new(title: "Solitaire")
 song.title #=&gt; "Solitaire"
 </code></pre>
+</div>
 
 <h2 id="api">API</h2>
 
 <p>Initialization always requires an object to twin.</p>
 
-<pre><code>twin = Song::Twin.new(song)
+<div class="highlighter-rouge"><pre class="highlight"><code>twin = Song::Twin.new(song)
 </code></pre>
+</div>
 
 <p>The twin will have configured accessors.</p>
 
-<pre><code>twin.title #=&gt; "Solitaire"
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.title #=&gt; "Solitaire"
 </code></pre>
+</div>
 
 <p>Writers on the twin do not write to the model.</p>
 
-<pre><code>twin.title = "Razorblade"
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.title = "Razorblade"
 song.title #=&gt; "Solitaire"
 </code></pre>
+</div>
 
 <p>You may pass options into the initializer. These options will override the actual values from the model. As always, this does not write to the model.</p>
 
-<pre><code>twin = Song::Twin.new(song, title: "Razorblade")
+<div class="highlighter-rouge"><pre class="highlight"><code>twin = Song::Twin.new(song, title: "Razorblade")
 twin.title #=&gt; "Razorblade"
 song.title #=&gt; "Solitaire"
 </code></pre>
+</div>
 
 <h2 id="twinoption">Twin::Option</h2>
 
 <p>Allows to specify external options.</p>
 
-<pre><code>class Song &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class Song &lt; Disposable::Twin
   property :title
   option :good?
 end
 </code></pre>
+</div>
 
-<p>Options are <em>not read</em> from the model, they have to be passed in the constructor. When omitted, they default to <code>nil</code>.</p>
+<p>Options are <em>not read</em> from the model, they have to be passed in the constructor. When omitted, they default to <code class="highlighter-rouge">nil</code>.</p>
 
-<pre><code>song = Song.new(model, good?: true)
+<div class="highlighter-rouge"><pre class="highlight"><code>song = Song.new(model, good?: true)
 </code></pre>
+</div>
 
 <p>As always, option properties are readable on the twin.</p>
 
-<pre><code>song.good? #=&gt; true
+<div class="highlighter-rouge"><pre class="highlight"><code>song.good? #=&gt; true
 </code></pre>
+</div>
 
 <p>When syncing, the option property is treated as not writeable and thus not written to the model.</p>
 

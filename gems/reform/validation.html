@@ -185,9 +185,9 @@
       <div class="columns medium-9 code-content">
         <h1 id="validation">Validation</h1>
 
-<p>Validation in Reform happens in the <code>validate</code> method, and only there.</p>
+<p>Validation in Reform happens in the <code class="highlighter-rouge">validate</code> method, and only there.</p>
 
-<p>Since Reform 2.0, you can pick your validation backend. This can either be <code>ActiveModel::Validations</code> or <code>dry-validation</code>.</p>
+<p>Since Reform 2.0, you can pick your validation backend. This can either be <code class="highlighter-rouge">ActiveModel::Validations</code> or <code class="highlighter-rouge">dry-validation</code>.</p>
 
 <div class="panel">
   <p>
@@ -199,14 +199,14 @@
 
 <p>Note that you are not limited to one validation backend. When switching from ActiveModel::Validation to dry-validation, you should set the first as the default validation engine.</p>
 
-<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-44-0-rails">Rails</a></li>
-<li class="tab-title"><a href="#tabs-44-1-ruby">Ruby</a></li></ul>
-<div class="tabs-content"><div class="content active" id="tabs-44-0-rails"><p>The configuration assumes you have <code>reform-rails</code> installed.</p>
+<div class="tabs-container"><ul class="tabs" data-tab=""><li class="tab-title active"><a href="#tabs-1-0-rails">Rails</a></li>
+<li class="tab-title"><a href="#tabs-1-1-ruby">Ruby</a></li></ul>
+<div class="tabs-content"><div class="content active" id="tabs-1-0-rails"><p>The configuration assumes you have <code>reform-rails</code> installed.</p>
 
 <pre><code>config.reform.validations = :active_model
 </code></pre>
 </div>
-<div class="content" id="tabs-44-1-ruby"><p>In a Ruby environment, you’d usually monkey-patch the <code>Form</code> class.</p>
+<div class="content" id="tabs-1-1-ruby"><p>In a Ruby environment, you’d usually monkey-patch the <code>Form</code> class.</p>
 
 <pre><code>Reform::Form.send(:include, Reform::Form::ActiveModel::Validations)
 </code></pre>
@@ -214,7 +214,7 @@
 
 <p>In forms you’re upgrading to dry-validation, you can include the validation module explicitly.</p>
 
-<pre><code>module Album::Contract
+<div class="highlighter-rouge"><pre class="highlight"><code>module Album::Contract
   class Create &lt; Reform::Form
     feature Reform::Form::Dry # override the default.
 
@@ -224,22 +224,23 @@
   end
 end
 </code></pre>
+</div>
 
 <p>This replaces the ActiveModel backend with dry for this specific form class, only.</p>
 
 <h2 id="overview">Overview</h2>
 
-<p>Validation in Reform works by invoking <code>validate</code> and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.</p>
+<p>Validation in Reform works by invoking <code class="highlighter-rouge">validate</code> and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.</p>
 
-<p><code>Form#validate</code> will return the result boolean, and provide potential errors via <code>Form#errors</code>.</p>
+<p><code class="highlighter-rouge">Form#validate</code> will return the result boolean, and provide potential errors via <code class="highlighter-rouge">Form#errors</code>.</p>
 
 <h2 id="dry-validation">Dry-validation</h2>
 
 <p>Dry-validation is the preferred backend for defining and executing validations.</p>
 
-<p>The purest form of defining validations with this backend is by using a <a href="#validation-group">validation group</a>. A group provides the exact same API as a <code>Dry::Validation::Schema</code>. You can learn all the details on the <a href="https://github.com/dryrb/dry-validation">gem’s website</a>.</p>
+<p>The purest form of defining validations with this backend is by using a <a href="#validation-group">validation group</a>. A group provides the exact same API as a <code class="highlighter-rouge">Dry::Validation::Schema</code>. You can learn all the details on the <a href="https://github.com/dryrb/dry-validation">gem’s website</a>.</p>
 
-<pre><code>require "reform/form/dry"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "reform/form/dry"
 
 class AlbumForm &lt; Reform::Form
   feature Reform::Form::Dry
@@ -251,10 +252,11 @@ class AlbumForm &lt; Reform::Form
   end
 end
 </code></pre>
+</div>
 
 <p>Custom predicates have to be defined in the validation group.</p>
 
-<pre><code>validation :default do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :default do
   key(:title) { |title| title.filled? &amp; title.unique? }
 
   def unique?(value)
@@ -262,10 +264,11 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>In addition to dry-validation’s API, you have access to the form that contains the group via <code>form</code>.</p>
+<p>In addition to dry-validation’s API, you have access to the form that contains the group via <code class="highlighter-rouge">form</code>.</p>
 
-<pre><code>validation :default do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :default do
   key(:confirm_password, &amp;:same_password?)
 
   def same_password?(value)
@@ -273,6 +276,7 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.</p>
 
@@ -280,37 +284,40 @@ end
 
 <p>You need to provide custom error messages via dry-validation mechanics.</p>
 
-<pre><code>validation :default do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :default do
   configure { |config|
     config.messages_file = 'config/error_messages.yml'
   }
 </code></pre>
+</div>
 
 <p>A simple error messages file might look as follows.</p>
 
-<pre><code>en:
+<div class="highlighter-rouge"><pre class="highlight"><code>en:
   errors:
     same_password?: "passwords not equal"
 </code></pre>
+</div>
 
 <h2 id="activemodel">ActiveModel</h2>
 
 <p>In Rails environments, the AM support will be automatically loaded.</p>
 
-<p>In other frameworks, you need to include <code>Reform::Form::ActiveModel::Validations</code> either into a particular form class, or simply into <code>Reform::Form</code> and make it available for all subclasses.</p>
+<p>In other frameworks, you need to include <code class="highlighter-rouge">Reform::Form::ActiveModel::Validations</code> either into a particular form class, or simply into <code class="highlighter-rouge">Reform::Form</code> and make it available for all subclasses.</p>
 
-<pre><code>require "reform/form/active_model/validations"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "reform/form/active_model/validations"
 
 Reform::Form.class_eval do
   feature Reform::Form::ActiveModel::Validations
 end
 </code></pre>
+</div>
 
 <h2 id="validation-group">Validation Group</h2>
 
-<p>Grouping validataions allows running them conditionally. You can use <code>:if</code> to specify what group had to be successful validated.</p>
+<p>Grouping validataions allows running them conditionally. You can use <code class="highlighter-rouge">:if</code> to specify what group had to be successful validated.</p>
 
-<pre><code>validation :default do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :default do
   key(:title, &amp;:filled?)
 end
 
@@ -321,39 +328,43 @@ validation :unique, if: :default do
   # ..
 end
 </code></pre>
+</div>
 
-<p>This will only run the database-consuming <code>:unique</code> validation group if the <code>:default</code> group was valid.</p>
+<p>This will only run the database-consuming <code class="highlighter-rouge">:unique</code> validation group if the <code class="highlighter-rouge">:default</code> group was valid.</p>
 
-<p>Chaining groups works via the <code>:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code>:if</code>.</p>
+<p>Chaining groups works via the <code class="highlighter-rouge">:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code class="highlighter-rouge">:if</code>.</p>
 
-<pre><code>validation :email, after: :default do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :email, after: :default do
   key(:email, &amp;:email?)
 
   def email?(value)
   # ..
 end
 </code></pre>
+</div>
 
-<p>At any time you can extend an existing group using <code>:inherit</code>.</p>
+<p>At any time you can extend an existing group using <code class="highlighter-rouge">:inherit</code>.</p>
 
-<pre><code>validation :email, inherit: true do
+<div class="highlighter-rouge"><pre class="highlight"><code>validation :email, inherit: true do
   key(:email, &amp;:filled?)
 end
 </code></pre>
+</div>
 
-<p>This appends validations to the existing <code>:email</code> group.</p>
+<p>This appends validations to the existing <code class="highlighter-rouge">:email</code> group.</p>
 
 <h2 id="uniqueness-validation">Uniqueness Validation</h2>
 
-<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support where the validation is basically delegated to the “real” model class. This happens when you use <code>validates_uniqueness_of</code> and will respect options like <code>:scope</code>, etc.</p>
+<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support where the validation is basically delegated to the “real” model class. This happens when you use <code class="highlighter-rouge">validates_uniqueness_of</code> and will respect options like <code class="highlighter-rouge">:scope</code>, etc.</p>
 
-<pre><code>class SongForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongForm &lt; Reform::Form
   include Reform::Form::ActiveRecord
   model :song
 
   property :title
   validates_uniqueness_of :title, scope: [:album_id, :artist_id]
 </code></pre>
+</div>
 
 <p>Be warned, though, that those validators write to the model instance. Even though this <em>usually</em> is not persisted, this will mess up your application state, as in case of an invalid validation your model will have unexpected values.</p>
 
@@ -361,32 +372,34 @@ end
 
 <h1 id="unique-validation">Unique Validation</h1>
 
-<p>You’re encouraged to use Reform’s non-writing <code>unique: true</code> validation, though.</p>
+<p>You’re encouraged to use Reform’s non-writing <code class="highlighter-rouge">unique: true</code> validation, though.</p>
 
-<pre><code>require "reform/form/validation/unique_validator"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "reform/form/validation/unique_validator"
 
 class SongForm &lt; Reform::Form
   property :title
   validates :title, unique: true
 end
 </code></pre>
+</div>
 
-<p>This will only validate the uniqueness of <code>title</code>.</p>
+<p>This will only validate the uniqueness of <code class="highlighter-rouge">title</code>.</p>
 
-<p>For uniqueness validation of multiple fields, use the <code>:scope</code> option.</p>
+<p>For uniqueness validation of multiple fields, use the <code class="highlighter-rouge">:scope</code> option.</p>
 
-<pre><code class="language-ruby">validates :user_id, unique: { scope: [:user_id, :song_id] }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">validates</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="ss">unique: </span><span class="p">{</span> <span class="ss">scope: </span><span class="p">[</span><span class="ss">:user_id</span><span class="p">,</span> <span class="ss">:song_id</span><span class="p">]</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <p>Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
 
 <h2 id="confirm-validation">Confirm Validation</h2>
 
-<p>Likewise, the <code>confirm: true</code> validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.</p>
+<p>Likewise, the <code class="highlighter-rouge">confirm: true</code> validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.</p>
 
 <p>Instead, use your own virtual fields.</p>
 
-<pre><code>class SignInForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class SignInForm &lt; Reform::Form
   property :password, virtual: true
   property :password_confirmation, virtual: true
 
@@ -394,6 +407,7 @@ end
     errors.add(:password, "Password mismatch") if password != password_confirmation
   end
 </code></pre>
+</div>
 
 <p>This is discussed in the <em>Authentication</em> chapter of the <a href="https://leanpub.com/trailblazer">Trailblazer book</a>.</p>
 

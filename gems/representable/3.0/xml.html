@@ -189,7 +189,7 @@
 
 <p>If you’re enjoying the pleasure of working with XML, Representable can help you. It does render and parse XML, too, with an almost identical declarative API.</p>
 
-<pre><code>require "representable/xml"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "representable/xml"
 
 class SongRepresenter &lt; Representable::Decorator
   include Representable::XML
@@ -199,12 +199,13 @@ class SongRepresenter &lt; Representable::Decorator
   collection :composers
 end
 </code></pre>
+</div>
 
-<p>Note that you have to include the <code>Representable::XML</code> module.</p>
+<p>Note that you have to include the <code class="highlighter-rouge">Representable::XML</code> module.</p>
 
-<p>The public API then gives you <code>to_xml</code> and <code>from_xml</code>.</p>
+<p>The public API then gives you <code class="highlighter-rouge">to_xml</code> and <code class="highlighter-rouge">from_xml</code>.</p>
 
-<pre><code>song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
+<div class="highlighter-rouge"><pre class="highlight"><code>song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
 SongRepresenter.new(song).to_xml #=&gt;
 
 &lt;song&gt;
@@ -213,12 +214,13 @@ SongRepresenter.new(song).to_xml #=&gt;
     &lt;composers&gt;Sting&lt;/composers&gt;
 &lt;/song&gt;
 </code></pre>
+</div>
 
 <h2 id="tag-attributes">Tag Attributes</h2>
 
 <p>You can also map properties to tag attributes in Representable. This works only for the top-level node, though (seen from the representer’s perspective).</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::XML
 
   property :id, attribute: true
@@ -228,14 +230,15 @@ end
 song.to_xml
 #=&gt; &lt;song title="American Idle" id="1" /&gt;
 </code></pre>
+</div>
 
 <p>Naturally, this works both ways.</p>
 
 <h2 id="mapping-content">Mapping Content</h2>
 
-<p>The same concept can also be applied to content. If you need to map a property to the top-level node’s content, use the <code>:content</code> option. Again, <em>top-level</em> refers to the document fragment that maps to the representer.</p>
+<p>The same concept can also be applied to content. If you need to map a property to the top-level node’s content, use the <code class="highlighter-rouge">:content</code> option. Again, <em>top-level</em> refers to the document fragment that maps to the representer.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::XML
 
   property :title, content: true
@@ -244,21 +247,23 @@ end
 song.to_xml
 #=&gt; &lt;song&gt;American Idle&lt;/song&gt;
 </code></pre>
+</div>
 
 <h2 id="wrapping-collections">Wrapping Collections</h2>
 
 <p>It is sometimes unavoidable to wrap tag lists in a container tag.</p>
 
-<pre><code>class AlbumRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumRepresenter &lt; Representable::Decorator
   include Representable::XML
 
   collection :songs, as: :song, wrap: :songs
 end
 </code></pre>
+</div>
 
-<p>Note that <code>:wrap</code> defines the container tag name.</p>
+<p>Note that <code class="highlighter-rouge">:wrap</code> defines the container tag name.</p>
 
-<pre><code>song.to_xml #=&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>song.to_xml #=&gt;
 &lt;album&gt;
     &lt;songs&gt;
         &lt;song&gt;Laundry Basket&lt;/song&gt;
@@ -267,20 +272,22 @@ end
     &lt;/songs&gt;
 &lt;/album&gt;
 </code></pre>
+</div>
 
 <h2 id="namespaces">Namespaces</h2>
 
 <p>Support for namespaces are not yet implemented. However, if an incoming parsed document contains namespaces, you can automatically remove them.</p>
 
-<pre><code>class AlbumRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumRepresenter &lt; Representable::Decorator
   include Representable::XML
 
   remove_namespaces!
 </code></pre>
+</div>
 
 <h2 id="development-status">Development Status</h2>
 
-<p>The <code>Representable::XML</code> module is currently not being further developed. If you are interested in working on it, feel free to PR. In case you need a feature but want us to build it, consider <a href="/inc/oss.html">hiring us</a> for an OSS feature project.</p>
+<p>The <code class="highlighter-rouge">Representable::XML</code> module is currently not being further developed. If you are interested in working on it, feel free to PR. In case you need a feature but want us to build it, consider <a href="/inc/oss.html">hiring us</a> for an OSS feature project.</p>
 
       </div>
     </div>

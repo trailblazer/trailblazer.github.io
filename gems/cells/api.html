@@ -191,44 +191,47 @@
 
 <p>Sometimes they’re also called <em>object-oriented partials</em>.</p>
 
-<p>The object has to define at least one method which in turn has to return the fragment. Per convention, this is <code>#show</code>. In this public method, you may compile arbitrary strings or <code>render</code> a cell view.</p>
+<p>The object has to define at least one method which in turn has to return the fragment. Per convention, this is <code class="highlighter-rouge">#show</code>. In this public method, you may compile arbitrary strings or <code class="highlighter-rouge">render</code> a cell view.</p>
 
 <p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
 
 <h2 id="anatomy">Anatomy</h2>
 
-<p>Cells are usually derived from <code>Cell::ViewModel</code>.</p>
+<p>Cells are usually derived from <code class="highlighter-rouge">Cell::ViewModel</code>.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  def show
-    render # renders app/cells/comment/show.haml
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="c1"># renders app/cells/comment/show.haml</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>When the <code>CommentCell</code> cell is invoked, its <code>show</code> method is called, the view is rendered, and returned as a HTML string.</p>
+<p>When the <code class="highlighter-rouge">CommentCell</code> cell is invoked, its <code class="highlighter-rouge">show</code> method is called, the view is rendered, and returned as a HTML string.</p>
 
 <p>This snippet illustrates a <em>suffix cell</em>, because it is following the outdated Rails-style naming and file structure. We encourage you to use <a href="trailblazer.html">Trailblazer cells</a>. However, this document mostly specifies generic API.</p>
 
 <h2 id="show">Show</h2>
 
-<p>As per convention, <code>#show</code> is the only public method of a cell class.</p>
+<p>As per convention, <code class="highlighter-rouge">#show</code> is the only public method of a cell class.</p>
 
 <p>The return value of this method is what gets rendered as the cell.</p>
 
-<pre><code class="language-ruby">def show
-  "I don't like templates!"
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="s2">"I don't like templates!"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>You’re free to use return whatever string you desire, use your own rendering engine, or use cells <code>render</code> for templates.</p>
+<p>You’re free to use return whatever string you desire, use your own rendering engine, or use cells <code class="highlighter-rouge">render</code> for templates.</p>
 
 <h2 id="manual-invocation">Manual Invocation</h2>
 
 <p>In its purest form, a cell can be rendered as follows.</p>
 
-<pre><code class="language-ruby">Comment::Cell.new(comment).() #=&gt; "I don't like templates!"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span><span class="o">.</span><span class="p">()</span> <span class="c1">#=&gt; "I don't like templates!"</span>
 </code></pre>
+</div>
 
 <p>This can be split up into two steps: initialization and invocation.</p>
 
@@ -236,237 +239,265 @@ end
 
 <p>You may instantiate cells manually, wherever you want.</p>
 
-<pre><code class="language-ruby">cell = Comment::Cell.new(comment)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a <code>Lotus::Action</code>.</p>
+<p>This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a <code class="highlighter-rouge">Lotus::Action</code>.</p>
 
-<p>Note that usually you pass in an arbitrary object into the cell, the <em>“model”</em>. Here, this is the <code>comment</code> instance.</p>
+<p>Note that usually you pass in an arbitrary object into the cell, the <em>“model”</em>. Here, this is the <code class="highlighter-rouge">comment</code> instance.</p>
 
 <h2 id="model">Model</h2>
 
-<p>The model you pass into the cell’s constructor is completely up to you! It could be an ActiveRecord instance, a <code>Struct</code>, or an array of items.</p>
+<p>The model you pass into the cell’s constructor is completely up to you! It could be an ActiveRecord instance, a <code class="highlighter-rouge">Struct</code>, or an array of items.</p>
 
-<p>The model is available via the <code>model</code> reader.</p>
+<p>The model is available via the <code class="highlighter-rouge">model</code> reader.</p>
 
-<pre><code class="language-ruby">def show
-  model.rude? "Offensive content." : render
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">model</span><span class="p">.</span><span class="nf">rude?</span> <span class="s2">"Offensive content."</span> <span class="p">:</span> <span class="n">render</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The term <em>model</em> is really not to be confused with the way Rails uses it - it can be just anything.</p>
 
 <h2 id="property">Property</h2>
 
-<p>Cells allow a short form to access model’s attributes using the <code>property</code> class method.</p>
+<p>Cells allow a short form to access model’s attributes using the <code class="highlighter-rouge">property</code> class method.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  property :email #=&gt; model.email
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">property</span> <span class="ss">:email</span> <span class="c1">#=&gt; model.email</span>
 
-  def show
-    model.email #=&gt; "s@trb.to"
-    email #=&gt; "s@trb.to"
-  end
-end
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">model</span><span class="p">.</span><span class="nf">email</span> <span class="c1">#=&gt; "s@trb.to"</span>
+    <span class="n">email</span> <span class="c1">#=&gt; "s@trb.to"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Using <code>::property</code> will create a convenient reader method for you to the model.</p>
+<p>Using <code class="highlighter-rouge">::property</code> will create a convenient reader method for you to the model.</p>
 
 <h2 id="options">Options</h2>
 
 <p>Along with the model, you may also pass arbitrary options into the cell, for example the current user.</p>
 
-<pre><code class="language-ruby">cell = Comment::Cell.new(comment, current_user: current_user)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="ss">current_user: </span><span class="n">current_user</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>In the cell, you can access any options using  the <code>options</code> reader.</p>
+<p>In the cell, you can access any options using  the <code class="highlighter-rouge">options</code> reader.</p>
 
-<pre><code class="language-ruby">def show
-  options[:current_user] ? render : "Not logged in!"
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span> <span class="p">?</span> <span class="n">render</span> <span class="p">:</span> <span class="s2">"Not logged in!"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <h2 id="invocation">Invocation</h2>
 
-<p>Once you got the cell instance, you may call the rendering state. This happens via <code>ViewModel#call</code>.</p>
+<p>Once you got the cell instance, you may call the rendering state. This happens via <code class="highlighter-rouge">ViewModel#call</code>.</p>
 
-<pre><code class="language-ruby">cell.call(:show)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>It’s a common idiom in Ruby to skip the explicit <code>call</code> method name. The next snippet does the same as the above.</p>
+<p>It’s a common idiom in Ruby to skip the explicit <code class="highlighter-rouge">call</code> method name. The next snippet does the same as the above.</p>
 
-<pre><code class="language-ruby">cell.(:show)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>Since <code>show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
+<p>Since <code class="highlighter-rouge">show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
 
-<pre><code>cell.() #=&gt; cell.(:show)
+<div class="highlighter-rouge"><pre class="highlight"><code>cell.() #=&gt; cell.(:show)
 </code></pre>
+</div>
 
-<p>Note that in Rails controller views, this will be called automatically via cell’s <code>ViewModel#to_s</code> method.</p>
+<p>Note that in Rails controller views, this will be called automatically via cell’s <code class="highlighter-rouge">ViewModel#to_s</code> method.</p>
 
 <h2 id="call">Call</h2>
 
-<p>Always invoke cell methods via <code>call</code>. This will ensure that caching - if configured - is performed properly.</p>
+<p>Always invoke cell methods via <code class="highlighter-rouge">call</code>. This will ensure that caching - if configured - is performed properly.</p>
 
-<pre><code>CommentCell.new(comment).(:show)
+<div class="highlighter-rouge"><pre class="highlight"><code>CommentCell.new(comment).(:show)
 </code></pre>
+</div>
 
-<p>As discussed, this will call the cell’s <code>show</code> method and return the rendered fragment.</p>
+<p>As discussed, this will call the cell’s <code class="highlighter-rouge">show</code> method and return the rendered fragment.</p>
 
 <p>Note that you can invoke more than one state on a cell, if desired.</p>
 
-<pre><code class="language-ruby">- cell = CommentCell.new(Comment.last)      # instantiate.
-= cell.call(:show)                          # render main fragment.
-= content_for :footer, cell.(:footer)       # render footer.
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">-</span> <span class="n">cell</span> <span class="o">=</span> <span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Comment</span><span class="p">.</span><span class="nf">last</span><span class="p">)</span>      <span class="c1"># instantiate.</span>
+<span class="o">=</span> <span class="n">cell</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>                          <span class="c1"># render main fragment.</span>
+<span class="o">=</span> <span class="n">content_for</span> <span class="ss">:footer</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:footer</span><span class="p">)</span>       <span class="c1"># render footer.</span>
 </code></pre>
+</div>
 
-<p>See how you can combine cells with global helpers like <code>content_for</code>?</p>
+<p>See how you can combine cells with global helpers like <code class="highlighter-rouge">content_for</code>?</p>
 
-<p>You can also provide additional arguments to <code>call</code>.</p>
+<p>You can also provide additional arguments to <code class="highlighter-rouge">call</code>.</p>
 
-<pre><code class="language-ruby">cell.(:show, Time.now)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">,</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>All arguments after the method name are passed to the invoked method.</p>
 
-<pre><code class="language-ruby">def show(when)
-  when #=&gt; Now!
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="k">when</span><span class="p">)</span>
+  <span class="k">when</span> <span class="c1">#=&gt; Now!</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Even blocks are allowed.</p>
 
-<pre><code class="language-ruby">cell.(:show) { "Yay!" }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <p>Again, the block is passed through to the invoked method.</p>
 
-<pre><code class="language-ruby">def show(&amp;block)
-  yield #=&gt; "Yay!"
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">yield</span> <span class="c1">#=&gt; "Yay!"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>This is particularly interesting when passing the block to <code>render</code> and using <code>yield</code> in the view. See <a href="#render">render</a>’s docs for that.</p>
+<p>This is particularly interesting when passing the block to <code class="highlighter-rouge">render</code> and using <code class="highlighter-rouge">yield</code> in the view. See <a href="#render">render</a>’s docs for that.</p>
 
 <h2 id="default-show">Default Show</h2>
 
-<p>Per default, every cell derived from <code>Cell::ViewModel</code> has a built-in <code>show</code> method.</p>
+<p>Per default, every cell derived from <code class="highlighter-rouge">Cell::ViewModel</code> has a built-in <code class="highlighter-rouge">show</code> method.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  # #show is inherited.
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="c1"># #show is inherited.</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The implementation looks as follows.</p>
 
-<pre><code class="language-ruby">def show(&amp;block)
-  render &amp;block
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">render</span> <span class="o">&amp;</span><span class="n">block</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>An optional block is always passed to the <code>render</code> method.</p>
+<p>An optional block is always passed to the <code class="highlighter-rouge">render</code> method.</p>
 
-<p>Of course, you’re free to override <code>show</code> to do whatever it needs to do.</p>
+<p>Of course, you’re free to override <code class="highlighter-rouge">show</code> to do whatever it needs to do.</p>
 
 <h2 id="instantiation-helper">Instantiation Helper</h2>
 
-<p>In most environments you will instantiate cells with the <code>concept</code> or <code>cell</code> helper which internally does exactly the same as the manual invocation.</p>
+<p>In most environments you will instantiate cells with the <code class="highlighter-rouge">concept</code> or <code class="highlighter-rouge">cell</code> helper which internally does exactly the same as the manual invocation.</p>
 
-<pre><code class="language-ruby">cell = cell(:comment, comment)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>This is identical to</p>
 
-<pre><code class="language-ruby">cell = CommentCell.new(comment)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>Depending on your environment, the <code>cell</code> helper might inject dependencies into the created cell. For example, in Rails, the controller is passed on into the cell behind the scenes. When manually instantiating cells, you must not forget to do so, too.</p>
+<p>Depending on your environment, the <code class="highlighter-rouge">cell</code> helper might inject dependencies into the created cell. For example, in Rails, the controller is passed on into the cell behind the scenes. When manually instantiating cells, you must not forget to do so, too.</p>
 
-<p>The <code>cell</code> helper also allows passing in the cell constant. This means, it won’t try to infer the class constant name.</p>
+<p>The <code class="highlighter-rouge">cell</code> helper also allows passing in the cell constant. This means, it won’t try to infer the class constant name.</p>
 
-<pre><code class="language-ruby">cell = cell(CommentCell, comment)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="no">CommentCell</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <h2 id="file-structure">File Structure</h2>
 
-<p>Having a cell to represent a fragment of your page is one thing. The real power, whatsoever, comes when rendering templates in cells. The <code>render</code> method does just that.</p>
+<p>Having a cell to represent a fragment of your page is one thing. The real power, whatsoever, comes when rendering templates in cells. The <code class="highlighter-rouge">render</code> method does just that.</p>
 
 <p>In a suffix environment, Cells expects the following file layout.</p>
 
-<pre><code>├── app
+<div class="highlighter-rouge"><pre class="highlight"><code>├── app
 │   ├── cells
 │   │   └── comment_cell.rb
 │   │   └── comment
 │   │       └── show.haml
 </code></pre>
+</div>
 
-<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code>comment</code>). Views do only have one extension to identify the template’s format (<code>show.haml</code>). Again, you’re free to provide arbitrary additional extensions.</p>
+<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code class="highlighter-rouge">comment</code>). Views do only have one extension to identify the template’s format (<code class="highlighter-rouge">show.haml</code>). Again, you’re free to provide arbitrary additional extensions.</p>
 
 <p>Note that the <em>suffix</em> style is getting superseded by the <a href="trailblazer.html">Trailblazer</a>-style naming and file structure.</p>
 
 <h2 id="render">Render</h2>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  def show
-    render # renders show.haml.
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="c1"># renders show.haml.</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>A simple <code>render</code> will implicitly figure out the method (or state) name and attempt to render that view. Here, the file will be resolved to <code>app/cells/comment/show.haml</code>.</p>
+<p>A simple <code class="highlighter-rouge">render</code> will implicitly figure out the method (or state) name and attempt to render that view. Here, the file will be resolved to <code class="highlighter-rouge">app/cells/comment/show.haml</code>.</p>
 
-<p>Note that <code>render</code> literally renders the template and returns the HTML string. This allows you to call render multiple times, concatenate, and so on.</p>
+<p>Note that <code class="highlighter-rouge">render</code> literally renders the template and returns the HTML string. This allows you to call render multiple times, concatenate, and so on.</p>
 
-<pre><code class="language-ruby">def show
-  render + render(:footer) + "&lt;hr/&gt;"
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="o">+</span> <span class="n">render</span><span class="p">(</span><span class="ss">:footer</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"&lt;hr/&gt;"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>You can provide an explicit view name as the first argument.</p>
 
-<pre><code class="language-ruby">def show
-  render :item # renders item.haml
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="ss">:item</span> <span class="c1"># renders item.haml</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>When providing more than one argument to <code>render</code>, you have to use the <code>:view</code> option.</p>
+<p>When providing more than one argument to <code class="highlighter-rouge">render</code>, you have to use the <code class="highlighter-rouge">:view</code> option.</p>
 
-<pre><code class="language-ruby">def show
-  render view: :item # renders item.haml
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="ss">view: :item</span> <span class="c1"># renders item.haml</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>If you like the clunky Rails-style file naming, you’re free to add a format to the view.</p>
 
-<pre><code class="language-ruby">render "shot.html" # renders show.html.haml
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">render</span> <span class="s2">"shot.html"</span> <span class="c1"># renders show.html.haml</span>
 </code></pre>
+</div>
 
-<p>You can pass locals to the view using <code>:locals</code>.</p>
+<p>You can pass locals to the view using <code class="highlighter-rouge">:locals</code>.</p>
 
-<pre><code class="language-ruby">render locals: { logged_in: options[:current_user] }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">render</span> <span class="ss">locals: </span><span class="p">{</span> <span class="ss">logged_in: </span><span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <h2 id="instance-methods">Instance Methods</h2>
 
 <p>While it is fine to use locals or instance variables in the view to access data, the preferred way is invoking instance methods in the view.</p>
 
-<pre><code>%h1 Show comment
+<div class="highlighter-rouge"><pre class="highlight"><code>%h1 Show comment
 
 = body
 = author_link
 </code></pre>
+</div>
 
 <p>Every method call in the view is dispatched to the cell instance. You have to define your “helpers” there.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  property :body # creates #body reader.
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">property</span> <span class="ss">:body</span> <span class="c1"># creates #body reader.</span>
 
-  def author_link
-    url_for model.author.name, model.author
-  end
-end
+  <span class="k">def</span> <span class="nf">author_link</span>
+    <span class="n">url_for</span> <span class="n">model</span><span class="p">.</span><span class="nf">author</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="nf">author</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>This allows slim, logic-less views.</p>
 
@@ -476,80 +507,91 @@ end
 
 <p>A block passed to the cell constructor is passed on to the state method.</p>
 
-<pre><code class="language-ruby">CommentCell.new(comment) { "Yay!" }
-cell(:comment, comment)  { "Yay!" }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
+<span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <p>It’s up to you if you want to use this block, or provide your own.</p>
 
-<pre><code class="language-ruby">def show(&amp;block)
-  render(&amp;block)
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">render</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Passing the block <code>render</code> allows yielding it in the view.</p>
+<p>Passing the block <code class="highlighter-rouge">render</code> allows yielding it in the view.</p>
 
-<pre><code>%h1 Comment
+<div class="highlighter-rouge"><pre class="highlight"><code>%h1 Comment
 
 = yield
 </code></pre>
+</div>
 
 <h2 id="collection">Collection</h2>
 
-<p>Instead of manually iterating an array of models and concatenating the output of the item cell, you can use the <code>:collection</code> feature.</p>
+<p>Instead of manually iterating an array of models and concatenating the output of the item cell, you can use the <code class="highlighter-rouge">:collection</code> feature.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: Comment.all).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
 </code></pre>
+</div>
 
-<p>This will instantiate a cell per iterated model, invoke <code>call</code> and join the output into one fragment.</p>
+<p>This will instantiate a cell per iterated model, invoke <code class="highlighter-rouge">call</code> and join the output into one fragment.</p>
 
-<p>Pass the method name to <code>call</code> when you want to invoke a state different to <code>show</code>.</p>
+<p>Pass the method name to <code class="highlighter-rouge">call</code> when you want to invoke a state different to <code class="highlighter-rouge">show</code>.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: Comment.all).(:item)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="ss">:item</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>You’re free to pass additional options to the call.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: comments, size: comments.size).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="n">comments</span><span class="p">,</span> <span class="ss">size: </span><span class="n">comments</span><span class="p">.</span><span class="nf">size</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
 </code></pre>
+</div>
 
 <p>This instantiates each collection cell as follows.</p>
 
-<pre><code class="language-ruby">CommentCell.new(comment, size: 9)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="ss">size: </span><span class="mi">9</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>The <code>join</code> method allows to customize the cell invocation. The block’s return value is autmatically joined.</p>
+<p>The <code class="highlighter-rouge">join</code> method allows to customize the cell invocation. The block’s return value is autmatically joined.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: Comment.all).join do |cell, i|
-  i.odd? cell.(:odd) : cell(:even)
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span> <span class="k">do</span> <span class="o">|</span><span class="n">cell</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+  <span class="n">i</span><span class="p">.</span><span class="nf">odd?</span> <span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:odd</span><span class="p">)</span> <span class="p">:</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:even</span><span class="p">)</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>An optional separator string can be passed to <code>join</code> when it concatenates the item fragments.</p>
+<p>An optional separator string can be passed to <code class="highlighter-rouge">join</code> when it concatenates the item fragments.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: Comment.all).join("&lt;hr/&gt;") do |cell, i|
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">"&lt;hr/&gt;"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">cell</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
 </code></pre>
+</div>
 
 <h2 id="external-layout">External Layout</h2>
 
 <p>Since Cells 4.1, you can instruct your cell to use a second cell as a wrapper. This will first render your actual content cell, then pass the content via a block to the layout cell.</p>
 
-<p>Cells desiring to be wrapped in a layout have to include <code>Layout::External</code>.</p>
+<p>Cells desiring to be wrapped in a layout have to include <code class="highlighter-rouge">Layout::External</code>.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  include Layout::External
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="no">Layout</span><span class="o">::</span><span class="no">External</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The layout cell usually can be an empty subclass.</p>
 
-<pre><code class="language-ruby">class LayoutCell &lt; Cell::ViewModel
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LayoutCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Its <code>show</code> view must contain a <code>yield</code> to insert the content.</p>
+<p>Its <code class="highlighter-rouge">show</code> view must contain a <code class="highlighter-rouge">yield</code> to insert the content.</p>
 
-<pre><code>!!!
+<div class="highlighter-rouge"><pre class="highlight"><code>!!!
 %html
   %head
     %title= "Gemgem"
@@ -558,23 +600,26 @@ end
   %body
     = yield
 </code></pre>
+</div>
 
-<p>The layout cell class is then injected into the actual invocation using <code>:layout</code>.</p>
+<p>The layout cell class is then injected into the actual invocation using <code class="highlighter-rouge">:layout</code>.</p>
 
-<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">LayoutCell</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>The context object will automatically be passed to the layout cell.</p>
 
-<p>Note that <code>:layout</code> also works in combination with <code>:collection</code>.</p>
+<p>Note that <code class="highlighter-rouge">:layout</code> also works in combination with <code class="highlighter-rouge">:collection</code>.</p>
 
 <h2 id="view-paths">View Paths</h2>
 
-<p>Per default, the cell’s view path is set to <code>app/cells</code>. You can set any number of view paths for the template file lookup.</p>
+<p>Per default, the cell’s view path is set to <code class="highlighter-rouge">app/cells</code>. You can set any number of view paths for the template file lookup.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  self.view_paths = ["app/views"]
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="nb">self</span><span class="p">.</span><span class="nf">view_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"app/views"</span><span class="p">]</span>
 </code></pre>
+</div>
 
 <h2 id="template-formats">Template Formats</h2>
 
@@ -585,27 +630,29 @@ end
 <ul>
   <li><a href="https://github.com/trailblazer/cells-erb">cells-erb</a></li>
   <li><a href="https://github.com/trailblazer/cells-hamlit">cells-hamlit</a> We strongly recommend using <a href="https://github.com/k0kubun/hamlit">Hamlit</a> as a Haml replacement.</li>
-  <li><a href="https://github.com/trailblazer/cells-haml">cells-haml</a> Make sure to bundle Haml 4.1: <code>gem "haml", github: "haml/haml", ref: "7c7c169"</code>. Use <code>cells-hamlit</code> instead.</li>
+  <li><a href="https://github.com/trailblazer/cells-haml">cells-haml</a> Make sure to bundle Haml 4.1: <code class="highlighter-rouge">gem "haml", github: "haml/haml", ref: "7c7c169"</code>. Use <code class="highlighter-rouge">cells-hamlit</code> instead.</li>
   <li><a href="https://github.com/trailblazer/cells-slim">cells-slim</a></li>
 </ul>
 
-<pre><code class="language-ruby">gem "cells-erb"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"cells-erb"</span>
 </code></pre>
+</div>
 
 <p>In Rails, this is all you need to do. In other environments, you need to include the respective module into your cells.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  include ::Cell::Erb # or Cell::Hamlit, or Cell::Haml, or Cell::Slim
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Erb</span> <span class="c1"># or Cell::Hamlit, or Cell::Haml, or Cell::Slim</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <h2 id="html-escaping">HTML Escaping</h2>
 
 <p>Cells per default does no HTML escaping, anywhere. This is one of the reasons that makes Cells faster than Rails.</p>
 
-<p>Include <code>Escaped</code> to make property readers return escaped strings.</p>
+<p>Include <code class="highlighter-rouge">Escaped</code> to make property readers return escaped strings.</p>
 
-<pre><code>class CommentCell &lt; Cell::ViewModel
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentCell &lt; Cell::ViewModel
   include Escaped
   property :title
 end
@@ -613,76 +660,85 @@ end
 song.title                 #=&gt; "&lt;script&gt;Dangerous&lt;/script&gt;"
 Comment::Cell.(song).title #=&gt; &amp;lt;script&amp;gt;Dangerous&amp;lt;/script&amp;gt;
 </code></pre>
+</div>
 
 <p>Only strings will be escaped via the property reader.</p>
 
 <p>You can suppress escaping manually.</p>
 
-<pre><code>def raw_title
+<div class="highlighter-rouge"><pre class="highlight"><code>def raw_title
   "#{title(escape: false)} on the edge!"
 end
 </code></pre>
+</div>
 
 <p>Of course, this works in views, too.</p>
 
-<pre><code>&lt;%= title(escape: false) %&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;%= title(escape: false) %&gt;
 </code></pre>
+</div>
 
 <h2 id="context-object">Context Object</h2>
 
-<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object is passed on automatically. To add objects to the context, use the <code>:context</code> option.</p>
+<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object is passed on automatically. To add objects to the context, use the <code class="highlighter-rouge">:context</code> option.</p>
 
-<pre><code class="language-ruby">cell("comment", comment, context: { user: current_user })
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="s2">"comment"</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">user: </span><span class="n">current_user</span> <span class="p">})</span>
 </code></pre>
+</div>
 
-<p>Reading from the context works via the <code>context</code> method.</p>
+<p>Reading from the context works via the <code class="highlighter-rouge">context</code> method.</p>
 
-<pre><code class="language-ruby">def show
-  context[:user] #=&gt; &lt;User ..&gt;
-  # ..
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">context</span><span class="p">[</span><span class="ss">:user</span><span class="p">]</span> <span class="c1">#=&gt; &lt;User ..&gt;</span>
+  <span class="c1"># ..</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.</p>
 
 <h2 id="nesting">Nesting</h2>
 
-<p>You can invoke cells in cells. This happens with the <code>cell</code> helper.</p>
+<p>You can invoke cells in cells. This happens with the <code class="highlighter-rouge">cell</code> helper.</p>
 
-<pre><code class="language-ruby">def show
-  html = cell(:comment_detail, model)
-  # ..
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">html</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:comment_detail</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+  <span class="c1"># ..</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The <code>cell</code> helper will automatically pass the context object to the nested cell.</p>
+<p>The <code class="highlighter-rouge">cell</code> helper will automatically pass the context object to the nested cell.</p>
 
 <h2 id="view-inheritance">View Inheritance</h2>
 
 <p>Cells can inherit code from each other with Ruby’s inheritance.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+<span class="k">end</span>
 
-class PostCell &lt; CommentCell
-end
+<span class="k">class</span> <span class="nc">PostCell</span> <span class="o">&lt;</span> <span class="no">CommentCell</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Even cooler, <code>PostCell</code> will now inherit views from <code>CommentCell</code>.</p>
+<p>Even cooler, <code class="highlighter-rouge">PostCell</code> will now inherit views from <code class="highlighter-rouge">CommentCell</code>.</p>
 
-<pre><code class="language-ruby">PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">PostCell</span><span class="p">.</span><span class="nf">prefixes</span> <span class="c1">#=&gt; ["app/cells/post", "app/cells/comment"]</span>
 </code></pre>
+</div>
 
-<p>When views can be found in the local <code>post</code> directory, they will be looked up in <code>comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
+<p>When views can be found in the local <code class="highlighter-rouge">post</code> directory, they will be looked up in <code class="highlighter-rouge">comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
 
-<p>If you only want to inherit views, not the entire class, use <code>::inherit_views</code>.</p>
+<p>If you only want to inherit views, not the entire class, use <code class="highlighter-rouge">::inherit_views</code>.</p>
 
-<pre><code class="language-ruby">class PostCell &lt; Cell::ViewModel
-  inherit_views Comment::Cell
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PostCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">inherit_views</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span>
+<span class="k">end</span>
 
-PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
+<span class="no">PostCell</span><span class="p">.</span><span class="nf">prefixes</span> <span class="c1">#=&gt; ["app/cells/post", "app/cells/comment"]</span>
 </code></pre>
+</div>
 
 <h2 id="builder">Builder</h2>
 
@@ -690,22 +746,25 @@ PostCell.prefixes #=&gt; ["app/cells/post", "app/cells/comment"]
 
 <p>Builders allow instantiating different cell classes for different models and options.</p>
 
-<pre><code class="language-ruby">class CommentCell &lt; Cell::ViewModel
-  builds do |model, options|
-    PostCell       if model.is_a?(Post)
-    CommentCell    if model.is_a?(Comment)
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">builds</span> <span class="k">do</span> <span class="o">|</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
+    <span class="no">PostCell</span>       <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Post</span><span class="p">)</span>
+    <span class="no">CommentCell</span>    <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Comment</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
-<p>The <code>#cell</code> helper takes care of instantiating the right cell class for you.</p>
+</div>
+<p>The <code class="highlighter-rouge">#cell</code> helper takes care of instantiating the right cell class for you.</p>
 
-<pre><code class="language-ruby">cell(:comment, Post.find(1)) #=&gt; creates a PostCell.
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="no">Post</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">#=&gt; creates a PostCell.</span>
 </code></pre>
+</div>
 <p>This also works with collections.</p>
 
-<pre><code class="language-ruby">cell(:comment, collection: [@post, @comment]) #=&gt; renders PostCell, then CommentCell.
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="p">[</span><span class="vi">@post</span><span class="p">,</span> <span class="vi">@comment</span><span class="p">])</span> <span class="c1">#=&gt; renders PostCell, then CommentCell.</span>
 </code></pre>
-<p>Multiple calls to <code>::builds</code> will be ORed. If no block returns a class, the original class will be used (<code>CommentCell</code>). Builders are inherited.</p>
+</div>
+<p>Multiple calls to <code class="highlighter-rouge">::builds</code> will be ORed. If no block returns a class, the original class will be used (<code class="highlighter-rouge">CommentCell</code>). Builders are inherited.</p>
 
 <h2 id="caching">Caching</h2>
 
@@ -713,81 +772,89 @@ end
 
 <p>To cache forever, don’t configure anything</p>
 
-<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
-  cache :show
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span>
 
-  def show
-    render
-  end
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>This will run <code>#show</code> only once, after that the rendered view comes from the cache.</p>
+<p>This will run <code class="highlighter-rouge">#show</code> only once, after that the rendered view comes from the cache.</p>
 
 <h2 id="cache-options">Cache Options</h2>
 
-<p>Note that you can pass arbitrary options through to your cache store. Symbols are evaluated as instance methods, callable objects (e.g. lambdas) are evaluated in the cell instance context allowing you to call instance methods and access instance variables. All arguments passed to your state (e.g. via <code>render_cell</code>) are propagated to the block.</p>
+<p>Note that you can pass arbitrary options through to your cache store. Symbols are evaluated as instance methods, callable objects (e.g. lambdas) are evaluated in the cell instance context allowing you to call instance methods and access instance variables. All arguments passed to your state (e.g. via <code class="highlighter-rouge">render_cell</code>) are propagated to the block.</p>
 
-<pre><code class="language-ruby">cache :show, :expires_in =&gt; 10.minutes
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:expires_in</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">.</span><span class="nf">minutes</span>
 </code></pre>
+</div>
 
 <p>If you need dynamic options evaluated at render-time, use a lambda.</p>
 
-<pre><code class="language-ruby">cache :show, :tags =&gt; lambda { |*args| tags }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:tags</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|*</span><span class="n">args</span><span class="o">|</span> <span class="n">tags</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <p>If you don’t like blocks, use instance methods instead.</p>
 
-<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
-  cache :show, :tags =&gt; :cache_tags
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:tags</span> <span class="o">=&gt;</span> <span class="ss">:cache_tags</span>
 
-  def cache_tags(*args)
-    # do your magic..
-  end
+  <span class="k">def</span> <span class="nf">cache_tags</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># do your magic..</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <h2 id="conditional-caching">Conditional Caching</h2>
 
-<p>The <code>:if</code> option lets you define a condition. If it doesn’t return a true value, caching for that state is skipped.</p>
+<p>The <code class="highlighter-rouge">:if</code> option lets you define a condition. If it doesn’t return a true value, caching for that state is skipped.</p>
 
-<pre><code class="language-ruby">cache :show, :if =&gt; lambda { |*| has_changed? }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:if</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|*|</span> <span class="n">has_changed?</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <h2 id="cache-keys">Cache Keys</h2>
 
-<p>You can expand the state’s cache key by appending a versioner block to the <code>::cache</code> call. This way you can expire state caches yourself.</p>
+<p>You can expand the state’s cache key by appending a versioner block to the <code class="highlighter-rouge">::cache</code> call. This way you can expire state caches yourself.</p>
 
-<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
-  cache :show do |options|
-    order.id
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span> <span class="k">do</span> <span class="o">|</span><span class="n">options</span><span class="o">|</span>
+    <span class="n">order</span><span class="p">.</span><span class="nf">id</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The versioner block is executed in the cell instance context, allowing you to access all stakeholder objects you need to compute a cache key. The return value is appended to the state key: <code>"cells/cart/show/1"</code>.</p>
+<p>The versioner block is executed in the cell instance context, allowing you to access all stakeholder objects you need to compute a cache key. The return value is appended to the state key: <code class="highlighter-rouge">"cells/cart/show/1"</code>.</p>
 
 <p>As everywhere in Rails, you can also return an array.</p>
 
-<pre><code class="language-ruby">class CartCell &lt; Cell::Rails
-  cache :show do |options|
-    [id, options[:items].md5]
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span> <span class="k">do</span> <span class="o">|</span><span class="n">options</span><span class="o">|</span>
+    <span class="p">[</span><span class="nb">id</span><span class="p">,</span> <span class="n">options</span><span class="p">[</span><span class="ss">:items</span><span class="p">].</span><span class="nf">md5</span><span class="p">]</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Resulting in: <code>"cells/cart/show/1/0ecb1360644ce665a4ef"</code>.</p>
+<p>Resulting in: <code class="highlighter-rouge">"cells/cart/show/1/0ecb1360644ce665a4ef"</code>.</p>
 
 <h2 id="debugging-cache">Debugging Cache</h2>
 
 <p>When caching is turned on, you might wanna see notifications. Just like a controller, Cells gives you the following notifications.</p>
 
 <ul>
-  <li><code>write_fragment.action_controller</code> for cache miss.</li>
-  <li><code>read_fragment.action_controller</code> for cache hits.</li>
+  <li><code class="highlighter-rouge">write_fragment.action_controller</code> for cache miss.</li>
+  <li><code class="highlighter-rouge">read_fragment.action_controller</code> for cache hits.</li>
 </ul>
 
-<p>To activate notifications, include the <code>Notifications</code> module in your cell.</p>
+<p>To activate notifications, include the <code class="highlighter-rouge">Notifications</code> module in your cell.</p>
 
-<pre><code class="language-ruby">class Comment::Cell &lt; Cell::Rails
-  include Cell::Caching::Notifications
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="kp">include</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Caching</span><span class="o">::</span><span class="no">Notifications</span>
 </code></pre>
+</div>
 
 <h2 id="cache-inheritance">Cache Inheritance</h2>
 
@@ -795,7 +862,7 @@ end
 
 <h2 id="testing-caching">Testing Caching</h2>
 
-<p>If you want to test it in <code>development</code>, you need to put <code>config.action_controller.perform_caching = true</code> in <code>development.rb</code> to see the effect.</p>
+<p>If you want to test it in <code class="highlighter-rouge">development</code>, you need to put <code class="highlighter-rouge">config.action_controller.perform_caching = true</code> in <code class="highlighter-rouge">development.rb</code> to see the effect.</p>
 
       </div>
     </div>

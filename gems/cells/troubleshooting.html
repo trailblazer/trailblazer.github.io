@@ -191,20 +191,22 @@
 
 <p>One of the many problems with Rails helper implementation is that the inclusion order matters. This can lead to problems with the following exception.</p>
 
-<pre><code>undefined method `output_buffer=' for #&lt;Comment::Cell:0xb518d8cc&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>undefined method `output_buffer=' for #&lt;Comment::Cell:0xb518d8cc&gt;
 </code></pre>
+</div>
 
-<p>Usually, the problem arises when you have initializers to setup your application cell. When including helpers here, they might be included before the <code>cells</code> gem has a chance to include its fixes.</p>
+<p>Usually, the problem arises when you have initializers to setup your application cell. When including helpers here, they might be included before the <code class="highlighter-rouge">cells</code> gem has a chance to include its fixes.</p>
 
 <p>Please include your template engine module explicitly then, <em>after</em> your standard helper inclusions.</p>
 
-<pre><code># config/initializers/trailblazer.rb
+<div class="highlighter-rouge"><pre class="highlight"><code># config/initializers/trailblazer.rb
 
 Cell::Concept.class_eval do
   include ActionView::Helpers::TranslationHelpers # include your helpers here.
   include Cell::Erb # or Cell::Slim, or Cell::Haml after that
 end
 </code></pre>
+</div>
 
       </div>
     </div>

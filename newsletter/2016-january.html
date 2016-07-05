@@ -80,7 +80,7 @@
         <div class="columns medium-9 medium-centered">
           <h1 id="january-2016">January 2016</h1>
 
-<p>Dear Readers of this newsletter,<br />
+<p>Dear Readers of this newsletter,
 Hello, and Hi from the Trailblazer team!</p>
 
 <p>Thank you for your interest in the Trailblazer project. We hope your new year 2016 started off great and you’re already working on fantastic new software!</p>
@@ -95,14 +95,15 @@ Hello, and Hi from the Trailblazer team!</p>
 
 <p>Formular is built without using any outdated Rails helpers, making it insanely fast and usable in many frameworks, namely Rails, Hanami, or Sinatra. Its API is following the best practices established by existing form builders, without inheriting all the problems originating from strong coupling.</p>
 
-<pre><code class="language-ruby">= form(model.contract, url) do |f|
-  = f.input :url_slug, placeholder: "URL slug"
-  .form-group
-    = f.checkbox :is_public, label: "Public?"
-  .form-group
-    = f.radio :owner, label: "Flori", value: 1
-    = f.radio :owner, label: "Konsti", value: 2
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">contract</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">input</span> <span class="ss">:url_slug</span><span class="p">,</span> <span class="ss">placeholder: </span><span class="s2">"URL slug"</span>
+  <span class="p">.</span><span class="nf">form</span><span class="o">-</span><span class="n">group</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">checkbox</span> <span class="ss">:is_public</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Public?"</span>
+  <span class="p">.</span><span class="nf">form</span><span class="o">-</span><span class="n">group</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">radio</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Flori"</span><span class="p">,</span> <span class="ss">value: </span><span class="mi">1</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">radio</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Konsti"</span><span class="p">,</span> <span class="ss">value: </span><span class="mi">2</span>
 </code></pre>
+</div>
 
 <p>It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended <a href="https://github.com/apotonick/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb">with plain Ruby classes</a>. It is incredibly simple to add new frontends or extend existing behavior.</p>
 
@@ -110,31 +111,32 @@ Hello, and Hi from the Trailblazer team!</p>
 
 <h3 id="dry-validation-and-reform">Dry-Validation and Reform</h3>
 
-<p>The <a href="https://github.com/apotonick/reform">Reform gem</a> is gaining more and more popularity and is a essential building block in Trailblazer. Its basic validation implementation comes from <code>ActiveModel::Validations</code>. While this makes the transition from model validations to form ojects very straight-forward, it brings a lot of legacy problems into Reform.</p>
+<p>The <a href="https://github.com/apotonick/reform">Reform gem</a> is gaining more and more popularity and is a essential building block in Trailblazer. Its basic validation implementation comes from <code class="highlighter-rouge">ActiveModel::Validations</code>. While this makes the transition from model validations to form ojects very straight-forward, it brings a lot of legacy problems into Reform.</p>
 
 <p>To keep moving forward, we integrated the excellent <a href="https://github.com/dryrb/dry-validation">Dry-Validation</a> gem into Reform, allowing to use this brand-new validation gem as a replacement for ActiveModel.</p>
 
-<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
-  property :title
-  property :url_slug
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">property</span> <span class="ss">:title</span>
+  <span class="n">property</span> <span class="ss">:url_slug</span>
 
-  include Reform::Form::Dry::Validations
+  <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Dry</span><span class="o">::</span><span class="no">Validations</span>
 
-  validation :default do
-    key(:title, &amp;:filled?)
-    key(:url_slug) { |slug| slug.format?(/^[\w-]+$/) &amp; slug.unique? }
-    key(:content) { |content| content.max_size?(10000) }
+  <span class="n">validation</span> <span class="ss">:default</span> <span class="k">do</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="o">&amp;</span><span class="ss">:filled?</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:url_slug</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">slug</span><span class="o">|</span> <span class="n">slug</span><span class="p">.</span><span class="nf">format?</span><span class="p">(</span><span class="sr">/^[\w-]+$/</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">slug</span><span class="p">.</span><span class="nf">unique?</span> <span class="p">}</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:content</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">content</span><span class="o">|</span> <span class="n">content</span><span class="p">.</span><span class="nf">max_size?</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span> <span class="p">}</span>
 
-    def unique?(value)
-      form.model.class[url_slug: value].nil?
-    end
-  end
-end
+    <span class="k">def</span> <span class="nf">unique?</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">form</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">class</span><span class="p">[</span><span class="ss">url_slug: </span><span class="n">value</span><span class="p">].</span><span class="nf">nil?</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>You can now use Dry-Validation’s predicate logic to write your validation code, which is richer and makes it easier to write complex validations and dependent rules.</p>
 
-<p>While there’s still moving parts, several companies switched to this validation engine, already, and they’re very happy with it. Another nicety is that you now can use Reform in other Ruby frameworks like Sinatra without any <code>Active*</code> Rails gem dependencies.</p>
+<p>While there’s still moving parts, several companies switched to this validation engine, already, and they’re very happy with it. Another nicety is that you now can use Reform in other Ruby frameworks like Sinatra without any <code class="highlighter-rouge">Active*</code> Rails gem dependencies.</p>
 
 <p>Wanna see that in action? Check out the <a href="https://github.com/apotonick/gemgem-sinatra/blob/1cfc38533e3cbf7be380d7afacd6c5580cb18614/concepts/post/operation/create.rb#L11">Gemgem-Sinatra example application</a>!</p>
 
@@ -142,26 +144,27 @@ end
 
 <p>A project that was a pleasure to work on is the new <a href="https://github.com/apotonick/gemgem-sinatra">Gemgem-Sinatra example </a> app - both because it shows how cool Trailblazer works with frameworks other than Rails, and also because it is <em>insanely fast</em>.</p>
 
-<pre><code class="language-ruby">├── app.rb
-├── concepts
-│   └── post
-│       ├── cell
-│       │   ├── new.rb
-│       │   └── show.rb
-│       ├── operation
-│       │   ├── create.rb
-│       │   └── update.rb
-│       └── view
-│           ├── new.slim
-│           └── show.slim
-├── config
-│   ├── init.rb
-│   └── migrations.rb
-├── Gemfile
-├── Gemfile.lock
-├── models
-│   └── post.rb
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="err">├──</span> <span class="n">app</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">├──</span> <span class="n">concepts</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">post</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">cell</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">├──</span> <span class="kp">new</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">└──</span> <span class="n">show</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">operation</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">├──</span> <span class="n">create</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">└──</span> <span class="n">update</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">└──</span> <span class="n">view</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="kp">new</span><span class="p">.</span><span class="nf">slim</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">show</span><span class="p">.</span><span class="nf">slim</span>
+<span class="err">├──</span> <span class="n">config</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">init</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">migrations</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">├──</span> <span class="no">Gemfile</span>
+<span class="err">├──</span> <span class="no">Gemfile</span><span class="p">.</span><span class="nf">lock</span>
+<span class="err">├──</span> <span class="n">models</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">post</span><span class="p">.</span><span class="nf">rb</span>
 </code></pre>
+</div>
 
 <p>We basically rebuild the Gemgem project from the Trailblazer book, using Sequel as a replacement for ActiveRecord and Sinatra as the underlying infrastructure framework.</p>
 
@@ -173,50 +176,55 @@ end
 
 <p>Simply pass the additional objects in a hash via the constructor.</p>
 
-<pre><code class="language-ruby">Form.new(post, current_user: current_user)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Form</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">post</span><span class="p">,</span> <span class="ss">current_user: </span><span class="n">current_user</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>To make Reform understand that this is a dependency, you have to define a virtual property, too!</p>
 
-<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
-  property :title                       # from model
-  property :url_slug                    # from model
-  property :current_user, virtual: true # via constructor
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">property</span> <span class="ss">:title</span>                       <span class="c1"># from model</span>
+  <span class="n">property</span> <span class="ss">:url_slug</span>                    <span class="c1"># from model</span>
+  <span class="n">property</span> <span class="ss">:current_user</span><span class="p">,</span> <span class="ss">virtual: </span><span class="kp">true</span> <span class="c1"># via constructor</span>
 </code></pre>
+</div>
 
 <p>You can now access the current user in validations or other accessors.</p>
 
-<pre><code class="language-ruby">class Post::Form &lt; Reform::Form
-  validates do
-    errors.add(:auth, "no current user") if current_user.nil?
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">validates</span> <span class="k">do</span>
+    <span class="n">errors</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">:auth</span><span class="p">,</span> <span class="s2">"no current user"</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>As most of Reform is implemented via Disposable’s Twin, you can find the logic that gives you the described <em>options semantic</em> <a href="https://github.com/apotonick/disposable/blob/3270bd16b0105cc48eb5c414f94b0003e04e78ac/lib/disposable/twin/setup.rb#L27">in the Disposable gem</a>.</p>
 
 <h3 id="accessing-the-parent-form">Accessing the Parent Form</h3>
 
-<p>Another addition to Disposable is the new <code>Parent</code> module, which allows accessing the parent form in a Reform instance. This is necessary when you have nested forms that need dependencies from an upper form, for instance a nested comment validation requiring the parent post’s ID.</p>
+<p>Another addition to Disposable is the new <code class="highlighter-rouge">Parent</code> module, which allows accessing the parent form in a Reform instance. This is necessary when you have nested forms that need dependencies from an upper form, for instance a nested comment validation requiring the parent post’s ID.</p>
 
-<p>Simply require and include the <code>Parent</code> extension in your form.</p>
+<p>Simply require and include the <code class="highlighter-rouge">Parent</code> extension in your form.</p>
 
-<pre><code class="language-ruby">require "disposable/twin/parent"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s2">"disposable/twin/parent"</span>
 
-class Post::Form &lt; Reform::Form
-  feature Disposable::Twin::Parent
+<span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">feature</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span><span class="o">::</span><span class="no">Parent</span>
 </code></pre>
+</div>
 
 <p>You can then use the parent form in nested instances.</p>
 
-<pre><code class="language-ruby">  property :comment do
-    property :body
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>  <span class="n">property</span> <span class="ss">:comment</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span>
 
-    validates do
-      if parent.model.id &gt; 0 ...
-      # ..
-    end
-  end
+    <span class="n">validates</span> <span class="k">do</span>
+      <span class="k">if</span> <span class="n">parent</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">id</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+      <span class="c1"># ..</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>A very helpful new addition that many users have asked for. Well, here it is!</p>
 

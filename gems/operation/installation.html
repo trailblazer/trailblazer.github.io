@@ -1,22 +1,23 @@
 <h1 id="trailblazer-installation">Trailblazer Installation</h1>
 
-<p>The obvious needs to be in your <code>Gemfile</code>.</p>
+<p>The obvious needs to be in your <code class="highlighter-rouge">Gemfile</code>.</p>
 
-<pre><code class="language-ruby">gem "trailblazer"
-gem "cells"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"trailblazer"</span>
+<span class="n">gem</span> <span class="s2">"cells"</span>
 </code></pre>
+</div>
 
 <p>Cells is <em>not</em> required per default! Add it if you use it, which is highly recommended.</p>
 
-<p>This is, in case you want to use <code>ViewModel</code>s.</p>
+<p>This is, in case you want to use <code class="highlighter-rouge">ViewModel</code>s.</p>
 
 <h1 id="rails-setup">Rails Setup</h1>
 
 <ol>
   <li>
-    <p>The railtie needs to get loaded at the bottom of <code>config/application.rb</code>.</p>
+    <p>The railtie needs to get loaded at the bottom of <code class="highlighter-rouge">config/application.rb</code>.</p>
 
-    <p><code>ruby
+    <p><code class="highlighter-rouge">ruby
  require "trailblazer/rails/railtie"
 </code></p>
 

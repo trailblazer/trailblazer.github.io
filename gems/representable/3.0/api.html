@@ -197,7 +197,7 @@
 
 <p>A representer can either be a class (called <em>decorator</em>) or a module (called <em>representer module</em>). Throughout the docs, we will use decorators as they are cleaner and faster, but keep in mind you can also use modules.</p>
 
-<pre><code>require 'representable/json'
+<div class="highlighter-rouge"><pre class="highlight"><code>require 'representable/json'
 
 class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
@@ -206,11 +206,13 @@ class SongRepresenter &lt; Representable::Decorator
   property :title
 end
 </code></pre>
+</div>
 
-<p>A representer simply defines the fields that will be mapped to the document using <code>property</code> or <code>collection</code>. You can then decorate an object and render or parse. Here’s an example.</p>
+<p>A representer simply defines the fields that will be mapped to the document using <code class="highlighter-rouge">property</code> or <code class="highlighter-rouge">collection</code>. You can then decorate an object and render or parse. Here’s an example.</p>
 
-<pre><code>SongRepresenter.new(song).to_json #=&gt; {"id": 1, title":"Fallout"}
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).to_json #=&gt; {"id": 1, title":"Fallout"}
 </code></pre>
+</div>
 
 <p>The details are being discussed in the <a href="#public-api">public API</a> section.</p>
 
@@ -220,33 +222,35 @@ end
 
 <p>A representer module is also a good way to share configuration and logic across decorators.</p>
 
-<pre><code>module SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>module SongRepresenter
   include Representable::JSON
 
   property :id
   property :title
 end
 </code></pre>
+</div>
 
 <p>The API in a module representer is identical to decorators. However, the way you apply them is different.</p>
 
-<pre><code>song.extend(SongRepresenter).to_json #=&gt; {"id": 1, title":"Fallout"}
+<div class="highlighter-rouge"><pre class="highlight"><code>song.extend(SongRepresenter).to_json #=&gt; {"id": 1, title":"Fallout"}
 </code></pre>
+</div>
 
 <p>There’s two drawbacks with this approach.</p>
 
 <ol>
-  <li>You pollute the represented object with the imported representer methods (e.g. <code>to_json</code>).</li>
-  <li>Extending an object at run-time is costly and with many <code>extend</code>s there will be a noteable performance decrease.</li>
+  <li>You pollute the represented object with the imported representer methods (e.g. <code class="highlighter-rouge">to_json</code>).</li>
+  <li>Extending an object at run-time is costly and with many <code class="highlighter-rouge">extend</code>s there will be a noteable performance decrease.</li>
 </ol>
 
 <p>Throughout this documentation, we will use decorator as examples to encourage this cleaner and faster approach.</p>
 
 <h3 id="collections">Collections</h3>
 
-<p>Not everything is a scalar value. Sometimes an object’s property can be a collection of values. Use <code>collection</code> to represent arrays.</p>
+<p>Not everything is a scalar value. Sometimes an object’s property can be a collection of values. Use <code class="highlighter-rouge">collection</code> to represent arrays.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :id
@@ -254,45 +258,49 @@ end
   collection :composer_ids
 end
 </code></pre>
+</div>
 
-<p>The new collection <code>composer_ids</code> has to be enumeratable object, like an array.</p>
+<p>The new collection <code class="highlighter-rouge">composer_ids</code> has to be enumeratable object, like an array.</p>
 
-<pre><code>Song = Struct.new(:id, :title, :composer_ids)
+<div class="highlighter-rouge"><pre class="highlight"><code>Song = Struct.new(:id, :title, :composer_ids)
 song = Song.new(1, "Fallout", [2, 3])
 
 song.to_json #=&gt; {"id": 1, title":"Fallout", composer_ids:[2,3]}
 </code></pre>
+</div>
 
-<p>Of course, this works also for parsing. The incoming <code>composer_ids</code> will override the old collection on the represented object.</p>
+<p>Of course, this works also for parsing. The incoming <code class="highlighter-rouge">composer_ids</code> will override the old collection on the represented object.</p>
 
 <h3 id="nesting">Nesting</h3>
 
-<p>Representable can also handle compositions of objects. This works for both <code>property</code> and <code>collection</code>.</p>
+<p>Representable can also handle compositions of objects. This works for both <code class="highlighter-rouge">property</code> and <code class="highlighter-rouge">collection</code>.</p>
 
 <p>For example, a song could nest an artist object.</p>
 
-<pre><code>Song   = Struct.new(:id, :title, :artist)
+<div class="highlighter-rouge"><pre class="highlight"><code>Song   = Struct.new(:id, :title, :artist)
 Artist = Struct.new(:id, :name)
 
 artist = Artist.new(2, "The Police")
 song = Song.new(1, "Fallout", artist)
 </code></pre>
+</div>
 
 <p>Here’s a better view of that object graph.</p>
 
-<pre><code>#&lt;struct Song
+<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;struct Song
   id=1,
   title="Fallout",
   artist=#&lt;struct Artist
     id=2,
     name="The Police"&gt;&gt;
 </code></pre>
+</div>
 
 <h3 id="inline-representer">Inline Representer</h3>
 
 <p>The easiest way to nest representers is by using an inline representer.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :id
@@ -304,6 +312,7 @@ song = Song.new(1, "Fallout", artist)
   end
 end
 </code></pre>
+</div>
 
 <p>Note that you can have any levels of nesting.</p>
 
@@ -311,17 +320,18 @@ end
 
 <p>Sometimes you want to compose two existing, stand-alone representers.</p>
 
-<pre><code>class ArtistRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class ArtistRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :id
   property :name
 end
 </code></pre>
+</div>
 
-<p>To maximize reusability of representers, you can reference a nested representer using the <code>:decorator</code> option.</p>
+<p>To maximize reusability of representers, you can reference a nested representer using the <code class="highlighter-rouge">:decorator</code> option.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :id
@@ -330,64 +340,70 @@ end
   property :artist, decorator: ArtistRepresenter
 end
 </code></pre>
+</div>
 
-<p>This is identical to an inline representer, but allows you to reuse <code>ArtistRepresenter</code> elsewhere.</p>
+<p>This is identical to an inline representer, but allows you to reuse <code class="highlighter-rouge">ArtistRepresenter</code> elsewhere.</p>
 
-<p>Note that the <code>:extend</code> and <code>:decorator</code> options are identical. They can both reference a decorator or a module.</p>
+<p>Note that the <code class="highlighter-rouge">:extend</code> and <code class="highlighter-rouge">:decorator</code> options are identical. They can both reference a decorator or a module.</p>
 
 <h3 id="nested-rendering">Nested Rendering</h3>
 
 <p>Regardless of the representer types you use, rendering will result in a nested document.</p>
 
-<pre><code>SongRepresenter.new(song).to_json
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).to_json
 #=&gt; {"id": 1, title":"Fallout", artist:{"id":2, "name":"The Police"}}
 </code></pre>
+</div>
 
 <h3 id="nested-parsing">Nested Parsing</h3>
 
 <p>When parsing, per default Representable will want to instantiate an object for every nested, typed fragment.</p>
 
-<p>You have to tell Representable what object to instantiate for the nested <code>artist:</code> fragment.</p>
+<p>You have to tell Representable what object to instantiate for the nested <code class="highlighter-rouge">artist:</code> fragment.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   # ..
   property :artist, decorator: ArtistRepresenter, class: Artist
 end
 </code></pre>
+</div>
 
-<p>This happens via the <code>:class</code> option. Now, the document can be parsed and a nested <code>Artist</code> will be created by the parsing.</p>
+<p>This happens via the <code class="highlighter-rouge">:class</code> option. Now, the document can be parsed and a nested <code class="highlighter-rouge">Artist</code> will be created by the parsing.</p>
 
-<pre><code>song = Song.new # nothing set.
+<div class="highlighter-rouge"><pre class="highlight"><code>song = Song.new # nothing set.
 
 SongRepresenter.new(song).
     from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
 
 song.artist.name #=&gt; "The Police"
 </code></pre>
+</div>
 
 <p>The default behavior is - admittedly - very primitive. Representable’s parsing allow rich mapping, object creation and runtime checks. Read about <a href="populator.html">populators</a> to learn how that works.</p>
 
 <h3 id="document-nesting">Document Nesting</h3>
 
-<p>Not always does the structure of the desired document map to your objects. The <code>::nested</code> method allows structuring properties within a separate section while still mapping the properties to the outer object.</p>
+<p>Not always does the structure of the desired document map to your objects. The <code class="highlighter-rouge">::nested</code> method allows structuring properties within a separate section while still mapping the properties to the outer object.</p>
 
 <p>Imagine the following document.</p>
 
-<pre><code>{"title": "Roxanne",
- "details":
-   {"track": 3,
-    "length": "4:10"}
-}
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Roxanne"</span><span class="p">,</span><span class="w">
+ </span><span class="nt">"details"</span><span class="p">:</span><span class="w">
+   </span><span class="p">{</span><span class="nt">"track"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"length"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4:10"</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>However, in the <code class="highlighter-rouge">Song</code> class, there’s no such concept as <code class="highlighter-rouge">details</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Song = Struct.new(:title, :track, :length)
 </code></pre>
+</div>
 
-<p>However, in the <code>Song</code> class, there’s no such concept as <code>details</code>.</p>
+<p>Both track and length are properties of the song object itself. Representable gives you ::nested to map the virtual <code class="highlighter-rouge">details</code> section to the song instance.</p>
 
-<pre><code>Song = Struct.new(:title, :track, :length)
-</code></pre>
-
-<p>Both track and length are properties of the song object itself. Representable gives you ::nested to map the virtual <code>details</code> section to the song instance.</p>
-
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :title
@@ -398,6 +414,7 @@ song.artist.name #=&gt; "The Police"
   end
 end
 </code></pre>
+</div>
 
 <p>Accessors for the nested properties will still be called on the song object. And as always, this works both ways - for rendering and parsing.</p>
 
@@ -405,7 +422,7 @@ end
 
 <p>You can automatically wrap a document.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   self.representation_wrap= :song
@@ -414,45 +431,51 @@ end
   property :id
 end
 </code></pre>
+</div>
 
 <p>This will add a container for rendering and parsing.</p>
 
-<pre><code>SongRepresenter.new(song).to_json
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).to_json
 #=&gt; {"song":{"title":"Fallout","id":1}}
 </code></pre>
+</div>
 
-<p>Setting <code>self.representation_wrap = true</code> will advice representable to figure out the wrap itself by inspecting the represented object class.</p>
+<p>Setting <code class="highlighter-rouge">self.representation_wrap = true</code> will advice representable to figure out the wrap itself by inspecting the represented object class.</p>
 
-<p>Note that <code>representation_wrap</code> is a dynamic function option.</p>
+<p>Note that <code class="highlighter-rouge">representation_wrap</code> is a dynamic function option.</p>
 
-<pre><code>self.representation_wrap = -&gt;(user_options:) { user_options[:my_wrap] }
+<div class="highlighter-rouge"><pre class="highlight"><code>self.representation_wrap = -&gt;(user_options:) { user_options[:my_wrap] }
 </code></pre>
+</div>
 
 <p>This would allow to provide the wrap manually.</p>
 
-<pre><code>decorator.to_json(user_options: { my_wrap: "hit" })
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(user_options: { my_wrap: "hit" })
 </code></pre>
+</div>
 
 <h3 id="suppressing-nested-wraps">Suppressing Nested Wraps</h3>
 
-<p>When reusing a representer for a nested document, you might want to suppress its <code>representation_wrap=</code> for the nested fragment.</p>
+<p>When reusing a representer for a nested document, you might want to suppress its <code class="highlighter-rouge">representation_wrap=</code> for the nested fragment.</p>
 
-<p>Reusing <code>SongRepresenter</code> from the last section in a nested setup allows suppressing the wrap via the <code>:wrap</code> option.</p>
+<p>Reusing <code class="highlighter-rouge">SongRepresenter</code> from the last section in a nested setup allows suppressing the wrap via the <code class="highlighter-rouge">:wrap</code> option.</p>
 
-<pre><code class="language-ruby">class AlbumRepresenter &lt; Representable::Decorator
-  include Representable::JSON
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
 
-  collection :songs,
-    decorator: SongRepresenter, # SongRepresenter defines representation_wrap.
-     wrap:     false            # turn off :song wrap.
-end
+  <span class="n">collection</span> <span class="ss">:songs</span><span class="p">,</span>
+    <span class="ss">decorator: </span><span class="no">SongRepresenter</span><span class="p">,</span> <span class="c1"># SongRepresenter defines representation_wrap.</span>
+     <span class="ss">wrap:     </span><span class="kp">false</span>            <span class="c1"># turn off :song wrap.</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The <code>representation_wrap</code> from the nested representer now won’t be rendered and parsed.</p>
+<p>The <code class="highlighter-rouge">representation_wrap</code> from the nested representer now won’t be rendered and parsed.</p>
 
-<pre><code class="language-ruby">AlbumRepresenter.new(album).to_json
-#=&gt; "{\"songs\": [{\"name\": \"Roxanne\"}]}"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">AlbumRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">).</span><span class="nf">to_json</span>
+<span class="c1">#=&gt; "{\"songs\": [{\"name\": \"Roxanne\"}]}"</span>
 </code></pre>
+</div>
 
 <p>Note that this only works for JSON and Hash at the moment.</p>
 
@@ -460,93 +483,101 @@ end
 
 <p>Properties can be inherited across representer classes and modules.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :id
   property :title
 end
 </code></pre>
+</div>
 
 <p>What if you need a refined representer to also add the artist. Use inheritance.</p>
 
-<pre><code>class SongWithArtistRepresenter &lt; SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongWithArtistRepresenter &lt; SongRepresenter
   property :artist do
     property :name
   end
 end
 </code></pre>
+</div>
 
-<p>All configuration from <code>SongRepresenter</code> will be inherited, making the properties on <code>SongWithArtistRepresenter</code>: <code>id</code>, <code>title</code>, and <code>artist</code>. The original <code>SongRepresenter</code> will stay as it is.</p>
+<p>All configuration from <code class="highlighter-rouge">SongRepresenter</code> will be inherited, making the properties on <code class="highlighter-rouge">SongWithArtistRepresenter</code>: <code class="highlighter-rouge">id</code>, <code class="highlighter-rouge">title</code>, and <code class="highlighter-rouge">artist</code>. The original <code class="highlighter-rouge">SongRepresenter</code> will stay as it is.</p>
 
 <h3 id="composition">Composition</h3>
 
 <p>You can also use modules and decorators together to compose representers.</p>
 
-<pre><code>module GenericRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>module GenericRepresenter
   include Representable::JSON
 
   property :id
 end
 </code></pre>
+</div>
 
 <p>This can be included in other representers and will extend their configuration.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include GenericRepresenter
 
   property :title
 end
 </code></pre>
+</div>
 
-<p>As a result, <code>SongRepresenter</code> will contain the good old <code>id</code> and <code>title</code> property.</p>
+<p>As a result, <code class="highlighter-rouge">SongRepresenter</code> will contain the good old <code class="highlighter-rouge">id</code> and <code class="highlighter-rouge">title</code> property.</p>
 
 <h3 id="overriding-properties">Overriding Properties</h3>
 
-<p>You might want to override a particular property in an inheriting representer. Successively calling <code>property(name)</code> will override the former definition - exactly as you know it from overriding methods in Ruby.</p>
+<p>You might want to override a particular property in an inheriting representer. Successively calling <code class="highlighter-rouge">property(name)</code> will override the former definition - exactly as you know it from overriding methods in Ruby.</p>
 
-<pre><code>class CoverSongRepresenter &lt; SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>class CoverSongRepresenter &lt; SongRepresenter
   include Representable::JSON
 
   property :title, as: :name # overrides that definition.
 end
 </code></pre>
+</div>
 
 <h3 id="partly-overriding-properties">Partly Overriding Properties</h3>
 
-<p>Instead of fully replacing a property, you can extend it with <code>:inherit</code>. This will <em>add</em> your new options and override existing options in case the one you provided already existed.</p>
+<p>Instead of fully replacing a property, you can extend it with <code class="highlighter-rouge">:inherit</code>. This will <em>add</em> your new options and override existing options in case the one you provided already existed.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :title, as: :name, render_nil: true
 end
 </code></pre>
+</div>
 
 <p>You can now inherit properties but still override or add options.</p>
 
-<pre><code>class CoverSongRepresenter &lt; SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>class CoverSongRepresenter &lt; SongRepresenter
   include Representable::JSON
 
   property :title, as: :songTitle, default: "n/a", inherit: true
 end
 </code></pre>
+</div>
 
 <p>Using the :inherit, this will result in a property having the following options.</p>
 
-<pre><code>property :title,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :title,
   as:         :songTitle, # overridden in CoverSongRepresenter.
   render_nil: true        # inherited from SongRepresenter.
   default:    "n/a"       # defined in CoverSongRepresenter.
 </code></pre>
+</div>
 
-<p>The <code>:inherit</code> option works for both inheritance and module composition.</p>
+<p>The <code class="highlighter-rouge">:inherit</code> option works for both inheritance and module composition.</p>
 
 <h3 id="inherit-with-inline-representers">Inherit With Inline Representers</h3>
 
-<p><code>:inherit</code> also works applied with inline representers.</p>
+<p><code class="highlighter-rouge">:inherit</code> also works applied with inline representers.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   property :title
@@ -555,10 +586,11 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>You can now override or add properties within the inline representer.</p>
 
-<pre><code>class HitRepresenter &lt; SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>class HitRepresenter &lt; SongRepresenter
   include Representable::JSON
 
   property :artist, inherit: true do
@@ -566,88 +598,96 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>Results in a combined inline representer as it inherits.</p>
 
-<pre><code>property :artist do
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist do
   property :name
   property :email
 end
 </code></pre>
+</div>
 
-<p>Naturally, <code>:inherit</code> can be used within the inline representer block.</p>
+<p>Naturally, <code class="highlighter-rouge">:inherit</code> can be used within the inline representer block.</p>
 
 <p>Note that the following also works.</p>
 
-<pre><code>class HitRepresenter &lt; SongRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>class HitRepresenter &lt; SongRepresenter
   include Representable::JSON
 
   property :artist, as: :composer, inherit: true
 end
 </code></pre>
+</div>
 
 <p>This renames the property but still inherits all the inlined configuration.</p>
 
-<p>Basically, <code>:inherit</code> copies the configuration from the parent property, then merges in your options from the inheriting representer. It exposes the same behaviour as <code>super</code> in Ruby - when using <code>:inherit</code> the property must exist in the parent representer.</p>
+<p>Basically, <code class="highlighter-rouge">:inherit</code> copies the configuration from the parent property, then merges in your options from the inheriting representer. It exposes the same behaviour as <code class="highlighter-rouge">super</code> in Ruby - when using <code class="highlighter-rouge">:inherit</code> the property must exist in the parent representer.</p>
 
 <h2 id="feature">Feature</h2>
 
 <p>If you need to include modules in all inline representers automatically, register it as a feature.</p>
 
-<pre><code class="language-ruby">class AlbumRepresenter &lt; Representable::Decorator
-  include Representable::JSON
-  feature Link # imports ::link
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
+  <span class="n">feature</span> <span class="no">Link</span> <span class="c1"># imports ::link</span>
 
-  link "/album/1"
+  <span class="n">link</span> <span class="s2">"/album/1"</span>
 
-  property :hit do
-    link "/hit/1" # link method imported automatically.
-  end
+  <span class="n">property</span> <span class="ss">:hit</span> <span class="k">do</span>
+    <span class="n">link</span> <span class="s2">"/hit/1"</span> <span class="c1"># link method imported automatically.</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Nested representers will <code>include</code> the provided module automatically.</p>
+<p>Nested representers will <code class="highlighter-rouge">include</code> the provided module automatically.</p>
 
 <h2 id="execution-context">Execution Context</h2>
 
-<p>Readers and Writers for properties will usually be called on the <code>represented</code> object. If you want to change that, so the accessors get called on the decorator instead, use <code>:exec_context</code>.</p>
+<p>Readers and Writers for properties will usually be called on the <code class="highlighter-rouge">represented</code> object. If you want to change that, so the accessors get called on the decorator instead, use <code class="highlighter-rouge">:exec_context</code>.</p>
 
-<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
-  property :title, exec_context: :decorator
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">exec_context: :decorator</span>
 
-  def title
-    represented.name
-  end
-end
+  <span class="k">def</span> <span class="nf">title</span>
+    <span class="n">represented</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <h2 id="callable-options">Callable Options</h2>
 
 <p>While lambdas are one option for dynamic options, you might also pass a “callable” object to a directive.</p>
 
-<pre><code class="language-ruby">class Sanitizer
-  include Uber::Callable
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Sanitizer</span>
+  <span class="kp">include</span> <span class="no">Uber</span><span class="o">::</span><span class="no">Callable</span>
 
-  def call(represented, fragment, doc, *args)
-    fragment.sanitize
-  end
-end
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">represented</span><span class="p">,</span> <span class="n">fragment</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">fragment</span><span class="p">.</span><span class="nf">sanitize</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Note how including <code>Uber::Callable</code> marks instances of this class as callable. No <code>respond_to?</code> or other magic takes place here.</p>
+<p>Note how including <code class="highlighter-rouge">Uber::Callable</code> marks instances of this class as callable. No <code class="highlighter-rouge">respond_to?</code> or other magic takes place here.</p>
 
-<pre><code class="language-ruby">property :title, parse_filter: Santizer.new
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">parse_filter: </span><span class="no">Santizer</span><span class="p">.</span><span class="nf">new</span>
 </code></pre>
+</div>
 
-<p>This is enough to have the <code>Sanitizer</code> class run with all the arguments that are usually passed to the lambda (preceded by the represented object as first argument).</p>
+<p>This is enough to have the <code class="highlighter-rouge">Sanitizer</code> class run with all the arguments that are usually passed to the lambda (preceded by the represented object as first argument).</p>
 
 <h2 id="readwrite-restrictions">Read/Write Restrictions</h2>
 
-<p>Using the <code>:readable</code> and <code>:writeable</code> options access to properties can be restricted.</p>
+<p>Using the <code class="highlighter-rouge">:readable</code> and <code class="highlighter-rouge">:writeable</code> options access to properties can be restricted.</p>
 
-<pre><code class="language-ruby">property :title, readable: false
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">readable: </span><span class="kp">false</span>
 </code></pre>
+</div>
 
-<p>This will leave out the <code>title</code> property in the rendered document. Vice-versa, <code>:writeable</code> will skip the property when parsing and does not assign it.</p>
+<p>This will leave out the <code class="highlighter-rouge">title</code> property in the rendered document. Vice-versa, <code class="highlighter-rouge">:writeable</code> will skip the property when parsing and does not assign it.</p>
 
 <h2 id="coercion">Coercion</h2>
 
@@ -655,20 +695,22 @@ end
 
 <p>Include Virtus in your Gemfile, first.</p>
 
-<pre><code class="language-ruby">gem 'virtus', "&gt;= 0.5.0"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'virtus'</span><span class="p">,</span> <span class="s2">"&gt;= 0.5.0"</span>
 </code></pre>
+</div>
 
-<p>Use the <code>:type</code> option to specify the conversion target. Note that <code>:default</code> still works.</p>
+<p>Use the <code class="highlighter-rouge">:type</code> option to specify the conversion target. Note that <code class="highlighter-rouge">:default</code> still works.</p>
 
-<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
-  include Representable::JSON
-  include Representable::Coercion
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Coercion</span>
 
-  property :recorded_at, type: DateTime, default: "May 12th, 2012"
-end
+  <span class="n">property</span> <span class="ss">:recorded_at</span><span class="p">,</span> <span class="ss">type: </span><span class="no">DateTime</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"May 12th, 2012"</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Coercing values only happens when rendering or parsing a document. Representable does not create accessors in your model as <code>virtus</code> does.</p>
+<p>Coercing values only happens when rendering or parsing a document. Representable does not create accessors in your model as <code class="highlighter-rouge">virtus</code> does.</p>
 
 <p>Note that we think coercion in the representer is wrong, and should happen on the underlying object. We have a rich <a href="/gems/disposable/coercion.html">coercion/constraint API for twins</a>.</p>
 
@@ -676,25 +718,27 @@ end
 
 <p>When parsing, Representable reads properties from hashes using their string keys.</p>
 
-<pre><code class="language-ruby">song.from_hash("title" =&gt; "Road To Never")
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">song</span><span class="p">.</span><span class="nf">from_hash</span><span class="p">(</span><span class="s2">"title"</span> <span class="o">=&gt;</span> <span class="s2">"Road To Never"</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>To allow symbol keys also include the <code>AllowSymbols</code> module.</p>
+<p>To allow symbol keys also include the <code class="highlighter-rouge">AllowSymbols</code> module.</p>
 
-<pre><code class="language-ruby">class SongRepresenter &lt; Representable::Decorator
-  include Representable::Hash
-  include Representable::Hash::AllowSymbols
-  # ..
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Hash</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Hash</span><span class="o">::</span><span class="no">AllowSymbols</span>
+  <span class="c1"># ..</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>This will give you a behavior close to Rails’ <code>HashWithIndifferentAccess</code> by stringifying the incoming hash internally.</p>
+<p>This will give you a behavior close to Rails’ <code class="highlighter-rouge">HashWithIndifferentAccess</code> by stringifying the incoming hash internally.</p>
 
 <h2 id="defaults">Defaults</h2>
 
-<p>The <code>defaults</code> method allows setting options that will be applied to all property definitions of a representer.</p>
+<p>The <code class="highlighter-rouge">defaults</code> method allows setting options that will be applied to all property definitions of a representer.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   defaults render_nil: true
@@ -703,67 +747,73 @@ end
   property :title
 end
 </code></pre>
+</div>
 
-<p>This will include <code>render_nil: true</code> in both <code>id</code> and <code>title</code> definitions, as if you’d provided that option each time.</p>
+<p>This will include <code class="highlighter-rouge">render_nil: true</code> in both <code class="highlighter-rouge">id</code> and <code class="highlighter-rouge">title</code> definitions, as if you’d provided that option each time.</p>
 
 <p>You can also have dynamic option computation at compile-time.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   defaults do |name, options|
     { as: name.camelize }
   end
 </code></pre>
+</div>
 
-<p>The <code>options</code> hash combines the user’s and Representable computed options.</p>
+<p>The <code class="highlighter-rouge">options</code> hash combines the user’s and Representable computed options.</p>
 
-<pre><code>property :id, skip: true
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, skip: true
 
 defaults do |name, options|
   options[:skip] ? { as: name.camelize } : {}
 end
 </code></pre>
+</div>
 
-<p>Note that the dynamic <code>defaults</code> block always has to return a hash.</p>
+<p>Note that the dynamic <code class="highlighter-rouge">defaults</code> block always has to return a hash.</p>
 
 <p>Combining those two forms also works.</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::JSON
 
   defaults render_nil: true do |name|
     { as: name.camelize }
   end
 </code></pre>
+</div>
 
 <p>All defaults are inherited to subclasses or including modules.</p>
 
 <h2 id="standalone-hash">Standalone Hash</h2>
 
-<p>If it’s required to represent a bare hash object, use <code>Representable::JSON::Hash</code> instead of <code>Representable::JSON</code>.</p>
+<p>If it’s required to represent a bare hash object, use <code class="highlighter-rouge">Representable::JSON::Hash</code> instead of <code class="highlighter-rouge">Representable::JSON</code>.</p>
 
 <p>This is sometimes called a <em>lonely hash</em>.</p>
 
-<pre><code>require "representable/json/hash"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "representable/json/hash"
 
 class SongsRepresenter &lt; Representable::Decorator
   include Representable::JSON::Hash
 end
 </code></pre>
+</div>
 
-<p>You can then use this hash decorator on instances of <code>Hash</code>.</p>
+<p>You can then use this hash decorator on instances of <code class="highlighter-rouge">Hash</code>.</p>
 
-<pre><code>hash = {"Nick" =&gt; "Hyper Music", "El" =&gt; "Blown In The Wind"}
+<div class="highlighter-rouge"><pre class="highlight"><code>hash = {"Nick" =&gt; "Hyper Music", "El" =&gt; "Blown In The Wind"}
 SongsRepresenter.new(hash).to_json
 #=&gt; {"Nick":"Hyper Music","El":"Blown In The Wind"}
 </code></pre>
+</div>
 
 <p>This works both ways.</p>
 
-<p>A lonely hash starts to make sense especially when the values are nested objects that need to be represented, too. You can configure the nested value objects using the <code>values</code> method. This works exactly as if you were defining an inline representer, accepting the same options.</p>
+<p>A lonely hash starts to make sense especially when the values are nested objects that need to be represented, too. You can configure the nested value objects using the <code class="highlighter-rouge">values</code> method. This works exactly as if you were defining an inline representer, accepting the same options.</p>
 
-<pre><code>class SongsRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongsRepresenter &lt; Representable::Decorator
   include Representable::JSON::Hash
 
   values class: Song do
@@ -771,20 +821,22 @@ SongsRepresenter.new(hash).to_json
   end
 end
 </code></pre>
+</div>
 
 <p>You can now represents nested objects in the hash, both rendering and parsing-wise.</p>
 
-<pre><code>hash = {"Nick" =&gt; Song.new("Hyper Music")}
+<div class="highlighter-rouge"><pre class="highlight"><code>hash = {"Nick" =&gt; Song.new("Hyper Music")}
 SongsRepresenter.new(hash).to_json
 </code></pre>
+</div>
 
-<p>In XML, use <code>XML::Hash</code>. If you want to store hash attributes in tag attributes instead of dedicated nodes, use <code>XML::AttributeHash</code>.</p>
+<p>In XML, use <code class="highlighter-rouge">XML::Hash</code>. If you want to store hash attributes in tag attributes instead of dedicated nodes, use <code class="highlighter-rouge">XML::AttributeHash</code>.</p>
 
 <h2 id="standalone-collection">Standalone Collection</h2>
 
-<p>Likewise, you can represent <em>lonely collections</em>, instances of <code>Array</code>.</p>
+<p>Likewise, you can represent <em>lonely collections</em>, instances of <code class="highlighter-rouge">Array</code>.</p>
 
-<pre><code>require "representable/json/collection"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "representable/json/collection"
 
 class SongsRepresenter &lt; Representable::Decorator
   include Representable::JSON::Collection
@@ -794,23 +846,25 @@ class SongsRepresenter &lt; Representable::Decorator
   end
 end
 </code></pre>
+</div>
 
-<p>Here, you define how to represent items in the collection using <code>items</code>.</p>
+<p>Here, you define how to represent items in the collection using <code class="highlighter-rouge">items</code>.</p>
 
 <p>Note that the items can be simple scalar values or deeply nested objects.</p>
 
-<pre><code>ary = [Song.new("Hyper Music"), Song.new("Screenager")]
+<div class="highlighter-rouge"><pre class="highlight"><code>ary = [Song.new("Hyper Music"), Song.new("Screenager")]
 SongsRepresenter.new(ary).to_json
 #=&gt; [{"title":"Hyper Music"},{"title":"Screenager"}]
 </code></pre>
+</div>
 
 <p>Note that this also works for XML.</p>
 
 <h2 id="standalone-collection-toa">Standalone Collection: to_a</h2>
 
-<p>Another trick to represent collections is using a normal representer with exactly one collection property named <code>to_a</code>.</p>
+<p>Another trick to represent collections is using a normal representer with exactly one collection property named <code class="highlighter-rouge">to_a</code>.</p>
 
-<pre><code>class SongsRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongsRepresenter &lt; Representable::Decorator
   include Representable::JSON # note that this is a plain representer.
 
   collection :to_a, class: Song do
@@ -818,14 +872,16 @@ SongsRepresenter.new(ary).to_json
   end
 end
 </code></pre>
+</div>
 
 <p>You can use this representer the way you already know and appreciate, but directly on an array.</p>
 
-<pre><code>ary = []
+<div class="highlighter-rouge"><pre class="highlight"><code>ary = []
 SongsRepresenter.new(ary).from_json('[{"title": "Screenager"}]')
 </code></pre>
+</div>
 
-<p>In order to grab the collection for rendering or parsing, Representable will now call <code>array.to_a</code>, which returns the array itself.</p>
+<p>In order to grab the collection for rendering or parsing, Representable will now call <code class="highlighter-rouge">array.to_a</code>, which returns the array itself.</p>
 
 <h2 id="automatic-collection-representer">Automatic Collection Representer</h2>
 
@@ -833,39 +889,42 @@ SongsRepresenter.new(ary).from_json('[{"title": "Screenager"}]')
 
 <p>You define a singular representer, Representable will infer the collection representer.</p>
 
-<p>Rendering a collection of objects comes for free, using <code>for_collection</code>.</p>
+<p>Rendering a collection of objects comes for free, using <code class="highlighter-rouge">for_collection</code>.</p>
 
-<pre><code>songs = Song.all
+<div class="highlighter-rouge"><pre class="highlight"><code>songs = Song.all
 SongRepresenter.for_collection.new(songs).to_json
 #=&gt; '[{"title": "Sevens"}, {"title": "Eric"}]'
 </code></pre>
+</div>
 
-<p><code>SongRepresenter.for_collection</code> will return a collection representer class.</p>
+<p><code class="highlighter-rouge">SongRepresenter.for_collection</code> will return a collection representer class.</p>
 
-<p>For parsing, you need to provide the class for the nested items. This happens via <code>collection_representer</code> in the representer class.</p>
+<p>For parsing, you need to provide the class for the nested items. This happens via <code class="highlighter-rouge">collection_representer</code> in the representer class.</p>
 
-<pre><code class="language-ruby">class SongsRepresenter &lt; Representable::Decorator
-  include Representable::JSON
-  property :title
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
+  <span class="n">property</span> <span class="ss">:title</span>
 
-  collection_representer class: Song
-end
+  <span class="n">collection_representer</span> <span class="ss">class: </span><span class="no">Song</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>You can now parse collections to <code>Song</code> instances.</p>
+<p>You can now parse collections to <code class="highlighter-rouge">Song</code> instances.</p>
 
-<pre><code>json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
+<div class="highlighter-rouge"><pre class="highlight"><code>json  = '[{"title": "Sevens"}, {"title": "Eric"}]'
 
 SongRepresenter.for_collection.new([]).from_json(json)
 </code></pre>
+</div>
 
-<p>Note: the implicit collection representer internally is implemented using a lonely collection. Everything you pass to <code>::collection_representer</code> is simply provided to the <code>::items</code> call in the lonely collection. That allows you to use <code>:populator</code> and all the other goodies, too.</p>
+<p>Note: the implicit collection representer internally is implemented using a lonely collection. Everything you pass to <code class="highlighter-rouge">::collection_representer</code> is simply provided to the <code class="highlighter-rouge">::items</code> call in the lonely collection. That allows you to use <code class="highlighter-rouge">:populator</code> and all the other goodies, too.</p>
 
 <h2 id="automatic-singular-and-collection">Automatic Singular and Collection</h2>
 
-<p>In case you don’t want to know whether or not you’re working with a collection or singular model, use <code>represent</code>.</p>
+<p>In case you don’t want to know whether or not you’re working with a collection or singular model, use <code class="highlighter-rouge">represent</code>.</p>
 
-<pre><code># singular
+<div class="highlighter-rouge"><pre class="highlight"><code># singular
 SongRepresenter.represent(Song.find(1)).to_json
 #=&gt; '{"title": "Sevens"}'
 
@@ -873,107 +932,118 @@ SongRepresenter.represent(Song.find(1)).to_json
 SongRepresenter.represent(Song.all).to_json
 #=&gt; '[{"title": "Sevens"}, {"title": "Eric"}]' ```
 </code></pre>
+</div>
 
-<p><code>represent</code> figures out the correct representer for you. This works for parsing, too.</p>
+<p><code class="highlighter-rouge">represent</code> figures out the correct representer for you. This works for parsing, too.</p>
 
 <h2 id="public-api">Public API</h2>
 
-<p>When decorating an object with a representer, the object needs to provide readers for every defined <code>property</code> - and writers, if you’re planning to parse.</p>
+<p>When decorating an object with a representer, the object needs to provide readers for every defined <code class="highlighter-rouge">property</code> - and writers, if you’re planning to parse.</p>
 
 <h3 id="accessors">Accessors</h3>
 
-<p>In our small <code>SongRepresenter</code> example, the represented object has to provide <code>#id</code> and <code>#title</code> for rendering.</p>
+<p>In our small <code class="highlighter-rouge">SongRepresenter</code> example, the represented object has to provide <code class="highlighter-rouge">#id</code> and <code class="highlighter-rouge">#title</code> for rendering.</p>
 
-<pre><code>Song = Struct.new(:id, :title)
+<div class="highlighter-rouge"><pre class="highlight"><code>Song = Struct.new(:id, :title)
 song = Song.new(1, "Fallout")
 </code></pre>
+</div>
 
 <h3 id="rendering">Rendering</h3>
 
 <p>You can render the document by decorating the object and calling the serializer method.</p>
 
-<pre><code>SongRepresenter.new(song).to_json #=&gt; {"id":1, title":"Fallout"}
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).to_json #=&gt; {"id":1, title":"Fallout"}
 </code></pre>
+</div>
 
-<p>When rendering, the document fragment is read from the represented object using the getter (e.g. <code>Song#id</code>).</p>
+<p>When rendering, the document fragment is read from the represented object using the getter (e.g. <code class="highlighter-rouge">Song#id</code>).</p>
 
-<p>Since we use <code>Representable::JSON</code> the serializer method is <code>#to_json</code>.</p>
+<p>Since we use <code class="highlighter-rouge">Representable::JSON</code> the serializer method is <code class="highlighter-rouge">#to_json</code>.</p>
 
 <p>For other format engines the serializer method will have the following name.</p>
 
 <ul>
-  <li><code>Representable::JSON#to_json</code></li>
-  <li><code>Representable::JSON#to_hash</code> (provides a hash instead of string)</li>
-  <li><code>Representable::Hash#to_hash</code></li>
-  <li><code>Representable::XML#to_xml</code></li>
-  <li><code>Representable::YAML#to_yaml</code></li>
+  <li><code class="highlighter-rouge">Representable::JSON#to_json</code></li>
+  <li><code class="highlighter-rouge">Representable::JSON#to_hash</code> (provides a hash instead of string)</li>
+  <li><code class="highlighter-rouge">Representable::Hash#to_hash</code></li>
+  <li><code class="highlighter-rouge">Representable::XML#to_xml</code></li>
+  <li><code class="highlighter-rouge">Representable::YAML#to_yaml</code></li>
 </ul>
 
 <h3 id="parsing">Parsing</h3>
 
 <p>Likewise, parsing will read values from the document and write them to the represented object.</p>
 
-<pre><code>song = Song.new
+<div class="highlighter-rouge"><pre class="highlight"><code>song = Song.new
 SongRepresenter.new(song).from_json('{"id":1, "title":"Fallout"}')
 song.id    #=&gt; 1
 song.title #=&gt; "Fallout"
 </code></pre>
+</div>
 
-<p>When parsing, the read fragment is written to the represented object using the setter (e.g. <code>Song#id=</code>).</p>
+<p>When parsing, the read fragment is written to the represented object using the setter (e.g. <code class="highlighter-rouge">Song#id=</code>).</p>
 
-<p>For other format engines, the deserializing method is named analogue to the serializing counterpart, where <code>to</code> becomes <code>from</code>. For example, <code>Representable::XML#from_xml</code> will parse XML if the format engine is mixed into the representer.</p>
+<p>For other format engines, the deserializing method is named analogue to the serializing counterpart, where <code class="highlighter-rouge">to</code> becomes <code class="highlighter-rouge">from</code>. For example, <code class="highlighter-rouge">Representable::XML#from_xml</code> will parse XML if the format engine is mixed into the representer.</p>
 
 <h3 id="user-options">User Options</h3>
 
-<p>You can provide options when representing an object using the <code>user_options:</code> option.</p>
+<p>You can provide options when representing an object using the <code class="highlighter-rouge">user_options:</code> option.</p>
 
-<pre><code>decorator.to_json(user_options: { is_admin: true })
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(user_options: { is_admin: true })
 </code></pre>
+</div>
 
-<p>Note that the <code>:user_options</code> will be accessable on all levels in a nested representer. They act like a “global” configuration and are passed to all option functions.</p>
+<p>Note that the <code class="highlighter-rouge">:user_options</code> will be accessable on all levels in a nested representer. They act like a “global” configuration and are passed to all option functions.</p>
 
-<p>Here’s an example where the <code>:if</code> option function evaluates a dynamic user option.</p>
+<p>Here’s an example where the <code class="highlighter-rouge">:if</code> option function evaluates a dynamic user option.</p>
 
-<pre><code>property :id, if: -&gt;(options) { options[:user_options][:is_admin] }
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, if: -&gt;(options) { options[:user_options][:is_admin] }
 </code></pre>
+</div>
 
-<p>This property is now only rendered or parsed when <code>:is_admin</code> is true.</p>
+<p>This property is now only rendered or parsed when <code class="highlighter-rouge">:is_admin</code> is true.</p>
 
 <p>Using Ruby 2.1’s keyword arguments is highly recommended - to make that look a bit nicer.</p>
 
-<pre><code>property :id, if: -&gt;(user_options:, **) { user_options[:is_admin] }
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, if: -&gt;(user_options:, **) { user_options[:is_admin] }
 </code></pre>
+</div>
 
 <h3 id="nested-user-options">Nested User Options</h3>
 
 <p>Representable also allows passing nested options to particular representers. You have to provide the property’s name to do so.</p>
 
-<pre><code>decorator.to_json(artist: { user_options: { is_admin: true } })
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(artist: { user_options: { is_admin: true } })
 </code></pre>
+</div>
 
-<p>This will pass the option to the nested <code>artist</code>, only. Note that this works with any level of nesting.</p>
+<p>This will pass the option to the nested <code class="highlighter-rouge">artist</code>, only. Note that this works with any level of nesting.</p>
 
 <h3 id="include-and-exclude">Include and Exclude</h3>
 
 <p>Representable supports two top-level options.</p>
 
-<p><code>:include</code> allows defining a set of properties to represent. The remaining will be skipped.</p>
+<p><code class="highlighter-rouge">:include</code> allows defining a set of properties to represent. The remaining will be skipped.</p>
 
-<pre><code>decorator.to_json(include: [:id])  #=&gt; {"id":1}
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(include: [:id])  #=&gt; {"id":1}
 </code></pre>
+</div>
 
-<p>The other, <code>:exclude</code>, will - you might have guessed it already - skip the provided properties and represent the remaining.</p>
+<p>The other, <code class="highlighter-rouge">:exclude</code>, will - you might have guessed it already - skip the provided properties and represent the remaining.</p>
 
-<pre><code>decorator.to_json(exclude: [:id, :artist])  #=&gt; {"title":"Fallout"}
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(exclude: [:id, :artist])  #=&gt; {"title":"Fallout"}
 </code></pre>
+</div>
 
 <p>As always, these options work both ways, for rendering <em>and</em> parsing.</p>
 
-<p>Note that you can also nest <code>:include</code> and <code>:exclude</code>.</p>
+<p>Note that you can also nest <code class="highlighter-rouge">:include</code> and <code class="highlighter-rouge">:exclude</code>.</p>
 
-<pre><code>decorator.to_json(artist: { include: [:name] })
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json(artist: { include: [:name] })
 #=&gt; {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 </code></pre>
+</div>
 
 <h3 id="tohash-and-fromhash">to_hash and from_hash</h3>
 

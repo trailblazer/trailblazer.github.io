@@ -191,25 +191,28 @@
 
 <p>Every cell class can have multiple view paths. However, I advise you not to have more than two, better one, unless you’re imlementing a cell in an engine. This is simply to prevent unexpected behavior.</p>
 
-<p>View paths are set via the <code>::view_paths</code> method.</p>
+<p>View paths are set via the <code class="highlighter-rouge">::view_paths</code> method.</p>
 
-<pre><code>class Cell::ViewModel
+<div class="highlighter-rouge"><pre class="highlight"><code>class Cell::ViewModel
   self.view_paths = ["app/cells"]
 </code></pre>
+</div>
 
 <p>Use the setter to override the view paths entirely, or append as follows.</p>
 
-<pre><code>class Shopify::CartCell
+<div class="highlighter-rouge"><pre class="highlight"><code>class Shopify::CartCell
   self.view_paths &lt;&lt; "/var/shopify/app/cells"
 </code></pre>
+</div>
 
-<p>The <code>view_paths</code> variable is an inheritable array.</p>
+<p>The <code class="highlighter-rouge">view_paths</code> variable is an inheritable array.</p>
 
-<p>A trick to quickly find out about the directory lookup list is to inspect the <code>::prefixes</code> class method of your particular cell.</p>
+<p>A trick to quickly find out about the directory lookup list is to inspect the <code class="highlighter-rouge">::prefixes</code> class method of your particular cell.</p>
 
-<pre><code>puts Shopify::CartCell.prefixes
+<div class="highlighter-rouge"><pre class="highlight"><code>puts Shopify::CartCell.prefixes
 #=&gt; ["app/cells/shopify/cart", "/var/shopify/app/cells/shopify/cart"]
 </code></pre>
+</div>
 
 <p>This is the authorative list when finding templates. It will include inherited cell’s directories as well when you used inheritance. The list is traversed from left to right.</p>
 
@@ -217,15 +220,16 @@
 
 <p>Even considered a taboo, you may render global partials from Cells.</p>
 
-<pre><code>SongCell &lt; Cell::ViewModel
+<div class="highlighter-rouge"><pre class="highlight"><code>SongCell &lt; Cell::ViewModel
   include Partial
 
   def show
     render partial: "../views/shared/sidebar.html"
   end
 </code></pre>
+</div>
 
-<p>Make sure to use the <code>:partial</code> option and specify a path relative to the cell’s view path. Cells will automatically add the format and the terrible underscore, resulting in <code>"../views/shared/_sidebar.html.erb"</code>.</p>
+<p>Make sure to use the <code class="highlighter-rouge">:partial</code> option and specify a path relative to the cell’s view path. Cells will automatically add the format and the terrible underscore, resulting in <code class="highlighter-rouge">"../views/shared/_sidebar.html.erb"</code>.</p>
 
       </div>
     </div>

@@ -187,11 +187,11 @@
 
 <h2 id="disposable-api">Disposable API</h2>
 
-<p>Every Reform form object inherits from <code>Disposable::Twin</code>, making every form a twin and giving each form the entire twin API such as.</p>
+<p>Every Reform form object inherits from <code class="highlighter-rouge">Disposable::Twin</code>, making every form a twin and giving each form the entire twin API such as.</p>
 
 <ul>
-  <li>Defaults using <code>:default</code>.</li>
-  <li>Coercion using <code>:type</code> and <code>:nilify</code>.</li>
+  <li>Defaults using <code class="highlighter-rouge">:default</code>.</li>
+  <li>Coercion using <code class="highlighter-rouge">:type</code> and <code class="highlighter-rouge">:nilify</code>.</li>
   <li>Nesting</li>
   <li>Composition</li>
   <li>Hash fields</li>
@@ -201,16 +201,17 @@
 
 <h2 id="coercion">Coercion</h2>
 
-<p>Incoming form data often needs conversion to a specific type, like timestamps. Reform uses <a href="http://dry-rb.org/gems/dry-types/">dry-types</a> for coercion. The DSL is seamlessly integrated with the <code>:type</code> option.</p>
+<p>Incoming form data often needs conversion to a specific type, like timestamps. Reform uses <a href="http://dry-rb.org/gems/dry-types/">dry-types</a> for coercion. The DSL is seamlessly integrated with the <code class="highlighter-rouge">:type</code> option.</p>
 
-<p>Be sure to add <code>dry-types</code> to your <code>Gemfile</code> when requiring coercion.</p>
+<p>Be sure to add <code class="highlighter-rouge">dry-types</code> to your <code class="highlighter-rouge">Gemfile</code> when requiring coercion.</p>
 
-<pre><code>gem "dry-types"
+<div class="highlighter-rouge"><pre class="highlight"><code>gem "dry-types"
 </code></pre>
+</div>
 
-<p>To use coercion, you need to include the <code>Coercion</code> module into your form class.</p>
+<p>To use coercion, you need to include the <code class="highlighter-rouge">Coercion</code> module into your form class.</p>
 
-<pre><code>require "reform/form/coercion"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "reform/form/coercion"
 
 class SongForm &lt; Reform::Form
   feature Coercion
@@ -220,11 +221,13 @@ end
 
 form.validate("written_at" =&gt; "26 September")
 </code></pre>
+</div>
 
-<p>Coercion only happens in <code>#validate</code>, <em>not</em> during construction.</p>
+<p>Coercion only happens in <code class="highlighter-rouge">#validate</code>, <em>not</em> during construction.</p>
 
-<pre><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
 </code></pre>
+</div>
 
 <p>Available coercion types are <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented here</a>.</p>
 
@@ -232,7 +235,7 @@ form.validate("written_at" =&gt; "26 September")
 
 <p>To filter values manually, you can override the setter in the form.</p>
 
-<pre><code>class SongForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongForm &lt; Reform::Form
   property :title
 
   def title=(value)
@@ -240,14 +243,15 @@ form.validate("written_at" =&gt; "26 September")
   end
 end
 </code></pre>
+</div>
 
-<p>Again, setters are only called in <code>validate</code>, <em>not</em> during construction.</p>
+<p>Again, setters are only called in <code class="highlighter-rouge">validate</code>, <em>not</em> during construction.</p>
 
 <h2 id="inheritance">Inheritance</h2>
 
 <p>Forms can be derived from other forms and will inherit all properties and validations.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   property :title
 
   collection :songs do
@@ -257,35 +261,38 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>Now, a simple inheritance can add fields.</p>
 
-<pre><code>class CompilationForm &lt; AlbumForm
+<div class="highlighter-rouge"><pre class="highlight"><code>class CompilationForm &lt; AlbumForm
   property :composers do
     property :name
   end
 end
 </code></pre>
+</div>
 
-<p>This will <em>add</em> <code>composers</code> to the existing fields.</p>
+<p>This will <em>add</em> <code class="highlighter-rouge">composers</code> to the existing fields.</p>
 
-<p>You can also partially override fields using <code>:inherit</code>.</p>
+<p>You can also partially override fields using <code class="highlighter-rouge">:inherit</code>.</p>
 
-<pre><code>class CompilationForm &lt; AlbumForm
+<div class="highlighter-rouge"><pre class="highlight"><code>class CompilationForm &lt; AlbumForm
   property :songs, inherit: true do
     property :band_id
     validates :band_id, presence: true
   end
 end
 </code></pre>
+</div>
 
-<p>Using <code>inherit:</code> here will extend the existing <code>songs</code> form with the <code>band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
+<p>Using <code class="highlighter-rouge">inherit:</code> here will extend the existing <code class="highlighter-rouge">songs</code> form with the <code class="highlighter-rouge">band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
 
 <h2 id="overriding-accessors">Overriding Accessors</h2>
 
 <p>You’re free to override form accessors for presentation and coercion.</p>
 
-<pre><code>class SongForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongForm &lt; Reform::Form
   property :title
 
   def title
@@ -293,14 +300,15 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>As always, use <code>super</code> for the original method.</p>
+<p>As always, use <code class="highlighter-rouge">super</code> for the original method.</p>
 
 <h2 id="forms-in-modules">Forms In Modules</h2>
 
 <p>To maximize reusability, you can also define forms in modules and include them in other modules or classes.</p>
 
-<pre><code>module SongsForm
+<div class="highlighter-rouge"><pre class="highlight"><code>module SongsForm
   include Reform::Form::Module
 
   collection :songs do
@@ -309,23 +317,25 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>This can now be included into a real form.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   property :title
 
   include SongsForm
 end
 </code></pre>
+</div>
 
 <p>Note that you can also override properties <a href="#inheritance">using inheritance</a> in Reform.</p>
 
-<p>When using coercion, make sure the including form already contains the <code>Coercion</code> module.</p>
+<p>When using coercion, make sure the including form already contains the <code class="highlighter-rouge">Coercion</code> module.</p>
 
-<p>If you want to provide accessors in the module, you have to define them in the <code>InstanceMethods</code> module.</p>
+<p>If you want to provide accessors in the module, you have to define them in the <code class="highlighter-rouge">InstanceMethods</code> module.</p>
 
-<pre><code>module SongForm
+<div class="highlighter-rouge"><pre class="highlight"><code>module SongForm
   include Reform::Form::Module
 
   property :title
@@ -337,6 +347,7 @@ end
   end
 end
 </code></pre>
+</div>
 
 <p>This is important so Reform can add your accessors after defining the default ones.</p>
 

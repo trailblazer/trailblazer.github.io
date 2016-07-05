@@ -185,23 +185,24 @@
       <div class="columns medium-9 code-content">
         <h1 id="prepopulating">Prepopulating</h1>
 
-<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code>validate</code>.</p>
+<p>Reform has two completely separated modes for form setup. One when rendering the form and one when populating the form in <code class="highlighter-rouge">validate</code>.</p>
 
 <p><a href="/gems/reform/prepopulator.html">Prepopulating</a> is helpful when you want to fill out fields (aka. <em>defaults</em>) or add nested forms before rendering.</p>
 
-<p><a href="/gems/reform/populators.html">Populating</a> is invoked in <code>validate</code> and will add nested forms depending on the incoming hash.</p>
+<p><a href="/gems/reform/populators.html">Populating</a> is invoked in <code class="highlighter-rouge">validate</code> and will add nested forms depending on the incoming hash.</p>
 
 <p>This page explains prepopulation used to prepare the form for rendering.</p>
 
 <h2 id="configuration">Configuration</h2>
 
-<p>You can use the <code>:prepopulator</code> option on every property or collection.</p>
+<p>You can use the <code class="highlighter-rouge">:prepopulator</code> option on every property or collection.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   property :artist, prepopulator: -&gt;(options) { self.artist = Artist.new } do
     property :name
   end
 </code></pre>
+</div>
 
 <p>The option value can be a lambda or an instance method name.</p>
 
@@ -211,43 +212,46 @@
 
 <p>Prepopulation must be invoked manually.</p>
 
-<pre><code>form = AlbumForm.new(Album.new)
+<div class="highlighter-rouge"><pre class="highlight"><code>form = AlbumForm.new(Album.new)
 form.artist #=&gt; nil
 
 form.prepopulate!
 
 form.artist #=&gt; &lt;nested ArtistForm @model=&lt;Artist ..&gt;&gt;
 </code></pre>
+</div>
 
 <p>This explicit call must happen before the form gets rendered. For instance, in Trailblazer, this happens in the controller action.</p>
 
 <h2 id="prepopulate-is-not-populate">Prepopulate is not Populate</h2>
 
-<p><code>:populator</code> and <code>:populate_if_empty</code> will be run automatically in <code>validate</code>. Do not call <code>prepopulate!</code> before <code>validate</code> if you use the populator options. This will usually result in “more” nested forms being added as you wanted (unless you know what you’re doing).</p>
+<p><code class="highlighter-rouge">:populator</code> and <code class="highlighter-rouge">:populate_if_empty</code> will be run automatically in <code class="highlighter-rouge">validate</code>. Do not call <code class="highlighter-rouge">prepopulate!</code> before <code class="highlighter-rouge">validate</code> if you use the populator options. This will usually result in “more” nested forms being added as you wanted (unless you know what you’re doing).</p>
 
-<p>Prepopulators are a concept designed to <strong>prepare a form for rendering</strong>, whereas populators are meant to <strong>set up the form in <code>validate</code></strong> when the input hash is deserialized.</p>
+<p>Prepopulators are a concept designed to <strong>prepare a form for rendering</strong>, whereas populators are meant to <strong>set up the form in <code class="highlighter-rouge">validate</code></strong> when the input hash is deserialized.</p>
 
 <p>This is explained in the <em>Nested Forms</em> chapter of the Trailblazer book. Please read it first if you have trouble understanding this, and then open an issue.</p>
 
 <h2 id="options">Options</h2>
 
-<p>Options may be passed. They will be available in the <code>:prepopulator</code> block.</p>
+<p>Options may be passed. They will be available in the <code class="highlighter-rouge">:prepopulator</code> block.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   property :title, prepopulator: -&gt;(options) { self.title = options[:def_title] }
 end
 </code></pre>
+</div>
 
-<p>You can then pass arbitrary arguments to <code>prepopulate!</code>.</p>
+<p>You can then pass arbitrary arguments to <code class="highlighter-rouge">prepopulate!</code>.</p>
 
-<pre><code>form.title #=&gt; nil
+<div class="highlighter-rouge"><pre class="highlight"><code>form.title #=&gt; nil
 
 form.prepopulate!(def_title: "Roxanne")
 
 form.title #=&gt; "Roxanne"
 </code></pre>
+</div>
 
-<p>The arguments passed to the <code>prepopulate!</code> call will be passed straight to the block/method.</p>
+<p>The arguments passed to the <code class="highlighter-rouge">prepopulate!</code> call will be passed straight to the block/method.</p>
 
 <p>This call will be applied to the entire nested form graph recursively <em>after</em> the currently traversed form’s prepopulators were run.</p>
 
@@ -259,40 +263,43 @@ form.title #=&gt; "Roxanne"
 
 <p>This is especially cool when populating collections.</p>
 
-<pre><code>property :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :songs,
   prepopulator: -&gt;(*) { self.songs &lt;&lt; Song.new if songs.size &lt; 3 } do
 </code></pre>
+</div>
 
-<p>This will always add an empty song form to the nested <code>songs</code> collection until three songs are attached. You can use the <code>Twin::Collection</code> <a href="/gems/disposable/collection.html">API</a> when adding, changing or deleting items from a collection.</p>
+<p>This will always add an empty song form to the nested <code class="highlighter-rouge">songs</code> collection until three songs are attached. You can use the <code class="highlighter-rouge">Twin::Collection</code> <a href="/gems/disposable/collection.html">API</a> when adding, changing or deleting items from a collection.</p>
 
-<p>Note that when calling <code>#prepopulate!</code>, your <code>:prepopulate</code> code for all existing forms in the graph will <em>be executed</em> . It is up to you to add checks if you need that.</p>
+<p>Note that when calling <code class="highlighter-rouge">#prepopulate!</code>, your <code class="highlighter-rouge">:prepopulate</code> code for all existing forms in the graph will <em>be executed</em> . It is up to you to add checks if you need that.</p>
 
 <h2 id="overriding">Overriding</h2>
 
-<p>You don’t have to use the <code>:prepopulator</code> option. Instead, you can simply override <code>#prepopulate!</code> itself.</p>
+<p>You don’t have to use the <code class="highlighter-rouge">:prepopulator</code> option. Instead, you can simply override <code class="highlighter-rouge">#prepopulate!</code> itself.</p>
 
-<pre><code>class AlbumForm &lt; Reform::Form
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumForm &lt; Reform::Form
   def prepopulate!(options)
     self.title = "Roxanne"
     self.artist = Artist.new(name: "The Police")
   end
 </code></pre>
+</div>
 
 <h1 id="defaults">Defaults</h1>
 
 <p>There’s different alternatives for setting a default value for a formerly empty field.</p>
 
 <ol>
-  <li>Use <code>:prepopulator</code> as <a href="#configuration">described here</a>. Don’t forget to call <code>prepopulate!</code> before rendering the form.</li>
+  <li>Use <code class="highlighter-rouge">:prepopulator</code> as <a href="#configuration">described here</a>. Don’t forget to call <code class="highlighter-rouge">prepopulate!</code> before rendering the form.</li>
   <li>
-    <p>Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in <code>#validate</code>.</p>
+    <p>Override the reader of the property. This is not recommended as you might screw things up. Remember that the property reader is called for presentation (in the form builder) and for validation in <code class="highlighter-rouge">#validate</code>.</p>
 
-    <pre><code>property :title
+    <div class="highlighter-rouge"><pre class="highlight"><code>property :title
 
 def title
   super or "Unnamed"
 end
 </code></pre>
+    </div>
   </li>
 </ol>
 

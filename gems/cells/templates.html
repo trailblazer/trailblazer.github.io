@@ -193,17 +193,18 @@
 
 <p>In a non-Rails environment, you need to include the respective module into your cells, so it knows what template to find.</p>
 
-<pre><code>class SongCell &lt; Cell::ViewModel
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongCell &lt; Cell::ViewModel
   include Cell::Erb
   # include Cell::Haml
   # include Cell::Slim
 </code></pre>
+</div>
 
 <p>Note that you can only include <em>one engine per class</em>. This is due to problems with helpers in Rails and the way they have to be fixed in combination with Cells.</p>
 
 <h3 id="multiple-template-engines-in-rails">Multiple Template Engines in Rails</h3>
 
-<p>When including more than one engine in your Gemfile in Rails, the last one wins. Since each gem includes itself into <code>Cell::ViewModel</code>, unfortunately there can only be one global engine.</p>
+<p>When including more than one engine in your Gemfile in Rails, the last one wins. Since each gem includes itself into <code class="highlighter-rouge">Cell::ViewModel</code>, unfortunately there can only be one global engine.</p>
 
 <p>Currently, there’s no clean way but to disable automatic inclusion from each gem (not yet implemented) and then include template modules into your application cells manually.</p>
 
@@ -217,9 +218,9 @@
 
 <p>Theoretically, you can use any template engine supported by Tilt.</p>
 
-<p>To activate it in a cell, you only need to override <code>#template_options_for</code>.</p>
+<p>To activate it in a cell, you only need to override <code class="highlighter-rouge">#template_options_for</code>.</p>
 
-<pre><code>class SongCell &lt; Cell::ViewModel
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongCell &lt; Cell::ViewModel
   def template_options_for(options)
     {
       template_class: Tilt, # or Your::Template.
@@ -227,8 +228,9 @@
   }
   end
 </code></pre>
+</div>
 
-<p>This will use <code>Tilt</code> to instantiate a template to be evaluated. The <code>:suffix</code> is needed for Cells when finding the view.</p>
+<p>This will use <code class="highlighter-rouge">Tilt</code> to instantiate a template to be evaluated. The <code class="highlighter-rouge">:suffix</code> is needed for Cells when finding the view.</p>
 
       </div>
     </div>

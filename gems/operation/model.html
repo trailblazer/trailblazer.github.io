@@ -187,53 +187,56 @@
       <div class="columns medium-9 code-content">
         <h1 id="operationmodel">Operation::Model</h1>
 
-<p>Including <code>Model</code> will add simple CRUD semantics to your operation to find/create a model in <code>#setup!</code>.</p>
+<p>Including <code class="highlighter-rouge">Model</code> will add simple CRUD semantics to your operation to find/create a model in <code class="highlighter-rouge">#setup!</code>.</p>
 
 <p>Note that this is not limited to ActiveRecord.</p>
 
-<pre><code>class Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Create &lt; Trailblazer::Operation
   include Model
   model Comment, :create
 </code></pre>
+</div>
 
-<p>Using the <code>::model</code> method you <em>have to</em> define what model class to work with. The second argument specifies the action.</p>
+<p>Using the <code class="highlighter-rouge">::model</code> method you <em>have to</em> define what model class to work with. The second argument specifies the action.</p>
 
-<p>This will override <code>model!</code> as follows.</p>
+<p>This will override <code class="highlighter-rouge">model!</code> as follows.</p>
 
-<pre><code>class Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Create &lt; Trailblazer::Operation
   def model!
     Comment.new
   end
 </code></pre>
+</div>
 
-<p>The model is automatically created for you in <code>#setup!</code> and hence available in <code>process</code>.</p>
+<p>The model is automatically created for you in <code class="highlighter-rouge">#setup!</code> and hence available in <code class="highlighter-rouge">process</code>.</p>
 
 <h2 id="validation">Validation</h2>
 
-<p>In <code>validate</code>, you don’t need to provide the model anymore.</p>
+<p>In <code class="highlighter-rouge">validate</code>, you don’t need to provide the model anymore.</p>
 
-<pre><code>def process(params)
+<div class="highlighter-rouge"><pre class="highlight"><code>def process(params)
   model #=&gt; &lt;Comment body=""&gt; # created via #model!.
   validate(params[:thing]) do
     ..
   end
 end
 </code></pre>
+</div>
 
 <h2 id="actions">Actions</h2>
 
-<p>The following actions for <code>::model</code> are available.</p>
+<p>The following actions for <code class="highlighter-rouge">::model</code> are available.</p>
 
 <ul>
-  <li><code>:create</code> calls <code>Comment.new</code></li>
-  <li><code>:update</code> or <code>:find</code> will execute <code>Comment.find(params[:id])</code></li>
+  <li><code class="highlighter-rouge">:create</code> calls <code class="highlighter-rouge">Comment.new</code></li>
+  <li><code class="highlighter-rouge">:update</code> or <code class="highlighter-rouge">:find</code> will execute <code class="highlighter-rouge">Comment.find(params[:id])</code></li>
 </ul>
 
-<p>In <code>process</code>, you now have a new or existing <code>model</code> available.</p>
+<p>In <code class="highlighter-rouge">process</code>, you now have a new or existing <code class="highlighter-rouge">model</code> available.</p>
 
 <h2 id="api">API</h2>
 
-<p>You may override <code>#instantiate_model!</code>, <code>create_model!</code> or <code>update_model!</code> from the <code>Model</code> module if you need to change behavior.</p>
+<p>You may override <code class="highlighter-rouge">#instantiate_model!</code>, <code class="highlighter-rouge">create_model!</code> or <code class="highlighter-rouge">update_model!</code> from the <code class="highlighter-rouge">Model</code> module if you need to change behavior.</p>
 
 <h2 id="discussion">Discussion</h2>
 

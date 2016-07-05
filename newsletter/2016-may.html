@@ -100,14 +100,15 @@
 
 <p>My absolute favorite addition is that every cell can now have an external layout cell. While the actual <em>content cell</em> is responsible to represent the fragment, the <em>layout cell</em> will present the outer container. This is very similar to how Rails or other frameworks handle layouts around content.</p>
 
-<p>Instead of configuring the content cell on the class level, you can inject the layout cell. This allows a more flexible way of handling layouts, and can easily be abstracted in the <code>ApplicationController</code>.</p>
+<p>Instead of configuring the content cell on the class level, you can inject the layout cell. This allows a more flexible way of handling layouts, and can easily be abstracted in the <code class="highlighter-rouge">ApplicationController</code>.</p>
 
-<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">LayoutCell</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>The <code>LayoutCell</code> is a simplistic cell class and <code>yield</code>s the content in its view.</p>
+<p>The <code class="highlighter-rouge">LayoutCell</code> is a simplistic cell class and <code class="highlighter-rouge">yield</code>s the content in its view.</p>
 
-<pre><code>!!!
+<div class="highlighter-rouge"><pre class="highlight"><code>!!!
 %html
   %head
     %title= "Gemgem"
@@ -115,15 +116,17 @@
   %body
     = yield
 </code></pre>
+</div>
 
 <p>What’s pretty awesome about this: It now, finally, allows to complete ditch ActionView and use Cells for everything. Great, isn’t it?</p>
 
 <p>Hand in hand with the layout comes the <em>context object</em> in Cells 4.1. We now maintain a special object that is automatically being passed from cell to cell and allows to propagate “global” objects such as the current user or helper objects via a clean, explicit mechanism.</p>
 
-<pre><code class="language-ruby">cell(:comment, comment, layout: LayoutCell, context: { user: current_user })
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">LayoutCell</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">user: </span><span class="n">current_user</span> <span class="p">})</span>
 </code></pre>
+</div>
 
-<p>Both content and layout will have access to the user via <code>context[:user]</code> now. This also works “downwards” when nesting cells into cells.</p>
+<p>Both content and layout will have access to the user via <code class="highlighter-rouge">context[:user]</code> now. This also works “downwards” when nesting cells into cells.</p>
 
 <h2 id="trailblazercell">Trailblazer::Cell</h2>
 
@@ -131,13 +134,14 @@
 
 <p>Cell classes now have a very constrained naming scheme which greatly improves productivity as you don’t have to think about cell names anymore.</p>
 
-<pre><code class="language-ruby">module Comment::Cell
-  class Show &lt; Trailblazer::Cell
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment::Cell</span>
+  <span class="k">class</span> <span class="nc">Show</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Ideally, cell classes can be empty as the <code>show</code> method is automatically added. In Trailblazer cells, views are resolved differently. In this class, the looked up view will be expected in <code>app/concepts/comment/view/show.haml</code>. Note that the cell’s class name dictates the view name, and not the state.</p>
+<p>Ideally, cell classes can be empty as the <code class="highlighter-rouge">show</code> method is automatically added. In Trailblazer cells, views are resolved differently. In this class, the looked up view will be expected in <code class="highlighter-rouge">app/concepts/comment/view/show.haml</code>. Note that the cell’s class name dictates the view name, and not the state.</p>
 
 <p>The new behavior introduces very strong conventions and many Trailblazer users love it already. You should try it out if you’re using Cells.</p>
 
@@ -145,9 +149,9 @@ end
 
 <p>In my spare free time, I started working on an example application that shows how <a href="http://hanamirb.org">Hanami</a> and Trailblazer work together. It is so much fun <a href="https://github.com/apotonick/gemgem-hanami">working on this project</a> and the two fit together just great.</p>
 
-<p>I use <code>Trailblazer::Cell</code> for the views and let operations handle the business logic in <code>Hanami::Action</code>s - fantastic stuff!</p>
+<p>I use <code class="highlighter-rouge">Trailblazer::Cell</code> for the views and let operations handle the business logic in <code class="highlighter-rouge">Hanami::Action</code>s - fantastic stuff!</p>
 
-<p>The project also plays with some advanced features such as Postgres’ <code>JSONB</code> columns for complex data types to be used within the operation and contract. We will surely write about this once it’s a bit more, well, let’s say <em>readable</em>.</p>
+<p>The project also plays with some advanced features such as Postgres’ <code class="highlighter-rouge">JSONB</code> columns for complex data types to be used within the operation and contract. We will surely write about this once it’s a bit more, well, let’s say <em>readable</em>.</p>
 
 <p>Also, a new gem trailblazer-hanami will soon be pushed. It won’t be more than a few dozens lines of code, but simplifies the workflow of using Trailblazer in Hanami.</p>
 
@@ -167,7 +171,7 @@ end
 
 <p>We are currently discussing how to “professionalize” Trailblazer and support. We’re thinking about offering a monthly <em>Trailblazer Pro</em> plan soon, which will give clients access to a private chat channel and ticket system for instant response support, and a new premium documentation area with cookbook recipes (for Trailblazer, not spaghetti bolognese), curated content and screencasts.</p>
 
-<p>We are very interested in hearing your opinions about that and what you would like to see happening in Trailblazer, such as an LTS version, a <code>trailblazer-enterprise</code> project with higher-level building blocks, and so on. Please <a href="https://gitter.im/trailblazer/chat">let us know what you think</a>.</p>
+<p>We are very interested in hearing your opinions about that and what you would like to see happening in Trailblazer, such as an LTS version, a <code class="highlighter-rouge">trailblazer-enterprise</code> project with higher-level building blocks, and so on. Please <a href="https://gitter.im/trailblazer/chat">let us know what you think</a>.</p>
 
 <h2 id="ruby-tapas">Ruby Tapas</h2>
 

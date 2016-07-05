@@ -187,71 +187,75 @@
       <div class="columns medium-9 code-content">
         <h1 id="operationcontroller">Operation::Controller</h1>
 
-<p>The <code>Operation::Controller</code> module provides four shorthand methods to run and present operations.</p>
+<p>The <code class="highlighter-rouge">Operation::Controller</code> module provides four shorthand methods to run and present operations.</p>
 
 <p>Note that you’re free to invoke operations manually at any time by <a href="api.html">invoking them directly</a>.</p>
 
-<p>It works in Rails but should also be fine in Sinatra, Lotus and other frameworks that expose a <code>params</code> object.</p>
+<p>It works in Rails but should also be fine in Sinatra, Lotus and other frameworks that expose a <code class="highlighter-rouge">params</code> object.</p>
 
 <h2 id="overview">Overview</h2>
 
 <p>You have four methods to pick from.</p>
 
 <ul>
-  <li>Use <code>#present</code> if you’re only interested in <em>presenting</em> the operation’s model.</li>
-  <li>Use <code>#form</code> to <em>render</em> the form object. This will not run the operation.</li>
-  <li>Use <code>#run</code> to process incoming data using the operation (and present it afterwards).</li>
-  <li>Use <code>#respond</code> to process incoming data and present it using Rails’ <code>respond_to</code>.</li>
+  <li>Use <code class="highlighter-rouge">#present</code> if you’re only interested in <em>presenting</em> the operation’s model.</li>
+  <li>Use <code class="highlighter-rouge">#form</code> to <em>render</em> the form object. This will not run the operation.</li>
+  <li>Use <code class="highlighter-rouge">#run</code> to process incoming data using the operation (and present it afterwards).</li>
+  <li>Use <code class="highlighter-rouge">#respond</code> to process incoming data and present it using Rails’ <code class="highlighter-rouge">respond_to</code>.</li>
 </ul>
 
 <h2 id="generics">Generics</h2>
 
-<p>Before the operation is invoked, the controller method <code>process_params!</code> is run. You can override that to normalize the incoming parameters.</p>
+<p>Before the operation is invoked, the controller method <code class="highlighter-rouge">process_params!</code> is run. You can override that to normalize the incoming parameters.</p>
 
-<p>You need to include the <code>Controller</code> module into the controller. This will import the <code>form</code>, <code>present</code>, <code>run</code> and <code>respond</code> methods.</p>
+<p>You need to include the <code class="highlighter-rouge">Controller</code> module into the controller. This will import the <code class="highlighter-rouge">form</code>, <code class="highlighter-rouge">present</code>, <code class="highlighter-rouge">run</code> and <code class="highlighter-rouge">respond</code> methods.</p>
 
-<pre><code>class ApplicationController &lt; ActionController::Base
+<div class="highlighter-rouge"><pre class="highlight"><code>class ApplicationController &lt; ActionController::Base
   include Trailblazer::Operation::Controller
 end
 </code></pre>
+</div>
 
 <h2 id="run">Run</h2>
 
-<p>Use <code>#run</code> to invoke the operation.</p>
+<p>Use <code class="highlighter-rouge">#run</code> to invoke the operation.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def create
     run Comment::Create
   end
 end
 </code></pre>
+</div>
 
-<p>This <em>runs</em> the operation with <code>params</code>, sets <code>@operation</code>, <code>@model</code> and <code>@form</code> on the controller instance, and returns the operation instance.</p>
+<p>This <em>runs</em> the operation with <code class="highlighter-rouge">params</code>, sets <code class="highlighter-rouge">@operation</code>, <code class="highlighter-rouge">@model</code> and <code class="highlighter-rouge">@form</code> on the controller instance, and returns the operation instance.</p>
 
 <p>Note that you can grab the operation and reassign it to another instance variable if you have multiple operation invocations.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def create
     create_op = run Comment::Create # returns operation instance.
     @comment  = create_op.model
   end
 </code></pre>
+</div>
 
-<p>The call stack in <code>#run</code> is as follows.</p>
+<p>The call stack in <code class="highlighter-rouge">#run</code> is as follows.</p>
 
-<pre><code>#run
+<div class="highlighter-rouge"><pre class="highlight"><code>#run
   process_params!(params)
   result, op = Comment::Create.run(params)
   @operation = op
   @model     = op.model
   @form      = op.contract
 </code></pre>
+</div>
 
-<p>First, you have the chance to normalize parameters. The controller’s <code>params</code> hash is then passed into the operation run. After that, operation and model are assigned to controller instance variables.</p>
+<p>First, you have the chance to normalize parameters. The controller’s <code class="highlighter-rouge">params</code> hash is then passed into the operation run. After that, operation and model are assigned to controller instance variables.</p>
 
-<p>An optional block for <code>#run</code> is invoked only when the operation was valid.</p>
+<p>An optional block for <code class="highlighter-rouge">#run</code> is invoked only when the operation was valid.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def create
     run Comment::Create do |op|
       flash[:notice] = "Success!" # only run for successful/valid operation.
@@ -259,73 +263,79 @@ end
   end
 end
 </code></pre>
+</div>
 
 <h2 id="present">Present</h2>
 
-<p>To setup an operation without running its <code>#process</code> method, use <code>#present</code>. This is often used if you only need the operation’s model for presentation.</p>
+<p>To setup an operation without running its <code class="highlighter-rouge">#process</code> method, use <code class="highlighter-rouge">#present</code>. This is often used if you only need the operation’s model for presentation.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def show
     present Comment::Update
     # you have access to @operation and @model.
   end
 end
 </code></pre>
+</div>
 
-<p>This <em>instantiates</em> the operation with <code>params</code>, sets <code>@operation</code> and <code>@model</code> on the controller instance, and returns the operation instance.</p>
+<p>This <em>instantiates</em> the operation with <code class="highlighter-rouge">params</code>, sets <code class="highlighter-rouge">@operation</code> and <code class="highlighter-rouge">@model</code> on the controller instance, and returns the operation instance.</p>
 
-<p>Instead of running the operation, this will only instantiate the operation by passing in the controller’s <code>params</code>. In turn, this only runs the operation’s <code>#setup</code> (which embraces model finding logic).</p>
+<p>Instead of running the operation, this will only instantiate the operation by passing in the controller’s <code class="highlighter-rouge">params</code>. In turn, this only runs the operation’s <code class="highlighter-rouge">#setup</code> (which embraces model finding logic).</p>
 
-<p>The <code>#present</code> helper <strong>does not run</strong> <code>#process</code> and does <strong>not instantiate</strong> a contract (which will be faster than <code>#form</code>).</p>
+<p>The <code class="highlighter-rouge">#present</code> helper <strong>does not run</strong> <code class="highlighter-rouge">#process</code> and does <strong>not instantiate</strong> a contract (which will be faster than <code class="highlighter-rouge">#form</code>).</p>
 
 <p>Note that you can grab the operation and reassign it to another instance variable if you have multiple operation invocations.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def show
     update_op = present Comment::Update # returns operation instance.
     @comment  = update_op.model
   end
 </code></pre>
+</div>
 
-<p>The call stack in <code>#present</code> is as follows.</p>
+<p>The call stack in <code class="highlighter-rouge">#present</code> is as follows.</p>
 
-<pre><code>#present
+<div class="highlighter-rouge"><pre class="highlight"><code>#present
   op = Comment::Update.present(params)
   @operation = op
   @model     = op.model
 </code></pre>
+</div>
 
-<p>Note that no <code>@form</code> is instantiated and assigned to the controller. If you need the form use the <code>#form</code> method.</p>
+<p>Note that no <code class="highlighter-rouge">@form</code> is instantiated and assigned to the controller. If you need the form use the <code class="highlighter-rouge">#form</code> method.</p>
 
 <h2 id="form">Form</h2>
 
-<p>To render the operation’s form, use <code>#form</code>. This is identical to <code>#present</code> plus the contract is being instantiated.</p>
+<p>To render the operation’s form, use <code class="highlighter-rouge">#form</code>. This is identical to <code class="highlighter-rouge">#present</code> plus the contract is being instantiated.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def new
     form Comment::Create
   end
 end
 </code></pre>
+</div>
 
-<p>This <em>instantiates</em> the operation with <code>params</code> and then sets <code>@operation</code>, <code>@model</code> and <code>@form</code> on the controller instance. After that, the form’s <code>prepopulate!</code> method is called and the form is ready for rendering.</p>
+<p>This <em>instantiates</em> the operation with <code class="highlighter-rouge">params</code> and then sets <code class="highlighter-rouge">@operation</code>, <code class="highlighter-rouge">@model</code> and <code class="highlighter-rouge">@form</code> on the controller instance. After that, the form’s <code class="highlighter-rouge">prepopulate!</code> method is called and the form is ready for rendering.</p>
 
-<p>The <code>#form</code> helper <strong>does not run</strong> <code>#process</code>.</p>
+<p>The <code class="highlighter-rouge">#form</code> helper <strong>does not run</strong> <code class="highlighter-rouge">#process</code>.</p>
 
 <p>It returns the <em>form</em> instance.</p>
 
 <p>Note that you can grab the form and reassign it to another instance variable if you use multiple operations in your endpoint.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   def show
     @create_form = form Comment::Create # returns form instance.
     @post_form   = form Post::Create
   end
 </code></pre>
+</div>
 
-<p>The call stack in <code>#form</code> is as follows.</p>
+<p>The call stack in <code class="highlighter-rouge">#form</code> is as follows.</p>
 
-<pre><code>#form(operation, options)
+<div class="highlighter-rouge"><pre class="highlight"><code>#form(operation, options)
   op = Comment::Create.present(params)
 
   @operation = op
@@ -334,28 +344,31 @@ end
 
   @form.prepopulate!(options)
 </code></pre>
+</div>
 
 <h3 id="options-for-prepopulate">Options for prepopulate!</h3>
 
-<p>Any options passed to <code>#form</code> are directly propagated to the form’s <code>prepopulate!</code> method, allowing you to use runtime data in prepopulators. Note that the original <code>params</code> object is available in this options hash, too.</p>
+<p>Any options passed to <code class="highlighter-rouge">#form</code> are directly propagated to the form’s <code class="highlighter-rouge">prepopulate!</code> method, allowing you to use runtime data in prepopulators. Note that the original <code class="highlighter-rouge">params</code> object is available in this options hash, too.</p>
 
-<pre><code>form Comment::Create, color: "green"
+<div class="highlighter-rouge"><pre class="highlight"><code>form Comment::Create, color: "green"
 </code></pre>
+</div>
 
-<p>This will result in the following hash being passed to <code>prepopulate!</code>.</p>
+<p>This will result in the following hash being passed to <code class="highlighter-rouge">prepopulate!</code>.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   contract do
     def prepopulate!(options)
       options[:color]  #=&gt; "green"
       options[:params] #=&gt; &lt;ActionController::Params ..&gt;
 </code></pre>
+</div>
 
 <h2 id="respond">Respond</h2>
 
 <p>Rails-specific.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
   respond_to :json
 
   def create
@@ -363,80 +376,89 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>This will do the same as <code>#run</code>, invoke the operation and then pass it to <code>#respond_with</code>.</p>
+<p>This will do the same as <code class="highlighter-rouge">#run</code>, invoke the operation and then pass it to <code class="highlighter-rouge">#respond_with</code>.</p>
 
-<pre><code>op = Comment::Create.(params)
+<div class="highlighter-rouge"><pre class="highlight"><code>op = Comment::Create.(params)
 respond_with op
 </code></pre>
+</div>
 
-<p>The operation needs to be prepared for the responder as the latter makes weird assumptions about the object being passed to <code>respond_with</code>. For example, the operation needs to respond to <code>to_json</code> in a JSON request. Read about <a href="representer.html">Representer</a> here.</p>
+<p>The operation needs to be prepared for the responder as the latter makes weird assumptions about the object being passed to <code class="highlighter-rouge">respond_with</code>. For example, the operation needs to respond to <code class="highlighter-rouge">to_json</code> in a JSON request. Read about <a href="representer.html">Representer</a> here.</p>
 
-<p>If the operation class has <code>Representer</code> mixed in, the params hash will be slightly modified. As the operation’s model key, the request body document is passed into the operation.</p>
+<p>If the operation class has <code class="highlighter-rouge">Representer</code> mixed in, the params hash will be slightly modified. As the operation’s model key, the request body document is passed into the operation.</p>
 
-<pre><code>params[:comment] = request.body
+<div class="highlighter-rouge"><pre class="highlight"><code>params[:comment] = request.body
 Comment::Create.(params)
 </code></pre>
+</div>
 
-<p>By doing so the operation’s representer will automatically parse and deserialize the incoming document, bypassing Rails’ <code>ParamsParser</code>.</p>
+<p>By doing so the operation’s representer will automatically parse and deserialize the incoming document, bypassing Rails’ <code class="highlighter-rouge">ParamsParser</code>.</p>
 
-<p>If you want the responder to compute URLs with namespaces, pass in the <code>:namespace</code> option.</p>
+<p>If you want the responder to compute URLs with namespaces, pass in the <code class="highlighter-rouge">:namespace</code> option.</p>
 
-<pre><code>respond Comment::Create, namespace: [:api]
+<div class="highlighter-rouge"><pre class="highlight"><code>respond Comment::Create, namespace: [:api]
 </code></pre>
+</div>
 
-<p>This will result in a call <code>respond_with :api, op</code>.</p>
+<p>This will result in a call <code class="highlighter-rouge">respond_with :api, op</code>.</p>
 
 <h2 id="custom-params">Custom Params</h2>
 
-<p>If you want to manually hand in parameters to <code>#run</code>, <code>#respond</code>, <code>#form</code> or <code>#present</code>, use the <code>params:</code> option.</p>
+<p>If you want to manually hand in parameters to <code class="highlighter-rouge">#run</code>, <code class="highlighter-rouge">#respond</code>, <code class="highlighter-rouge">#form</code> or <code class="highlighter-rouge">#present</code>, use the <code class="highlighter-rouge">params:</code> option.</p>
 
-<pre><code>def create
+<div class="highlighter-rouge"><pre class="highlight"><code>def create
   run Comment::Create, params: {comment: {body: "Always the same! Boring!"}}
 end
 </code></pre>
+</div>
 
 <h2 id="document-formats">Document Formats</h2>
 
-<p>Normally, Trailblazer will pass Rails’ <code>params</code> hash into any operation.</p>
+<p>Normally, Trailblazer will pass Rails’ <code class="highlighter-rouge">params</code> hash into any operation.</p>
 
-<p>For operations that have <code>Operation::Representer</code> included, not a hash but the request body will be passed into the operation, keyed under the operation’s <code>model_name</code>.</p>
+<p>For operations that have <code class="highlighter-rouge">Operation::Representer</code> included, not a hash but the request body will be passed into the operation, keyed under the operation’s <code class="highlighter-rouge">model_name</code>.</p>
 
-<pre><code>Comment::Create.({comment: request.body.string})
+<div class="highlighter-rouge"><pre class="highlight"><code>Comment::Create.({comment: request.body.string})
 </code></pre>
+</div>
 
-<p>This allows the operation’s representer to deserialize the document and populate the contract, bypassing Rails’ <code>ParamsParser</code>.</p>
+<p>This allows the operation’s representer to deserialize the document and populate the contract, bypassing Rails’ <code class="highlighter-rouge">ParamsParser</code>.</p>
 
-<p>You can instruct Trailblazer not to do that and pass in the normal <code>params</code> hash if you don’t want that using the <code>:is_document</code> option.</p>
+<p>You can instruct Trailblazer not to do that and pass in the normal <code class="highlighter-rouge">params</code> hash if you don’t want that using the <code class="highlighter-rouge">:is_document</code> option.</p>
 
-<pre><code>def create
+<div class="highlighter-rouge"><pre class="highlight"><code>def create
   run Comment::Create, is_document: false # will run Comment::Create(params)
 end
 </code></pre>
+</div>
 
 <h2 id="normalizing-params">Normalizing Params</h2>
 
-<p>Override <code>#params!</code> to return an arbitrary params object. This is called in <code>#run</code>, <code>#respond</code>, <code>#present</code> and <code>#form</code> before the operation is called.</p>
+<p>Override <code class="highlighter-rouge">#params!</code> to return an arbitrary params object. This is called in <code class="highlighter-rouge">#run</code>, <code class="highlighter-rouge">#respond</code>, <code class="highlighter-rouge">#present</code> and <code class="highlighter-rouge">#form</code> before the operation is called.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
 private
   def params!(params)
     params.to_h # return arbitrary object.
   end
 end
 </code></pre>
+</div>
 
-<p>Override <code>#process_params!</code> to add or remove values to params before the operation is run. This is called in <code>#run</code>, <code>#respond</code>, <code>#present</code> and <code>#form</code>.</p>
+<p>Override <code class="highlighter-rouge">#process_params!</code> to add or remove values to params before the operation is run. This is called in <code class="highlighter-rouge">#run</code>, <code class="highlighter-rouge">#respond</code>, <code class="highlighter-rouge">#present</code> and <code class="highlighter-rouge">#form</code>.</p>
 
-<pre><code>class CommentsController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class CommentsController &lt; ApplicationController
 private
   def process_params!(params)
     params.merge!(current_user: current_user)
   end
 end
 </code></pre>
+</div>
 
-<p>Note that this is a mutual method where you’re changing the <code>params</code> object.</p>
+<p>Note that this is a mutual method where you’re changing the <code class="highlighter-rouge">params</code> object.</p>
 
       </div>
     </div>

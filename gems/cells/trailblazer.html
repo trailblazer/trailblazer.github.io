@@ -189,14 +189,15 @@
 
 <p>This documents the Trailblazer-style cells semantics, brought to you by the <a href="https://github.com/trailblazer/trailblazer-cells">trailblazer-cells</a> gem. This gem is not dependent on Trailblazer and can be used without it.</p>
 
-<pre><code class="language-ruby">gem "trailblazer-cells"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"trailblazer-cells"</span>
 </code></pre>
+</div>
 
 <h2 id="file-structure">File Structure</h2>
 
-<p>In Trailblazer, cell classes sit in their concept’s <code>cell</code> directory, the corresponding views sit in the <code>view</code> directory.</p>
+<p>In Trailblazer, cell classes sit in their concept’s <code class="highlighter-rouge">cell</code> directory, the corresponding views sit in the <code class="highlighter-rouge">view</code> directory.</p>
 
-<pre><code>├── app
+<div class="highlighter-rouge"><pre class="highlight"><code>├── app
 │   ├── concepts
 │   │   └── comment
 │   │       ├── cell
@@ -211,67 +212,73 @@
 │   │           └── user.scss
 
 </code></pre>
+</div>
 
-<p>Note that one cell class can have multiple views, as well as other assets like <code>.scss</code> stylesheets.</p>
+<p>Note that one cell class can have multiple views, as well as other assets like <code class="highlighter-rouge">.scss</code> stylesheets.</p>
 
-<p>Also, the view names with <code>Trailblazer::Cell</code> are <em>not</em> called <code>show.haml</code>, but named after its corresponding cell class.</p>
+<p>Also, the view names with <code class="highlighter-rouge">Trailblazer::Cell</code> are <em>not</em> called <code class="highlighter-rouge">show.haml</code>, but named after its corresponding cell class.</p>
 
 <h2 id="naming">Naming</h2>
 
 <p>As always, the Trailblazer naming applies.</p>
 
-<pre><code class="language-ruby">Comment[::SubConcepts]::Cell::[Name]
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Comment</span><span class="p">[</span><span class="o">::</span><span class="no">SubConcepts</span><span class="p">]</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="p">[</span><span class="no">Name</span><span class="p">]</span>
 </code></pre>
+</div>
 
 <p>This results in classes such as follows.</p>
 
-<pre><code class="language-ruby">module Comment # or: Comment &lt; ActiveRecord::Base or alike.
-  module Cell
-    class New &lt; Trailblazer::Cell
-      def show
-        render # renders app/concepts/comment/view/new.haml.
-      end
-    end
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment</span> <span class="c1"># or: Comment &lt; ActiveRecord::Base or alike.</span>
+  <span class="k">module</span> <span class="nn">Cell</span>
+    <span class="k">class</span> <span class="nc">New</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+      <span class="k">def</span> <span class="nf">show</span>
+        <span class="n">render</span> <span class="c1"># renders app/concepts/comment/view/new.haml.</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>This is different to old suffix-cells. While the <code>show</code> method still is the public method, calling <code>render</code> will use the <code>new.haml</code> view, as inferred from the cell’s last class constant segment (<code>New</code>).</p>
+<p>This is different to old suffix-cells. While the <code class="highlighter-rouge">show</code> method still is the public method, calling <code class="highlighter-rouge">render</code> will use the <code class="highlighter-rouge">new.haml</code> view, as inferred from the cell’s last class constant segment (<code class="highlighter-rouge">New</code>).</p>
 
 <h2 id="default-show">Default Show</h2>
 
-<p>Note that you don’t have to provide a <code>show</code> method, it is created automatically.</p>
+<p>Note that you don’t have to provide a <code class="highlighter-rouge">show</code> method, it is created automatically.</p>
 
-<pre><code class="language-ruby">class New &lt; Trailblazer::Cell
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">New</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>You’re free to override <code>show</code>, though.</p>
+<p>You’re free to override <code class="highlighter-rouge">show</code>, though.</p>
 
 <h2 id="view-names">View Names</h2>
 
 <p>Per default, the view name is computed from the cell’s class name.</p>
 
-<pre><code class="language-ruby">Comment::Cell::New #=&gt; "new.haml"
-Comment::Cell::Themed::New #=&gt; "themed/new.haml"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">New</span> <span class="c1">#=&gt; "new.haml"</span>
+<span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Themed</span><span class="o">::</span><span class="no">New</span> <span class="c1">#=&gt; "themed/new.haml"</span>
 </code></pre>
+</div>
 
-<p>Note that the entire path after <code>Cell::</code> is considered, resulting in a hierarchical view name.</p>
+<p>Note that the entire path after <code class="highlighter-rouge">Cell::</code> is considered, resulting in a hierarchical view name.</p>
 
-<p>Use <code>ViewName::Flat</code> if you prefer a flat view name.</p>
+<p>Use <code class="highlighter-rouge">ViewName::Flat</code> if you prefer a flat view name.</p>
 
-<pre><code class="language-ruby">module Comment # or: Comment &lt; ActiveRecord::Base or alike.
-  module Cell
-    module Themed
-      class New &lt; Trailblazer::Cell
-        extend ViewName::Flat
-      end
-    end
-  end
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment</span> <span class="c1"># or: Comment &lt; ActiveRecord::Base or alike.</span>
+  <span class="k">module</span> <span class="nn">Cell</span>
+    <span class="k">module</span> <span class="nn">Themed</span>
+      <span class="k">class</span> <span class="nc">New</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+        <span class="kp">extend</span> <span class="no">ViewName</span><span class="o">::</span><span class="no">Flat</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-Comment::Cell::Themed::New #=&gt; "new.haml"
+<span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Themed</span><span class="o">::</span><span class="no">New</span> <span class="c1">#=&gt; "new.haml"</span>
 </code></pre>
+</div>
 
 <p>This will always result in a flat name where the view name is inferred from the last segment of the cell constant.</p>
 
@@ -279,25 +286,27 @@ Comment::Cell::Themed::New #=&gt; "new.haml"
 
 <p>Manual invocation is always possible as discussed here.</p>
 
-<p>As per Cells 4.1, you can use the <code>concept</code> helper to invoke a Trailblazer cell from a controller, view, or test.</p>
+<p>As per Cells 4.1, you can use the <code class="highlighter-rouge">concept</code> helper to invoke a Trailblazer cell from a controller, view, or test.</p>
 
-<pre><code class="language-ruby">concept("comment/cell/new", op.model).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">concept</span><span class="p">(</span><span class="s2">"comment/cell/new"</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
 </code></pre>
+</div>
 
 <p>You have to provide the fully-qualified constant path.</p>
 
-<p>Within a Trailblazer cell, you can use <code>concept</code> to invoke nested cells.</p>
+<p>Within a Trailblazer cell, you can use <code class="highlighter-rouge">concept</code> to invoke nested cells.</p>
 
-<p>Alternatively, you can use <code>cell</code> and provide the constant directly. This applies to both controllers/views and within cells.</p>
+<p>Alternatively, you can use <code class="highlighter-rouge">cell</code> and provide the constant directly. This applies to both controllers/views and within cells.</p>
 
-<pre><code class="language-ruby">cell(Comment::Cell::New, op.model).()
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">New</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
 </code></pre>
+</div>
 
 <h2 id="layouts">Layouts</h2>
 
 <p>It’s a common pattern to maintain a cell representing the application’s layout(s). Usually, it resides in a concept named after the application.</p>
 
-<pre><code>├── app
+<div class="highlighter-rouge"><pre class="highlight"><code>├── app
 │   ├── concepts
 │   │   └── gemgem
 │   │       ├── cell
@@ -305,16 +314,18 @@ Comment::Cell::Themed::New #=&gt; "new.haml"
 │   │       └── view
 │   │           ├── layout.haml
 </code></pre>
+</div>
 
 <p>Most times, the layout cell can be an empty subclass.</p>
 
-<pre><code class="language-ruby">class Gemgem::Cell::Layout &lt; Trailblazer::Cell
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Gemgem</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Layout</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The view <code>gemgem/view/layout.haml</code> contains a <code>yield</code> where the actual content goes.</p>
+<p>The view <code class="highlighter-rouge">gemgem/view/layout.haml</code> contains a <code class="highlighter-rouge">yield</code> where the actual content goes.</p>
 
-<pre><code>!!!
+<div class="highlighter-rouge"><pre class="highlight"><code>!!!
 %html
   %head
     %title= "Gemgem"
@@ -323,13 +334,15 @@ end
   %body
     = yield
 </code></pre>
+</div>
 
-<p>Wrapping the content cell (<code>Comment::Cell::New</code>) with the layout cell (<code>Gemgem::Cell::Layout</code>) happens via the public <code>:layout</code> option.</p>
+<p>Wrapping the content cell (<code class="highlighter-rouge">Comment::Cell::New</code>) with the layout cell (<code class="highlighter-rouge">Gemgem::Cell::Layout</code>) happens via the public <code class="highlighter-rouge">:layout</code> option.</p>
 
-<pre><code class="language-ruby">concept("comment/cell/new", op.model, layout: Gemgem::Cell::Layout)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">concept</span><span class="p">(</span><span class="s2">"comment/cell/new"</span><span class="p">,</span> <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">Gemgem</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Layout</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>This will render the <code>Comment::Cell::New</code>, instantiate <code>Gemgem::Cell::Layout</code> and pass through the context object, then render the layout around it.</p>
+<p>This will render the <code class="highlighter-rouge">Comment::Cell::New</code>, instantiate <code class="highlighter-rouge">Gemgem::Cell::Layout</code> and pass through the context object, then render the layout around it.</p>
 
       </div>
     </div>

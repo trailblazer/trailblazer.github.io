@@ -243,127 +243,134 @@
 
 <h2 id="controller">Controller</h2>
 
-<p>Every web framework has the concept of <em>controllers</em>: Endpoints hooked to a HTTP route. For example, this could be a Rails controller action invoked via a <code>POST /comments</code> request.</p>
+<p>Every web framework has the concept of <em>controllers</em>: Endpoints hooked to a HTTP route. For example, this could be a Rails controller action invoked via a <code class="highlighter-rouge">POST /comments</code> request.</p>
 
 <p>The code you would usually put into the intercepting action method, such as creating an object, assigning request parameters to it, and so on, does no longer live there.</p>
 
 <p>Instead, an <strong>endpoint simply dispatches to its operation</strong>.</p>
 
-<pre><code class="language-ruby">class CommentsController &lt; ApplicationController
-  def create
-    Comment::Create.(params)
-    # you still have to take care of rendering.
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="c1"># you still have to take care of rendering.</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Trailblazer leverages Ruby’s namespacing the way it was intended to be used. This is why the operation’s constant name is <code>Comment::Create</code>.</p>
+<p>Trailblazer leverages Ruby’s namespacing the way it was intended to be used. This is why the operation’s constant name is <code class="highlighter-rouge">Comment::Create</code>.</p>
 
-<p>Each operation has only one responsibility and exposes only one public method: <code>call</code>. Ruby automatically invokes the <code>call</code> method when the method name is omitted, giving the handily abbreviated style: <code>Create.(params)</code> rather than <code>Create.call(params)</code>.</p>
+<p>Each operation has only one responsibility and exposes only one public method: <code class="highlighter-rouge">call</code>. Ruby automatically invokes the <code class="highlighter-rouge">call</code> method when the method name is omitted, giving the handily abbreviated style: <code class="highlighter-rouge">Create.(params)</code> rather than <code class="highlighter-rouge">Create.call(params)</code>.</p>
 
 <p>You might have noticed that there’s no instantiation of the operation happening. This is done internally. Exposing only one public method is a concept adopted from functional programming: Since there’s only one way to invoke an operation, you simply can’t confuse method orders or mess with internal state.</p>
 
-<p>What you pass into the operation is absolutely your business (no pun intended). In web applications, this will usually be the <code>params</code> hash. Note that this completely <strong>decouples an operation from HTTP</strong>. You could use it in a background task or an event-loop system, too - the operation expects a hash as input, nothing more.</p>
+<p>What you pass into the operation is absolutely your business (no pun intended). In web applications, this will usually be the <code class="highlighter-rouge">params</code> hash. Note that this completely <strong>decouples an operation from HTTP</strong>. You could use it in a background task or an event-loop system, too - the operation expects a hash as input, nothing more.</p>
 
 <h2 id="operation">Operation</h2>
 
-<p>The <code>Comment::Create</code> operation is a class taking care of the entire process of creating, validating, and persisting a comment.</p>
+<p>The <code class="highlighter-rouge">Comment::Create</code> operation is a class taking care of the entire process of creating, validating, and persisting a comment.</p>
 
 <p>Don’t confuse this with a <em>god class</em>, though. An <strong>operation is an orchestrating object</strong> that instructs smaller objects like representers, a form object or the persistent model to accomplish that! It knows how to wire together those stakeholders but leaves the specific implementation up to them.</p>
 
-<pre><code class="language-ruby">class Comment &lt; ActiveRecord::Base
-  class Create &lt; Trailblazer::Operation
-    model Comment, :create
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+    <span class="n">model</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">:create</span>
 
-    contract do
-      property :body
-      property :author_id
+    <span class="n">contract</span> <span class="k">do</span>
+      <span class="n">property</span> <span class="ss">:body</span>
+      <span class="n">property</span> <span class="ss">:author_id</span>
 
-      validates :body, presence: true
-    end
+      <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+    <span class="k">end</span>
 
-    def process(params)
-      validate(params[:comment]) do
-        contract.save
-      end
-    end
-  end
-end
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+      <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+        <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Operations are always namespaced into their <em>concept</em>. In Rails, very often, this happens to be the model’s constant name. The <code>Create</code> class sits in the <code>Comment</code> ActiveRecord constant. This is simple Ruby namespacing and should in no way be confused with inheritance.</p>
+<p>Operations are always namespaced into their <em>concept</em>. In Rails, very often, this happens to be the model’s constant name. The <code class="highlighter-rouge">Create</code> class sits in the <code class="highlighter-rouge">Comment</code> ActiveRecord constant. This is simple Ruby namespacing and should in no way be confused with inheritance.</p>
 
-<p>Every operation needs to implement the <code>process</code> method. Here, the business code happens and the orchestration takes place.</p>
+<p>Every operation needs to implement the <code class="highlighter-rouge">process</code> method. Here, the business code happens and the orchestration takes place.</p>
 
-<p>The <code>Operation</code> class offers you the <code>validate</code> method to deserialize and validate the incoming data. To do so, the operation uses its form object, also known as <em>contract</em> in Trailblazer.</p>
+<p>The <code class="highlighter-rouge">Operation</code> class offers you the <code class="highlighter-rouge">validate</code> method to deserialize and validate the incoming data. To do so, the operation uses its form object, also known as <em>contract</em> in Trailblazer.</p>
 
 <h2 id="contract">Contract</h2>
 
-<p>Since it is very common for operations to use a contract for validation, you can define contracts inline using the declarative <code>contract</code> class method.</p>
+<p>Since it is very common for operations to use a contract for validation, you can define contracts inline using the declarative <code class="highlighter-rouge">contract</code> class method.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  # ..
-  contract do
-    property :body
-    property :author_id
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+    <span class="n">property</span> <span class="ss">:author_id</span>
 
-    validates :body, presence: true
-  end
+    <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>A contract is simply a <a href="/gems/reform">Reform class</a>. <strong>It allows to specify the fields of the input, and validations specific to that operation.</strong></p>
 
-<p>Explicitly declaring incoming fields is very important in Trailblazer. When validating the input, the contract will only respect the defined, or whitelisted, fields and ignore unsolicited data in the input. This is why you don’t need solutions like <code>strong_parameters</code> anymore.</p>
+<p>Explicitly declaring incoming fields is very important in Trailblazer. When validating the input, the contract will only respect the defined, or whitelisted, fields and ignore unsolicited data in the input. This is why you don’t need solutions like <code class="highlighter-rouge">strong_parameters</code> anymore.</p>
 
 <p>Validations can be defined using <a href="http://guides.rubyonrails.org/active_record_validations.html">ActiveModel::Validations</a> or the new <a href="/gems/reform/validation.html#dry-validation">dry-validation</a> engine.</p>
 
 <h2 id="validation">Validation</h2>
 
-<p>To validate the incoming <code>params</code>, the <code>validate</code> method in the operation enters the stage.</p>
+<p>To validate the incoming <code class="highlighter-rouge">params</code>, the <code class="highlighter-rouge">validate</code> method in the operation enters the stage.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  # ..
-  def process(params)
-    validate(params[:comment]) do
-      # ..
-    end
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="c1"># ..</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>In case of a successful validation, the block passed to <code>validate</code> is invoked.</p>
+<p>In case of a successful validation, the block passed to <code class="highlighter-rouge">validate</code> is invoked.</p>
 
-<p>The operation’s <code>validate</code> first instantiates the contract, which is really just a Reform object. Then, the incoming data is written to the contract object (this is called <em>deserialization</em>) and afterwards, validation of the entire object graph is performed using the Reform API.</p>
+<p>The operation’s <code class="highlighter-rouge">validate</code> first instantiates the contract, which is really just a Reform object. Then, the incoming data is written to the contract object (this is called <em>deserialization</em>) and afterwards, validation of the entire object graph is performed using the Reform API.</p>
 
 <p>The whole process of validation happens internally, but can be easily customized. An important fact here is that the contract is an intermediate object - <strong>instead of writing input to the model, this all happens on the contract</strong>. The model is not accessed at all for validation.</p>
 
 <p>Having a dedicated contract object sitting between operation and model is why your model classes will end up as a pure persistence layer.</p>
 
-<pre><code class="language-ruby">class Comment &lt; ActiveRecord::Base
-  belongs_to :author
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:author</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Validation code sits in the contract, callbacks are defined in operation or callback objects.</p>
 
 <h2 id="persistence">Persistence</h2>
 
-<p>After having validated data, to persist it, a model object is needed. In most Rails applications, this will be an <code>ActiveRecord</code> model, but many Trailblazer projects use alternative libraries such as <a href="http://sequel.jeremyevans.net/">Sequel</a> or <a href="http://rom-rb.org/">ROM</a>.</p>
+<p>After having validated data, to persist it, a model object is needed. In most Rails applications, this will be an <code class="highlighter-rouge">ActiveRecord</code> model, but many Trailblazer projects use alternative libraries such as <a href="http://sequel.jeremyevans.net/">Sequel</a> or <a href="http://rom-rb.org/">ROM</a>.</p>
 
 <p>You’re free to create or retrieve models yourself. However, the operation offers you a trivial API to create a model when it is needed.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  model Comment, :create # will assign @model = Comment.new
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">model</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">:create</span> <span class="c1"># will assign @model = Comment.new</span>
 </code></pre>
+</div>
 
 <p>Having the validated data sitting on the contract object, it is a good idea to push the data to the model and save it. This, again, happens using the contract’s API.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  # ..
-  def process(params)
-    validate(params[:comment]) do
-      contract.save
-    end
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p><strong>The model is now populated with the validated data, and saved to the database.</strong> Very simple mechanics happen behind the scenes and can easily be changed, if you disagree with Trailblazer’s flow.</p>
 
@@ -373,21 +380,22 @@ end
 
 <p>They are literally called when you need them.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  # ..
-  def process(params)
-    validate(params[:comment]) do
-      contract.save
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
 
-      after_save!
-    end
-  end
+      <span class="n">after_save!</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-private
-  def after_save!
-    CommentNotifier.daily_digest(model).deliver_later
-  end
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">after_save!</span>
+    <span class="no">CommentNotifier</span><span class="p">.</span><span class="nf">daily_digest</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="nf">deliver_later</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Callbacks can be methods on the operation, separate callback objects, using <a href="http://trailblazer.to/gems/operation/callback.html">Trailblazer’s callback API</a>, or even advanced transactional gems like the excellent <a href="https://github.com/dry-rb/dry-transaction">dry-transaction</a>.</p>
 
@@ -395,21 +403,23 @@ private
 
 <p>Trailblazer and its operation design makes it extremely simple to unit-test your application’s behavior. <strong>All business code is tested via operation tests.</strong></p>
 
-<pre><code class="language-ruby">describe Comment::Create do
-  it "persists valid input" do
-    op = Comment::Create.(comment: { body: "TRB rocks!", author_id: 1 })
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">describe</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">"persists valid input"</span> <span class="k">do</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span> <span class="ss">body: </span><span class="s2">"TRB rocks!"</span><span class="p">,</span> <span class="ss">author_id: </span><span class="mi">1</span> <span class="p">})</span>
 
-    op.model.persisted?.must_equal true
-    op.model.body.must_equal "TRB rocks!"
-  end
-end
+    <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">persisted?</span><span class="p">.</span><span class="nf">must_equal</span> <span class="kp">true</span>
+    <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">must_equal</span> <span class="s2">"TRB rocks!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Operations are also used as factories in Trailblazer applications. This will assure that your test application state is always identical to a realistic production state.</p>
 
-<pre><code class="language-ruby">let(:user)    { User::Create.(user: attributes_for(:user)).model }
-let(:comment) { Comment::Create.(comment: { body: "Yo!", author_id: user.id} ) }
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">let</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>    <span class="p">{</span> <span class="no">User</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">user: </span><span class="n">attributes_for</span><span class="p">(</span><span class="ss">:user</span><span class="p">)).</span><span class="nf">model</span> <span class="p">}</span>
+<span class="n">let</span><span class="p">(</span><span class="ss">:comment</span><span class="p">)</span> <span class="p">{</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span> <span class="ss">body: </span><span class="s2">"Yo!"</span><span class="p">,</span> <span class="ss">author_id: </span><span class="n">user</span><span class="p">.</span><span class="nf">id</span><span class="p">}</span> <span class="p">)</span> <span class="p">}</span>
 </code></pre>
+</div>
 
 <p>Gone are the times of leaky factories. Gems such as <a href="https://github.com/thoughtbot/factory_girl">factory_girl</a> can be used to provide input hashes, only.</p>
 
@@ -419,7 +429,7 @@ let(:comment) { Comment::Create.(comment: { body: "Yo!", author_id: user.id} ) }
 
 <p>Files for the additional abstraction layers are no longer organized by technology. Trailblazer introduces the idea of <em>concepts</em>, which group files by a set of features.</p>
 
-<pre><code>app
+<div class="highlighter-rouge"><pre class="highlight"><code>app
 ├── concepts
 │   ├── comment
 │   │   ├── contract
@@ -434,47 +444,51 @@ let(:comment) { Comment::Create.(comment: { body: "Yo!", author_id: user.id} ) }
 │   │       ├── new.haml
 │   │       └── show.haml
 </code></pre>
+</div>
 
-<p>A concept could be comments, blog posts, image galleries or abstract workflows. At the same time, operations are not limited to CRUD. They often are named <code>Job::Apply</code> or <code>User::Follow</code> and help with a domain-oriented software design.</p>
+<p>A concept could be comments, blog posts, image galleries or abstract workflows. At the same time, operations are not limited to CRUD. They often are named <code class="highlighter-rouge">Job::Apply</code> or <code class="highlighter-rouge">User::Follow</code> and help with a domain-oriented software design.</p>
 
 <h2 id="view-ui">View (UI)</h2>
 
-<p>While the operation is the pivotal element for the business processing, Trailblazer also comes with a drop-in replacement for views. This is completely optional, and you are free to use your framework’s views, such as <code>ActionView</code>.</p>
+<p>While the operation is the pivotal element for the business processing, Trailblazer also comes with a drop-in replacement for views. This is completely optional, and you are free to use your framework’s views, such as <code class="highlighter-rouge">ActionView</code>.</p>
 
 <p>Object-oriented <em>view models</em> are provided by the <a href="/gems/cells">Cells gem</a>. They encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
 
 <p>Those <em>cells</em> are usually rendered from the controller.</p>
 
-<pre><code class="language-ruby">class CommentsController &lt; ApplicationController
-  def show
-    comment = Comment::Create.present(params)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="p">.</span><span class="nf">present</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-    render Comment::Cell::New, comment, layout: Application::Layout
-  end
+    <span class="n">render</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">New</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">Application</span><span class="o">::</span><span class="no">Layout</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>View models, or cells, are classes.</p>
 
-<pre><code class="language-ruby">module Comment::Cell
-  class New &lt; Trailblazer::Cell
-    property :body
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment::Cell</span>
+  <span class="k">class</span> <span class="nc">New</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+    <span class="n">property</span> <span class="ss">:body</span>
 
-    def author_name
-      model.author.full_name || "Anonymous"
-    end
-  end
-end
+    <span class="k">def</span> <span class="nf">author_name</span>
+      <span class="n">model</span><span class="p">.</span><span class="nf">author</span><span class="p">.</span><span class="nf">full_name</span> <span class="o">||</span> <span class="s2">"Anonymous"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Helpers as known from Rails do not exist anymore. Instead, instance methods of the cell can be used in the view.</p>
 
-<pre><code>%h1 Comment
+<div class="highlighter-rouge"><pre class="highlight"><code>%h1 Comment
 
 .row
   = body
 .row
   = author_name
 </code></pre>
+</div>
 
 <p>Again, view models in Trailblazer are provided by the <a href="/gems/cells">Cells gem</a> which is completely decoupled from Trailblazer. It also works fine in other frameworks like Hanami or Sinatra.</p>
 
@@ -484,11 +498,12 @@ end
 
 <p>The simplest form is a <em>guard</em> policy you can embedd straight into the operation.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  policy do |params|
-    params[:current_user].present?
-  end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">policy</span> <span class="k">do</span> <span class="o">|</span><span class="n">params</span><span class="o">|</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">].</span><span class="nf">present?</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
 <p>Policies will be evaluated when the operation is instantiated and <strong>allow denying the execution of code for specific environments</strong>, plus they can be reused at any later point. This includes queries in the view layer.</p>
 
@@ -500,24 +515,26 @@ end
 
 <p>Representers can be defined inline in the operation.</p>
 
-<pre><code class="language-ruby">class Create &lt; Trailblazer::Operation
-  representer do
-    include Roar::JSON
-    include Roar::Hypermedia
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">representer</span> <span class="k">do</span>
+    <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span>
+    <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Hypermedia</span>
 
-    property :id
-    property :body
-    property :author_id
+    <span class="n">property</span> <span class="ss">:id</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+    <span class="n">property</span> <span class="ss">:author_id</span>
 
-    link(:self) { comment_path(represented.id) }
-  end
+    <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span> <span class="p">{</span> <span class="n">comment_path</span><span class="p">(</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>The operation is now aware the input and output document is not a hash anymore but a JSON document. It will use the representer to parse the incoming document, and provide a <code>to_json</code> method for the controller to render the response.</p>
+<p>The operation is now aware the input and output document is not a hash anymore but a JSON document. It will use the representer to parse the incoming document, and provide a <code class="highlighter-rouge">to_json</code> method for the controller to render the response.</p>
 
-<pre><code class="language-ruby">Comment::Create.('{"body": "Solnic rules!"}').to_json
-#=&gt; '{"body": "Solnic rules!", "id":1, link: {"rel":"self", "href":"/comments/1"}}'
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="s1">'{"body": "Solnic rules!"}'</span><span class="p">).</span><span class="nf">to_json</span>
+<span class="c1">#=&gt; '{"body": "Solnic rules!", "id":1, link: {"rel":"self", "href":"/comments/1"}}'</span>
 </code></pre>
+</div>
 
 <p>Representers in Trailblazer are provided by the <a href="/gems/roar">Roar gem</a> and are completely optional.</p>
 
@@ -529,7 +546,7 @@ end
 
 <p>You may also leverage operations in render-only requests and use the contract object with your form rendering helper.</p>
 
-<p>Trailblazer’s polymorphic interface allows to handle edge cases cleanly in small subclasses without the need for <code>if</code>s and <code>else</code> throughout your code base.</p>
+<p>Trailblazer’s polymorphic interface allows to handle edge cases cleanly in small subclasses without the need for <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">else</code> throughout your code base.</p>
 
 <p>And, there’s more optimizations coming every day. We love working on Trailblazer and making life for programmers simpler.</p>
 

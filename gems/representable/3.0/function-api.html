@@ -193,65 +193,69 @@
 
 <h2 id="overview">Overview</h2>
 
-<p>Function option are passed to <code>property</code>.</p>
+<p>Function option are passed to <code class="highlighter-rouge">property</code>.</p>
 
-<pre><code>property :id, default: "n/a"
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, default: "n/a"
 </code></pre>
+</div>
 
 <p>Most options accept a static value, like a string, or a dynamic lambda.</p>
 
-<pre><code>property :id, if: -&gt;(options) { options[:fragment].nil? }
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, if: -&gt;(options) { options[:fragment].nil? }
 </code></pre>
+</div>
 
-<p>The <code>options</code> hash is passed to <strong>all options</strong> and has the following members.<br />
+<p>The <code class="highlighter-rouge">options</code> hash is passed to <strong>all options</strong> and has the following members.
 {doc: doc, options: options, represented: represented, decorator: self}</p>
 
 <table>
   <tbody>
     <tr>
-      <td><code>options[:doc]</code></td>
+      <td><code class="highlighter-rouge">options[:doc]</code></td>
       <td>When rendering, the document as it gets created. When parsing, the entire document.</td>
     </tr>
     <tr>
-      <td><code>options[:fragment]</code></td>
+      <td><code class="highlighter-rouge">options[:fragment]</code></td>
       <td>When parsing, this is the fragment read from the document corresponding to this property.</td>
     </tr>
     <tr>
-      <td><code>options[:input]</code></td>
+      <td><code class="highlighter-rouge">options[:input]</code></td>
       <td>When rendering, this is the value read from the represented object corresponding to this property.</td>
     </tr>
     <tr>
-      <td><code>options[:represented]</code></td>
+      <td><code class="highlighter-rouge">options[:represented]</code></td>
       <td>The currently represented object.</td>
     </tr>
     <tr>
-      <td><code>options[:decorator]</code></td>
+      <td><code class="highlighter-rouge">options[:decorator]</code></td>
       <td>The current decorator instance.</td>
     </tr>
     <tr>
-      <td><code>options[:binding]</code></td>
-      <td>The current binding instance. This allows to access the currently used definition, e.g. <code>options[:binding][:name]</code>.</td>
+      <td><code class="highlighter-rouge">options[:binding]</code></td>
+      <td>The current binding instance. This allows to access the currently used definition, e.g. <code class="highlighter-rouge">options[:binding][:name]</code>.</td>
     </tr>
     <tr>
-      <td><code>options[:options]</code></td>
+      <td><code class="highlighter-rouge">options[:options]</code></td>
       <td>All options that have been passed into the render or parse method.</td>
     </tr>
     <tr>
-      <td><code>options[:user_options]</code></td>
-      <td>The <code>:user_options</code> for the current representer. These are only the <a href="api.html#nested-user-options">nested options</a> from the user, for a particular representer.</td>
+      <td><code class="highlighter-rouge">options[:user_options]</code></td>
+      <td>The <code class="highlighter-rouge">:user_options</code> for the current representer. These are only the <a href="api.html#nested-user-options">nested options</a> from the user, for a particular representer.</td>
     </tr>
   </tbody>
 </table>
 
 <p>In your option function, you can either receive the entire options hash and use it in the block.</p>
 
-<pre><code>if: -&gt;(options) { options[:fragment].nil? }
+<div class="highlighter-rouge"><pre class="highlight"><code>if: -&gt;(options) { options[:fragment].nil? }
 </code></pre>
+</div>
 
 <p>Or, and that is the preferred way, use Ruby’s keyword arguments.</p>
 
-<pre><code>if: -&gt;(fragment:, **) { fragment.nil? }
+<div class="highlighter-rouge"><pre class="highlight"><code>if: -&gt;(fragment:, **) { fragment.nil? }
 </code></pre>
+</div>
 
 <h2 id="options">Options</h2>
 
@@ -260,75 +264,75 @@
 <table>
   <tbody>
     <tr>
-      <td><code>:as</code></td>
+      <td><code class="highlighter-rouge">:as</code></td>
       <td><a href="#as">Renames</a> property</td>
     </tr>
     <tr>
-      <td><code>:getter</code></td>
+      <td><code class="highlighter-rouge">:getter</code></td>
       <td>Custom <a href="#getter">getter</a> logic for rendering</td>
     </tr>
     <tr>
-      <td><code>:setter</code></td>
+      <td><code class="highlighter-rouge">:setter</code></td>
       <td>Custom <a href="#setter">setter</a> logic after parsing</td>
     </tr>
     <tr>
-      <td><code>:if</code></td>
+      <td><code class="highlighter-rouge">:if</code></td>
       <td><a href="#if">Includes</a> property when rendering/parsing when evaluated to true</td>
     </tr>
     <tr>
-      <td><code>:reader</code></td>
+      <td><code class="highlighter-rouge">:reader</code></td>
       <td>Overrides entire <a href="#reader">parsing</a> process for property</td>
     </tr>
     <tr>
-      <td><code>:writer</code></td>
+      <td><code class="highlighter-rouge">:writer</code></td>
       <td>Overrides entire <a href="#writer">rendering</a> process for property</td>
     </tr>
     <tr>
-      <td><code>:skip_parse</code></td>
+      <td><code class="highlighter-rouge">:skip_parse</code></td>
       <td><a href="#skip-parse">Skips parsing</a> when evaluated to true</td>
     </tr>
     <tr>
-      <td><code>:skip_render</code></td>
+      <td><code class="highlighter-rouge">:skip_render</code></td>
       <td><a href="#skip-render">Skips rendering</a> when evaluated to true</td>
     </tr>
     <tr>
-      <td><code>:parse_filter</code></td>
+      <td><code class="highlighter-rouge">:parse_filter</code></td>
       <td>Pipeline to process <a href="#parse-filter">parsing result</a></td>
     </tr>
     <tr>
-      <td><code>:render_filter</code></td>
+      <td><code class="highlighter-rouge">:render_filter</code></td>
       <td>Pipeline to process <a href="#render-filter">rendering result</a></td>
     </tr>
     <tr>
-      <td><code>:deserialize</code></td>
+      <td><code class="highlighter-rouge">:deserialize</code></td>
       <td>Override <a href="#deserialize">deserialization</a> of nested object</td>
     </tr>
     <tr>
-      <td><code>:serialize</code></td>
+      <td><code class="highlighter-rouge">:serialize</code></td>
       <td>Override <a href="#serialize">serialization</a> of nested object</td>
     </tr>
     <tr>
-      <td><code>:extend</code></td>
+      <td><code class="highlighter-rouge">:extend</code></td>
       <td><a href="#extend">Representer</a> to use for parsing or rendering</td>
     </tr>
     <tr>
-      <td><code>:prepare</code></td>
+      <td><code class="highlighter-rouge">:prepare</code></td>
       <td><a href="#prepare">Decorate</a> the represented object</td>
     </tr>
     <tr>
-      <td><code>:class</code></td>
+      <td><code class="highlighter-rouge">:class</code></td>
       <td><a href="#class">Class</a> to instantiate when parsing nested fragment</td>
     </tr>
     <tr>
-      <td><code>:instance</code></td>
+      <td><code class="highlighter-rouge">:instance</code></td>
       <td><a href="#class">Instantiate</a> object directly when parsing nested fragment</td>
     </tr>
     <tr>
-      <td><code>:render_nil</code></td>
+      <td><code class="highlighter-rouge">:render_nil</code></td>
       <td><a href="#render-nil">Render nil</a> values</td>
     </tr>
     <tr>
-      <td><code>:render_empty</code></td>
+      <td><code class="highlighter-rouge">:render_empty</code></td>
       <td><a href="#render-empty">Render empty </a> collections</td>
     </tr>
   </tbody>
@@ -338,170 +342,188 @@
 
 <p>If your property name doesn’t match the name in the document, use the :as option.</p>
 
-<pre><code>property :title, as: :name
+<div class="highlighter-rouge"><pre class="highlight"><code>property :title, as: :name
 </code></pre>
+</div>
 
-<p>This will render using the <code>:as</code> value. Vice-versa for parsing</p>
+<p>This will render using the <code class="highlighter-rouge">:as</code> value. Vice-versa for parsing</p>
 
-<pre><code>song.to_json #=&gt; {"name":"Fallout","track":1}
+<div class="highlighter-rouge"><pre class="highlight"><code>song.to_json #=&gt; {"name":"Fallout","track":1}
 </code></pre>
+</div>
 
 <h2 id="getter">Getter</h2>
 
-<p>When rendering, Representable calls the property’s getter on the represented object. For a property named <code>:id</code>, this will result in <code>represented.id</code> to retrieve the value for rendering.</p>
+<p>When rendering, Representable calls the property’s getter on the represented object. For a property named <code class="highlighter-rouge">:id</code>, this will result in <code class="highlighter-rouge">represented.id</code> to retrieve the value for rendering.</p>
 
 <p>You can override this, and instead of having Representable call the getter, run your own logic.</p>
 
-<pre><code>property :id, getter: -&gt;(represented:, **) { represented.uuid.human_readable }
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, getter: -&gt;(represented:, **) { represented.uuid.human_readable }
 </code></pre>
+</div>
 
 <p>In the rendered document, you will find the UUID now where should be the ID.</p>
 
-<pre><code>decorator.to_json #=&gt; {"id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"}
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.to_json #=&gt; {"id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"}
 </code></pre>
+</div>
 
 <p>As helpful as this option is, please do not overuse it. A representer is not a data mapper, but a document transformer. If your underlying data model and your representers diverge too much, consider using a <a href="/gems/disposable">twin</a> to simplify the representer.</p>
 
 <h2 id="setter">Setter</h2>
 
-<p>After parsing has happened, the fragment is assigned to the represented object using the property’s setter. In the above example, Representable will call <code>represented.id=(fragment)</code>.</p>
+<p>After parsing has happened, the fragment is assigned to the represented object using the property’s setter. In the above example, Representable will call <code class="highlighter-rouge">represented.id=(fragment)</code>.</p>
 
-<p>Override that using <code>:setter</code>.</p>
+<p>Override that using <code class="highlighter-rouge">:setter</code>.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   setter: -&gt;(fragment:, represented:, **) { represented.uuid = fragment.upcase }
 </code></pre>
+</div>
 
-<p>Again, don’t overuse this method and consider a twin if you find yourself using <code>:setter</code> for every property.</p>
+<p>Again, don’t overuse this method and consider a twin if you find yourself using <code class="highlighter-rouge">:setter</code> for every property.</p>
 
 <h2 id="if">If</h2>
 
-<p>You can exclude properties when rendering or parsing, as if they were not defined at all. This works with <code>:if</code>.</p>
+<p>You can exclude properties when rendering or parsing, as if they were not defined at all. This works with <code class="highlighter-rouge">:if</code>.</p>
 
-<pre><code>property :id, if: -&gt;(user_options:,**) { user_options[:is_admin] }
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, if: -&gt;(user_options:,**) { user_options[:is_admin] }
 </code></pre>
+</div>
 
-<p>When parsing (or rendering), the <code>id</code> property is only considered when <code>is_admin</code> has been passed in.</p>
+<p>When parsing (or rendering), the <code class="highlighter-rouge">id</code> property is only considered when <code class="highlighter-rouge">is_admin</code> has been passed in.</p>
 
-<p>This will parse the <code>id</code> field.</p>
+<p>This will parse the <code class="highlighter-rouge">id</code> field.</p>
 
-<pre><code>decorator.from_json('{"id":1}', user_options: {is_admin: true})
+<div class="highlighter-rouge"><pre class="highlight"><code>decorator.from_json('{"id":1}', user_options: {is_admin: true})
 </code></pre>
+</div>
 
 <h2 id="reader">Reader</h2>
 
-<p>To override the entire parsing process, use <code>:reader</code>. You won’t have access to <code>:fragment</code> here since parsing hasn’t happened, yet.</p>
+<p>To override the entire parsing process, use <code class="highlighter-rouge">:reader</code>. You won’t have access to <code class="highlighter-rouge">:fragment</code> here since parsing hasn’t happened, yet.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   reader: -&gt;(represented:,doc:,**) { represented.payload = doc[:uuid] || "n/a" }
 </code></pre>
+</div>
 
-<p>With <code>:reader</code>, parsing is completely up to you. Representable will only invoke the function and do nothing else.</p>
+<p>With <code class="highlighter-rouge">:reader</code>, parsing is completely up to you. Representable will only invoke the function and do nothing else.</p>
 
 <h2 id="writer">Writer</h2>
 
-<p>To override the entire rendering process, use <code>:writer</code>. You won’t have access to <code>:input</code> here since the value query to the represented object hasn’t happened, yet.</p>
+<p>To override the entire rendering process, use <code class="highlighter-rouge">:writer</code>. You won’t have access to <code class="highlighter-rouge">:input</code> here since the value query to the represented object hasn’t happened, yet.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   writer: -&gt;(represented:,doc:,**) { doc[:uuid] = represented.id }
 </code></pre>
+</div>
 
-<p>With <code>:writer</code>, rendering is completely up to you. Representable will only invoke the function and do nothing else.</p>
+<p>With <code class="highlighter-rouge">:writer</code>, rendering is completely up to you. Representable will only invoke the function and do nothing else.</p>
 
 <h2 id="skip-parse">Skip Parse</h2>
 
-<p>To suppress parsing of a property, use <code>:skip_parse</code>.</p>
+<p>To suppress parsing of a property, use <code class="highlighter-rouge">:skip_parse</code>.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   skip_parse: -&gt;(fragment:,**) { fragment.nil? || fragment=="" }
 </code></pre>
+</div>
 
 <p>No further processing happens with this property, should the option evaluate to true.</p>
 
 <h2 id="skip-render">Skip Render</h2>
 
-<p>To suppress rendering of a property, use <code>:skip_render</code>.</p>
+<p>To suppress rendering of a property, use <code class="highlighter-rouge">:skip_render</code>.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   skip_render: -&gt;(represented:,**) { represented.id.nil? }
 </code></pre>
+</div>
 
 <p>No further processing happens with this property, should the option evaluate to true.</p>
 
 <h2 id="parse-filter">Parse Filter</h2>
 
-<p>Use <code>:parse_filter</code> to process the parsing result.</p>
+<p>Use <code class="highlighter-rouge">:parse_filter</code> to process the parsing result.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   parse_filter: -&gt;(fragment, options) { fragment.strip }
 </code></pre>
+</div>
 
-<p>Just before setting the fragment to the object via the setter, the <code>:parse_filter</code> is called.</p>
+<p>Just before setting the fragment to the object via the setter, the <code class="highlighter-rouge">:parse_filter</code> is called.</p>
 
 <p>Note that you can add multiple filters, the result from the last will be passed to the next.</p>
 
 <h2 id="render-filter">Render Filter</h2>
 
-<p>Use <code>:render_filter</code> to process the rendered fragment.</p>
+<p>Use <code class="highlighter-rouge">:render_filter</code> to process the rendered fragment.</p>
 
-<pre><code>property :id,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id,
   render_filter: -&gt;(input, options) { input.strip }
 </code></pre>
+</div>
 
-<p>Just before rendering the fragment into the document, the <code>:render_filter</code> is invoked.</p>
+<p>Just before rendering the fragment into the document, the <code class="highlighter-rouge">:render_filter</code> is invoked.</p>
 
 <p>Note that you can add multiple filters, the result from the last will be passed to the next.</p>
 
 <h2 id="deserialize">Deserialize</h2>
 
-<p>When deserializing a nested fragment, the default mechanics after decorating the represented object are to call <code>represented.from_json(fragment)</code>.</p>
+<p>When deserializing a nested fragment, the default mechanics after decorating the represented object are to call <code class="highlighter-rouge">represented.from_json(fragment)</code>.</p>
 
-<p>Override this step using <code>:deserialize</code>.</p>
+<p>Override this step using <code class="highlighter-rouge">:deserialize</code>.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   deserialize: -&gt;(input:,fragment:,**) { input.attributes = fragment }
 </code></pre>
+</div>
 
-<p>The <code>:input</code> option provides the currently deserialized object.</p>
+<p>The <code class="highlighter-rouge">:input</code> option provides the currently deserialized object.</p>
 
 <h2 id="serialize">Serialize</h2>
 
-<p>When serializing a nested object, the default mechanics after decorating the represented object are to call <code>represented.to_json</code>.</p>
+<p>When serializing a nested object, the default mechanics after decorating the represented object are to call <code class="highlighter-rouge">represented.to_json</code>.</p>
 
-<p>Override this step using <code>:serialize</code>.</p>
+<p>Override this step using <code class="highlighter-rouge">:serialize</code>.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   serialize: -&gt;(represented:,**) { represented.attributes.to_h }
 </code></pre>
+</div>
 
 <h2 id="extend">Extend</h2>
 
-<p>Alias: <code>:decorator</code>.</p>
+<p>Alias: <code class="highlighter-rouge">:decorator</code>.</p>
 
-<p>When rendering or parsing a nested object, that represented object needs to get decorated, which is configured via the <code>:extend</code> option.</p>
+<p>When rendering or parsing a nested object, that represented object needs to get decorated, which is configured via the <code class="highlighter-rouge">:extend</code> option.</p>
 
-<p>You can use <code>:extend</code> to configure an explicit representer module or decorator.</p>
+<p>You can use <code class="highlighter-rouge">:extend</code> to configure an explicit representer module or decorator.</p>
 
-<pre><code>property :artist, extend: ArtistRepresenter
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist, extend: ArtistRepresenter
 </code></pre>
+</div>
 
 <p>Alternatively, you could also compute that representer at run-time.</p>
 
 <p>For parsing, this could look like this.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   extend: -&gt;(fragment:,**) do
     fragment["type"] == "rockstar" ? RockstarRepresenter : ArtistRepresenter
   end
 </code></pre>
+</div>
 
 <p>For rendering, you could do something as follows.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   extend: -&gt;(input:,**) do
     input.is_a?(Rockstar) ? RockstarRepresenter : ArtistRepresenter
   end
 </code></pre>
+</div>
 
 <p>This allows a dynamic polymorphic representer structure.</p>
 
@@ -509,59 +531,66 @@
 
 <p>The default mechanics when representing a nested object is decorating the object, then calling the serializer or deserializer method on it.</p>
 
-<p>You can override this step using <code>:prepare</code>.</p>
+<p>You can override this step using <code class="highlighter-rouge">:prepare</code>.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   prepare: -&gt;(represented:,**) { ArtistRepresenter.new(input) }
 </code></pre>
+</div>
 
 <p>Just for fun, you could mimic the original behavior.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   prepare: -&gt;(represented:,binding:,**) { binding[:extend].new(represented) }
 </code></pre>
+</div>
 
 <h2 id="class">Class</h2>
 
-<p>When parsing a nested fragment, Representable per default creates an object for you. The class can be defined with <code>:class</code>.</p>
+<p>When parsing a nested fragment, Representable per default creates an object for you. The class can be defined with <code class="highlighter-rouge">:class</code>.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   class: Artist
 </code></pre>
+</div>
 
 <p>It could also be dynamic.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   class: -&gt;(fragment) { fragment["type"] == "rockstar" ? Rockstar : Artist }
 </code></pre>
+</div>
 
 <h2 id="instance">Instance</h2>
 
-<p>Instead of using <code>:class</code> you can directly instantiate the represented object yourself using <code>:instance</code>.</p>
+<p>Instead of using <code class="highlighter-rouge">:class</code> you can directly instantiate the represented object yourself using <code class="highlighter-rouge">:instance</code>.</p>
 
-<pre><code>property :artist,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :artist,
   instance: -&gt;(fragment) do
     fragment["type"] == "rockstar" ? Rockstar.new : Artist.new
   end
 </code></pre>
+</div>
 
 <h3 id="render-nil">Render Nil</h3>
 
-<p>In Representable, <code>false</code> values are considered as a valid value and will be rendered into the document or parsed.</p>
+<p>In Representable, <code class="highlighter-rouge">false</code> values are considered as a valid value and will be rendered into the document or parsed.</p>
 
-<p>If you want <code>nil</code> values to be included when rendering, use the <code>:render_nil</code> option.</p>
+<p>If you want <code class="highlighter-rouge">nil</code> values to be included when rendering, use the <code class="highlighter-rouge">:render_nil</code> option.</p>
 
-<pre><code>property :title,
+<div class="highlighter-rouge"><pre class="highlight"><code>property :title,
   render_nil: true
 </code></pre>
+</div>
 
 <h3 id="render-empty">Render Empty</h3>
 
-<p>Per default, empty collections are rendered (unless they’re <code>nil</code>). You can suppress rendering.</p>
+<p>Per default, empty collections are rendered (unless they’re <code class="highlighter-rouge">nil</code>). You can suppress rendering.</p>
 
-<pre><code>collection :songs,
+<div class="highlighter-rouge"><pre class="highlight"><code>collection :songs,
   render_empty: false
 </code></pre>
+</div>
 
       </div>
     </div>

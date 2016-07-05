@@ -187,7 +187,7 @@
       <div class="columns medium-9 code-content">
         <h2 id="overview">Overview</h2>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   include Dispatch
 
   callback :after_save do
@@ -195,22 +195,24 @@
   end
 end
 </code></pre>
+</div>
 
-<p>Note that you need to <code>include Dispatch</code> into operations that use callbacks.</p>
+<p>Note that you need to <code class="highlighter-rouge">include Dispatch</code> into operations that use callbacks.</p>
 
 <h2 id="composable-interface">Composable Interface</h2>
 
-<p>Using <code>Operation::callback</code> simply creates a new <code>Disposable::Callback::Group</code> class for you.</p>
+<p>Using <code class="highlighter-rouge">Operation::callback</code> simply creates a new <code class="highlighter-rouge">Disposable::Callback::Group</code> class for you.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   callback :after_save do
     # this is a Disposable::Callback::Group class.
   end
 </code></pre>
+</div>
 
 <p>Successive calls with the same name will extend the group.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   callback :after_save do
     on_change :notify!
   end
@@ -219,39 +221,43 @@ end
     on_change :cleanup!
   end
 </code></pre>
+</div>
 
-<p>Dispatching <code>:after_save</code> will now run <code>#notify!</code>, then <code>#cleanup!</code>.</p>
+<p>Dispatching <code class="highlighter-rouge">:after_save</code> will now run <code class="highlighter-rouge">#notify!</code>, then <code class="highlighter-rouge">#cleanup!</code>.</p>
 
 <p>Note that this also works when inheriting callbacks from a parent operation. You can extend it without changing the parent’s callbacks.</p>
 
 <p>If you prefer keeping callbacks in separate classes, you can do so.</p>
 
-<pre><code>class AfterSave &lt; Disposable::Callback::Group
+<div class="highlighter-rouge"><pre class="highlight"><code>class AfterSave &lt; Disposable::Callback::Group
   on_change :notify!
 end
 </code></pre>
+</div>
 
-<p>Register it using <code>::callback</code>.</p>
+<p>Register it using <code class="highlighter-rouge">::callback</code>.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   callback :after_save, AfterSave
 </code></pre>
+</div>
 
 <p>As always, the callback can be extended locally.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   callback :after_save, AfterSave do
     on_update :cleanup!
   end
 </code></pre>
+</div>
 
 <p>Since Trailblazer copies the callback group, this will change the callbacks only for this operation.</p>
 
 <h2 id="custom-callbacks">Custom Callbacks</h2>
 
-<p>You can attach any callback object you like to an operation. It will receive the contract in the initializer and has to respond to <code>#call</code>.</p>
+<p>You can attach any callback object you like to an operation. It will receive the contract in the initializer and has to respond to <code class="highlighter-rouge">#call</code>.</p>
 
-<pre><code>class MyCallback
+<div class="highlighter-rouge"><pre class="highlight"><code>class MyCallback
   def initialize(contract)
     @contract = contract
   end
@@ -261,12 +267,14 @@ end
   end
 end
 </code></pre>
+</div>
 
-<p>Use <code>::callback</code> to register it as a group.</p>
+<p>Use <code class="highlighter-rouge">::callback</code> to register it as a group.</p>
 
-<pre><code>class Comment::Create &lt; Trailblazer::Operation
+<div class="highlighter-rouge"><pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
   callback :after_save, MyCallback
 </code></pre>
+</div>
 
       </div>
     </div>

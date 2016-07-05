@@ -191,19 +191,20 @@
 
 <h2 id="summary">Summary</h2>
 
-<p>As Trailblazer provides <code>Operation</code> to encapsulate the business logic, and representers for rendering and parsing documents, Grape ends up being leveraged as a routing layer that dispatches to operations.</p>
+<p>As Trailblazer provides <code class="highlighter-rouge">Operation</code> to encapsulate the business logic, and representers for rendering and parsing documents, Grape ends up being leveraged as a routing layer that dispatches to operations.</p>
 
-<pre><code class="language-ruby">module API
-  class Application &lt; Grape::API
-    format :json
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">module</span> <span class="nn">API</span>
+  <span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Grape</span><span class="o">::</span><span class="no">API</span>
+    <span class="nb">format</span> <span class="ss">:json</span>
 
-    version :v1 do
-      get("posts")  { run!(Post::Show, request) }
-      post("posts") { run!(Post::Create, request) }
-    end
-  end
-end
+    <span class="n">version</span> <span class="ss">:v1</span> <span class="k">do</span>
+      <span class="n">get</span><span class="p">(</span><span class="s2">"posts"</span><span class="p">)</span>  <span class="p">{</span> <span class="n">run!</span><span class="p">(</span><span class="no">Post</span><span class="o">::</span><span class="no">Show</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">post</span><span class="p">(</span><span class="s2">"posts"</span><span class="p">)</span> <span class="p">{</span> <span class="n">run!</span><span class="p">(</span><span class="no">Post</span><span class="o">::</span><span class="no">Create</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <h2 id="routing">Routing</h2>
 

@@ -193,9 +193,9 @@
 
 <h2 id="declarative-api">Declarative API</h2>
 
-<p>Every twin is based on a schema which comes in form of a <code>Disposable::Twin</code> class.</p>
+<p>Every twin is based on a schema which comes in form of a <code class="highlighter-rouge">Disposable::Twin</code> class.</p>
 
-<pre><code>class AlbumTwin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
   property :title
 
   collection :songs do
@@ -208,14 +208,15 @@
   end
 end
 </code></pre>
+</div>
 
 <p>The self-explaining DSL known from many Trailblazer gems allows to define flat or nested twins.</p>
 
 <h2 id="unnest">Unnest</h2>
 
-<p>To expose a nested property on an outer level, use <code>::unnest</code>.</p>
+<p>To expose a nested property on an outer level, use <code class="highlighter-rouge">::unnest</code>.</p>
 
-<pre><code>class AlbumTwin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
   property :artist do
     property :email
   end
@@ -223,244 +224,265 @@ end
   unnest :email, from: :artist
 end
 </code></pre>
+</div>
 
-<p>The <code>email</code> accessors will now be on top-level, hiding the nested structure to the outside world.</p>
+<p>The <code class="highlighter-rouge">email</code> accessors will now be on top-level, hiding the nested structure to the outside world.</p>
 
-<pre><code>album = Album.find(1)
+<div class="highlighter-rouge"><pre class="highlight"><code>album = Album.find(1)
 twin  = AlbumTwin.new(album)
 
 twin.email #=&gt; "duran@duran.to"
 twin.email = "duran@duran.com"
 </code></pre>
+</div>
 
-<p>When <code>sync</code>ing, only the nested structure will be considered.</p>
+<p>When <code class="highlighter-rouge">sync</code>ing, only the nested structure will be considered.</p>
 
-<pre><code>twin.sync
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.sync
 album.artist.email #=&gt; "duran@duran.com"
 </code></pre>
+</div>
 
 <h2 id="public-api">Public API</h2>
 
 <p>The public twin API is unbelievably simple.</p>
 
 <ol>
-  <li><code>Twin::new</code> creates and populates the twin.</li>
-  <li><code>Twin#"reader"</code> returns the value or nested twin of the property.</li>
-  <li><code>Twin#"writer"=(v)</code> writes the value to the twin, not the model.</li>
-  <li><code>Twin#sync</code> writes all values to the model.</li>
-  <li><code>Twin#save</code> writes all values to the model and calls <code>save</code> on configured models.</li>
+  <li><code class="highlighter-rouge">Twin::new</code> creates and populates the twin.</li>
+  <li><code class="highlighter-rouge">Twin#"reader"</code> returns the value or nested twin of the property.</li>
+  <li><code class="highlighter-rouge">Twin#"writer"=(v)</code> writes the value to the twin, not the model.</li>
+  <li><code class="highlighter-rouge">Twin#sync</code> writes all values to the model.</li>
+  <li><code class="highlighter-rouge">Twin#save</code> writes all values to the model and calls <code class="highlighter-rouge">save</code> on configured models.</li>
 </ol>
 
 <h2 id="constructor">Constructor</h2>
 
 <p>Twins get populated from the decorated models.</p>
 
-<pre><code class="language-ruby">Song   = Struct.new(:name, :index)
-Artist = Struct.new(:full_name)
-Album  = Struct.new(:title, :songs, :artist)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Song</span>   <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:index</span><span class="p">)</span>
+<span class="no">Artist</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:full_name</span><span class="p">)</span>
+<span class="no">Album</span>  <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:songs</span><span class="p">,</span> <span class="ss">:artist</span><span class="p">)</span>
 </code></pre>
+</div>
 
 <p>You need to pass model and the facultative options to the twin constructor.</p>
 
-<pre><code class="language-ruby">album = Album.new("Nice Try")
-twin  = AlbumTwin.new(album, playable?: current_user.can?(:play))
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">album</span> <span class="o">=</span> <span class="no">Album</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Nice Try"</span><span class="p">)</span>
+<span class="n">twin</span>  <span class="o">=</span> <span class="no">AlbumTwin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">,</span> <span class="n">playable?</span><span class="p">:</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">can?</span><span class="p">(</span><span class="ss">:play</span><span class="p">))</span>
 </code></pre>
+</div>
 
 <h2 id="readers">Readers</h2>
 
 <p>This will create a composition object of the actual model and the hash.</p>
 
-<pre><code class="language-ruby">twin.title     #=&gt; "Nice Try"
-twin.playable? #=&gt; true
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">title</span>     <span class="c1">#=&gt; "Nice Try"</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">playable?</span> <span class="c1">#=&gt; true</span>
 </code></pre>
+</div>
 
-<p>You can also override <code>property</code> values in the constructor:</p>
+<p>You can also override <code class="highlighter-rouge">property</code> values in the constructor:</p>
 
-<pre><code class="language-ruby">twin = AlbumTwin.new(album, title: "Plasticash")
-twin.title #=&gt; "Plasticash"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span> <span class="o">=</span> <span class="no">AlbumTwin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">,</span> <span class="ss">title: </span><span class="s2">"Plasticash"</span><span class="p">)</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">title</span> <span class="c1">#=&gt; "Plasticash"</span>
 </code></pre>
+</div>
 
 <h2 id="writers">Writers</h2>
 
 <p>Writers change values on the twin and are <em>not</em> propagated to the model.</p>
 
-<pre><code class="language-ruby">twin.title = "Skamobile"
-twin.title  #=&gt; "Skamobile"
-album.title #=&gt; "Nice Try"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">title</span> <span class="o">=</span> <span class="s2">"Skamobile"</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">title</span>  <span class="c1">#=&gt; "Skamobile"</span>
+<span class="n">album</span><span class="p">.</span><span class="nf">title</span> <span class="c1">#=&gt; "Nice Try"</span>
 </code></pre>
+</div>
 
 <p>Writers on nested twins will “twin” the value.</p>
 
-<pre><code class="language-ruby">twin.songs #=&gt; []
-twin.songs &lt;&lt; Song.new("Adondo", 1)
-twin.songs  #=&gt; [&lt;Twin::Song name="Adondo" index=1 model=&lt;Song ..&gt;&gt;]
-album.songs #=&gt; []
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">songs</span> <span class="c1">#=&gt; []</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">songs</span> <span class="o">&lt;&lt;</span> <span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Adondo"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">songs</span>  <span class="c1">#=&gt; [&lt;Twin::Song name="Adondo" index=1 model=&lt;Song ..&gt;&gt;]</span>
+<span class="n">album</span><span class="p">.</span><span class="nf">songs</span> <span class="c1">#=&gt; []</span>
 </code></pre>
+</div>
 
 <p>The added twin is <em>not</em> passed to the model. Note that the nested song is a twin, not the model itself.</p>
 
 <h2 id="sync">Sync</h2>
 
-<p>Given the above state change on the twin, here is what happens after calling <code>#sync</code>.</p>
+<p>Given the above state change on the twin, here is what happens after calling <code class="highlighter-rouge">#sync</code>.</p>
 
-<pre><code class="language-ruby">album.title  #=&gt; "Nice Try"
-album.songs #=&gt; []
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">album</span><span class="p">.</span><span class="nf">title</span>  <span class="c1">#=&gt; "Nice Try"</span>
+<span class="n">album</span><span class="p">.</span><span class="nf">songs</span> <span class="c1">#=&gt; []</span>
 
-twin.sync
+<span class="n">twin</span><span class="p">.</span><span class="nf">sync</span>
 
-album.title  #=&gt; "Skamobile"
-album.songs #=&gt; [&lt;Song name="Adondo" index=1&gt;]
+<span class="n">album</span><span class="p">.</span><span class="nf">title</span>  <span class="c1">#=&gt; "Skamobile"</span>
+<span class="n">album</span><span class="p">.</span><span class="nf">songs</span> <span class="c1">#=&gt; [&lt;Song name="Adondo" index=1&gt;]</span>
 </code></pre>
+</div>
 
-<p><code>#sync</code> writes all configured attributes back to the models using public setters as <code>album.name=</code> or <code>album.songs=</code>. This is recursive and will sync the entire object graph.</p>
+<p><code class="highlighter-rouge">#sync</code> writes all configured attributes back to the models using public setters as <code class="highlighter-rouge">album.name=</code> or <code class="highlighter-rouge">album.songs=</code>. This is recursive and will sync the entire object graph.</p>
 
-<p>Note that <code>sync</code> might already trigger saving the model as persistence layers like ActiveRecord can’t deal with <code>collection= []</code> and instantly persist that.</p>
+<p>Note that <code class="highlighter-rouge">sync</code> might already trigger saving the model as persistence layers like ActiveRecord can’t deal with <code class="highlighter-rouge">collection= []</code> and instantly persist that.</p>
 
-<p>You may implement your syncing manually by passing a block to <code>sync</code>.</p>
+<p>You may implement your syncing manually by passing a block to <code class="highlighter-rouge">sync</code>.</p>
 
-<pre><code class="language-ruby">twin.sync do |hash|
-  hash #=&gt; {
-  #  "title"     =&gt; "Skamobile",
-  #  "playable?" =&gt; true,
-  #  "songs"     =&gt; [{"name"=&gt;"Adondo"...}..]
-  # }
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">sync</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="o">|</span>
+  <span class="nb">hash</span> <span class="c1">#=&gt; {</span>
+  <span class="c1">#  "title"     =&gt; "Skamobile",</span>
+  <span class="c1">#  "playable?" =&gt; true,</span>
+  <span class="c1">#  "songs"     =&gt; [{"name"=&gt;"Adondo"...}..]</span>
+  <span class="c1"># }</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Invoking <code>sync</code> with block will <em>not</em> write anything to the models.</p>
+<p>Invoking <code class="highlighter-rouge">sync</code> with block will <em>not</em> write anything to the models.</p>
 
-<p>Needs to be included explicitly (<code>Sync</code>).</p>
+<p>Needs to be included explicitly (<code class="highlighter-rouge">Sync</code>).</p>
 
 <h2 id="save">Save</h2>
 
-<p>Calling <code>#save</code> will do <code>sync</code> plus calling <code>save</code> on all nested models. This implies that the models need to implement <code>#save</code>.</p>
+<p>Calling <code class="highlighter-rouge">#save</code> will do <code class="highlighter-rouge">sync</code> plus calling <code class="highlighter-rouge">save</code> on all nested models. This implies that the models need to implement <code class="highlighter-rouge">#save</code>.</p>
 
-<pre><code class="language-ruby">twin.save
-#=&gt; album.save
-#=&gt;      .songs[0].save
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">save</span>
+<span class="c1">#=&gt; album.save</span>
+<span class="c1">#=&gt;      .songs[0].save</span>
 
 </code></pre>
+</div>
 
-<p>Needs to be included explicitly (<code>Save</code>).</p>
+<p>Needs to be included explicitly (<code class="highlighter-rouge">Save</code>).</p>
 
 <h2 id="nested-twin">Nested Twin</h2>
 
 <p>Nested objects can be declared with an inline twin.</p>
 
-<pre><code class="language-ruby">property :artist do
-  property :full_name
-end
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">property</span> <span class="ss">:artist</span> <span class="k">do</span>
+  <span class="n">property</span> <span class="ss">:full_name</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
 <p>The setter will automatically “twin” the model.</p>
 
-<pre><code class="language-ruby">twin.artist = Artist.new
-twin.artist #=&gt; &lt;Twin::Artist model=&lt;Artist ..&gt;&gt;
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">artist</span> <span class="o">=</span> <span class="no">Artist</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">artist</span> <span class="c1">#=&gt; &lt;Twin::Artist model=&lt;Artist ..&gt;&gt;</span>
 </code></pre>
+</div>
 
 <p>You can also specify nested objects with an explicit class.</p>
 
-<pre><code class="language-ruby">property :artist, twin: TwinArtist
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">property</span> <span class="ss">:artist</span><span class="p">,</span> <span class="ss">twin: </span><span class="no">TwinArtist</span>
 </code></pre>
+</div>
 
 <h2 id="features">Features</h2>
 
-<p>You can simply <code>include</code> feature modules into twins. If you want a feature to be included into all inline twins of your schema, use <code>::feature</code>.</p>
+<p>You can simply <code class="highlighter-rouge">include</code> feature modules into twins. If you want a feature to be included into all inline twins of your schema, use <code class="highlighter-rouge">::feature</code>.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Coercion
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Coercion</span>
 
-  property :artist do
-    # this will now include Coercion, too.
+  <span class="n">property</span> <span class="ss">:artist</span> <span class="k">do</span>
+    <span class="c1"># this will now include Coercion, too.</span>
 </code></pre>
+</div>
 
 <h2 id="coercion">Coercion</h2>
 
 <p>Twins can use <a href="https://github.com/dry-rb/dry-types">dry-types</a> coercion. This will override the setter in your twin, coerce the incoming value, and call the original setter. <em>Nothing more</em> will happen.</p>
 
-<p>Disposable already defines a module <code>Disposable::Twin::Coercion::Types</code> with all the Dry::Types built-in types. So you can use any of the <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented types</a>.</p>
+<p>Disposable already defines a module <code class="highlighter-rouge">Disposable::Twin::Coercion::Types</code> with all the Dry::Types built-in types. So you can use any of the <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented types</a>.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Coercion
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Coercion</span>
 
-  property :id, type: Types::Form::Int
+  <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">type: </span><span class="no">Types</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Int</span>
 </code></pre>
+</div>
 
-<p>The <code>:type</code> option defines the coercion type. You may incluce <code>Setup::SkipSetter</code>, too, as otherwise the coercion will happen at initialization time and in the setter.</p>
+<p>The <code class="highlighter-rouge">:type</code> option defines the coercion type. You may incluce <code class="highlighter-rouge">Setup::SkipSetter</code>, too, as otherwise the coercion will happen at initialization time and in the setter.</p>
 
-<pre><code class="language-ruby">twin.id = "1"
-twin.id #=&gt; 1
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="s2">"1"</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">id</span> <span class="c1">#=&gt; 1</span>
 </code></pre>
+</div>
 
 <p>Again, coercion only happens in the setter.</p>
 
 <h2 id="nilify">Nilify</h2>
 
-<p>Coercion also supports the conversion of blank strings (<code>""</code>) into <code>nil</code>. This is known as <em>nilify</em> and provided via the <code>:nilify</code> option.</p>
+<p>Coercion also supports the conversion of blank strings (<code class="highlighter-rouge">""</code>) into <code class="highlighter-rouge">nil</code>. This is known as <em>nilify</em> and provided via the <code class="highlighter-rouge">:nilify</code> option.</p>
 
-<pre><code>property :id, type: Types::Form::Int, nilify: true
+<div class="highlighter-rouge"><pre class="highlight"><code>property :id, type: Types::Form::Int, nilify: true
 </code></pre>
+</div>
 
 <p>This will result in the following behavior.</p>
 
-<pre><code>twin.id = ""
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.id = ""
 twin.id #=&gt; nil
 </code></pre>
+</div>
 
-<p>Note that you can use <code>:nilify</code> without specifying a <code>:type</code>.</p>
+<p>Note that you can use <code class="highlighter-rouge">:nilify</code> without specifying a <code class="highlighter-rouge">:type</code>.</p>
 
 <h2 id="defaults">Defaults</h2>
 
-<p>Default values can be set via <code>:default</code>.</p>
+<p>Default values can be set via <code class="highlighter-rouge">:default</code>.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Default
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Default</span>
 
-  property :title, default: "The Greatest Songs Ever Written"
-  property :composer, default: Composer.new do
-    property :name, default: -&gt; { "Object-#{id}" }
-  end
-end
+  <span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">default: </span><span class="s2">"The Greatest Songs Ever Written"</span>
+  <span class="n">property</span> <span class="ss">:composer</span><span class="p">,</span> <span class="ss">default: </span><span class="no">Composer</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">default: </span><span class="o">-&gt;</span> <span class="p">{</span> <span class="s2">"Object-</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Default value is applied when the model’s getter returns <code>nil</code> when <em>initializing</em> the twin.</p>
+<p>Default value is applied when the model’s getter returns <code class="highlighter-rouge">nil</code> when <em>initializing</em> the twin.</p>
 
-<p>Note that <code>:default</code> also works with <code>:virtual</code> and <code>readable: false</code>. <code>:default</code> can also be a lambda which is then executed in twin context.</p>
+<p>Note that <code class="highlighter-rouge">:default</code> also works with <code class="highlighter-rouge">:virtual</code> and <code class="highlighter-rouge">readable: false</code>. <code class="highlighter-rouge">:default</code> can also be a lambda which is then executed in twin context.</p>
 
 <h2 id="collections">Collections</h2>
 
-<p>Collections can be defined analogue to <code>property</code>. The exposed API is the <code>Array</code> API.</p>
+<p>Collections can be defined analogue to <code class="highlighter-rouge">property</code>. The exposed API is the <code class="highlighter-rouge">Array</code> API.</p>
 
 <ul>
-  <li><code>twin.songs = [..]</code> will override the existing value and “twin” every item.</li>
-  <li><code>twin.songs &lt;&lt; Song.new</code> will add and twin.</li>
-  <li><code>twin.insert(0, Song.new)</code> will insert at the specified position and twin.</li>
+  <li><code class="highlighter-rouge">twin.songs = [..]</code> will override the existing value and “twin” every item.</li>
+  <li><code class="highlighter-rouge">twin.songs &lt;&lt; Song.new</code> will add and twin.</li>
+  <li><code class="highlighter-rouge">twin.insert(0, Song.new)</code> will insert at the specified position and twin.</li>
 </ul>
 
 <p>You can also delete, replace and move items.</p>
 
 <ul>
-  <li><code>twin.songs.delete( twin.songs[0] )</code></li>
+  <li><code class="highlighter-rouge">twin.songs.delete( twin.songs[0] )</code></li>
 </ul>
 
 <p>None of these operations are propagated to the model.</p>
 
 <h2 id="collection-semantics">Collection Semantics</h2>
 
-<p>In addition to the standard <code>Array</code> API the collection adds a handful of additional semantics.</p>
+<p>In addition to the standard <code class="highlighter-rouge">Array</code> API the collection adds a handful of additional semantics.</p>
 
 <ul>
-  <li><code>songs=</code>, <code>songs&lt;&lt;</code> and <code>songs.insert</code> track twin via <code>#added</code>.</li>
-  <li><code>songs.delete</code> tracks via <code>#deleted</code>.</li>
-  <li><code>twin.destroy( twin.songs[0] )</code> deletes the twin and marks it for destruction in <code>#to_destroy</code>.</li>
-  <li><code>twin.songs.save</code> will call <code>destroy</code> on all models marked for destruction in <code>to_destroy</code>. Tracks destruction via <code>#destroyed</code>.</li>
+  <li><code class="highlighter-rouge">songs=</code>, <code class="highlighter-rouge">songs&lt;&lt;</code> and <code class="highlighter-rouge">songs.insert</code> track twin via <code class="highlighter-rouge">#added</code>.</li>
+  <li><code class="highlighter-rouge">songs.delete</code> tracks via <code class="highlighter-rouge">#deleted</code>.</li>
+  <li><code class="highlighter-rouge">twin.destroy( twin.songs[0] )</code> deletes the twin and marks it for destruction in <code class="highlighter-rouge">#to_destroy</code>.</li>
+  <li><code class="highlighter-rouge">twin.songs.save</code> will call <code class="highlighter-rouge">destroy</code> on all models marked for destruction in <code class="highlighter-rouge">to_destroy</code>. Tracks destruction via <code class="highlighter-rouge">#destroyed</code>.</li>
 </ul>
 
-<p>Again, the model is left alone until you call <code>sync</code> or <code>save</code>.</p>
+<p>Again, the model is left alone until you call <code class="highlighter-rouge">sync</code> or <code class="highlighter-rouge">save</code>.</p>
 
 <h2 id="jsonb">JSONB</h2>
 
-<p>The <code>JSONB</code> module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.</p>
+<p>The <code class="highlighter-rouge">JSONB</code> module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.</p>
 
 <div class="panel">
    <code>JSONB</code>'s not limited to Postgres' JSONB and hstore column type, but may also interact with JSON or serialized-hash columns.
@@ -468,7 +490,7 @@ end
 
 <p>A serialized hash field must return a Ruby hash.</p>
 
-<pre><code>album = Album.find(1)
+<div class="highlighter-rouge"><pre class="highlight"><code>album = Album.find(1)
 album.payload #=&gt;
   {
     "title"=&gt; "A View To A Kill",
@@ -477,12 +499,13 @@ album.payload #=&gt;
     }
   }
 </code></pre>
+</div>
 
-<p>Here, the <code>payload</code> field is such a serialized hash field.</p>
+<p>Here, the <code class="highlighter-rouge">payload</code> field is such a serialized hash field.</p>
 
-<p>Letting the twin handle the hash field works via the <code>:jsonb</code> option.</p>
+<p>Letting the twin handle the hash field works via the <code class="highlighter-rouge">:jsonb</code> option.</p>
 
-<pre><code>require "disposable/twin/jsonb"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "disposable/twin/jsonb"
 
 class Album::Twin &lt; Disposable::Twin
   feature Sync
@@ -497,24 +520,27 @@ class Album::Twin &lt; Disposable::Twin
   end
 end
 </code></pre>
+</div>
 
-<p>Note that you can have any level of nesting, and are free to use <code>collection</code>.</p>
+<p>Note that you can have any level of nesting, and are free to use <code class="highlighter-rouge">collection</code>.</p>
 
 <p>You get fully object-oriented access to your properties.</p>
 
-<pre><code class="language-ruby">twin = Album::Twin.new(album)
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span> <span class="o">=</span> <span class="no">Album</span><span class="o">::</span><span class="no">Twin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">)</span>
 
-twin.payload.band.name #=&gt; "Duran Duran"
+<span class="n">twin</span><span class="p">.</span><span class="nf">payload</span><span class="p">.</span><span class="nf">band</span><span class="p">.</span><span class="nf">name</span> <span class="c1">#=&gt; "Duran Duran"</span>
 </code></pre>
+</div>
 
 <p>This works for writing, too.</p>
 
-<pre><code class="language-ruby">twin.payload.band.name = "James Bond"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">payload</span><span class="p">.</span><span class="nf">band</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"James Bond"</span>
 </code></pre>
+</div>
 
-<p>After <code>sync</code>ing, the model’s hash field will be updated.</p>
+<p>After <code class="highlighter-rouge">sync</code>ing, the model’s hash field will be updated.</p>
 
-<pre><code>album.payload #=&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>album.payload #=&gt;
   {
     "title"=&gt; "A View To A Kill",
     "band" =&gt; {
@@ -522,10 +548,11 @@ twin.payload.band.name #=&gt; "Duran Duran"
     }
   }
 </code></pre>
+</div>
 
-<p>If you don’t know the field names, you can define a scalar <code>property</code>.</p>
+<p>If you don’t know the field names, you can define a scalar <code class="highlighter-rouge">property</code>.</p>
 
-<pre><code>class Album::Twin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class Album::Twin &lt; Disposable::Twin
   feature Sync
   include JSONB
 
@@ -536,56 +563,63 @@ twin.payload.band.name #=&gt; "Duran Duran"
   end
 end
 </code></pre>
+</div>
 
 <p>This will return the native hash.</p>
 
-<pre><code>twin.payload.band #=&gt; { "band" =&gt; { "name" =&gt; "Duran Duran" } }
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.payload.band #=&gt; { "band" =&gt; { "name" =&gt; "Duran Duran" } }
 </code></pre>
+</div>
 
-<p>The <code>JSONB</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
+<p>The <code class="highlighter-rouge">JSONB</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
 
 <h2 id="twin-collections">Twin Collections</h2>
 
-<p>To twin a collection of models, you can use <code>::from_collection</code>.</p>
+<p>To twin a collection of models, you can use <code class="highlighter-rouge">::from_collection</code>.</p>
 
-<pre><code class="language-ruby">SongTwin.from_collection([song, song])
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">SongTwin</span><span class="p">.</span><span class="nf">from_collection</span><span class="p">([</span><span class="n">song</span><span class="p">,</span> <span class="n">song</span><span class="p">])</span>
 </code></pre>
+</div>
 
 <p>This will decorate every song instance using a fresh twin.</p>
 
 <h2 id="renaming">Renaming</h2>
 
-<p>The <code>Expose</code> module allows renaming properties.</p>
+<p>The <code class="highlighter-rouge">Expose</code> module allows renaming properties.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Expose
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Expose</span>
 
-  property :song_title, from: :title
+  <span class="n">property</span> <span class="ss">:song_title</span><span class="p">,</span> <span class="ss">from: :title</span>
 </code></pre>
+</div>
 
-<p>The public accessor is now <code>song_title</code> whereas the model’s accessor needs to be <code>title</code>.</p>
+<p>The public accessor is now <code class="highlighter-rouge">song_title</code> whereas the model’s accessor needs to be <code class="highlighter-rouge">title</code>.</p>
 
-<pre><code class="language-ruby">album = OpenStruct.new(title: "Run For Cover")
-AlbumTwin.new(album).song_title #=&gt; "Run For Cover"
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">album</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">title: </span><span class="s2">"Run For Cover"</span><span class="p">)</span>
+<span class="no">AlbumTwin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">).</span><span class="nf">song_title</span> <span class="c1">#=&gt; "Run For Cover"</span>
 </code></pre>
+</div>
 
 <h2 id="composition">Composition</h2>
 
 <p>Compositions of objects can be mapped, too.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  include Composition
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="kp">include</span> <span class="no">Composition</span>
 
-  property :id,    on: :album
-  property :title, on: :album
-  property :songs, on: :cd
-  property :cd_id, on: :cd, from: :id
+  <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>    <span class="ss">on: :album</span>
+  <span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">on: :album</span>
+  <span class="n">property</span> <span class="ss">:songs</span><span class="p">,</span> <span class="ss">on: :cd</span>
+  <span class="n">property</span> <span class="ss">:cd_id</span><span class="p">,</span> <span class="ss">on: :cd</span><span class="p">,</span> <span class="ss">from: :id</span>
 </code></pre>
+</div>
 
 <p>When initializing a composition, you have to pass a hash that contains the composees.</p>
 
-<pre><code class="language-ruby">AlbumTwin.new(album: album, cd: CD.find(1))
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">AlbumTwin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">album: </span><span class="n">album</span><span class="p">,</span> <span class="ss">cd: </span><span class="no">CD</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 </code></pre>
+</div>
 
 <p>Note that renaming works here, too.</p>
 
@@ -599,83 +633,91 @@ AlbumTwin.new(album).song_title #=&gt; "Run For Cover"
 
 <p>You can override getters for presentation.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-    property :title
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+    <span class="n">property</span> <span class="ss">:title</span>
 
-    def title
-      super.upcase
-    end
-  end
+    <span class="k">def</span> <span class="nf">title</span>
+      <span class="k">super</span><span class="p">.</span><span class="nf">upcase</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Be careful, though. The getter normally is also called in <code>sync</code> when writing properties to the models.</p>
+<p>Be careful, though. The getter normally is also called in <code class="highlighter-rouge">sync</code> when writing properties to the models.</p>
 
-<p>You can skip invocation of getters in <code>sync</code> and read values from <code>@fields</code> directly by including <code>Sync::SkipGetter</code>.</p>
+<p>You can skip invocation of getters in <code class="highlighter-rouge">sync</code> and read values from <code class="highlighter-rouge">@fields</code> directly by including <code class="highlighter-rouge">Sync::SkipGetter</code>.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Sync
-  feature Sync::SkipGetter
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Sync</span>
+  <span class="n">feature</span> <span class="no">Sync</span><span class="o">::</span><span class="no">SkipGetter</span>
 </code></pre>
+</div>
 
 <h2 id="manual-coercion">Manual Coercion</h2>
 
 <p>You can override setters for manual coercion.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-    property :title
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+    <span class="n">property</span> <span class="ss">:title</span>
 
-    def title=(v)
-      super(v.trim)
-    end
-  end
+    <span class="k">def</span> <span class="nf">title</span><span class="o">=</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="nf">trim</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 </code></pre>
+</div>
 
-<p>Be careful, though. The setter normally is also called in <code>setup</code> when copying properties from the models to the twin.</p>
+<p>Be careful, though. The setter normally is also called in <code class="highlighter-rouge">setup</code> when copying properties from the models to the twin.</p>
 
-<p>Analogue to <code>SkipGetter</code>, include <code>Setup::SkipSetter</code> to write values directly to <code>@fields</code>.</p>
+<p>Analogue to <code class="highlighter-rouge">SkipGetter</code>, include <code class="highlighter-rouge">Setup::SkipSetter</code> to write values directly to <code class="highlighter-rouge">@fields</code>.</p>
 
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  feature Setup::SkipSetter
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span>
+  <span class="n">feature</span> <span class="no">Setup</span><span class="o">::</span><span class="no">SkipSetter</span>
 </code></pre>
+</div>
 
 <h2 id="change-tracking">Change Tracking</h2>
 
-<p>The <code>Changed</code> module will allow tracking of state changes in all properties, even nested structures.</p>
+<p>The <code class="highlighter-rouge">Changed</code> module will allow tracking of state changes in all properties, even nested structures.</p>
 
-<pre><code>class AlbumTwin &lt; Disposable::Twin
+<div class="highlighter-rouge"><pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
   feature Changed
 </code></pre>
+</div>
 
 <p>Now, consider the following operations.</p>
 
-<pre><code>twin.name = "Skamobile"
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.name = "Skamobile"
 twin.songs &lt;&lt; Song.new("Skate", 2) # this adds second song.
 </code></pre>
+</div>
 
 <p>This results in the following tracking results.</p>
 
-<pre><code>twin.changed?             #=&gt; true
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.changed?             #=&gt; true
 twin.changed?(:name)      #=&gt; true
 twin.changed?(:playable?) #=&gt; false
 twin.songs.changed?       #=&gt; true
 twin.songs[0].changed?    #=&gt; false
 twin.songs[1].changed?    #=&gt; true
 </code></pre>
+</div>
 
 <p>Assignments from the constructor are <em>not</em> tracked as changes.</p>
 
-<p>twin = AlbumTwin.new(album)<br />
+<p>twin = AlbumTwin.new(album)
 twin.changed? #=&gt; false</p>
 
-<p>When used with <code>Coercion</code>, note that first coercion happens, then the assignment, then the tracking logic.</p>
+<p>When used with <code class="highlighter-rouge">Coercion</code>, note that first coercion happens, then the assignment, then the tracking logic.</p>
 
 <p>That will lead to the following assignment <em>not</em> being marked as change.</p>
 
-<pre><code>twin.released #=&gt; true
+<div class="highlighter-rouge"><pre class="highlight"><code>twin.released #=&gt; true
 twin.released = 1
 twin.released #=&gt; true
 twin.changed?(:released) #=&gt; false
 </code></pre>
+</div>
 
       </div>
     </div>

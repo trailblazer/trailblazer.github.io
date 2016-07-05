@@ -191,9 +191,9 @@
 
 <h2 id="flow-style-lists">Flow Style Lists</h2>
 
-<p>A nice feature is that <code>#collection</code> also accepts a <code>:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
+<p>A nice feature is that <code class="highlighter-rouge">#collection</code> also accepts a <code class="highlighter-rouge">:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
 
-<pre><code>class SongRepresenter &lt; Representable::Decorator
+<div class="highlighter-rouge"><pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
   include Representable::YAML
 
   property :title
@@ -201,17 +201,19 @@
   collection :composers, style: :flow
 end
 </code></pre>
+</div>
 
 <h3 id="public-api">Public API</h3>
 
-<p>To render and parse, you invoke <code>to_yaml</code> and <code>from_yaml</code>.</p>
+<p>To render and parse, you invoke <code class="highlighter-rouge">to_yaml</code> and <code class="highlighter-rouge">from_yaml</code>.</p>
 
-<pre><code>SongRepresenter.new(song).to_yaml
+<div class="highlighter-rouge"><pre class="highlight"><code>SongRepresenter.new(song).to_yaml
 #=&gt;
 ---
 title: Fallout
 composers: [Stewart Copeland, Sting]
 </code></pre>
+</div>
 
       </div>
     </div>
