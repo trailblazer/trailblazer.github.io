@@ -5,7 +5,7 @@ title: "Validation"
 
 Validation in Reform happens in the `validate` method, and only there.
 
-Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`.
+Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`. The validation examples included on this page are using `dry-validation`.
 
 <div class="callout secondary">
   <p>
@@ -15,7 +15,7 @@ Since Reform 2.0, you can pick your validation backend. This can either be `Acti
 
 ## Refactoring Legacy Forms
 
-Note that you are not limited to one validation backend. When switching from ActiveModel::Validation to dry-validation, you should set the first as the default validation engine.
+Note that you are not limited to one validation backend. When switching from `ActiveModel::Validation` to `dry-validation`, you should set the first as the default validation engine.
 
 {% tabs %}
 ~~Rails
@@ -49,6 +49,45 @@ Validation in Reform works by invoking `validate` and passing in a hash. This ha
 
 `Form#validate` will return the result boolean, and provide potential errors via `Form#errors`.
 
+## Validation Groups
+
+Grouping validataions enables you to run them conditionally, or in a specific order. You can use `:if` to specify what group had to be successful for it to be validated.
+
+    validation :default do
+      required(:title).filled
+    end
+
+    validation :unique, if: :default do
+      configure do
+        def unique?(value)
+          # ..
+        end
+      end
+
+      required(:title, &:unique?)
+    end
+
+This will only run the database-consuming `:unique` validation group if the `:default` group was valid.
+
+Chaining groups works via the `:after` option. This will run the group regardless of the former result. Note that it still can be combined with `:if`.
+
+    validation :email, after: :default do
+      configure do
+        def email?(value)
+          # ..
+        end
+      end
+      required(:email, &:email?)
+    end
+
+At any time you can extend an existing group using `:inherit`.
+
+    validation :email, inherit: true do
+      required(:email).filled
+    end
+
+This appends validations to the existing `:email` group.
+
 ## Dry-validation
 
 Dry-validation is the preferred backend for defining and executing validations.
@@ -63,40 +102,46 @@ The purest form of defining validations with this backend is by using a [validat
       property :title
 
       validation :default do
-        key(:title, &:filled?)
+        required(:title).filled
       end
     end
 
 Custom predicates have to be defined in the validation group.
 
     validation :default do
-      key(:title) { |title| title.filled? & title.unique? }
-
-      def unique?(value)
-        Album.find_by(title: value).nil?
+      configure do
+        def unique?(value)
+          Album.where.not(id: form.model.id).find_by(title: value).nil?
+        end
       end
+
+      required(:title).filled(:unique?)
     end
 
 In addition to dry-validation's API, you have access to the form that contains the group via `form`.
 
     validation :default do
-      key(:confirm_password, &:same_password?)
-
-      def same_password?(value)
-        value == form.password
+      configure do
+        def same_password?(value)
+          value == form.password
+        end
       end
+
+      required(:confirm_password).filled(:same_password?)
     end
 
-Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.
+Make sure to read the [documentation](http://dry-rb.org/gems/dry-validation) for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.
 
 ### Dry: Error Messages
 
 You need to provide custom error messages via dry-validation mechanics.
 
     validation :default do
-      configure { |config|
+      configure do
         config.messages_file = 'config/error_messages.yml'
-      }
+      end
+      # ..
+    end
 
 A simple error messages file might look as follows.
 
@@ -117,41 +162,8 @@ In other frameworks, you need to include `Reform::Form::ActiveModel::Validations
       feature Reform::Form::ActiveModel::Validations
     end
 
-## Validation Group
 
-Grouping validataions allows running them conditionally. You can use `:if` to specify what group had to be successful validated.
-
-    validation :default do
-      key(:title, &:filled?)
-    end
-
-    validation :unique, if: :default do
-      key(:title, &:unique?)
-
-      def unique?(value)
-      # ..
-    end
-
-This will only run the database-consuming `:unique` validation group if the `:default` group was valid.
-
-Chaining groups works via the `:after` option. This will run the group regardless of the former result. Note that it still can be combined with `:if`.
-
-    validation :email, after: :default do
-      key(:email, &:email?)
-
-      def email?(value)
-      # ..
-    end
-
-At any time you can extend an existing group using `:inherit`.
-
-    validation :email, inherit: true do
-      key(:email, &:filled?)
-    end
-
-This appends validations to the existing `:email` group.
-
-## Uniqueness Validation
+### Uniqueness Validation
 
 Both ActiveRecord and Mongoid modules will support "native" uniqueness support where the validation is basically delegated to the "real" model class. This happens when you use `validates_uniqueness_of` and will respect options like `:scope`, etc.
 
@@ -162,13 +174,13 @@ Both ActiveRecord and Mongoid modules will support "native" uniqueness support w
 
       property :title
       validates_uniqueness_of :title, scope: [:album_id, :artist_id]
-
+    end
 
 Be warned, though, that those validators write to the model instance. Even though this _usually_ is not persisted, this will mess up your application state, as in case of an invalid validation your model will have unexpected values.
 
 This is not Reform's fault but a design flaw in ActiveRecord's validators.
 
-# Unique Validation
+### Unique Validation
 
 You're encouraged to use Reform's non-writing `unique: true` validation, though.
 
@@ -191,7 +203,7 @@ validates :user_id, unique: { scope: [:user_id, :song_id] }
 
 Feel free to [help us here](https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb)!
 
-## Confirm Validation
+### Confirm Validation
 
 Likewise, the `confirm: true` validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.
 
@@ -205,6 +217,7 @@ Instead, use your own virtual fields.
       validate :passwork_ok? do
         errors.add(:password, "Password mismatch") if password != password_confirmation
       end
+    end
 
 
 This is discussed in the _Authentication_ chapter of the [Trailblazer book](https://leanpub.com/trailblazer).
