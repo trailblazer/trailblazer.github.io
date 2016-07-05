@@ -458,6 +458,92 @@ end
 
 <p>Again, the model is left alone until you call <code>sync</code> or <code>save</code>.</p>
 
+<h2 id="jsonb">JSONB</h2>
+
+<p>The <code>JSONB</code> module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.</p>
+
+<div class="panel">
+   <code>JSONB</code>'s not limited to Postgres' JSONB and hstore column type, but may also interact with a JSON or serialized-hash columns.
+</div>
+
+<p>A serialized hash field must return a Ruby hash.</p>
+
+<pre><code>album = Album.find(1)
+album.payload #=&gt;
+  {
+    "title"=&gt; "A View To A Kill",
+    "band" =&gt; {
+      "name" =&gt; "Duran Duran"
+    }
+  }
+</code></pre>
+
+<p>Here, the <code>payload</code> field is such a serialized hash field.</p>
+
+<p>Letting the twin handle the hash field works via the <code>:jsonb</code> option.</p>
+
+<pre><code>require "disposable/twin/jsonb"
+
+class Album::Twin &lt; Disposable::Twin
+  feature Sync
+  include JSONB
+
+  property :id # or whatever you need.
+  property :payload, jsonb: true do
+    property :title
+    property :band do
+      property :name
+    end
+  end
+end
+</code></pre>
+
+<p>Note that you can have any level of nesting, and are free to use <code>collection</code>s.</p>
+
+<p>You get fully object-oriented access to your properties.</p>
+
+<pre><code class="language-ruby">twin = Album::Twin.new(album)
+
+twin.payload.band.name #=&gt; "Duran Duran"
+</code></pre>
+
+<p>This works for writing, too.</p>
+
+<pre><code class="language-ruby">twin.payload.band.name = "James Bond"
+</code></pre>
+
+<p>After <code>sync</code>ing, the model’s hash field will be updated.</p>
+
+<pre><code>album.payload #=&gt;
+  {
+    "title"=&gt; "A View To A Kill",
+    "band" =&gt; {
+      "name" =&gt; "James Bond"
+    }
+  }
+</code></pre>
+
+<p>If you don’t know the field names, you can define a scalar <code>property</code>.</p>
+
+<pre><code>class Album::Twin &lt; Disposable::Twin
+  feature Sync
+  include JSONB
+
+  property :id # or whatever you need.
+  property :payload, jsonb: true do
+    property :title
+    property :band # scalar!
+  end
+end
+</code></pre>
+
+<p>This will return the native hash.</p>
+
+<pre><code>twin.payload.band #=&gt; "band" =&gt; { "name" =&gt; "Duran Duran" }
+</code></pre>
+
+<p>The <code>JSONB</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
+
 <h2 id="twin-collections">Twin Collections</h2>
 
 <p>To twin a collection of models, you can use <code>::from_collection</code>.</p>
@@ -502,48 +588,6 @@ AlbumTwin.new(album).song_title #=&gt; "Run For Cover"
 </code></pre>
 
 <p>Note that renaming works here, too.</p>
-
-<h2 id="struct">Struct</h2>
-
-<p>Twins can also map hash properties, e.g. from a deeply nested serialized JSON column.</p>
-
-<pre><code class="language-ruby">album.permissions #=&gt; {admin: {read: true, write: true}, user: {destroy: false}}
-</code></pre>
-
-<p>Map that using the <code>Struct</code> module.</p>
-
-<pre><code class="language-ruby">class AlbumTwin &lt; Disposable::Twin
-  property :permissions do
-     include Struct
-    property :admin do
-      include Struct
-      property :read
-      property :write
-    end
-
-    property :user # you don't have to use Struct everywhere!
-  end
-</code></pre>
-
-<p>You get fully object-oriented access to your properties.</p>
-
-<pre><code class="language-ruby">twin.permissions.admin.read #=&gt; true
-</code></pre>
-
-<p>Note that you do not have to use <code>Struct</code> everywhere.</p>
-
-<pre><code class="language-ruby">twin.permissions.user #=&gt; {destroy: false}
-</code></pre>
-
-<p>Of course, this works for writing, too.</p>
-
-<pre><code class="language-ruby">twin.permissions.admin.read = :MAYBE
-</code></pre>
-
-<p>After <code>sync</code>ing, you will find a hash in the model.</p>
-
-<pre><code class="language-ruby">album.permissions #=&gt; {admin: {read: :MAYBE, write: true}, user: {destroy: false}}
-</code></pre>
 
 <h2 id="with-representers">With Representers</h2>
 
