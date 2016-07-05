@@ -539,7 +539,7 @@ end
 
 <p>This will return the native hash.</p>
 
-<pre><code>twin.payload.band #=&gt; "band" =&gt; { "name" =&gt; "Duran Duran" }
+<pre><code>twin.payload.band #=&gt; { "band" =&gt; { "name" =&gt; "Duran Duran" } }
 </code></pre>
 
 <p>The <code>JSONB</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
