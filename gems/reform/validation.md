@@ -106,10 +106,12 @@ The purest form of defining validations with this backend is by using a [validat
       end
     end
 
-Custom predicates have to be defined in the validation group.
+Custom predicates have to be defined in the validation group. If you need access to your form you must add `option :form` to your configure block.
 
     validation :default do
       configure do
+        option :form
+
         def unique?(value)
           Album.where.not(id: form.model.id).find_by(title: value).nil?
         end
@@ -122,6 +124,8 @@ In addition to dry-validation's API, you have access to the form that contains t
 
     validation :default do
       configure do
+        option :form
+
         def same_password?(value)
           value == form.password
         end
