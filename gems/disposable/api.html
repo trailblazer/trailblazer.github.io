@@ -480,12 +480,13 @@ twin.id #=&gt; nil
 
 <p>Again, the model is left alone until you call <code class="highlighter-rouge">sync</code> or <code class="highlighter-rouge">save</code>.</p>
 
-<h2 id="jsonb">JSONB</h2>
+<p><a name="jsonb"></a>
+## Property::Hash</p>
 
-<p>The <code class="highlighter-rouge">JSONB</code> module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.</p>
+<p>The <code class="highlighter-rouge">Property::Hash</code> module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.</p>
 
 <div class="panel">
-   <code>JSONB</code>'s not limited to Postgres' JSONB and hstore column type, but may also interact with JSON or serialized-hash columns.
+   This module is not limited to Postgres' JSONB and hstore column type, but may also interact with [JSON or serialized-hash columns](http://apidock.com/rails/v4.2.1/ActiveRecord/AttributeMethods/Serialization/ClassMethods/serialize).
 </div>
 
 <p>A serialized hash field must return a Ruby hash.</p>
@@ -509,10 +510,10 @@ album.payload #=&gt;
 
 class Album::Twin &lt; Disposable::Twin
   feature Sync
-  include JSONB
+  include Property::Hash
 
   property :id # or whatever you need.
-  property :payload, jsonb: true do
+  property :payload, field: :hash do
     property :title
     property :band do
       property :name
@@ -554,10 +555,10 @@ end
 
 <div class="highlighter-rouge"><pre class="highlight"><code>class Album::Twin &lt; Disposable::Twin
   feature Sync
-  include JSONB
+  include Property::Hash
 
   property :id # or whatever you need.
-  property :payload, jsonb: true do
+  property :payload, field: :hash do
     property :title
     property :band # scalar!
   end
@@ -571,7 +572,7 @@ end
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">JSONB</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
+<p>The <code class="highlighter-rouge">Property::Hash</code> module also works great with <a href="#unnest">::unnest</a> and is a fantastic way to get rid of migrations and data that doesn’t need a dedicated column.</p>
 
 <h2 id="twin-collections">Twin Collections</h2>
 
