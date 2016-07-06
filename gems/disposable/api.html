@@ -504,9 +504,9 @@ album.payload #=&gt;
 
 <p>Here, the <code class="highlighter-rouge">payload</code> field is such a serialized hash field.</p>
 
-<p>Letting the twin handle the hash field works via the <code class="highlighter-rouge">:jsonb</code> option.</p>
+<p>Letting the twin handle the hash field works via the <code class="highlighter-rouge">:field</code> option.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>require "disposable/twin/jsonb"
+<div class="highlighter-rouge"><pre class="highlight"><code>require "disposable/twin/property/hash"
 
 class Album::Twin &lt; Disposable::Twin
   feature Sync
