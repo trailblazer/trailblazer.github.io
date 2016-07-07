@@ -47,7 +47,7 @@
     <li class="divider"></li>
     <li><a href="/newsletter/">NEWSLETTER</a></li>
     <li class="divider"></li>
-    <li><a href="https://gitter.im/trailblazer/chat">CHAT</a></li>
+    <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
     <li class="divider"></li>
     <li><a href="/users.html">USERS</a></li>
     <li class="divider"></li>
@@ -66,7 +66,7 @@
       </li>
       <li class="divider"></li>
       <li class="has-form">
-        <a href="https://leanpub.com/trailblazer" class="button radius secondary"onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
       </li>
     </ul>
   </section>
@@ -131,6 +131,7 @@
 </div>
 -->
 
+<div id="code-slider">
 <div class="sub-section section-separator">
   <div class="row">
     <div class="columns">
@@ -211,10 +212,7 @@
 
     def process(params)
       if validate(params[:comment])
-
-      else
-
-      end
+        # ..
     end
   end
       </code></pre>
@@ -325,25 +323,13 @@
     <div class="columns medium-6">
       <pre><code class="ruby">
   class Comment::Cell &lt; Cell::ViewModel
-    property :body
     property :author
-
-    def show
-      render
-    end
 
   private
     def author_link
       link_to "#{author.email}", author
     end
   end
-      </code></pre>
-      <pre>
-        <code class="html ruby">
-  &lt;div class="comment"&gt;
-    &lt;%= body %&gt;
-    By &lt;%= author_link %&gt;
-  &lt;/div&gt;
       </code></pre>
   </div>
   <div class="columns medium-6">
@@ -352,35 +338,6 @@
       <p>Rails helpers can still be used but are limited to the cell's scope.</p>
     </div>
 </div>
-</div>
-
-
-<!-- View Model -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>Views</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  &lt;h1&gt;Comments for &lt;%= @thing.name %&gt;&lt;/h1&gt;
-
-  This was created &lt;%= @thing.created_at %&gt;
-
-    &lt;%= concept("comment/cell",
-    collection: @thing.comments) %&gt;
-      </code></pre>
-
-
-    </div>
-    <div class="columns medium-6">
-      <p>Controller views are still ok to use.</p>
-      <p>However, replacing huge chunks with cells is encouraged and will simplify your views.</p>
-    </div>
-  </div>
 </div>
 
 <!-- Representer -->
@@ -488,17 +445,14 @@
     app
     ├── concepts
     │   ├── comment
-    │   │   ├── operations.rb
-    │   │   ├── cell.rb
-    │   │   ├── policy.rb
-    │   │   ├── views
+    │   │   ├── cell
+    │   │   │   └── show.rb
+    │   │   ├── operation
+    │   │   │   ├── create.rb
+    │   │   │   └── update.rb
+    │   │   ├── view
     │   │   │   ├── show.haml
-    │   │   │   ├── list.haml
-    │   │   │   ├── comment.css.sass
-    │   │   └── twin.rb
-    │   │
-    │   └── post
-    │       └── operations.rb
+    │   │   │   └── list.haml
         </code>
 
       </pre>
@@ -516,6 +470,7 @@
     </div>
 
   </div>
+</div>
 </div>
 
 </section>
@@ -834,6 +789,12 @@
   $(document).foundation();
 </script>
 
+
+<script>
+  jQuery(document).ready(function($) {
+    $('#code-slider').slick({arrows: true, dots: true});
+  });
+</script>
 
 
   </body>

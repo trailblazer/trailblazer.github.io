@@ -47,7 +47,7 @@
     <li class="divider"></li>
     <li><a href="/newsletter/">NEWSLETTER</a></li>
     <li class="divider"></li>
-    <li><a href="https://gitter.im/trailblazer/chat">CHAT</a></li>
+    <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
     <li class="divider"></li>
     <li><a href="/users.html">USERS</a></li>
     <li class="divider"></li>
@@ -66,7 +66,7 @@
       </li>
       <li class="divider"></li>
       <li class="has-form">
-        <a href="https://leanpub.com/trailblazer" class="button radius secondary"onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
       </li>
     </ul>
   </section>
@@ -278,6 +278,12 @@
   $(document).foundation();
 </script>
 
+
+<script>
+  jQuery(document).ready(function($) {
+    $('#code-slider').slick({arrows: true, dots: true});
+  });
+</script>
 
 
   </body>
