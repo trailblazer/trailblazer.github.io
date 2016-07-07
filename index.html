@@ -160,6 +160,9 @@
       <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
 
       <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+
+      <p>More <a id="trb-more">about Trailblazer →</a></p>
+      <!-- scripts -->
     </div>
   </div>
 </div>
@@ -794,6 +797,10 @@
   jQuery(document).ready(function($) {
     $('#code-slider').slick({arrows: true, dots: true});
   });
+</script>
+
+<script type="text/javascript">
+  $("#trb-more").click( function(e) { e.preventDefault(); $("button.slick-next").click() } );
 </script>
 
 
