@@ -66,7 +66,7 @@
       </li>
       <li class="divider"></li>
       <li class="has-form">
-        <a href="https://leanpub.com/trailblazer" class="button radius secondary">GET THE BOOK</a>
+        <a href="https://leanpub.com/trailblazer" class="button radius secondary"onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
       </li>
     </ul>
   </section>
@@ -379,7 +379,20 @@ Hello, and Hi from the Trailblazer team!</p>
   ga('create', 'UA-69514939-1', 'auto');
   ga('send', 'pageview');
 
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
 </script>
+
 
 
 <script src="/javascripts/jquery.min.js"></script>
