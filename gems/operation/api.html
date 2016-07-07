@@ -15,6 +15,23 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add(".code-content h2, .sub-section h2");
+
+    hljs.initHighlightingOnLoad();
+
+    $('#code-slider').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+
 <meta property="og:title" content="Operation API"/>
 <meta property="og:site_name" content="Trailblazer"/>
 <meta property="og:url" content="http://trailblazer.to/gems/operation/api.html"/>
@@ -588,29 +605,6 @@ end
   }
 </script>
 
-
-
-<script src="/javascripts/jquery.min.js"></script>
-<script src="/javascripts/application.min.js"></script>
-
-<script>
-  anchors.add(".code-content h2, .sub-section h2");
-
-  hljs.initHighlightingOnLoad();
-
-  $(document).foundation();
-</script>
-
-
-<script>
-  jQuery(document).ready(function($) {
-    $('#code-slider').slick({arrows: true, dots: true});
-  });
-</script>
-
-<script type="text/javascript">
-  $("#trb-more").click( function(e) { e.preventDefault(); $("button.slick-next").click() } );
-</script>
 
 
   </body>
