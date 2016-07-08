@@ -4,15 +4,17 @@ module.exports = function(grunt) {
 
     sass: {
       options: {
-        includePaths: ['bower_components/foundation/scss', "bower_components/slick-carousel/slick"]
+        includePaths: ['bower_components/foundation-sites/scss', // to find util/util, foundation.
+        // "bower_components/slick-carousel/slick"
+        ]
       },
       dist: {
         options: {
           outputStyle: 'compressed'
         },
         files: {
-          // compile into css/style.css.
-          'css/style.css': 'scss/style.scss'
+          // compile into css/application.css.
+          'css/application.css': 'scss/application.scss'
         }
       }
     },
@@ -27,7 +29,7 @@ module.exports = function(grunt) {
         files: {
           'javascripts/application.min.js': [
             // "bower_components/jquery/dist/jquery.js", // FIXME: doesn't concat properly.
-            'bower_components/foundation-sites/js/foundation.min.js',
+            'bower_components/foundation-sites/dist/foundation.js',
             'bower_components/what-input/what-input.min.js',
             // 'bower_components/anchor-js/anchor.js',
             // 'bower_components/highlightjs/highlight.pack.js',

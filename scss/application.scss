@@ -1,0 +1,37 @@
+/* foundation */
+@import "settings";
+@import "foundation";
+@include foundation-everything;
+
+/* padding and margins */
+//@import "padding-margin";
+
+// UI Components
+/*
+@import "components/testimonials";
+@import "components/gems";
+@import "components/navigation";
+@import "components/avatar";
+@import "components/code_boxes";
+@import "components/guides";
+@import "components/pro";
+@import "components/tabs";
+@import "components/sidebar";
+@import "components/panel";
+*/
+
+//Layout
+/*
+@import "layout/footer";
+@import "layout/hero";
+@import "layout/top-footer";
+@import "layout/sections";
+@import "layout/code-content";
+
+@import "dark";
+
+@import "components/slick-carousel";
+*/
+
+
+/* this file gets compiled by grunt into an application-wide /css/application.css file! */

@@ -5,7 +5,45 @@
   </head>
   <body>
 
-    {{ content }}
+    {% include top-bar.html %}
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article>
+          {{ content }}
+
+          <header>
+            A fantatic header
+          </header>
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              docs
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top"
+                data-sticky data-anchor="docs" data-sticky-on="large">
+                <ul class="vertical menu" data-magellan>
+                  <li><a href="#first">First Arrival</a></li>
+                  <li><a href="#second">Second Arrival</a></li>
+                  <li><a href="#third">Third Arrival</a></li>
+                </ul>
+              </nav>
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        sidebar
+      </div>
+    </div>
+
+
+
 
   </body>
 </html>
