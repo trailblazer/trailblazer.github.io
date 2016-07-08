@@ -1,0 +1,21 @@
+kramdown:
+  auto_ids:   true
+  input:      GFM
+exclude:
+  - node_modules
+  - bower_components
+  - scss
+  - Gemfile*
+  - Gruntfile.js
+  - HOWTO*
+  - package.json
+baseurl: /
+domain_name: 'http://trailblazer.to'
+url: 'http://trailblazer.to'
+name: "Trailblazer"
+imageurl: "http://trailblazer.to/images/go-trailblazer.jpg"
+twitter: "@apotonick"
+include:
+  - .nojekyll
+gems:
+  - jekyll-redirect-from

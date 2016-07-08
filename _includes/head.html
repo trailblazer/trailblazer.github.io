@@ -1,0 +1,39 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>{{ site.name }}: {{ page.title }}</title>
+<meta name="description" content="{{ page.title }} - {{ site.name }}" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords" content="{{ page.keywords }}, {{ site.keywords }}" />
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300, 400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    // anchors.add(".code-content h2, .sub-section h2");
+
+    // hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="{{ page.title }}"/>
+<meta property="og:site_name" content="{{ site.name }}"/>
+<meta property="og:url" content="{{ site.url }}{{ page.url }}"/>
+<meta property="og:description" content="{{ page.description }}"/>
+<meta property="og:image" content="{{ site.imageurl }}"/>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="{{ site.twitter }}">
+<meta name="twitter:title" content="{{ page.title }}">
+<meta name="twitter:description" content="{{ page.description }}">
+<meta name="twitter:image" content="{% if page.imageurl.size > 0 %}{{ page.imageurl }}{% else %}{{ site.imageurl }}{% endif %}">
