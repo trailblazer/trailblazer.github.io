@@ -1,0 +1,29 @@
+{
+  "name": "anchor-js",
+  "version": "3.2.0",
+  "authors": [
+    "Bryan Braun"
+  ],
+  "description": "A Javascript utility for adding deep anchor links to online docs.",
+  "main": "anchor.js",
+  "license": "MIT",
+  "homepage": "https://github.com/bryanbraun/anchorjs",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "package.json"
+  ],
+  "_release": "3.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.2.0",
+    "commit": "c0564e1e7a876551b706df2620dfbdb3b32d1329"
+  },
+  "_source": "https://github.com/bryanbraun/anchorjs.git",
+  "_target": "~3.2.0",
+  "_originalSource": "anchor-js",
+  "_direct": true
+}

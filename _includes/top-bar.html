@@ -3,27 +3,34 @@
     <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
       <button class="menu-icon dark" type="button" data-toggle></button>
     </span>
-    <strong>Site Title</strong>
+    <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
   </div>
   <div id="responsive-menu">
     <div class="top-bar-left">
-      <ul class="dropdown menu" data-dropdown-menu>
-        <li>
-          <a href="#">One</a>
-          <ul class="menu vertical">
-            <li><a href="#">One</a></li>
-            <li><a href="#">Two</a></li>
-            <li><a href="#">Three</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Two</a></li>
-        <li><a href="#">Three</a></li>
+      <ul class="menu">
+        <li></li>
       </ul>
     </div>
     <div class="top-bar-right">
-      <ul class="menu">
-        <li><input type="search" placeholder="Search"></li>
-        <li><button type="button" class="button">Search</button></li>
+      <ul class="dropdown menu" data-dropdown-menu>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/users.html">USERS</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li class="has-dropdown">
+          <a href="#">GEMS</a>
+          <ul class="dropdown">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
       </ul>
     </div>
   </div>

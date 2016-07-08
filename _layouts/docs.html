@@ -10,26 +10,28 @@
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
         <article>
-          {{ content }}
-
           <header>
-            A fantatic header
+            <h1 class="doc-page-title">{{ page.title }}</h1>
+            <span>Last updated: </span>
           </header>
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              docs
+              {{ content }}
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
 
               <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top"
                 data-sticky data-anchor="docs" data-sticky-on="large">
+<!--
                 <ul class="vertical menu" data-magellan>
                   <li><a href="#first">First Arrival</a></li>
                   <li><a href="#second">Second Arrival</a></li>
                   <li><a href="#third">Third Arrival</a></li>
                 </ul>
+ -->
+                {{ content | toctoctoc }}
               </nav>
 
             </div>
@@ -38,7 +40,7 @@
       </div>
 
       <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
-        sidebar
+        {% include sidebar.html %}
       </div>
     </div>
 

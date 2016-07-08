@@ -31,8 +31,8 @@ module.exports = function(grunt) {
             // "bower_components/jquery/dist/jquery.js", // FIXME: doesn't concat properly.
             'bower_components/foundation-sites/dist/foundation.js',
             'bower_components/what-input/what-input.min.js',
-            // 'bower_components/anchor-js/anchor.js',
-            // 'bower_components/highlightjs/highlight.pack.js',
+            'bower_components/anchor-js/anchor.js',
+            'bower_components/highlightjs/highlight.pack.js',
             // "bower_components/slick-carousel/slick/slick.js",
           ]
         }

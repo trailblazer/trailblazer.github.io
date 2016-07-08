@@ -28,10 +28,27 @@
 @import "layout/sections";
 @import "layout/code-content";
 
-@import "dark";
 
 @import "components/slick-carousel";
 */
 
 
 /* this file gets compiled by grunt into an application-wide /css/application.css file! */
+
+
+@import "hljs-dark";
+
+
+.top-bar li {
+  a {
+    color: $topbar-link-color;
+    font-size: $topbar-link-font-size;
+
+
+    &:hover { background-color: $topbar-hover; }
+    //&:after { border-top-color: $topbar-link-color; }
+
+  }
+
+  border-right: 1px solid #38383a;
+}
