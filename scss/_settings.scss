@@ -81,17 +81,25 @@ $dark-gray: #8a8a8a;
 $black: #0a0a0a;
 $white: #fefefe;
 $body-background: $white;
-$body-font-color: $black;
+$body-font-color: $jet;
 $body-font-family: "Open Sans","Helvetica Neue", Helvetica, Arial, sans-serif;
 $body-antialiased: true;
 $global-margin: 1rem;
 $global-padding: 1rem;
-$global-weight-normal: normal;
+$global-weight-normal: 300;
 $global-weight-bold: bold;
 $global-radius: 0;
 $global-text-direction: ltr;
 $global-flexbox: false;
 $print-transparent-backgrounds: true;
+
+
+//$body-font-color: $jet;
+//$body-font-family: $font-family-sans-serif;
+//$body-font-weight: 300;
+//$body-font-style: normal;
+
+
 
 @include add-foundation-colors;
 

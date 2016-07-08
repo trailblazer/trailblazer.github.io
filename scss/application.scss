@@ -43,7 +43,7 @@
   a {
     color: $topbar-link-color;
     font-size: $topbar-link-font-size;
-
+    font-weight: normal;
 
     &:hover { background-color: $topbar-hover; }
     //&:after { border-top-color: $topbar-link-color; }
@@ -51,4 +51,8 @@
   }
 
   border-right: 1px solid #38383a;
+}
+
+h1,h2,h3 {
+  font-weight: normal;
 }
