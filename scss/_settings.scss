@@ -321,7 +321,7 @@ $drilldown-background: $white;
 // ------------
 
 $dropdown-padding: 1rem;
-$dropdown-border: 1px solid $medium-gray;
+//$dropdown-border: 1px solid $medium-gray;
 $dropdown-font-size: 1rem;
 $dropdown-width: 300px;
 $dropdown-radius: $global-radius;
@@ -336,7 +336,7 @@ $dropdown-sizes: (
 
 $dropdownmenu-arrows: true;
 //$dropdownmenu-arrow-color: $anchor-color;
-$dropdownmenu-min-width: 200px;
+//$dropdownmenu-min-width: 200px;
 $dropdownmenu-background: $white;
 $dropdownmenu-border: 1px solid $medium-gray;
 
@@ -602,3 +602,5 @@ $topbar-link-font-size: rem-calc(13);
 $topbar-hover: lighten($topbar-background, 5);;
 
 $dropdownmenu-arrow-color: $topbar-link-color;
+$dropdownmenu-border: none;
+$dropdownmenu-min-width: 99px;
