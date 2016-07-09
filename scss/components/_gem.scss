@@ -35,19 +35,18 @@ $generic-color: #D52027;
     }
   }
 
-  .tabs {
-    .tab-title {
-      &.active {
-        a {
+  // .tabs {
+    .tabs-title {
+        a[aria-selected='true'] {
           background: lighten($color, 10%);
           color: white;
           &:hover {
             color: white;
           }
         }
-      }
+      // }
     }
-  }
+  // }
 
   .tabs-content {
     border: 1px solid lighten($color, 20%);

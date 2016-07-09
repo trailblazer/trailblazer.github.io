@@ -1,8 +1,6 @@
 /* --- sidebar menus --- */
 
-$nav-link-color: $charcoal;
-$nav-link-color-hover: scale-color($nav-link-color, $lightness: 20%);
-$nav-link-bg-color-hover: hsla(0, 0, 0, 0.075);
+// see _settings.scss for $variables.
 
 .side-nav {
   li {

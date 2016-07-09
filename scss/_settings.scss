@@ -539,7 +539,7 @@ $show-header-for-stacked: false;
 
 $tab-margin: 0;
 $tab-background: $white;
-$tab-background-active: $light-gray;
+// $tab-background-active: $light-gray;
 $tab-item-font-size: rem-calc(12);
 $tab-item-background-hover: $white;
 $tab-item-padding: 1.25rem 1.5rem;
@@ -604,3 +604,14 @@ $topbar-hover: lighten($topbar-background, 5);;
 $dropdownmenu-arrow-color: $topbar-link-color;
 $dropdownmenu-border: none;
 $dropdownmenu-min-width: 99px;
+
+
+$nav-link-color: $charcoal;
+$nav-link-color-hover: scale-color($nav-link-color, $lightness: 20%);
+$nav-link-bg-color-hover: hsla(0, 0, 0, 0.075);
+
+$tab-item-font-size: $global-font-size;
+$tab-item-padding:  .8rem 1rem;
+$tab-item-background-hover: $nav-link-bg-color-hover;
+
+$global-padding-bottom: 2em;

@@ -1,54 +1,43 @@
 $code-block-background-color: #232324;
 
-article {
-  .tabs-content {
-    padding-left: rem-calc(16);
-    padding-right: rem-calc(16);
-  }
+.tabs-container {
+  padding-bottom: $global-padding-bottom;
+}
+// see foundation-sites/components/_tabs.scss for "documentation".
+// parts of this is configured in _gem.scss
 
+article {
   .tabs {
+    border: 0;
+
     .tab-title {
       a {
-        color: $nav-link-color;
+        color: $white;
+
+        // is-active configured in _gem.scss
+
         &:hover {
           color: $nav-link-color-hover;
           background: $nav-link-bg-color-hover;
         }
         outline: none;
       }
-      &.code-only {
-        &.is-active {
-          a {
-            background: $code-block-background-color;
-            color: white;
-            &:hover {
-              color: white;
-            }
-          }
-        }
-      }
     }
   }
 
   .code-only {
     .tabs {
-      line-height: 1;
-      border: 0;
-
-      //padding-left: 1em;
       .tabs-title {
         a {
-          //border-top-left-radius: 4px;
-          //border-top-right-radius: 4px;
           font-size: 0.8rem;
         }
 
         &.is-active {
           a {
             background: $code-block-background-color;
-            color: white;
+            color: $white;
             &:hover {
-              color: white;
+              color: $white;
             }
           }
         }

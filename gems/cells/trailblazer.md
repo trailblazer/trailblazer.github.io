@@ -3,8 +3,6 @@ layout: cells
 title: "Trailblazer::Cell"
 ---
 
-# Trailblazer::Cell
-
 This documents the Trailblazer-style cells semantics, brought to you by the [trailblazer-cells](https://github.com/trailblazer/trailblazer-cells) gem. This gem is not dependent on Trailblazer and can be used without it.
 
 ```ruby
