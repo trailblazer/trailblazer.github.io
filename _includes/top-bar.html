@@ -1,22 +1,20 @@
 <div class="top-bar">
   <div class="top-bar-title">
-    <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
-      <button class="menu-icon dark" type="button" data-toggle></button>
-    </span>
-    <ul class="menu">
+    <ul class="menu horizontal">
       <li>
         <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
       </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
     </ul>
   </div>
+
   <div id="responsive-menu">
-    <!-- <div class="top-bar-left">
-      <ul class="menu">
-        <li></li>
-      </ul>
-    </div> -->
     <div class="top-bar-right">
-      <ul class="dropdown menu" data-dropdown-menu>
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
         <li><a href="/newsletter/">NEWSLETTER</a></li>
         <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
         <li><a href="/users.html">USERS</a></li>
