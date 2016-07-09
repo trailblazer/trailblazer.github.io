@@ -10,10 +10,7 @@
 
 // UI Components
 /*
-@import "components/testimonials";
-@import "components/gems";
 @import "components/navigation";
-@import "components/avatar";
 @import "components/code_boxes";
 @import "components/guides";
 @import "components/pro";
@@ -21,12 +18,18 @@
 @import "components/panel";
 */
 
+
+
 @import "components/sidebar"; // menu
 @import "components/tabs";
 @import "components/code";
 @import "components/gem";
 @import "components/hero";
 @import "components/footer";
+
+@import "components/avatar";
+@import "components/testimonials";
+
 
 //Layout
 /*
@@ -150,7 +153,8 @@ article {
 
 
 // home page
-.about {
+section {
   .button { font-size: 1rem; }
    h2 { margin-bottom: 2rem; }
+   h2 { margin-top: 2rem; }
 }

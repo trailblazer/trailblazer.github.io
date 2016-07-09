@@ -412,3 +412,113 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 </div>
 
 </section>
+
+
+
+
+
+
+
+<!-- Book -->
+<section class="sub-section book">
+  <div class="row">
+    <div class="columns">
+      <a name="book" />
+      <h2>The Book</h2>
+      <div class="row the-book">
+        <div class="columns medium-3">
+          <a href="https://leanpub.com/trailblazer">
+          <img src="/images/3dbuch-freigestellt.png" />
+          </a>
+        </div>
+
+        <div class="columns medium-9">
+        <h3>Yes, there's a book!</h3>
+          <p>Written by the creator of Trailblazer, this book gives you <b>300 pages full of wisdom about Trailblazer</b> and its gems, such as Reform, Cells and Roar.</p>
+
+          <p>The book comes with a <a href="https://github.com/apotonick/gemgem-trbrb">sample app repository</a> to conveniently browse through changes per chapter.</p>
+
+          <p>In the book, <b>we build a realistic Rails application with Trailblazer</b> that discusses convoluted requirements such as dynamic forms, polymorphic rendering and processing for signed-in users, file uploads, pagination, a JSON document API sitting on top of that, and many more problems you run into when building web applications.</p>
+
+          <p>Check out the <a href="/books/trailblazer.html">full book description</a> for a few more details about the content.</p>
+
+          <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
+          <a href="https://leanpub.com/trailblazer" class="button radius">Buy Book</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="sub-section testimonials">
+  <div class="row">
+    <div class="columns">
+      <a name="testimonials"></a>
+
+      <h2>
+        Testimonials
+      </h2>
+
+      <div class="row testimonial">
+        <div class="columns medium-2">
+          <img src="../images/igor.jpg" class="avatar">
+        </div>
+        <div class="columns medium-10">
+          <blockquote>
+            "At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."
+            <cite><strong>Igor Pstyga</strong>, PeerStreet</cite>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="row testimonial">
+        <div class="columns medium-2">
+          <img src="../images/paulo.jpg" class="avatar">
+        </div>
+        <div class="columns medium-10">
+          <blockquote>
+            "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
+            <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="row testimonial">
+        <div class="columns medium-2">
+          <img src="../images/yuri.jpg" class="avatar">
+        </div>
+        <div class="columns medium-10">
+          <blockquote>
+            "Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."
+            <cite><strong>Yuri Freire Lima</strong>, AzClick</cite>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="row testimonial">
+        <div class="columns medium-2">
+          <img src="../images/eric.jpg" class="avatar">
+        </div>
+        <div class="columns medium-10">
+          <blockquote>
+            Trailblazer has brought the fun back to Rails for me. It helps me organize large codebases into small, smart, testable chunks. Nick has brought together his years of insight in managing Rails projects and made them available for everyone. Any Rails engineer looking to expand past the default Rails Way should take a look at Trailblazer.
+            <cite><strong>Eric Skogen</strong>, Software Inventor</cite>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="row testimonial">
+        <div class="columns medium-2">
+          <img src="../images/nick.jpg" class="avatar">
+        </div>
+        <div class="columns medium-10">
+          <blockquote>
+            I haven't been this excited about Rails since 2007! Trailblazer - makes Rails development fun again. Especially on large projects. It's one of the better implementations of the ServiceObject / ViewModel / Form Object / Policy layers I've seen, which sooner or later ( rather sooner) you'll need.
+            <cite><strong>Nick Gorbikoff</strong>, Rinica Company</cite>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

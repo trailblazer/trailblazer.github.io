@@ -1,0 +1,18 @@
+.testimonials {
+  background: $vapor;
+  .row.testimonial {
+    margin-bottom: 2em;
+    background: #fff;
+    padding: 3em;
+  }
+
+  blockquote {
+    font-weight: 300;
+    @media #{$large-up} {
+      margin: 0.8em 0 0 0;
+    }
+  }
+  cite {
+    margin-top: 0.8em;
+  }
+}
