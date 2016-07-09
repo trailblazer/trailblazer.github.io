@@ -1,15 +1,13 @@
 ---
 layout: reform
-title: "Reform Validation"
+title: "Validation"
 ---
-
-# Validation
 
 Validation in Reform happens in the `validate` method, and only there.
 
 Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`.
 
-<div class="panel">
+<div class="callout secondary">
   <p>
     Reform 2.2 drops <code>ActiveModel</code>-support. You can still use it (and it will work!), but we won't maintain it actively, anymore. In other words, <code>ActiveModel::Validations</code> and Reform should be working until at least Reform 4.0.
   </p>
