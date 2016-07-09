@@ -47,6 +47,14 @@
   padding-left: 0;
 }
 
+$topbar-height: 55px;
+.top-bar .menu a {
+    height: $topbar-height;
+    line-height: $topbar-height;
+}
+.top-bar .menu > li:not(.menu-text) > a {
+    padding: 0 1rem;
+}
 
 
 .top-bar li {
@@ -60,6 +68,9 @@
 
   }
 
+}
+
+.top-bar-right li {
   border-right: 1px solid #38383a;
 }
 
@@ -72,4 +83,8 @@ h1,h2,h3 {
 
 .logo-leveler {
   margin-top: 12px;
+}
+
+.doc-last-updated {
+  color: $charcoal;
 }

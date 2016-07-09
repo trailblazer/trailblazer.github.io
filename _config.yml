@@ -19,3 +19,4 @@ include:
   - .nojekyll
 gems:
   - jekyll-redirect-from
+  - jekyll-last-modified-at
