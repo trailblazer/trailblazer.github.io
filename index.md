@@ -21,7 +21,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 
 <!-- About -->
-<section class="sub-section about">
+<section class="about">
   <div class="row">
     <div class="columns">
       <h2>About Trailblazer</h2>
@@ -42,7 +42,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
           <p>Check out who's using <a href="/users.html">Trailblazer in production →</a></p>
 
            <a href="/guides/trailblazer-in-20-minutes.html" class="button radius">Get Started:<br>
-            Trailblazer In 20 Minutes (Actually Even Less)</a>
+            Trailblazer in 12 Minutes</a>
         </div>
         <div class="columns medium-6">
           <img src="images/Trb-Stack.png">
@@ -64,7 +64,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 -->
 
 <div id="code-slider">
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>Controller</h2>
@@ -132,7 +132,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 <!-- Operation -->
 
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>Operation</h2>
@@ -198,7 +198,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 <!-- Callback -->
 
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>Callback</h2>
@@ -251,7 +251,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 <!-- View Model -->
 
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>View Model</h2>
@@ -280,7 +280,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 <!-- Representer -->
 
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>Representer</h2>
@@ -339,7 +339,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 <!-- Polymorphism -->
 
-<div class="sub-section section-separator">
+<div class="section-separator">
   <div class="row">
     <div class="columns">
       <h2>Polymorphism</h2>
@@ -411,3 +411,4 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 </div>
 </div>
 
+</section>

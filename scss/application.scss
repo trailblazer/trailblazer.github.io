@@ -34,10 +34,9 @@
 @import "layout/top-footer";
 @import "layout/sections";
 @import "layout/code-content";
-
+*/
 
 @import "components/slick-carousel";
-*/
 
 
 /* this file gets compiled by grunt into an application-wide /css/application.css file! */
@@ -144,3 +143,14 @@ article {
     background-color: #C3C2C2;
     padding: 18px;
   }
+
+
+
+
+
+
+// home page
+.about {
+  .button { font-size: 1rem; }
+   h2 { margin-bottom: 2rem; }
+}

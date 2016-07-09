@@ -38,6 +38,13 @@
       height: 60px;
     }
   }
+
+  // TODO: merge with gems-hero.
+  .hero-unit {
+    height: 100px;
+    display: table-cell;
+    vertical-align: middle;
+  }
 }
 
 
