@@ -3,7 +3,6 @@
 @import "foundation";
 @include foundation-everything;
 @import "font-awesome";
-
 @import "hljs-dark";
 
 /* padding and margins */
@@ -43,6 +42,10 @@
 
 /* this file gets compiled by grunt into an application-wide /css/application.css file! */
 
+// #docs is the main content column in <article>.
+#docs {
+  padding-left: 0;
+}
 
 
 
