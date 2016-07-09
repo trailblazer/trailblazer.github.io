@@ -33,6 +33,14 @@ module Jekyll
       html = page.output
       doc  = Nokogiri::HTML(html)
 
+# sidebar
+      path = page.path.sub("/index.md", "")
+      path = path.sub(".md", ".html")
+      path = "/#{path}"
+      a = doc.css(".side-nav>li>a[href='#{path}']").first and a[:class] = "active"
+
+
+
       # h2[:id] comes from kramdown/auto_ids.
       headers = doc.css("h2").collect do |h2|
         h2["data-magellan-target"] = h2[:id]
