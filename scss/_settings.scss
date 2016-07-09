@@ -335,7 +335,7 @@ $dropdown-sizes: (
 // -----------------
 
 $dropdownmenu-arrows: true;
-$dropdownmenu-arrow-color: $anchor-color;
+//$dropdownmenu-arrow-color: $anchor-color;
 $dropdownmenu-min-width: 200px;
 $dropdownmenu-background: $white;
 $dropdownmenu-border: 1px solid $medium-gray;
@@ -593,8 +593,12 @@ $topbar-title-spacing: 1rem;
 $topbar-input-width: 200px;
 $topbar-unstack-breakpoint: medium;
 
+
+
 // does not work anymore out-of-the-box
 $topbar-link-color: $ghost;
 $topbar-link-font-size: rem-calc(13);
 //$topbar-link-hover-lightness: -20%; // Darken by 10%
 $topbar-hover: lighten($topbar-background, 5);;
+
+$dropdownmenu-arrow-color: $topbar-link-color;

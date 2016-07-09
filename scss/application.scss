@@ -70,9 +70,16 @@ $topbar-height: 55px;
 
 }
 
+// dividers in the right bar.
 .top-bar-right li {
   border-right: 1px solid #38383a;
 }
+
+//.top-bar .has-dropdown > a:after {
+//    border-color: #FF0000 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+//}
+
+
 
 h1,h2,h3 {
   font-weight: normal;
