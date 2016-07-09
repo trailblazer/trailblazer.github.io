@@ -1,0 +1,38 @@
+/* --- sidebar menus --- */
+
+$nav-link-color: $charcoal;
+$nav-link-color-hover: scale-color($nav-link-color, $lightness: 20%);
+$nav-link-bg-color-hover: hsla(0, 0, 0, 0.075);
+
+.side-nav {
+  li {
+    a {
+      padding: .5rem 1rem; //rem-calc(3 0);
+      color: $nav-link-color;
+      font-size: rem-calc(14);
+
+      &:hover, .active {
+        color: $nav-link-color-hover;
+        background: $nav-link-bg-color-hover;
+      }
+
+    }
+    a.active {
+      color: scale-color($nav-link-color, $lightness: 20%);
+      background: hsla(0, 0, 0, 0.075);
+    }
+
+  }
+  li.heading {
+    font-weight:bold;
+  }
+  li.divider {
+    border-top: 1px solid scale-color($nav-link-color, $lightness: 90%);
+  }
+
+  .page-toc-heading {
+    padding: .5em 1em;
+    font-weight: bold;
+    font-size: rem-calc(14);
+  }
+}

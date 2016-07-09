@@ -23,7 +23,8 @@ module Jekyll
       raise unless @filename
       raise unless line_number
       @panel_id = sprintf("%s-%s", @filename, line_number) # ID for tabs block.
-      @panel_id = @panel_id.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') # http://stackoverflow.com/questions/4308377/ruby-post-title-to-slug
+      @panel_id = @panel_id.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') # gemscellsgetting-startedmd-17
+
 
       blocks = markup.split("~~").drop(1) # The first block starts with ~~, so drop everything before this first ~~.
 
@@ -39,8 +40,8 @@ module Jekyll
 
       # { Ruby: "..", Rails: "" }
       titles = tabs.keys.collect.with_index do |tab, index|
-        classes = ["tab-title"]
-        classes << "active" if index == 0
+        classes = ["tabs-title"]
+        classes << "is-active" if index == 0
         sprintf("<li class='%s'><a href='#%s'>%s</a></li>",
                 classes.join(" "),
                 identifier(index, tab),
@@ -48,8 +49,8 @@ module Jekyll
         )
       end
       contents = tabs.collect.with_index do |(tab, content), index|
-        classes = ["content"]
-        classes << "active" if index == 0
+        classes = ["tabs-panel"]
+        classes << "is-active" if index == 0
         sprintf("<div class='%s' id='%s'>%s</div>",
                 classes.join(" "),
                 identifier(index, tab),
@@ -57,11 +58,15 @@ module Jekyll
         )
       end
 
-      sprintf("<div class='%s'><ul class='tabs' data-tab>%s</ul>\n<div class='tabs-content'>%s</div></div>\n",
-                    @code ? "tabs-container code-only" : "tabs-container",
-                    titles.join("\n"),
-                    contents.join("\n")
-      )
+
+%{
+<div class="#{@code ? "tabs-container code-only" : "tabs-container"}">
+  <ul class="tabs" data-tabs id="#{@panel_id}">#{titles.join("\n")}</ul>
+  <div class="tabs-content" data-tabs-content="#{@panel_id}">
+    #{contents.join("\n")}
+  </div>
+</div>
+}
     end
   end
 end

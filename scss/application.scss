@@ -15,10 +15,12 @@
 @import "components/code_boxes";
 @import "components/guides";
 @import "components/pro";
-@import "components/tabs";
 @import "components/sidebar";
 @import "components/panel";
 */
+
+@import "components/sidebar"; // menu
+@import "components/tabs";
 
 //Layout
 /*
@@ -57,33 +59,6 @@ h1,h2,h3 {
   font-weight: normal;
 }
 
-/* --- sidebar menus --- */
-
-$nav-link-color: $charcoal;
-
-.side-nav {
-  li {
-    a {
-      padding: .5rem 1rem; //rem-calc(3 0);
-      color: $nav-link-color;
-      font-size: rem-calc(14);
-
-      &:hover, .active {
-        color: scale-color($nav-link-color, $lightness: 20%);
-        background: hsla(0, 0, 0, 0.075);
-      }
-
-    }
-    a.active {
-      color: scale-color($nav-link-color, $lightness: 20%);
-      background: hsla(0, 0, 0, 0.075);
-    }
-
-  }
-  li.heading {
-    font-weight:bold;
-  }
-  li.divider {
-    border-top: 1px solid scale-color($nav-link-color, $lightness: 90%);
-  }
+pre.highlight {
+  padding-bottom: 2em;
 }

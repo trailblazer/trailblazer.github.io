@@ -1,7 +1,7 @@
 require "nokogiri"
 
 module Jekyll
-  module TOC
+  # module TOC
   #   def toctoctoc(html)
   #     doc = Nokogiri::HTML(html)
 
@@ -47,6 +47,7 @@ module Jekyll
 
       magellan = %{
         <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
           #{content.join("\n")}
         </ul>
       }
@@ -57,10 +58,9 @@ module Jekyll
   end
 end
 
-Liquid::Template.register_filter(Jekyll::TOC)
+# Liquid::Template.register_filter(Jekyll::TOC)
 
 Jekyll::Hooks.register :pages, :post_render do |page, payload|
   page.output = Jekyll::TOCGenerator.new.(page)
   # code to call after Jekyll renders a post
 end
-
