@@ -1,19 +1,9 @@
 ---
-layout: foundation
+layout: guide
 title: Guides
 ---
 
-<div class="hero little-hero">
-  <div class="hero-unit">
-    <div class="row text-center">
-      <div class="columns">
-        <h1>
-          Guides
-        </h1>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <div class="row text-center">
   <div class="columns">
@@ -31,7 +21,7 @@ title: Guides
 
       <h3>
         <img src="/images/guides/getting-started-logo.png" class="teaser-logo">
-        Trailblazer In 20 Minutes
+        Trailblazer in 2̶0̶ 12 Minutes
       </h3>
 
       <p>Trailblazer adds a set of abstraction layers to existing web frameworks and pipelines the workflow.</p>
@@ -56,11 +46,7 @@ title: Guides
       </p>
     </div>
   </div>
-</div>
-
-<div class="row">
-  <hr>
-</div>
+</section>
 
 <div class="row text-center">
   <div class="columns">

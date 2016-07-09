@@ -3,8 +3,6 @@ layout: guide
 title: "Getting Started with Sinatra and Trailblazer"
 ---
 
-# Getting Started with Sinatra and Trailblazer
-
 A common misunderstanding is that Trailblazer only works with Rails. This would defeat its philosophy: by decoupling the business logic from the framework, you make it run just anywhere.
 
 This simple example will show you how to write a CRUD interface to create a blog post in a Sinatra environment. We use Sequel as ORM, Trailblazer, and dry-validations for the contract.

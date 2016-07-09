@@ -3,6 +3,10 @@ layout: guide
 title: Getting Started
 ---
 
+Setting up Trailblazer in projects is usually not more than installing a few gems.
+
+This guide will walk you through the configuration of all major frameworks such as Rails, Sinatra, Hanami and Roda.
+
 ## Installation
 
 As Trailblazer is highly modular, you have to make sure you include the correct gems in your `Gemfile`.
