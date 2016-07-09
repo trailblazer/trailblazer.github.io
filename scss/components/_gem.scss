@@ -1,0 +1,85 @@
+/* Gems colors */
+
+$cells-color: #CE2458;
+$operation-color: #17C2AA;
+$reform-color: #F04694;
+$representable-color: #10A6F7;
+$roar-color: #F4A608;
+$disposable-color: #8714AD;
+$generic-color: #D52027;
+
+/* Gems block list */
+
+.gems-list {
+  margin-top: 4em;
+  li {
+    min-height: 100px;
+    text-align: center;
+  .avatar {
+    margin: 0 auto 1.5em auto;
+    transition: all .2s ease-in-out;
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+/* Mixin to have each gem page with its own link color */
+
+@mixin gems-color($color) {
+  .code-content {
+    a {
+    color: $color;
+    &:hover {
+      color: darken($color, 10%);
+      }
+    }
+
+    .tabs {
+      .tab-title {
+        &.active {
+          a {
+            background: lighten($color, 10%);
+            color: white;
+            &:hover {
+              color: white;
+            }
+          }
+        }
+      }
+    }
+
+    .tabs-content {
+      border: 1px solid lighten($color, 20%);
+      background: lighten($color, 60%);
+    }
+  }
+}
+
+
+.cells-body {
+  @include gems-color($cells-color)
+}
+
+.operation-body {
+  @include gems-color($operation-color)
+}
+
+
+.reform-body {
+  @include gems-color($reform-color)
+}
+
+.representable-body {
+  @include gems-color($representable-color)
+}
+
+
+.disposable-body {
+  @include gems-color($disposable-color)
+}
+
+.generic-body {
+  @include gems-color($generic-color)
+}

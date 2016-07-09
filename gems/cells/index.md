@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: cells
 permalink: /gems/cells/
 title: "Cells"
 ---

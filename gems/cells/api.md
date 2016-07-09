@@ -1,5 +1,5 @@
 ---
-layout: docs
+layout: cells
 title: "Cells API"
 ---
 

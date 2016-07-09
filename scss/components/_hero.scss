@@ -1,0 +1,84 @@
+.hero {
+  height: 450px;
+  background: url("/images/background-hero.jpg");
+  background-size: cover;
+  font-weight: 300;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1.5em;
+  display: table;
+  width: 100%;
+  @media #{$small-only} {
+    height: 350px;
+  }
+  h1,
+  h2 {
+    color: #fff;
+  }
+  h2 {
+    font-size: rem-calc(36);
+  }
+
+  h1 {
+    font-size: rem-calc(64);
+  }
+  @media #{$small-only} {
+    height: 350px;
+
+    h1 {
+      font-size: rem-calc(44);
+    }
+    h2 {
+      font-size: rem-calc(20);
+    }
+  }
+  img {
+    height: 120px;
+    @media #{$small-only} {
+      height: 60px;
+    }
+  }
+}
+
+
+.hero.gems-hero {
+  text-align: left;
+  height: 200px;
+  line-height: 200px; // without that, hero-unit.vertical-align doesn't work.
+
+
+  @media #{$small-only} {
+    height: 150px;
+  }
+
+  .hero-unit {
+    height: 100px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+
+.cells-hero {
+  background: $cells-color;
+}
+
+.operation-hero {
+  background: $operation-color;
+}
+
+.reform-hero {
+  background: $reform-color;
+}
+
+.representable-hero {
+  background: $representable-color;
+}
+
+.roar-hero {
+  background: $roar-color;
+}
+
+.disposable-hero {
+  background: $disposable-color;
+}

@@ -3,6 +3,8 @@
 @import "foundation";
 @include foundation-everything;
 
+@import "hljs-dark";
+
 /* padding and margins */
 //@import "padding-margin";
 
@@ -21,6 +23,9 @@
 
 @import "components/sidebar"; // menu
 @import "components/tabs";
+@import "components/code";
+@import "components/gem";
+@import "components/hero";
 
 //Layout
 /*
@@ -38,7 +43,6 @@
 /* this file gets compiled by grunt into an application-wide /css/application.css file! */
 
 
-@import "hljs-dark";
 
 
 .top-bar li {
@@ -59,6 +63,9 @@ h1,h2,h3 {
   font-weight: normal;
 }
 
-pre.highlight {
-  padding-bottom: 2em;
+
+
+
+.logo-leveler {
+  margin-top: 12px;
 }
