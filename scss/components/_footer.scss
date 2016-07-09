@@ -1,0 +1,70 @@
+.top-footer {
+  background: lighten($tuatara, 3);
+  color: lighten($tuatara, 35);
+
+  h3 {
+    color: lighten($tuatara, 46);
+  }
+
+  padding: 3em 0;
+}
+
+footer {
+  background: $tuatara;
+  min-height: 150px;
+  padding: 3em 0;
+  color: lighten($tuatara, 32);
+  a {
+    color: lighten($tuatara, 32);
+    &:hover {
+      color: lighten($tuatara, 42);
+    }
+  }
+  h4 {
+    color: lighten($tuatara, 46);
+    margin-bottom: 1em;
+  }
+  .copyright {
+    font-size: rem-calc(12);
+    margin-bottom: 0;
+    color: lighten($tuatara, 22);
+  }
+  .logo-box {
+    @media #{$small-only} {
+      margin-bottom: 2em;
+    }
+  }
+  .inline-list {
+    li:first-child{
+    margin-left: 0;
+    }
+  }
+}
+
+.footer-icon {
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+  background-repeat: no-repeat;
+}
+
+.twitter-icon {
+  background-image: url("/images/twitter.svg");
+  &:hover{
+    background-image: url("/images/twitter-blue.svg");
+  }
+}
+
+.github-icon {
+  background-image: url("/images/github.svg");
+  &:hover{
+    background-image: url("/images/github-blue.svg");
+  }
+}
+
+.facebook-icon {
+  background-image: url("/images/facebook.svg");
+  &:hover{
+    background-image: url("/images/facebook-blue.svg");
+  }
+}
