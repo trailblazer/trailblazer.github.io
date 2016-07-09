@@ -1,6 +1,6 @@
 ---
 title: "Cells: Getting Started"
-layout: docs
+layout: cells
 description: "Learn how Trailblazer::Cell helps you refactoring legacy views. 4-minutes read."
 ---
 
