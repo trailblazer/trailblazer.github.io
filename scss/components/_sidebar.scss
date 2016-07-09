@@ -7,7 +7,7 @@ $nav-link-bg-color-hover: hsla(0, 0, 0, 0.075);
 .side-nav {
   li {
     a {
-      padding: .5rem 1rem; //rem-calc(3 0);
+      padding: .5rem 0 .5rem 1rem; //rem-calc(3 0);
       color: $nav-link-color;
       font-size: rem-calc(14);
 
@@ -15,6 +15,8 @@ $nav-link-bg-color-hover: hsla(0, 0, 0, 0.075);
         color: $nav-link-color-hover;
         background: $nav-link-bg-color-hover;
       }
+
+      i { vertical-align: inherit; } // in the sidebar, this puts the > icons in line with the text.
 
     }
     a.active {
