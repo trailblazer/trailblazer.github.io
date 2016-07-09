@@ -6,7 +6,7 @@ module.exports = function(grunt) {
       options: {
         includePaths: ['bower_components/foundation-sites/scss', // to find util/util, foundation.
         // "bower_components/slick-carousel/slick",
-          "bower_components/font-awesome/scss"
+          // "bower_components/font-awesome/scss"
         ]
       },
       dist: {

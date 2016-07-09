@@ -28,32 +28,30 @@ $generic-color: #D52027;
 /* Mixin to have each gem page with its own link color */
 
 @mixin gems-color($color) {
-  .code-content {
-    a {
+  a {
     color: $color;
     &:hover {
       color: darken($color, 10%);
-      }
     }
+  }
 
-    .tabs {
-      .tab-title {
-        &.active {
-          a {
-            background: lighten($color, 10%);
+  .tabs {
+    .tab-title {
+      &.active {
+        a {
+          background: lighten($color, 10%);
+          color: white;
+          &:hover {
             color: white;
-            &:hover {
-              color: white;
-            }
           }
         }
       }
     }
+  }
 
-    .tabs-content {
-      border: 1px solid lighten($color, 20%);
-      background: lighten($color, 60%);
-    }
+  .tabs-content {
+    border: 1px solid lighten($color, 20%);
+    background: lighten($color, 60%);
   }
 }
 
