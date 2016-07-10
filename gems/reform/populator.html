@@ -174,6 +174,52 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 
 <p>You need to configure a populator to engage Reform in the proper deserialization.</p>
 
+<h2 id="declarative-dsl" data-magellan-target="declarative-dsl">Declarative DSL</h2>
+
+<p>You have to declare a populator when the form has to deserialize nested input. This can happen via <code class="highlighter-rouge">:populate_if_empty</code> or the generic <code class="highlighter-rouge">:populator</code> option.</p>
+
+<p>Both options accept either a proc, a method symbol, or a <code class="highlighter-rouge">Callable</code> instance.</p>
+
+<p>The proc is the most popular version.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist, populator: -&gt;(options) { .. } # proc
+</code></pre>
+</div>
+
+<p>However, note that you can also provide a proc constant (here <code class="highlighter-rouge">ArtistPopulator</code>).</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>ArtistPopulator = -&gt;(options) { .. }
+
+property :artist, populator: ArtistPopulator
+</code></pre>
+</div>
+
+<p>You can also use a method defined on the same level as the populator property (here <code class="highlighter-rouge">#artist!</code>).</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist, populator: :artist!
+
+def artist!(options)
+end
+</code></pre>
+</div>
+
+<p>Or, a <code class="highlighter-rouge">Uber::Callable</code>-marked object.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class ArtistPopulator
+  def call(options)
+  end
+end
+
+property :artist, populator: ArtistPopulator
+</code></pre>
+</div>
+
+<p>This is especially helpful when the populator gets complex and could benefit from inheritance/mixins.</p>
+
 <h3 id="populator-invocation">Populator Invocation</h3>
 
 <p>Regardless of the populator type, keep in mind that a populator is only called if an incoming fragment for that property is present.</p>
@@ -484,6 +530,7 @@ form  = AlbumForm.new(album)
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#populators-the-problem">Populators: The Problem</a></li>
+<li><a href="#declarative-dsl">Declarative DSL</a></li>
 <li><a href="#populateifempty">Populate_if_empty</a></li>
 <li><a href="#populateifempty-custom">Populate_if_empty: Custom</a></li>
 <li><a href="#populateifempty-arguments">Populate_if_empty: Arguments</a></li>
