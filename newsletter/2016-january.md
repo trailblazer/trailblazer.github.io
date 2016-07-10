@@ -5,8 +5,6 @@ description: "January 2016 newsletter talks about Formular (new form builder for
 title: "Newsletter January 2016"
 ---
 
-# January 2016
-
 Dear Readers of this newsletter,
 Hello, and Hi from the Trailblazer team!
 

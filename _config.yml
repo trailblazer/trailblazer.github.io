@@ -9,6 +9,8 @@ exclude:
   - Gruntfile.js
   - HOWTO*
   - package.json
+  - README.md
+  - TODO.md
 baseurl: /
 domain_name: 'http://trailblazer.to'
 url: 'http://trailblazer.to'

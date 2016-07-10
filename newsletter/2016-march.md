@@ -5,8 +5,6 @@ description: "March 2016 newsletter talks about coercion in Reform using Dry-Typ
 title: "Newsletter March 2016"
 ---
 
-# March 2016
-
 Greetings, fellow Trailblazers!
 
 It's been nearly two months since the last newsletter! My apologies, but I was busy traveling in Europe, seeing family and many friends, and giving some Trailblazer presentations. I am back in Australia now and the Github repositories are smoking, again!
