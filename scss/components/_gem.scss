@@ -8,23 +8,6 @@ $roar-color: #F4A608;
 $disposable-color: #8714AD;
 $generic-color: #D52027;
 
-/* Gems block list */
-
-.gems-list {
-  margin-top: 4em;
-  li {
-    min-height: 100px;
-    text-align: center;
-  .avatar {
-    margin: 0 auto 1.5em auto;
-    transition: all .2s ease-in-out;
-      &:hover {
-        transform: scale(1.1);
-      }
-    }
-  }
-}
-
 /* Mixin to have each gem page with its own link color */
 
 @mixin gems-color($color) {

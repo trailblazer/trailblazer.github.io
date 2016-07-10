@@ -63,7 +63,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 </div>
 -->
 
-<div id="code-slider">
+<div id="code-slider" class="carousel">
 <div class="section-separator">
   <div class="row">
     <div class="columns">
