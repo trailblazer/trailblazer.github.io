@@ -544,37 +544,37 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
       <div class="row">
         <div class="column medium-2 text-center">
-          <a href="http://mitimes.com">
+          <a href="http://mitimes.com" target="_blank">
             <img src="/images/users/mitimes.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://wickedweasel.com/">
+          <a href="http://wickedweasel.com/" target="_blank">
             <img src="/images/users/ww.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center">
-          <a href="http://www.mytappr.com/">
+          <a href="http://www.mytappr.com/" target="_blank">
             <img src="/images/users/tappr.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center">
-          <a href="http://zertico.com/">
+          <a href="http://zertico.com/" target="_blank">
             <img src="/images/users/zertico.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://serviceseeking.com.au/">
+          <a href="http://serviceseeking.com.au/" target="_blank">
             <img src="/images/users/serviceseeking.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://weareathlon.com/">
+          <a href="http://weareathlon.com/" target="_blank">
             <img src="/images/users/athlon.png" />
           </a>
         </div>
@@ -582,38 +582,38 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
       <div class="row">
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://localsearch.com.au/">
+          <a href="http://localsearch.com.au/" target="_blank">
             <img src="/images/users/localSearch.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center">
-          <a href="http://microminimus.com">
+          <a href="http://microminimus.com" target="_blank">
             <img src="/images/users/microminimus.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://shaken.com/">
+          <a href="http://shaken.com/" target="_blank">
             <img src="/images/users/shaken.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center">
-          <a href="http://yebo.com.br/">
+          <a href="http://yebo.com.br/" target="_blank">
             <img src="/images/users/yebo.png" />
           </a>
         </div>
 
 
         <div class="column medium-2 text-center">
-          <a href="http://ajrintl.com/">
+          <a href="http://ajrintl.com/" target="_blank">
             <img src="/images/users/ajr.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://rinica.com/">
+          <a href="http://rinica.com/" target="_blank">
             <img src="/images/users/rinica.png" />
           </a>
         </div>
@@ -621,19 +621,19 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
       <div class="row">
         <div class="column medium-2 text-center logo-leveler">
-          <a href="https://www.skovingulv.no">
+          <a href="https://www.skovingulv.no" target="_blank">
             <img src="/images/users/skovin.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
-          <a href="http://angelcompass.org/">
+          <a href="http://angelcompass.org/" target="_blank">
             <img src="/images/users/angelcompass.png" />
           </a>
         </div>
 
         <div class="column medium-2 text-center">
-          <a href="https://www.gratwifi.eu">
+          <a href="https://www.gratwifi.eu" target="_blank">
             <img src="/images/users/gratwifi_logo_facebook.png" />
           </a>
         </div>
