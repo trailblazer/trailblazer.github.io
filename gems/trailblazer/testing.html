@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<h1 id="testing">Testing</h1>
+
+<p>Testing Trailblazer applications usually involves the following tests.</p>
+
+<ol>
+  <li>Unit tests for operations. They test all edge cases in a nice, fast unit test environment without any HTTP involved.</li>
+  <li>
+    <p>Integration tests for controllers. These Smoke tests only test the wiring between controller, operation and presentation layer. Usually, a coded click path simulates you manually clicking through your app and testing if it works.</p>
+
+    <p>The preferred way here is using Rack-test and Capybara.</p>
+  </li>
+  <li>Unit tests for cells. By invoking your cells with aritrary data you functionally test the rendered markup using Capybara.</li>
+</ol>
+
+<h2 id="rspec" data-magellan-target="rspec">Rspec</h2>
+
+<p>Even though the Trailblazer book uses MiniTest for its test suite, Trailblazer can be tested with any framework. Usually, this will be Rspec.</p>
+
+<p>Invoking operations works identical to MiniTest.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">"creates comment"</span> <span class="k">do</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span><span class="ss">body: </span><span class="s2">"Rspec rocks!"</span><span class="p">})</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">"Rspec rocks!"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>You’re free to use your matchers, your testing style, your way of structuring <code class="highlighter-rouge">describe</code> or <code class="highlighter-rouge">specify</code>, and so on.</p>
+
+<p>!!! TODO: Example for smoke tests.</p>
+
+<p>To write unit tests for your cells, please install the <a href="https://github.com/apotonick/rspec-cells">rspec-cells</a> gem.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">,</span> <span class="ss">type: :cell</span> <span class="k">do</span>
+  <span class="n">let</span> <span class="p">(</span><span class="ss">:comment</span><span class="p">)</span> <span class="p">{</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span><span class="ss">body: </span><span class="s2">"Rspec rocks!"</span><span class="p">})</span> <span class="p">}</span>
+  <span class="n">subject</span> <span class="p">{</span> <span class="n">concept</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="p">{</span> <span class="n">expect</span><span class="p">(</span><span class="n">subject</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_content</span> <span class="s2">"Rspec rocks!"</span> <span class="p">}</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Learn more about <a href="/gems/cells/testing.html#rspec">Rspec and Cells</a>.</p>
+
+<h2 id="minitest" data-magellan-target="minitest">MiniTest</h2>
+</body></html>

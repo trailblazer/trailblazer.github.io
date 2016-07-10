@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Trailblazer in 2̶0̶ 12 Minutes</title>
+<meta name="description" content="Trailblazer in 2̶0̶ 12 Minutes - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Trailblazer in 2̶0̶ 12 Minutes">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/guides/trailblazer-in-20-minutes.html">
+<meta property="og:description" content="Understanding the essential elements of Trailblazer and its high-level architecture doesn't take longer than 20 minutes. Let Trailblazer show you how its stack extensions to the conventional MVC make you write better structured software.">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Trailblazer in 2̶0̶ 12 Minutes">
+<meta name="twitter:description" content="Understanding the essential elements of Trailblazer and its high-level architecture doesn't take longer than 20 minutes. Let Trailblazer show you how its stack extensions to the conventional MVC make you write better structured software.">
+<meta name="twitter:image" content="http://trailblazer.to/images/diagrams/high-level.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero guide-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="guide-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Trailblazer in 2̶0̶ 12 Minutes</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 July 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <p>Understanding the essential elements of Trailblazer and its <em>high-level architecture</em> doesn’t take longer than 20 minutes. Once you leave the “MVC” mindset and allow Trailblazer to show how it restructures applications, defines strong conventions where code should sit, and how objects interact, it is just another stack in your repertoire.</p>
+
+<p>Be aware that this guide describes a <em>Create</em> operation, only. The discussed concepts apply to all kinds of functions, such as updating or deleting.</p>
+
+<p>We hope you like it!</p>
+
+<h2 id="high-level-architecture" data-magellan-target="high-level-architecture">High-Level Architecture</h2>
+
+<p>Announcing itself as a <em>High-Level Architecture</em>, Trailblazer aims to help software teams to implement the actual business logic of their applications. We understand business logic as anything that happens after intercepting the HTTP request, and before returning a response document.</p>
+
+<p>Trailblazer leaves dealing with HTTP and instructing the rendering up to the <em>infrastructure framework</em>: This could be any library you like, Rails, Hanami, Sinatra or Roda.</p>
+
+<p>Business code is encapsulated into <em>operations</em>, the fundamental and pivotal element in Trailblazer. <strong>Operations gently force you to decouple your application code from the framework.</strong> This is why your code ideally doesn’t care about the underlying framework anymore.</p>
+
+<h2 id="flow" data-magellan-target="flow">Flow</h2>
+
+<p>In a web environment, user actions are processed via requests. Each typical business workflow in a request is structured into five steps.</p>
+
+<div class="row">
+  <div class="column medium-6">
+    <img class="img" src="/images/diagrams/high-level.jpg">
+  </div>
+
+  <div class="column medium-6">
+    <p>
+      Have a look at the diagram's left-hand side. This is what each request needs to handle.
+    </p>
+
+    <ul>
+      <li>Deserialization</li>
+      <li>Validation</li>
+      <li>Persistence</li>
+      <li>Post-processing, aka callbacks</li>
+      <li>Presentation, rendering a response</li>
+    </ul>
+
+    <p>
+      On the right-hand side, you can see how Trailblazer introduces exciting new abstraction layers. <strong>Layers are implemented as objects.</strong> Each object handles only one specific aspect, minimizing the responsibility per layer.
+    </p>
+  </div>
+</div>
+
+<p>A vertical <em>Authorization</em> layer allows to involve policies at every point in your code.</p>
+
+<p>Following that approach will lead to controllers being empty HTTP endpoints, lean models with persistence-relevant scopes, finders and associations, only, and a handful of new, innovating objects helping you to implement the business.</p>
+
+<h2 id="application-features" data-magellan-target="application-features">Application Features</h2>
+
+<p>Every application is a set of functions (or <em>“features”</em>) that can be triggered by the user. This could be viewing a comment, updating a user’s details, following a draft beer shop, or importing a CSV file of bean grinders into a database.</p>
+
+<p>Each function is implemented with one public operation. Operations are objects. This means, <strong>for every feature of your app, you will write an operation</strong> class which is then hooked to the framework’s endpoint.</p>
+
+<p>The great thing about that is: You can also introduce operations step-wise into existing systems and replace legacy code or add new features using operations and cells.</p>
+
+<h2 id="controller" data-magellan-target="controller">Controller</h2>
+
+<p>Every web framework has the concept of <em>controllers</em>: Endpoints hooked to a HTTP route. For example, this could be a Rails controller action invoked via a <code class="highlighter-rouge">POST /comments</code> request.</p>
+
+<p>The code you would usually put into the intercepting action method, such as creating an object, assigning request parameters to it, and so on, does no longer live there.</p>
+
+<p>Instead, an <strong>endpoint simply dispatches to its operation</strong>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="c1"># you still have to take care of rendering.</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Trailblazer leverages Ruby’s namespacing the way it was intended to be used. This is why the operation’s constant name is <code class="highlighter-rouge">Comment::Create</code>.</p>
+
+<p>Each operation has only one responsibility and exposes only one public method: <code class="highlighter-rouge">call</code>. Ruby automatically invokes the <code class="highlighter-rouge">call</code> method when the method name is omitted, giving the handily abbreviated style: <code class="highlighter-rouge">Create.(params)</code> rather than <code class="highlighter-rouge">Create.call(params)</code>.</p>
+
+<p>You might have noticed that there’s no instantiation of the operation happening. This is done internally. Exposing only one public method is a concept adopted from functional programming: Since there’s only one way to invoke an operation, you simply can’t confuse method orders or mess with internal state.</p>
+
+<p>What you pass into the operation is absolutely your business (no pun intended). In web applications, this will usually be the <code class="highlighter-rouge">params</code> hash. Note that this completely <strong>decouples an operation from HTTP</strong>. You could use it in a background task or an event-loop system, too - the operation expects a hash as input, nothing more.</p>
+
+<h2 id="operation" data-magellan-target="operation">Operation</h2>
+
+<p>The <code class="highlighter-rouge">Comment::Create</code> operation is a class taking care of the entire process of creating, validating, and persisting a comment.</p>
+
+<p>Don’t confuse this with a <em>god class</em>, though. An <strong>operation is an orchestrating object</strong> that instructs smaller objects like representers, a form object or the persistent model to accomplish that! It knows how to wire together those stakeholders but leaves the specific implementation up to them.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+    <span class="n">model</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">:create</span>
+
+    <span class="n">contract</span> <span class="k">do</span>
+      <span class="n">property</span> <span class="ss">:body</span>
+      <span class="n">property</span> <span class="ss">:author_id</span>
+
+      <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+      <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+        <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Operations are always namespaced into their <em>concept</em>. In Rails, very often, this happens to be the model’s constant name. The <code class="highlighter-rouge">Create</code> class sits in the <code class="highlighter-rouge">Comment</code> ActiveRecord constant. This is simple Ruby namespacing and should in no way be confused with inheritance.</p>
+
+<p>Every operation needs to implement the <code class="highlighter-rouge">process</code> method. Here, the business code happens and the orchestration takes place.</p>
+
+<p>The <code class="highlighter-rouge">Operation</code> class offers you the <code class="highlighter-rouge">validate</code> method to deserialize and validate the incoming data. To do so, the operation uses its form object, also known as <em>contract</em> in Trailblazer.</p>
+
+<h2 id="contract" data-magellan-target="contract">Contract</h2>
+
+<p>Since it is very common for operations to use a contract for validation, you can define contracts inline using the declarative <code class="highlighter-rouge">contract</code> class method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+    <span class="n">property</span> <span class="ss">:author_id</span>
+
+    <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>A contract is simply a <a href="/gems/reform">Reform class</a>. <strong>It allows to specify the fields of the input, and validations specific to that operation.</strong></p>
+
+<p>Explicitly declaring incoming fields is very important in Trailblazer. When validating the input, the contract will only respect the defined, or whitelisted, fields and ignore unsolicited data in the input. This is why you don’t need solutions like <code class="highlighter-rouge">strong_parameters</code> anymore.</p>
+
+<p>Validations can be defined using <a href="http://guides.rubyonrails.org/active_record_validations.html">ActiveModel::Validations</a> or the new <a href="/gems/reform/validation.html#dry-validation">dry-validation</a> engine.</p>
+
+<h2 id="validation" data-magellan-target="validation">Validation</h2>
+
+<p>To validate the incoming <code class="highlighter-rouge">params</code>, the <code class="highlighter-rouge">validate</code> method in the operation enters the stage.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="c1"># ..</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>In case of a successful validation, the block passed to <code class="highlighter-rouge">validate</code> is invoked.</p>
+
+<p>The operation’s <code class="highlighter-rouge">validate</code> first instantiates the contract, which is really just a Reform object. Then, the incoming data is written to the contract object (this is called <em>deserialization</em>) and afterwards, validation of the entire object graph is performed using the Reform API.</p>
+
+<p>The whole process of validation happens internally, but can be easily customized. An important fact here is that the contract is an intermediate object - <strong>instead of writing input to the model, this all happens on the contract</strong>. The model is not accessed at all for validation.</p>
+
+<p>Having a dedicated contract object sitting between operation and model is why your model classes will end up as a pure persistence layer.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:author</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Validation code sits in the contract, callbacks are defined in operation or callback objects.</p>
+
+<h2 id="persistence" data-magellan-target="persistence">Persistence</h2>
+
+<p>After having validated data, to persist it, a model object is needed. In most Rails applications, this will be an <code class="highlighter-rouge">ActiveRecord</code> model, but many Trailblazer projects use alternative libraries such as <a href="http://sequel.jeremyevans.net/">Sequel</a> or <a href="http://rom-rb.org/">ROM</a>.</p>
+
+<p>You’re free to create or retrieve models yourself. However, the operation offers you a trivial API to create a model when it is needed.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">model</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">:create</span> <span class="c1"># will assign @model = Comment.new</span>
+</code></pre>
+</div>
+
+<p>Having the validated data sitting on the contract object, it is a good idea to push the data to the model and save it. This, again, happens using the contract’s API.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p><strong>The model is now populated with the validated data, and saved to the database.</strong> Very simple mechanics happen behind the scenes and can easily be changed, if you disagree with Trailblazer’s flow.</p>
+
+<h2 id="callback" data-magellan-target="callback">Callback</h2>
+
+<p>Often after persisting, additional logic needs to be executed. This is known as <em>post-processing</em> or <em>callbacks</em> in Trailblazer. Instead of polluting the model or controller with this code, <strong>callbacks live in the operation</strong>.</p>
+
+<p>They are literally called when you need them.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="c1"># ..</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:comment</span><span class="p">])</span> <span class="k">do</span>
+      <span class="n">contract</span><span class="p">.</span><span class="nf">save</span>
+
+      <span class="n">after_save!</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">after_save!</span>
+    <span class="no">CommentNotifier</span><span class="p">.</span><span class="nf">daily_digest</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="nf">deliver_later</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Callbacks can be methods on the operation, separate callback objects, using <a href="http://trailblazer.to/gems/operation/callback.html">Trailblazer’s callback API</a>, or even advanced transactional gems like the excellent <a href="https://github.com/dry-rb/dry-transaction">dry-transaction</a>.</p>
+
+<h2 id="test" data-magellan-target="test">Test</h2>
+
+<p>Trailblazer and its operation design makes it extremely simple to unit-test your application’s behavior. <strong>All business code is tested via operation tests.</strong></p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">describe</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">"persists valid input"</span> <span class="k">do</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span> <span class="ss">body: </span><span class="s2">"TRB rocks!"</span><span class="p">,</span> <span class="ss">author_id: </span><span class="mi">1</span> <span class="p">})</span>
+
+    <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">persisted?</span><span class="p">.</span><span class="nf">must_equal</span> <span class="kp">true</span>
+    <span class="n">op</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">must_equal</span> <span class="s2">"TRB rocks!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Operations are also used as factories in Trailblazer applications. This will assure that your test application state is always identical to a realistic production state.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">let</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>    <span class="p">{</span> <span class="no">User</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">user: </span><span class="n">attributes_for</span><span class="p">(</span><span class="ss">:user</span><span class="p">)).</span><span class="nf">model</span> <span class="p">}</span>
+<span class="n">let</span><span class="p">(</span><span class="ss">:comment</span><span class="p">)</span> <span class="p">{</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="ss">comment: </span><span class="p">{</span> <span class="ss">body: </span><span class="s2">"Yo!"</span><span class="p">,</span> <span class="ss">author_id: </span><span class="n">user</span><span class="p">.</span><span class="nf">id</span><span class="p">}</span> <span class="p">)</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Gone are the times of leaky factories. Gems such as <a href="https://github.com/thoughtbot/factory_girl">factory_girl</a> can be used to provide input hashes, only.</p>
+
+<p>Trailblazer also abandons controller tests, in favor of strict integration tests. This minimizes testing to integration and operation tests.</p>
+
+<h2 id="file-structure" data-magellan-target="file-structure">File Structure</h2>
+
+<p>Files for the additional abstraction layers are no longer organized by technology. Trailblazer introduces the idea of <em>concepts</em>, which group files by a set of features.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>app
+├── concepts
+│   ├── comment
+│   │   ├── contract
+│   │   │   ├── create.rb
+│   │   │   └── update.rb
+│   │   ├── cell
+│   │   │   └── new.rb
+│   │   ├── operation
+│   │   │   ├── create.rb
+│   │   │   └── update.rb
+│   │   └── view
+│   │       ├── new.haml
+│   │       └── show.haml
+</code></pre>
+</div>
+
+<p>A concept could be comments, blog posts, image galleries or abstract workflows. At the same time, operations are not limited to CRUD. They often are named <code class="highlighter-rouge">Job::Apply</code> or <code class="highlighter-rouge">User::Follow</code> and help with a domain-oriented software design.</p>
+
+<h2 id="view-ui" data-magellan-target="view-ui">View (UI)</h2>
+
+<p>While the operation is the pivotal element for the business processing, Trailblazer also comes with a drop-in replacement for views. This is completely optional, and you are free to use your framework’s views, such as <code class="highlighter-rouge">ActionView</code>.</p>
+
+<p>Object-oriented <em>view models</em> are provided by the <a href="/gems/cells">Cells gem</a>. They encapsulate fragments of the web UI and make it easier to deal with complexity.</p>
+
+<p>Those <em>cells</em> are usually rendered from the controller.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="p">.</span><span class="nf">present</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="n">render</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">New</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">Application</span><span class="o">::</span><span class="no">Layout</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>View models, or cells, are classes.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">module</span> <span class="nn">Comment::Cell</span>
+  <span class="k">class</span> <span class="nc">New</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Cell</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+
+    <span class="k">def</span> <span class="nf">author_name</span>
+      <span class="n">model</span><span class="p">.</span><span class="nf">author</span><span class="p">.</span><span class="nf">full_name</span> <span class="o">||</span> <span class="s2">"Anonymous"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Helpers as known from Rails do not exist anymore. Instead, instance methods of the cell can be used in the view.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>%h1 Comment
+
+.row
+  = body
+.row
+  = author_name
+</code></pre>
+</div>
+
+<p>Again, view models in Trailblazer are provided by the <a href="/gems/cells">Cells gem</a> which is completely decoupled from Trailblazer. It also works fine in other frameworks like Hanami or Sinatra.</p>
+
+<h2 id="policy" data-magellan-target="policy">Policy</h2>
+
+<p>Trailblazer makes authorization a first-class citizen. Operations define policy objects that can be accessed and queried throughout the stack for deciding about access control.</p>
+
+<p>The simplest form is a <em>guard</em> policy you can embedd straight into the operation.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">policy</span> <span class="k">do</span> <span class="o">|</span><span class="n">params</span><span class="o">|</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">].</span><span class="nf">present?</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Policies will be evaluated when the operation is instantiated and <strong>allow denying the execution of code for specific environments</strong>, plus they can be reused at any later point. This includes queries in the view layer.</p>
+
+<p>Also, they are not limited to blocks. Trailblazer allows <a href="http://trailblazer.to/gems/operation/policy.html#pundit">Pundit-style policies</a>, too.</p>
+
+<h2 id="representer" data-magellan-target="representer">Representer</h2>
+
+<p>While operations are extremely helpful for processing form submissions, they can also be used in the exact same way for document APIs, e.g. with JSON or XML. This works by <strong>using <em>representers</em> to parse input and render the response document</strong>.</p>
+
+<p>Representers can be defined inline in the operation.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">representer</span> <span class="k">do</span>
+    <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span>
+    <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Hypermedia</span>
+
+    <span class="n">property</span> <span class="ss">:id</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+    <span class="n">property</span> <span class="ss">:author_id</span>
+
+    <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span> <span class="p">{</span> <span class="n">comment_path</span><span class="p">(</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The operation is now aware the input and output document is not a hash anymore but a JSON document. It will use the representer to parse the incoming document, and provide a <code class="highlighter-rouge">to_json</code> method for the controller to render the response.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="s1">'{"body": "Solnic rules!"}'</span><span class="p">).</span><span class="nf">to_json</span>
+<span class="c1">#=&gt; '{"body": "Solnic rules!", "id":1, link: {"rel":"self", "href":"/comments/1"}}'</span>
+</code></pre>
+</div>
+
+<p>Representers in Trailblazer are provided by the <a href="/gems/roar">Roar gem</a> and are completely optional.</p>
+
+<h2 id="what-we-didnt-talk-about" data-magellan-target="what-we-didnt-talk-about">What We Didn’t Talk About</h2>
+
+<p>Trailblazer has many more features that will help writing better software.</p>
+
+<p>If you don’t like contracts, policies or representers inline, you can instruct the operation to use an external class, too. The composable interface allows that.</p>
+
+<p>You may also leverage operations in render-only requests and use the contract object with your form rendering helper.</p>
+
+<p>Trailblazer’s polymorphic interface allows to handle edge cases cleanly in small subclasses without the need for <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">else</code> throughout your code base.</p>
+
+<p>And, there’s more optimizations coming every day. We love working on Trailblazer and making life for programmers simpler.</p>
+
+<div class="row guide">
+  <div class="column medium-4">
+    <div class="content">
+      <p>
+        <a href="/newsletter">→ Join our Trailblazer newsletter</a> and stay up-to-date what's new in the community and the gems.
+      </p>
+
+      <p>Our <a href="http://gitter.im/trailblazer/chat">Gitter chat channel</a> is the perfect source for instant help!</p>
+    </div>
+  </div>
+
+  <div class="column medium-8">
+    <a href="http://leanpub.com/trailblazer">
+      <img src="/images/3dbuch-freigestellt.png" id="book-teaser">
+    </a>
+
+    <p>
+      Check out the sample application's <a href="http://github.com/apotonick/gemgem-trbrb">repository</a> for some teaser code or <a href="http://leanpub.com/trailblazer">→ buy the book</a> and learn everything about Trailblazer.
+    </p>
+
+    <p>Or browse our <a href="/gems/operation">extensive documentation</a> online!</p>
+  </div>
+</div>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#high-level-architecture">High-Level Architecture</a></li>
+<li><a href="#flow">Flow</a></li>
+<li><a href="#application-features">Application Features</a></li>
+<li><a href="#controller">Controller</a></li>
+<li><a href="#operation">Operation</a></li>
+<li><a href="#contract">Contract</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#persistence">Persistence</a></li>
+<li><a href="#callback">Callback</a></li>
+<li><a href="#test">Test</a></li>
+<li><a href="#file-structure">File Structure</a></li>
+<li><a href="#view-ui">View (UI)</a></li>
+<li><a href="#policy">Policy</a></li>
+<li><a href="#representer">Representer</a></li>
+<li><a href="#what-we-didnt-talk-about">What We Didn’t Talk About</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html" class="active">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Check Out Book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Operation: Contract</title>
+<meta name="description" content="Operation: Contract - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Operation: Contract">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/contract.html">
+<meta property="og:description" content="">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Operation: Contract">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero operation-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          Operation
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="operation-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Operation: Contract</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <h1 id="operation-contract">Operation: Contract</h1>
+
+<p>The operation’s contract is one of the pivotal elements in Trailblazer. It integrates the deserialization and validation into your service object.</p>
+
+<p>[DOCS STILL UNDER CONSTRUCTION]</p>
+
+<h2 id="composition" data-magellan-target="composition">Composition</h2>
+
+<p>Contracts don’t have to map to one model, only.</p>
+
+<p>If your contract embraces several models using <code class="highlighter-rouge">Composition</code>, you can easily pass the composition hash via <code class="highlighter-rouge">validate</code>. Note that composition is a <a href="/gems/reform/#composition">Reform feature</a>. Do not forget the <code class="highlighter-rouge">on:</code> option when defining your compositional mapping.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Composition</span>
+
+    <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>   <span class="ss">on: :comment</span>
+    <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">on: :author</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="no">Comment</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+    <span class="n">author</span>  <span class="o">=</span> <span class="n">comment</span><span class="p">.</span><span class="nf">author</span>
+
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">comment: </span><span class="n">comment</span><span class="p">,</span> <span class="ss">author: </span><span class="n">author</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The second argument to <code class="highlighter-rouge">validate</code> is the contract’s model. As per Reform’s API, for compositions this must be a hash.</p>
+
+<h2 id="injection" data-magellan-target="injection">Injection</h2>
+
+<p>It is possible to inject additional dependencies into the contract, which are not part of the original model(s). This often is a <code class="highlighter-rouge">current_user</code> or the operation instance itself.</p>
+
+<p>Those dependencies have to be virtual properties in the contract. They can then be passed as the third argument to <code class="highlighter-rouge">validate</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">contract</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:current_user</span><span class="p">,</span> <span class="ss">virtual: </span><span class="kp">true</span>
+    <span class="n">property</span> <span class="ss">:operation</span><span class="p">,</span>    <span class="ss">virtual: </span><span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span>
+      <span class="ss">current_user: </span><span class="n">params</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">],</span>
+      <span class="ss">operation:    </span><span class="nb">self</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The same semantics apply to <code class="highlighter-rouge">contract</code>.</p>
+
+<h2 id="contract-method" data-magellan-target="contract-method">contract! Method</h2>
+
+<p>To automate injection or composition, you can override <code class="highlighter-rouge">Operation#contract!</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">contract!</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">contract_class</span><span class="p">)</span>
+    <span class="n">contract_class</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="ss">current_user: </span><span class="vi">@current_user</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#composition">Composition</a></li>
+<li><a href="#injection">Injection</a></li>
+<li><a href="#contract-method">contract! Method</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html" class="active">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Check Out Book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>

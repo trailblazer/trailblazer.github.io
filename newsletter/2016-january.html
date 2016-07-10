@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Newsletter January 2016</title>
+<meta name="description" content="Newsletter January 2016 - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Newsletter January 2016">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/newsletter/2016-january.html">
+<meta property="og:description" content="January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia.">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Newsletter January 2016">
+<meta name="twitter:description" content="January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia.">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero guide-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="guide-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Newsletter January 2016</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 10 July 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <h1 id="january-2016">January 2016</h1>
+
+<p>Dear Readers of this newsletter,
+Hello, and Hi from the Trailblazer team!</p>
+
+<p>Thank you for your interest in the Trailblazer project. We hope your new year 2016 started off great and you’re already working on fantastic new software!</p>
+
+<p>The Trailblazer newsletter is going to be a monthly buzz telling you what has changed in the Trailblazer gems, Cells, Reform, Roar and Representable, and Formular, what new features have been released and cool upcoming stuff to expect.</p>
+
+<p>This is newsletter no. 1, the first ever, and I’m excited to tell you what has happened the last few months!</p>
+
+<h3 id="formular---a-new-form-builder-for-ruby">Formular - A New Form Builder for Ruby</h3>
+
+<p>One of the coolest projects we’ve been working on the last weeks is the <a href="https://github.com/apotonick/formular">Formular gem</a>, a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.</p>
+
+<p>Formular is built without using any outdated Rails helpers, making it insanely fast and usable in many frameworks, namely Rails, Hanami, or Sinatra. Its API is following the best practices established by existing form builders, without inheriting all the problems originating from strong coupling.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="o">=</span> <span class="n">form</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">contract</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">input</span> <span class="ss">:url_slug</span><span class="p">,</span> <span class="ss">placeholder: </span><span class="s2">"URL slug"</span>
+  <span class="p">.</span><span class="nf">form</span><span class="o">-</span><span class="n">group</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">checkbox</span> <span class="ss">:is_public</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Public?"</span>
+  <span class="p">.</span><span class="nf">form</span><span class="o">-</span><span class="n">group</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">radio</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Flori"</span><span class="p">,</span> <span class="ss">value: </span><span class="mi">1</span>
+    <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">radio</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">label: </span><span class="s2">"Konsti"</span><span class="p">,</span> <span class="ss">value: </span><span class="mi">2</span>
+</code></pre>
+</div>
+
+<p>It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended <a href="https://github.com/apotonick/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb">with plain Ruby classes</a>. It is incredibly simple to add new frontends or extend existing behavior.</p>
+
+<p>Formular will be released soon after a beta-test phase. Please contact us on our <a href="http://gitter.im/trailblazer/chat">Gitter channel</a> if you’re interested in giving Formular a go!</p>
+
+<h2 id="dry-validation-and-reform" data-magellan-target="dry-validation-and-reform">Dry-Validation and Reform</h2>
+
+<p>The <a href="https://github.com/apotonick/reform">Reform gem</a> is gaining more and more popularity and is a essential building block in Trailblazer. Its basic validation implementation comes from <code class="highlighter-rouge">ActiveModel::Validations</code>. While this makes the transition from model validations to form ojects very straight-forward, it brings a lot of legacy problems into Reform.</p>
+
+<p>To keep moving forward, we integrated the excellent <a href="https://github.com/dryrb/dry-validation">Dry-Validation</a> gem into Reform, allowing to use this brand-new validation gem as a replacement for ActiveModel.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">property</span> <span class="ss">:title</span>
+  <span class="n">property</span> <span class="ss">:url_slug</span>
+
+  <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Dry</span><span class="o">::</span><span class="no">Validations</span>
+
+  <span class="n">validation</span> <span class="ss">:default</span> <span class="k">do</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="o">&amp;</span><span class="ss">:filled?</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:url_slug</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">slug</span><span class="o">|</span> <span class="n">slug</span><span class="p">.</span><span class="nf">format?</span><span class="p">(</span><span class="sr">/^[\w-]+$/</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">slug</span><span class="p">.</span><span class="nf">unique?</span> <span class="p">}</span>
+    <span class="n">key</span><span class="p">(</span><span class="ss">:content</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">content</span><span class="o">|</span> <span class="n">content</span><span class="p">.</span><span class="nf">max_size?</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">unique?</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">form</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">class</span><span class="p">[</span><span class="ss">url_slug: </span><span class="n">value</span><span class="p">].</span><span class="nf">nil?</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You can now use Dry-Validation’s predicate logic to write your validation code, which is richer and makes it easier to write complex validations and dependent rules.</p>
+
+<p>While there’s still moving parts, several companies switched to this validation engine, already, and they’re very happy with it. Another nicety is that you now can use Reform in other Ruby frameworks like Sinatra without any <code class="highlighter-rouge">Active*</code> Rails gem dependencies.</p>
+
+<p>Wanna see that in action? Check out the <a href="https://github.com/apotonick/gemgem-sinatra/blob/1cfc38533e3cbf7be380d7afacd6c5580cb18614/concepts/post/operation/create.rb#L11">Gemgem-Sinatra example application</a>!</p>
+
+<h2 id="sinatra-and-trailblazer" data-magellan-target="sinatra-and-trailblazer">Sinatra and Trailblazer</h2>
+
+<p>A project that was a pleasure to work on is the new <a href="https://github.com/apotonick/gemgem-sinatra">Gemgem-Sinatra example </a> app - both because it shows how cool Trailblazer works with frameworks other than Rails, and also because it is <em>insanely fast</em>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="err">├──</span> <span class="n">app</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">├──</span> <span class="n">concepts</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">post</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">cell</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">├──</span> <span class="kp">new</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">└──</span> <span class="n">show</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">├──</span> <span class="n">operation</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">├──</span> <span class="n">create</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">│  </span> <span class="err">└──</span> <span class="n">update</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span>     <span class="err">└──</span> <span class="n">view</span>
+<span class="err">│  </span>         <span class="err">├──</span> <span class="kp">new</span><span class="p">.</span><span class="nf">slim</span>
+<span class="err">│  </span>         <span class="err">└──</span> <span class="n">show</span><span class="p">.</span><span class="nf">slim</span>
+<span class="err">├──</span> <span class="n">config</span>
+<span class="err">│  </span> <span class="err">├──</span> <span class="n">init</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">migrations</span><span class="p">.</span><span class="nf">rb</span>
+<span class="err">├──</span> <span class="no">Gemfile</span>
+<span class="err">├──</span> <span class="no">Gemfile</span><span class="p">.</span><span class="nf">lock</span>
+<span class="err">├──</span> <span class="n">models</span>
+<span class="err">│  </span> <span class="err">└──</span> <span class="n">post</span><span class="p">.</span><span class="nf">rb</span>
+</code></pre>
+</div>
+
+<p>We basically rebuild the Gemgem project from the Trailblazer book, using Sequel as a replacement for ActiveRecord and Sinatra as the underlying infrastructure framework.</p>
+
+<p>In the course of working on this project, I seriously started questioning myself why I’d ever use Rails again. Definitely check it out, Sinatra (or Padrino) with Trailblazer is extremely cool!</p>
+
+<h2 id="arbitrary-options-for-reform" data-magellan-target="arbitrary-options-for-reform">Arbitrary Options for Reform</h2>
+
+<p>Did you know that you can inject arbitrary objects besides the model into a Reform form instance? This is super helpful when you need dependencies other than your model’s attributes, e.g. the current user.</p>
+
+<p>Simply pass the additional objects in a hash via the constructor.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Form</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">post</span><span class="p">,</span> <span class="ss">current_user: </span><span class="n">current_user</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>To make Reform understand that this is a dependency, you have to define a virtual property, too!</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">property</span> <span class="ss">:title</span>                       <span class="c1"># from model</span>
+  <span class="n">property</span> <span class="ss">:url_slug</span>                    <span class="c1"># from model</span>
+  <span class="n">property</span> <span class="ss">:current_user</span><span class="p">,</span> <span class="ss">virtual: </span><span class="kp">true</span> <span class="c1"># via constructor</span>
+</code></pre>
+</div>
+
+<p>You can now access the current user in validations or other accessors.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">validates</span> <span class="k">do</span>
+    <span class="n">errors</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">:auth</span><span class="p">,</span> <span class="s2">"no current user"</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>As most of Reform is implemented via Disposable’s Twin, you can find the logic that gives you the described <em>options semantic</em> <a href="https://github.com/apotonick/disposable/blob/3270bd16b0105cc48eb5c414f94b0003e04e78ac/lib/disposable/twin/setup.rb#L27">in the Disposable gem</a>.</p>
+
+<h2 id="accessing-the-parent-form" data-magellan-target="accessing-the-parent-form">Accessing the Parent Form</h2>
+
+<p>Another addition to Disposable is the new <code class="highlighter-rouge">Parent</code> module, which allows accessing the parent form in a Reform instance. This is necessary when you have nested forms that need dependencies from an upper form, for instance a nested comment validation requiring the parent post’s ID.</p>
+
+<p>Simply require and include the <code class="highlighter-rouge">Parent</code> extension in your form.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="nb">require</span> <span class="s2">"disposable/twin/parent"</span>
+
+<span class="k">class</span> <span class="nc">Post</span><span class="o">::</span><span class="no">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+  <span class="n">feature</span> <span class="no">Disposable</span><span class="o">::</span><span class="no">Twin</span><span class="o">::</span><span class="no">Parent</span>
+</code></pre>
+</div>
+
+<p>You can then use the parent form in nested instances.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code>  <span class="n">property</span> <span class="ss">:comment</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:body</span>
+
+    <span class="n">validates</span> <span class="k">do</span>
+      <span class="k">if</span> <span class="n">parent</span><span class="p">.</span><span class="nf">model</span><span class="p">.</span><span class="nf">id</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+      <span class="c1"># ..</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>A very helpful new addition that many users have asked for. Well, here it is!</p>
+
+<h2 id="trailblazer-book-and-trailblazer-primer" data-magellan-target="trailblazer-book-and-trailblazer-primer">Trailblazer Book and Trailblazer Primer</h2>
+
+<p>The <a href="http://trailblazer.to/books/trailblazer">Trailblazer book</a> was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don’t have it yet, <a href="http://leanpub.com/trailblazer/c/EPIgtwW2WG0z">grab it now and get a $10 discount</a> until Feb 4!</p>
+
+<p>It will teach you everything about engineering complex Rails applications with Trailblazer from authorization, validations, operations and persistence to hypermedia API parsing and rendering.</p>
+
+<p>While this book focuses on a Rails scenario, it can easily be adapted to other frameworks.</p>
+
+<p>Many future users have asked for a “quicker, more compressed” way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the <a href="http://trailblazer.to/books/trailblazer-primer">Trailblazer Primer</a>, a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.</p>
+
+<h2 id="cells-and-hamlit" data-magellan-target="cells-and-hamlit">Cells and Hamlit</h2>
+
+<p><a href="https://github.com/k0kubun/hamlit">Hamlit</a> is a super fast implementation of Haml written by Takashi Kokubun.</p>
+
+<p>I <a href="http://nicksda.apotomo.de/2016/01/cells-hamlit-the-fastest-view-engine-around/">blogged about the Cells integration</a> a few days ago and show how Cells and Hamlit speed up rendering dramatically and wins over Slim and Haml.</p>
+
+<p>Many thanks go out to Takashi for all the support and help when integrating the two projects.</p>
+
+<h3 id="next-newsletter--talks">Next Newsletter + Talks</h3>
+
+<p>The next newsletter will be out in late February or early March, where I hopefully have some good stories about TRB talks I’ll be giving in Europe in February.</p>
+
+<ul>
+  <li>Feb 17: <a href="http://www.colognerb.de/">cologne.rb</a> Köln, Germany</li>
+  <li>Feb 23: <a href="http://www.meetup.com/brug__/events/228240599/">BRUG</a> Brussels, Belgium</li>
+  <li>Feb 25: <a href="http://www.meetup.com/groningen-rb/">groningen.rb</a> Groningen, Netherlands</li>
+</ul>
+
+<p>Also, if you happen to come to <a href="http://rubyconf.org.au/2016">RubyConf Australia</a> Febuary 10-13 - which you totally should!!! - there will be a <a href="http://lanyrd.com/2016/rubyconf-au/sdxmxp/">one-day TRB workshop</a> with Nick Kirkwood and myself!</p>
+
+<p>It would be great to see you in February! Cheers!</p>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#dry-validation-and-reform">Dry-Validation and Reform</a></li>
+<li><a href="#sinatra-and-trailblazer">Sinatra and Trailblazer</a></li>
+<li><a href="#arbitrary-options-for-reform">Arbitrary Options for Reform</a></li>
+<li><a href="#accessing-the-parent-form">Accessing the Parent Form</a></li>
+<li><a href="#trailblazer-book-and-trailblazer-primer">Trailblazer Book and Trailblazer Primer</a></li>
+<li><a href="#cells-and-hamlit">Cells and Hamlit</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Check Out Book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>

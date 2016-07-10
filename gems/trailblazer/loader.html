@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<h1 id="trailblazerloader">Trailblazer::Loader</h1>
+
+<p>Design</p>
+
+<p>Load deeper structured files, first. representer, policy etc should not depend on each other</p>
+
+<h2 id="first-step" data-magellan-target="first-step">First Step</h2>
+
+<p>If automatic loading doesn’t work for you, as a first resolution, require files manually.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>require_relative "../comment/create"
+</code></pre>
+</div>
+
+<p>Actually, Ruby is the only programming language that does help with loading, and has problems. Most other languages require you to load files manually.</p>
+
+<p>Even Matz himself is <a href="https://twitter.com/yukihiro_matz/status/676170870226706432">not so sure anymore</a> if allowing autoloading was a wise choice in Ruby.</p>
+</body></html>

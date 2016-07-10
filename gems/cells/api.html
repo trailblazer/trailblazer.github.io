@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Cells API</title>
+<meta name="description" content="Cells API - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Cells API">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/gems/cells/api.html">
+<meta property="og:description" content="">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Cells API">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero cells-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          Cells
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="cells-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Cells API</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 July 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <p>A cell is an object that can render views. It represents a fragment of the page, or the entire page.</p>
+
+<p>Sometimes they’re also called <em>object-oriented partials</em>.</p>
+
+<p>The object has to define at least one method which in turn has to return the fragment. Per convention, this is <code class="highlighter-rouge">#show</code>. In this public method, you may compile arbitrary strings or <code class="highlighter-rouge">render</code> a cell view.</p>
+
+<p>The return value of this public method (also called <em>state</em>) is what will be the rendered in the view using the cell.</p>
+
+<h2 id="anatomy" data-magellan-target="anatomy">Anatomy</h2>
+
+<p>Cells are usually derived from <code class="highlighter-rouge">Cell::ViewModel</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="c1"># renders app/cells/comment/show.haml</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>When the <code class="highlighter-rouge">CommentCell</code> cell is invoked, its <code class="highlighter-rouge">show</code> method is called, the view is rendered, and returned as a HTML string.</p>
+
+<p>This snippet illustrates a <em>suffix cell</em>, because it is following the outdated Rails-style naming and file structure. We encourage you to use <a href="trailblazer.html">Trailblazer cells</a>. However, this document mostly specifies generic API.</p>
+
+<h2 id="show" data-magellan-target="show">Show</h2>
+
+<p>As per convention, <code class="highlighter-rouge">#show</code> is the only public method of a cell class.</p>
+
+<p>The return value of this method is what gets rendered as the cell.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="s2">"I don't like templates!"</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You’re free to use return whatever string you desire, use your own rendering engine, or use cells <code class="highlighter-rouge">render</code> for templates.</p>
+
+<h2 id="manual-invocation" data-magellan-target="manual-invocation">Manual Invocation</h2>
+
+<p>In its purest form, a cell can be rendered as follows.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span><span class="o">.</span><span class="p">()</span> <span class="c1">#=&gt; "I don't like templates!"</span>
+</code></pre>
+</div>
+
+<p>This can be split up into two steps: initialization and invocation.</p>
+
+<h2 id="initialize" data-magellan-target="initialize">Initialize</h2>
+
+<p>You may instantiate cells manually, wherever you want.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>This is helpful in environments where the helpers are not available, e.g. a Rails mailer or a <code class="highlighter-rouge">Lotus::Action</code>.</p>
+
+<p>Note that usually you pass in an arbitrary object into the cell, the <em>“model”</em>. Here, this is the <code class="highlighter-rouge">comment</code> instance.</p>
+
+<h2 id="model" data-magellan-target="model">Model</h2>
+
+<p>The model you pass into the cell’s constructor is completely up to you! It could be an ActiveRecord instance, a <code class="highlighter-rouge">Struct</code>, or an array of items.</p>
+
+<p>The model is available via the <code class="highlighter-rouge">model</code> reader.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">model</span><span class="p">.</span><span class="nf">rude?</span> <span class="s2">"Offensive content."</span> <span class="p">:</span> <span class="n">render</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The term <em>model</em> is really not to be confused with the way Rails uses it - it can be just anything.</p>
+
+<h2 id="property" data-magellan-target="property">Property</h2>
+
+<p>Cells allow a short form to access model’s attributes using the <code class="highlighter-rouge">property</code> class method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">property</span> <span class="ss">:email</span> <span class="c1">#=&gt; model.email</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">model</span><span class="p">.</span><span class="nf">email</span> <span class="c1">#=&gt; "s@trb.to"</span>
+    <span class="n">email</span> <span class="c1">#=&gt; "s@trb.to"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Using <code class="highlighter-rouge">::property</code> will create a convenient reader method for you to the model.</p>
+
+<h2 id="options" data-magellan-target="options">Options</h2>
+
+<p>Along with the model, you may also pass arbitrary options into the cell, for example the current user.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="ss">current_user: </span><span class="n">current_user</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>In the cell, you can access any options using  the <code class="highlighter-rouge">options</code> reader.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span> <span class="p">?</span> <span class="n">render</span> <span class="p">:</span> <span class="s2">"Not logged in!"</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="invocation" data-magellan-target="invocation">Invocation</h2>
+
+<p>Once you got the cell instance, you may call the rendering state. This happens via <code class="highlighter-rouge">ViewModel#call</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>It’s a common idiom in Ruby to skip the explicit <code class="highlighter-rouge">call</code> method name. The next snippet does the same as the above.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Since <code class="highlighter-rouge">show</code> is the default state, you may simple <em>call</em> the cell without arguments.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>cell.() #=&gt; cell.(:show)
+</code></pre>
+</div>
+
+<p>Note that in Rails controller views, this will be called automatically via cell’s <code class="highlighter-rouge">ViewModel#to_s</code> method.</p>
+
+<h2 id="call" data-magellan-target="call">Call</h2>
+
+<p>Always invoke cell methods via <code class="highlighter-rouge">call</code>. This will ensure that caching - if configured - is performed properly.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>CommentCell.new(comment).(:show)
+</code></pre>
+</div>
+
+<p>As discussed, this will call the cell’s <code class="highlighter-rouge">show</code> method and return the rendered fragment.</p>
+
+<p>Note that you can invoke more than one state on a cell, if desired.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="o">-</span> <span class="n">cell</span> <span class="o">=</span> <span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Comment</span><span class="p">.</span><span class="nf">last</span><span class="p">)</span>      <span class="c1"># instantiate.</span>
+<span class="o">=</span> <span class="n">cell</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>                          <span class="c1"># render main fragment.</span>
+<span class="o">=</span> <span class="n">content_for</span> <span class="ss">:footer</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:footer</span><span class="p">)</span>       <span class="c1"># render footer.</span>
+</code></pre>
+</div>
+
+<p>See how you can combine cells with global helpers like <code class="highlighter-rouge">content_for</code>?</p>
+
+<p>You can also provide additional arguments to <code class="highlighter-rouge">call</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">,</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>All arguments after the method name are passed to the invoked method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="k">when</span><span class="p">)</span>
+  <span class="k">when</span> <span class="c1">#=&gt; Now!</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Even blocks are allowed.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Again, the block is passed through to the invoked method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">yield</span> <span class="c1">#=&gt; "Yay!"</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>This is particularly interesting when passing the block to <code class="highlighter-rouge">render</code> and using <code class="highlighter-rouge">yield</code> in the view. See <a href="#render">render</a>’s docs for that.</p>
+
+<h2 id="default-show" data-magellan-target="default-show">Default Show</h2>
+
+<p>Per default, every cell derived from <code class="highlighter-rouge">Cell::ViewModel</code> has a built-in <code class="highlighter-rouge">show</code> method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="c1"># #show is inherited.</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The implementation looks as follows.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">render</span> <span class="o">&amp;</span><span class="n">block</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>An optional block is always passed to the <code class="highlighter-rouge">render</code> method.</p>
+
+<p>Of course, you’re free to override <code class="highlighter-rouge">show</code> to do whatever it needs to do.</p>
+
+<h2 id="instantiation-helper" data-magellan-target="instantiation-helper">Instantiation Helper</h2>
+
+<p>In most environments you will instantiate cells with the <code class="highlighter-rouge">concept</code> or <code class="highlighter-rouge">cell</code> helper which internally does exactly the same as the manual invocation.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>This is identical to</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Depending on your environment, the <code class="highlighter-rouge">cell</code> helper might inject dependencies into the created cell. For example, in Rails, the controller is passed on into the cell behind the scenes. When manually instantiating cells, you must not forget to do so, too.</p>
+
+<p>The <code class="highlighter-rouge">cell</code> helper also allows passing in the cell constant. This means, it won’t try to infer the class constant name.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="no">CommentCell</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="file-structure" data-magellan-target="file-structure">File Structure</h2>
+
+<p>Having a cell to represent a fragment of your page is one thing. The real power, whatsoever, comes when rendering templates in cells. The <code class="highlighter-rouge">render</code> method does just that.</p>
+
+<p>In a suffix environment, Cells expects the following file layout.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>├── app
+│   ├── cells
+│   │   └── comment_cell.rb
+│   │   └── comment
+│   │       └── show.haml
+</code></pre>
+</div>
+
+<p>Every cell - unless configured otherwise - has its own view  directory named after the cell’s name (<code class="highlighter-rouge">comment</code>). Views do only have one extension to identify the template’s format (<code class="highlighter-rouge">show.haml</code>). Again, you’re free to provide arbitrary additional extensions.</p>
+
+<p>Note that the <em>suffix</em> style is getting superseded by the <a href="trailblazer.html">Trailblazer</a>-style naming and file structure.</p>
+
+<h2 id="render" data-magellan-target="render">Render</h2>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="c1"># renders show.haml.</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>A simple <code class="highlighter-rouge">render</code> will implicitly figure out the method (or state) name and attempt to render that view. Here, the file will be resolved to <code class="highlighter-rouge">app/cells/comment/show.haml</code>.</p>
+
+<p>Note that <code class="highlighter-rouge">render</code> literally renders the template and returns the HTML string. This allows you to call render multiple times, concatenate, and so on.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="o">+</span> <span class="n">render</span><span class="p">(</span><span class="ss">:footer</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"&lt;hr/&gt;"</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You can provide an explicit view name as the first argument.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="ss">:item</span> <span class="c1"># renders item.haml</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>When providing more than one argument to <code class="highlighter-rouge">render</code>, you have to use the <code class="highlighter-rouge">:view</code> option.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">render</span> <span class="ss">view: :item</span> <span class="c1"># renders item.haml</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>If you like the clunky Rails-style file naming, you’re free to add a format to the view.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">render</span> <span class="s2">"shot.html"</span> <span class="c1"># renders show.html.haml</span>
+</code></pre>
+</div>
+
+<p>You can pass locals to the view using <code class="highlighter-rouge">:locals</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">render</span> <span class="ss">locals: </span><span class="p">{</span> <span class="ss">logged_in: </span><span class="n">options</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">]</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="instance-methods" data-magellan-target="instance-methods">Instance Methods</h2>
+
+<p>While it is fine to use locals or instance variables in the view to access data, the preferred way is invoking instance methods in the view.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>%h1 Show comment
+
+= body
+= author_link
+</code></pre>
+</div>
+
+<p>Every method call in the view is dispatched to the cell instance. You have to define your “helpers” there.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">property</span> <span class="ss">:body</span> <span class="c1"># creates #body reader.</span>
+
+  <span class="k">def</span> <span class="nf">author_link</span>
+    <span class="n">url_for</span> <span class="n">model</span><span class="p">.</span><span class="nf">author</span><span class="p">.</span><span class="nf">name</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="nf">author</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>This allows slim, logic-less views.</p>
+
+<p>Note that you can use Rails in the instance level, too, if you’re in a Rails environment.</p>
+
+<h2 id="yield" data-magellan-target="yield">Yield</h2>
+
+<p>A block passed to the cell constructor is passed on to the state method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
+<span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">"Yay!"</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>It’s up to you if you want to use this block, or provide your own.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">render</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Passing the block <code class="highlighter-rouge">render</code> allows yielding it in the view.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>%h1 Comment
+
+= yield
+</code></pre>
+</div>
+
+<h2 id="collection" data-magellan-target="collection">Collection</h2>
+
+<p>Instead of manually iterating an array of models and concatenating the output of the item cell, you can use the <code class="highlighter-rouge">:collection</code> feature.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>This will instantiate a cell per iterated model, invoke <code class="highlighter-rouge">call</code> and join the output into one fragment.</p>
+
+<p>Pass the method name to <code class="highlighter-rouge">call</code> when you want to invoke a state different to <code class="highlighter-rouge">show</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="ss">:item</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>You’re free to pass additional options to the call.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="n">comments</span><span class="p">,</span> <span class="ss">size: </span><span class="n">comments</span><span class="p">.</span><span class="nf">size</span><span class="p">)</span><span class="o">.</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>This instantiates each collection cell as follows.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">CommentCell</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="ss">size: </span><span class="mi">9</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">join</code> method allows to customize the cell invocation. The block’s return value is autmatically joined.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span> <span class="k">do</span> <span class="o">|</span><span class="n">cell</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+  <span class="n">i</span><span class="p">.</span><span class="nf">odd?</span> <span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:odd</span><span class="p">)</span> <span class="p">:</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:even</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>An optional separator string can be passed to <code class="highlighter-rouge">join</code> when it concatenates the item fragments.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">"&lt;hr/&gt;"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">cell</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+</code></pre>
+</div>
+
+<h2 id="external-layout" data-magellan-target="external-layout">External Layout</h2>
+
+<p>Since Cells 4.1, you can instruct your cell to use a second cell as a wrapper. This will first render your actual content cell, then pass the content via a block to the layout cell.</p>
+
+<p>Cells desiring to be wrapped in a layout have to include <code class="highlighter-rouge">Layout::External</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="no">Layout</span><span class="o">::</span><span class="no">External</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The layout cell usually can be an empty subclass.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">LayoutCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Its <code class="highlighter-rouge">show</code> view must contain a <code class="highlighter-rouge">yield</code> to insert the content.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>!!!
+%html
+  %head
+    %title= "Gemgem"
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+  %body
+    = yield
+</code></pre>
+</div>
+
+<p>The layout cell class is then injected into the actual invocation using <code class="highlighter-rouge">:layout</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">layout: </span><span class="no">LayoutCell</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>The context object will automatically be passed to the layout cell.</p>
+
+<p>Note that <code class="highlighter-rouge">:layout</code> also works in combination with <code class="highlighter-rouge">:collection</code>.</p>
+
+<h2 id="view-paths" data-magellan-target="view-paths">View Paths</h2>
+
+<p>Per default, the cell’s view path is set to <code class="highlighter-rouge">app/cells</code>. You can set any number of view paths for the template file lookup.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="nb">self</span><span class="p">.</span><span class="nf">view_paths</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"app/views"</span><span class="p">]</span>
+</code></pre>
+</div>
+
+<h2 id="template-formats" data-magellan-target="template-formats">Template Formats</h2>
+
+<p>Cells provides a handful of popular Erb, Haml, etc.</p>
+
+<p>Various template engines are supported but need to be added to your Gemfile.</p>
+
+<ul>
+  <li><a href="https://github.com/trailblazer/cells-erb">cells-erb</a></li>
+  <li>
+<a href="https://github.com/trailblazer/cells-hamlit">cells-hamlit</a> We strongly recommend using <a href="https://github.com/k0kubun/hamlit">Hamlit</a> as a Haml replacement.</li>
+  <li>
+<a href="https://github.com/trailblazer/cells-haml">cells-haml</a> Make sure to bundle Haml 4.1: <code class="highlighter-rouge">gem "haml", github: "haml/haml", ref: "7c7c169"</code>. Use <code class="highlighter-rouge">cells-hamlit</code> instead.</li>
+  <li><a href="https://github.com/trailblazer/cells-slim">cells-slim</a></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"cells-erb"</span>
+</code></pre>
+</div>
+
+<p>In Rails, this is all you need to do. In other environments, you need to include the respective module into your cells.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Erb</span> <span class="c1"># or Cell::Hamlit, or Cell::Haml, or Cell::Slim</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="html-escaping" data-magellan-target="html-escaping">HTML Escaping</h2>
+
+<p>Cells per default does no HTML escaping, anywhere. This is one of the reasons that makes Cells faster than Rails.</p>
+
+<p>Include <code class="highlighter-rouge">Escaped</code> to make property readers return escaped strings.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class CommentCell &lt; Cell::ViewModel
+  include Escaped
+  property :title
+end
+
+song.title                 #=&gt; "&lt;script&gt;Dangerous&lt;/script&gt;"
+Comment::Cell.(song).title #=&gt; &amp;lt;script&amp;gt;Dangerous&amp;lt;/script&amp;gt;
+</code></pre>
+</div>
+
+<p>Only strings will be escaped via the property reader.</p>
+
+<p>You can suppress escaping manually.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def raw_title
+  "#{title(escape: false)} on the edge!"
+end
+</code></pre>
+</div>
+
+<p>Of course, this works in views, too.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>&lt;%= title(escape: false) %&gt;
+</code></pre>
+</div>
+
+<h2 id="context-object" data-magellan-target="context-object">Context Object</h2>
+
+<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object is passed on automatically. To add objects to the context, use the <code class="highlighter-rouge">:context</code> option.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="s2">"comment"</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">user: </span><span class="n">current_user</span> <span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Reading from the context works via the <code class="highlighter-rouge">context</code> method.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">context</span><span class="p">[</span><span class="ss">:user</span><span class="p">]</span> <span class="c1">#=&gt; &lt;User ..&gt;</span>
+  <span class="c1"># ..</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.</p>
+
+<h2 id="nesting" data-magellan-target="nesting">Nesting</h2>
+
+<p>You can invoke cells in cells. This happens with the <code class="highlighter-rouge">cell</code> helper.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
+  <span class="n">html</span> <span class="o">=</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:comment_detail</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+  <span class="c1"># ..</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">cell</code> helper will automatically pass the context object to the nested cell.</p>
+
+<h2 id="view-inheritance" data-magellan-target="view-inheritance">View Inheritance</h2>
+
+<p>Cells can inherit code from each other with Ruby’s inheritance.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">PostCell</span> <span class="o">&lt;</span> <span class="no">CommentCell</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Even cooler, <code class="highlighter-rouge">PostCell</code> will now inherit views from <code class="highlighter-rouge">CommentCell</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">PostCell</span><span class="p">.</span><span class="nf">prefixes</span> <span class="c1">#=&gt; ["app/cells/post", "app/cells/comment"]</span>
+</code></pre>
+</div>
+
+<p>When views can be found in the local <code class="highlighter-rouge">post</code> directory, they will be looked up in <code class="highlighter-rouge">comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
+
+<p>If you only want to inherit views, not the entire class, use <code class="highlighter-rouge">::inherit_views</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">PostCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">inherit_views</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Cell</span>
+<span class="k">end</span>
+
+<span class="no">PostCell</span><span class="p">.</span><span class="nf">prefixes</span> <span class="c1">#=&gt; ["app/cells/post", "app/cells/comment"]</span>
+</code></pre>
+</div>
+
+<h2 id="builder" data-magellan-target="builder">Builder</h2>
+
+<p>Often, it is good practice to replace decider code from views or classes into separate sub-cells. Or in case you want to render a polymorphic collection, builders come in handy.</p>
+
+<p>Builders allow instantiating different cell classes for different models and options.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="n">builds</span> <span class="k">do</span> <span class="o">|</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
+    <span class="no">PostCell</span>       <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Post</span><span class="p">)</span>
+    <span class="no">CommentCell</span>    <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Comment</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+<p>The <code class="highlighter-rouge">#cell</code> helper takes care of instantiating the right cell class for you.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="no">Post</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">#=&gt; creates a PostCell.</span>
+</code></pre>
+</div>
+<p>This also works with collections.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="p">[</span><span class="vi">@post</span><span class="p">,</span> <span class="vi">@comment</span><span class="p">])</span> <span class="c1">#=&gt; renders PostCell, then CommentCell.</span>
+</code></pre>
+</div>
+<p>Multiple calls to <code class="highlighter-rouge">::builds</code> will be ORed. If no block returns a class, the original class will be used (<code class="highlighter-rouge">CommentCell</code>). Builders are inherited.</p>
+
+<h2 id="caching" data-magellan-target="caching">Caching</h2>
+
+<p>Cells allow you to cache per state. It’s simple: the rendered result of a state method is cached and expired as you configure it.</p>
+
+<p>To cache forever, don’t configure anything</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>This will run <code class="highlighter-rouge">#show</code> only once, after that the rendered view comes from the cache.</p>
+
+<h2 id="cache-options" data-magellan-target="cache-options">Cache Options</h2>
+
+<p>Note that you can pass arbitrary options through to your cache store. Symbols are evaluated as instance methods, callable objects (e.g. lambdas) are evaluated in the cell instance context allowing you to call instance methods and access instance variables. All arguments passed to your state (e.g. via <code class="highlighter-rouge">render_cell</code>) are propagated to the block.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:expires_in</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">.</span><span class="nf">minutes</span>
+</code></pre>
+</div>
+
+<p>If you need dynamic options evaluated at render-time, use a lambda.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:tags</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|*</span><span class="n">args</span><span class="o">|</span> <span class="n">tags</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>If you don’t like blocks, use instance methods instead.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:tags</span> <span class="o">=&gt;</span> <span class="ss">:cache_tags</span>
+
+  <span class="k">def</span> <span class="nf">cache_tags</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># do your magic..</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="conditional-caching" data-magellan-target="conditional-caching">Conditional Caching</h2>
+
+<p>The <code class="highlighter-rouge">:if</code> option lets you define a condition. If it doesn’t return a true value, caching for that state is skipped.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">cache</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">:if</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|*|</span> <span class="n">has_changed?</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="cache-keys" data-magellan-target="cache-keys">Cache Keys</h2>
+
+<p>You can expand the state’s cache key by appending a versioner block to the <code class="highlighter-rouge">::cache</code> call. This way you can expire state caches yourself.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span> <span class="k">do</span> <span class="o">|</span><span class="n">options</span><span class="o">|</span>
+    <span class="n">order</span><span class="p">.</span><span class="nf">id</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The versioner block is executed in the cell instance context, allowing you to access all stakeholder objects you need to compute a cache key. The return value is appended to the state key: <code class="highlighter-rouge">"cells/cart/show/1"</code>.</p>
+
+<p>As everywhere in Rails, you can also return an array.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">CartCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="n">cache</span> <span class="ss">:show</span> <span class="k">do</span> <span class="o">|</span><span class="n">options</span><span class="o">|</span>
+    <span class="p">[</span><span class="nb">id</span><span class="p">,</span> <span class="n">options</span><span class="p">[</span><span class="ss">:items</span><span class="p">].</span><span class="nf">md5</span><span class="p">]</span>
+  <span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Resulting in: <code class="highlighter-rouge">"cells/cart/show/1/0ecb1360644ce665a4ef"</code>.</p>
+
+<h2 id="debugging-cache" data-magellan-target="debugging-cache">Debugging Cache</h2>
+
+<p>When caching is turned on, you might wanna see notifications. Just like a controller, Cells gives you the following notifications.</p>
+
+<ul>
+  <li>
+<code class="highlighter-rouge">write_fragment.action_controller</code> for cache miss.</li>
+  <li>
+<code class="highlighter-rouge">read_fragment.action_controller</code> for cache hits.</li>
+</ul>
+
+<p>To activate notifications, include the <code class="highlighter-rouge">Notifications</code> module in your cell.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Comment</span><span class="o">::</span><span class="no">Cell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Rails</span>
+  <span class="kp">include</span> <span class="no">Cell</span><span class="o">::</span><span class="no">Caching</span><span class="o">::</span><span class="no">Notifications</span>
+</code></pre>
+</div>
+
+<h2 id="cache-inheritance" data-magellan-target="cache-inheritance">Cache Inheritance</h2>
+
+<p>Cache configuration is inherited to derived cells.</p>
+
+<h2 id="testing-caching" data-magellan-target="testing-caching">Testing Caching</h2>
+
+<p>If you want to test it in <code class="highlighter-rouge">development</code>, you need to put <code class="highlighter-rouge">config.action_controller.perform_caching = true</code> in <code class="highlighter-rouge">development.rb</code> to see the effect.</p>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#anatomy">Anatomy</a></li>
+<li><a href="#show">Show</a></li>
+<li><a href="#manual-invocation">Manual Invocation</a></li>
+<li><a href="#initialize">Initialize</a></li>
+<li><a href="#model">Model</a></li>
+<li><a href="#property">Property</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#invocation">Invocation</a></li>
+<li><a href="#call">Call</a></li>
+<li><a href="#default-show">Default Show</a></li>
+<li><a href="#instantiation-helper">Instantiation Helper</a></li>
+<li><a href="#file-structure">File Structure</a></li>
+<li><a href="#render">Render</a></li>
+<li><a href="#instance-methods">Instance Methods</a></li>
+<li><a href="#yield">Yield</a></li>
+<li><a href="#collection">Collection</a></li>
+<li><a href="#external-layout">External Layout</a></li>
+<li><a href="#view-paths">View Paths</a></li>
+<li><a href="#template-formats">Template Formats</a></li>
+<li><a href="#html-escaping">HTML Escaping</a></li>
+<li><a href="#context-object">Context Object</a></li>
+<li><a href="#nesting">Nesting</a></li>
+<li><a href="#view-inheritance">View Inheritance</a></li>
+<li><a href="#builder">Builder</a></li>
+<li><a href="#caching">Caching</a></li>
+<li><a href="#cache-options">Cache Options</a></li>
+<li><a href="#conditional-caching">Conditional Caching</a></li>
+<li><a href="#cache-keys">Cache Keys</a></li>
+<li><a href="#debugging-cache">Debugging Cache</a></li>
+<li><a href="#cache-inheritance">Cache Inheritance</a></li>
+<li><a href="#testing-caching">Testing Caching</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html" class="active">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Check Out Book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>

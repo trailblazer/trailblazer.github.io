@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Representable: Function API</title>
+<meta name="description" content="Representable: Function API - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Representable: Function API">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/gems/representable/3.0/function-api.html">
+<meta property="og:description" content="">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Representable: Function API">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li class="has-form">
+          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero representable-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          Representable
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="representable-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Representable: Function API</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <h1 id="function-api">Function API</h1>
+
+<p>Both rendering and parsing have a rich API that allows you to hook into particular steps and change behavior.</p>
+
+<p>If that still isn’t enough, you can create your own <a href="pipeline.html">pipeline</a>.</p>
+
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
+
+<p>Function option are passed to <code class="highlighter-rouge">property</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id, default: "n/a"
+</code></pre>
+</div>
+
+<p>Most options accept a static value, like a string, or a dynamic lambda.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id, if: -&gt;(options) { options[:fragment].nil? }
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">options</code> hash is passed to <strong>all options</strong> and has the following members.
+{doc: doc, options: options, represented: represented, decorator: self}</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">options[:doc]</code></td>
+      <td>When rendering, the document as it gets created. When parsing, the entire document.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:fragment]</code></td>
+      <td>When parsing, this is the fragment read from the document corresponding to this property.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:input]</code></td>
+      <td>When rendering, this is the value read from the represented object corresponding to this property.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:represented]</code></td>
+      <td>The currently represented object.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:decorator]</code></td>
+      <td>The current decorator instance.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:binding]</code></td>
+      <td>The current binding instance. This allows to access the currently used definition, e.g. <code class="highlighter-rouge">options[:binding][:name]</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:options]</code></td>
+      <td>All options that have been passed into the render or parse method.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">options[:user_options]</code></td>
+      <td>The <code class="highlighter-rouge">:user_options</code> for the current representer. These are only the <a href="api.html#nested-user-options">nested options</a> from the user, for a particular representer.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In your option function, you can either receive the entire options hash and use it in the block.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>if: -&gt;(options) { options[:fragment].nil? }
+</code></pre>
+</div>
+
+<p>Or, and that is the preferred way, use Ruby’s keyword arguments.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>if: -&gt;(fragment:, **) { fragment.nil? }
+</code></pre>
+</div>
+
+<h2 id="options" data-magellan-target="options">Options</h2>
+
+<p>Here’s a list of all available options.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">:as</code></td>
+      <td>
+<a href="#as">Renames</a> property</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:getter</code></td>
+      <td>Custom <a href="#getter">getter</a> logic for rendering</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:setter</code></td>
+      <td>Custom <a href="#setter">setter</a> logic after parsing</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:if</code></td>
+      <td>
+<a href="#if">Includes</a> property when rendering/parsing when evaluated to true</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:reader</code></td>
+      <td>Overrides entire <a href="#reader">parsing</a> process for property</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:writer</code></td>
+      <td>Overrides entire <a href="#writer">rendering</a> process for property</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:skip_parse</code></td>
+      <td>
+<a href="#skip-parse">Skips parsing</a> when evaluated to true</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:skip_render</code></td>
+      <td>
+<a href="#skip-render">Skips rendering</a> when evaluated to true</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:parse_filter</code></td>
+      <td>Pipeline to process <a href="#parse-filter">parsing result</a>
+</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:render_filter</code></td>
+      <td>Pipeline to process <a href="#render-filter">rendering result</a>
+</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:deserialize</code></td>
+      <td>Override <a href="#deserialize">deserialization</a> of nested object</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:serialize</code></td>
+      <td>Override <a href="#serialize">serialization</a> of nested object</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:extend</code></td>
+      <td>
+<a href="#extend">Representer</a> to use for parsing or rendering</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:prepare</code></td>
+      <td>
+<a href="#prepare">Decorate</a> the represented object</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:class</code></td>
+      <td>
+<a href="#class">Class</a> to instantiate when parsing nested fragment</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:instance</code></td>
+      <td>
+<a href="#class">Instantiate</a> object directly when parsing nested fragment</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:render_nil</code></td>
+      <td>
+<a href="#render-nil">Render nil</a> values</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:render_empty</code></td>
+      <td>
+<a href="#render-empty">Render empty </a> collections</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="as" data-magellan-target="as">As</h2>
+
+<p>If your property name doesn’t match the name in the document, use the :as option.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :title, as: :name
+</code></pre>
+</div>
+
+<p>This will render using the <code class="highlighter-rouge">:as</code> value. Vice-versa for parsing</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>song.to_json #=&gt; {"name":"Fallout","track":1}
+</code></pre>
+</div>
+
+<h2 id="getter" data-magellan-target="getter">Getter</h2>
+
+<p>When rendering, Representable calls the property’s getter on the represented object. For a property named <code class="highlighter-rouge">:id</code>, this will result in <code class="highlighter-rouge">represented.id</code> to retrieve the value for rendering.</p>
+
+<p>You can override this, and instead of having Representable call the getter, run your own logic.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id, getter: -&gt;(represented:, **) { represented.uuid.human_readable }
+</code></pre>
+</div>
+
+<p>In the rendered document, you will find the UUID now where should be the ID.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>decorator.to_json #=&gt; {"id": "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"}
+</code></pre>
+</div>
+
+<p>As helpful as this option is, please do not overuse it. A representer is not a data mapper, but a document transformer. If your underlying data model and your representers diverge too much, consider using a <a href="/gems/disposable">twin</a> to simplify the representer.</p>
+
+<h2 id="setter" data-magellan-target="setter">Setter</h2>
+
+<p>After parsing has happened, the fragment is assigned to the represented object using the property’s setter. In the above example, Representable will call <code class="highlighter-rouge">represented.id=(fragment)</code>.</p>
+
+<p>Override that using <code class="highlighter-rouge">:setter</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  setter: -&gt;(fragment:, represented:, **) { represented.uuid = fragment.upcase }
+</code></pre>
+</div>
+
+<p>Again, don’t overuse this method and consider a twin if you find yourself using <code class="highlighter-rouge">:setter</code> for every property.</p>
+
+<h2 id="if" data-magellan-target="if">If</h2>
+
+<p>You can exclude properties when rendering or parsing, as if they were not defined at all. This works with <code class="highlighter-rouge">:if</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id, if: -&gt;(user_options:,**) { user_options[:is_admin] }
+</code></pre>
+</div>
+
+<p>When parsing (or rendering), the <code class="highlighter-rouge">id</code> property is only considered when <code class="highlighter-rouge">is_admin</code> has been passed in.</p>
+
+<p>This will parse the <code class="highlighter-rouge">id</code> field.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>decorator.from_json('{"id":1}', user_options: {is_admin: true})
+</code></pre>
+</div>
+
+<h2 id="reader" data-magellan-target="reader">Reader</h2>
+
+<p>To override the entire parsing process, use <code class="highlighter-rouge">:reader</code>. You won’t have access to <code class="highlighter-rouge">:fragment</code> here since parsing hasn’t happened, yet.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  reader: -&gt;(represented:,doc:,**) { represented.payload = doc[:uuid] || "n/a" }
+</code></pre>
+</div>
+
+<p>With <code class="highlighter-rouge">:reader</code>, parsing is completely up to you. Representable will only invoke the function and do nothing else.</p>
+
+<h2 id="writer" data-magellan-target="writer">Writer</h2>
+
+<p>To override the entire rendering process, use <code class="highlighter-rouge">:writer</code>. You won’t have access to <code class="highlighter-rouge">:input</code> here since the value query to the represented object hasn’t happened, yet.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  writer: -&gt;(represented:,doc:,**) { doc[:uuid] = represented.id }
+</code></pre>
+</div>
+
+<p>With <code class="highlighter-rouge">:writer</code>, rendering is completely up to you. Representable will only invoke the function and do nothing else.</p>
+
+<h2 id="skip-parse" data-magellan-target="skip-parse">Skip Parse</h2>
+
+<p>To suppress parsing of a property, use <code class="highlighter-rouge">:skip_parse</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  skip_parse: -&gt;(fragment:,**) { fragment.nil? || fragment=="" }
+</code></pre>
+</div>
+
+<p>No further processing happens with this property, should the option evaluate to true.</p>
+
+<h2 id="skip-render" data-magellan-target="skip-render">Skip Render</h2>
+
+<p>To suppress rendering of a property, use <code class="highlighter-rouge">:skip_render</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  skip_render: -&gt;(represented:,**) { represented.id.nil? }
+</code></pre>
+</div>
+
+<p>No further processing happens with this property, should the option evaluate to true.</p>
+
+<h2 id="parse-filter" data-magellan-target="parse-filter">Parse Filter</h2>
+
+<p>Use <code class="highlighter-rouge">:parse_filter</code> to process the parsing result.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  parse_filter: -&gt;(fragment, options) { fragment.strip }
+</code></pre>
+</div>
+
+<p>Just before setting the fragment to the object via the setter, the <code class="highlighter-rouge">:parse_filter</code> is called.</p>
+
+<p>Note that you can add multiple filters, the result from the last will be passed to the next.</p>
+
+<h2 id="render-filter" data-magellan-target="render-filter">Render Filter</h2>
+
+<p>Use <code class="highlighter-rouge">:render_filter</code> to process the rendered fragment.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :id,
+  render_filter: -&gt;(input, options) { input.strip }
+</code></pre>
+</div>
+
+<p>Just before rendering the fragment into the document, the <code class="highlighter-rouge">:render_filter</code> is invoked.</p>
+
+<p>Note that you can add multiple filters, the result from the last will be passed to the next.</p>
+
+<h2 id="deserialize" data-magellan-target="deserialize">Deserialize</h2>
+
+<p>When deserializing a nested fragment, the default mechanics after decorating the represented object are to call <code class="highlighter-rouge">represented.from_json(fragment)</code>.</p>
+
+<p>Override this step using <code class="highlighter-rouge">:deserialize</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  deserialize: -&gt;(input:,fragment:,**) { input.attributes = fragment }
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">:input</code> option provides the currently deserialized object.</p>
+
+<h2 id="serialize" data-magellan-target="serialize">Serialize</h2>
+
+<p>When serializing a nested object, the default mechanics after decorating the represented object are to call <code class="highlighter-rouge">represented.to_json</code>.</p>
+
+<p>Override this step using <code class="highlighter-rouge">:serialize</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  serialize: -&gt;(represented:,**) { represented.attributes.to_h }
+</code></pre>
+</div>
+
+<h2 id="extend" data-magellan-target="extend">Extend</h2>
+
+<p>Alias: <code class="highlighter-rouge">:decorator</code>.</p>
+
+<p>When rendering or parsing a nested object, that represented object needs to get decorated, which is configured via the <code class="highlighter-rouge">:extend</code> option.</p>
+
+<p>You can use <code class="highlighter-rouge">:extend</code> to configure an explicit representer module or decorator.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist, extend: ArtistRepresenter
+</code></pre>
+</div>
+
+<p>Alternatively, you could also compute that representer at run-time.</p>
+
+<p>For parsing, this could look like this.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  extend: -&gt;(fragment:,**) do
+    fragment["type"] == "rockstar" ? RockstarRepresenter : ArtistRepresenter
+  end
+</code></pre>
+</div>
+
+<p>For rendering, you could do something as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  extend: -&gt;(input:,**) do
+    input.is_a?(Rockstar) ? RockstarRepresenter : ArtistRepresenter
+  end
+</code></pre>
+</div>
+
+<p>This allows a dynamic polymorphic representer structure.</p>
+
+<h2 id="prepare" data-magellan-target="prepare">Prepare</h2>
+
+<p>The default mechanics when representing a nested object is decorating the object, then calling the serializer or deserializer method on it.</p>
+
+<p>You can override this step using <code class="highlighter-rouge">:prepare</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  prepare: -&gt;(represented:,**) { ArtistRepresenter.new(input) }
+</code></pre>
+</div>
+
+<p>Just for fun, you could mimic the original behavior.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  prepare: -&gt;(represented:,binding:,**) { binding[:extend].new(represented) }
+</code></pre>
+</div>
+
+<h2 id="class" data-magellan-target="class">Class</h2>
+
+<p>When parsing a nested fragment, Representable per default creates an object for you. The class can be defined with <code class="highlighter-rouge">:class</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  class: Artist
+</code></pre>
+</div>
+
+<p>It could also be dynamic.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  class: -&gt;(fragment) { fragment["type"] == "rockstar" ? Rockstar : Artist }
+</code></pre>
+</div>
+
+<h2 id="instance" data-magellan-target="instance">Instance</h2>
+
+<p>Instead of using <code class="highlighter-rouge">:class</code> you can directly instantiate the represented object yourself using <code class="highlighter-rouge">:instance</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :artist,
+  instance: -&gt;(fragment) do
+    fragment["type"] == "rockstar" ? Rockstar.new : Artist.new
+  end
+</code></pre>
+</div>
+
+<h3 id="render-nil">Render Nil</h3>
+
+<p>In Representable, <code class="highlighter-rouge">false</code> values are considered as a valid value and will be rendered into the document or parsed.</p>
+
+<p>If you want <code class="highlighter-rouge">nil</code> values to be included when rendering, use the <code class="highlighter-rouge">:render_nil</code> option.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :title,
+  render_nil: true
+</code></pre>
+</div>
+
+<h3 id="render-empty">Render Empty</h3>
+
+<p>Per default, empty collections are rendered (unless they’re <code class="highlighter-rouge">nil</code>). You can suppress rendering.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>collection :songs,
+  render_empty: false
+</code></pre>
+</div>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#overview">Overview</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#as">As</a></li>
+<li><a href="#getter">Getter</a></li>
+<li><a href="#setter">Setter</a></li>
+<li><a href="#if">If</a></li>
+<li><a href="#reader">Reader</a></li>
+<li><a href="#writer">Writer</a></li>
+<li><a href="#skip-parse">Skip Parse</a></li>
+<li><a href="#skip-render">Skip Render</a></li>
+<li><a href="#parse-filter">Parse Filter</a></li>
+<li><a href="#render-filter">Render Filter</a></li>
+<li><a href="#deserialize">Deserialize</a></li>
+<li><a href="#serialize">Serialize</a></li>
+<li><a href="#extend">Extend</a></li>
+<li><a href="#prepare">Prepare</a></li>
+<li><a href="#class">Class</a></li>
+<li><a href="#instance">Instance</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html" class="active">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Check Out Book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>
