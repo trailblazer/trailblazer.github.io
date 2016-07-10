@@ -48,6 +48,40 @@ Reform per design makes no assumptions about how to create nested models. You ha
 
 You need to configure a populator to engage Reform in the proper deserialization.
 
+## Declarative DSL
+
+You have to declare a populator when the form has to deserialize nested input. This can happen via `:populate_if_empty` or the generic `:populator` option.
+
+Both options accept either a proc, a method symbol, or a `Callable` instance.
+
+The proc is the most popular version.
+
+    property :artist, populator: ->(options) { .. } # proc
+
+However, note that you can also provide a proc constant (here `ArtistPopulator`).
+
+    ArtistPopulator = ->(options) { .. }
+
+    property :artist, populator: ArtistPopulator
+
+You can also use a method defined on the same level as the populator property (here `#artist!`).
+
+    property :artist, populator: :artist!
+
+    def artist!(options)
+    end
+
+Or, a `Uber::Callable`-marked object.
+
+    class ArtistPopulator
+      def call(options)
+      end
+    end
+
+    property :artist, populator: ArtistPopulator
+
+This is especially helpful when the populator gets complex and could benefit from inheritance/mixins.
+
 ### Populator Invocation
 
 Regardless of the populator type, keep in mind that a populator is only called if an incoming fragment for that property is present.
@@ -58,6 +92,9 @@ Running with our example, the following validation will _not_ trigger any popula
 
     form.validate({})          # empty.
     form.validate({songs: []}) # not empty, but no items!
+
+
+
 
 ## Populate_if_empty
 
