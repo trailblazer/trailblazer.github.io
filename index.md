@@ -637,67 +637,9 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
             <img src="/images/users/gratwifi_logo_facebook.png" />
           </a>
         </div>
-
-        <div class="column medium-2 text-center">
-          <a href="http://yebo.com.br/">
-            <img src="" />
-          </a>
-        </div>
-
-
-        <div class="column medium-2 text-center">
-          <a href="http://ajrintl.com/">
-            <img src="" />
-          </a>
-        </div>
-
-        <div class="column medium-2 text-center logo-leveler">
-          <a href="http://rinica.com/">
-            <img src="" />
-          </a>
-        </div>
       </div>
 
 
-
-      <div class="row">
-        <div class="column medium-2 text-center logo-leveler">
-          <a href="http://localsearch.com.au/">
-            <img src="" />
-          </a>
-        </div>
-
-        <div class="column medium-2 text-center">
-          <a href="http://microminimus.com">
-            <img src="" />
-          </a>
-        </div>
-
-        <div class="column medium-2 text-center logo-leveler">
-          <a href="http://shaken.com/">
-            <img src="" />
-          </a>
-        </div>
-
-        <div class="column medium-2 text-center">
-          <a href="http://yebo.com.br/">
-            <img src="" />
-          </a>
-        </div>
-
-
-        <div class="column medium-2 text-center">
-          <a href="http://ajrintl.com/">
-            <img src="" />
-          </a>
-        </div>
-
-        <div class="column medium-2 text-center logo-leveler">
-          <a href="http://rinica.com/">
-            <img src="" />
-          </a>
-        </div>
-      </div>
 
       <div class="row">
         <div class="columns">
