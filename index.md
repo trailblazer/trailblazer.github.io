@@ -460,65 +460,253 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
         Testimonials
       </h2>
 
-      <div class="row testimonial">
-        <div class="columns medium-2">
-          <img src="../images/igor.jpg" class="avatar">
-        </div>
-        <div class="columns medium-10">
-          <blockquote>
-            "At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."
-            <cite><strong>Igor Pstyga</strong>, PeerStreet</cite>
-          </blockquote>
-        </div>
-      </div>
 
-      <div class="row testimonial">
-        <div class="columns medium-2">
-          <img src="../images/paulo.jpg" class="avatar">
-        </div>
-        <div class="columns medium-10">
-          <blockquote>
-            "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
-            <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
-          </blockquote>
-        </div>
-      </div>
+      <div class="carousel">
 
-      <div class="row testimonial">
-        <div class="columns medium-2">
-          <img src="../images/yuri.jpg" class="avatar">
-        </div>
-        <div class="columns medium-10">
-          <blockquote>
-            "Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."
-            <cite><strong>Yuri Freire Lima</strong>, AzClick</cite>
-          </blockquote>
-        </div>
-      </div>
+        <div>
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/igor.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                "At some point of time we started to decouple our form objects from models. Things got a lot easier when we found out there is a ready to use solution which solves our exact problem. That was Reform. Soon after, we started using all other parts of Trailblazer and haven't regretted a second of our time we spent using it."
+                <cite><strong>Igor Pstyga</strong>, PeerStreet</cite>
+              </blockquote>
+            </div>
+          </div>
 
-      <div class="row testimonial">
-        <div class="columns medium-2">
-          <img src="../images/eric.jpg" class="avatar">
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/paulo.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
+                <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
+              </blockquote>
+            </div>
+          </div>
         </div>
-        <div class="columns medium-10">
-          <blockquote>
-            Trailblazer has brought the fun back to Rails for me. It helps me organize large codebases into small, smart, testable chunks. Nick has brought together his years of insight in managing Rails projects and made them available for everyone. Any Rails engineer looking to expand past the default Rails Way should take a look at Trailblazer.
-            <cite><strong>Eric Skogen</strong>, Software Inventor</cite>
-          </blockquote>
-        </div>
-      </div>
 
-      <div class="row testimonial">
-        <div class="columns medium-2">
-          <img src="../images/nick.jpg" class="avatar">
+        <div>
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/yuri.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                "Trailblazer helps organize my code, the book showed me how. You can assume what each component does by its name, it's very easy and intuitive, it should be shipped as an essential part of Rails."
+                <cite><strong>Yuri Freire Lima</strong>, AzClick</cite>
+              </blockquote>
+            </div>
+          </div>
+
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/eric.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                Trailblazer has brought the fun back to Rails for me. It helps me organize large codebases into small, smart, testable chunks. Nick has brought together his years of insight in managing Rails projects and made them available for everyone. Any Rails engineer looking to expand past the default Rails Way should take a look at Trailblazer.
+                <cite><strong>Eric Skogen</strong>, Software Inventor</cite>
+              </blockquote>
+            </div>
+          </div>
         </div>
-        <div class="columns medium-10">
-          <blockquote>
-            I haven't been this excited about Rails since 2007! Trailblazer - makes Rails development fun again. Especially on large projects. It's one of the better implementations of the ServiceObject / ViewModel / Form Object / Policy layers I've seen, which sooner or later ( rather sooner) you'll need.
-            <cite><strong>Nick Gorbikoff</strong>, Rinica Company</cite>
-          </blockquote>
+
+        <div>
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/nick.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                I haven't been this excited about Rails since 2007! Trailblazer - makes Rails development fun again. Especially on large projects. It's one of the better implementations of the ServiceObject / ViewModel / Form Object / Policy layers I've seen, which sooner or later ( rather sooner) you'll need.
+                <cite><strong>Nick Gorbikoff</strong>, Rinica Company</cite>
+              </blockquote>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<section>
+<div class="row">
+    <div class="columns">
+      <a name="testimonials"></a>
+
+      <h2>
+        Companies using Trailblazer
+      </h2>
+
+      <div class="row">
+        <div class="column medium-2 text-center">
+          <a href="http://mitimes.com">
+            <img src="/images/users/mitimes.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://wickedweasel.com/">
+            <img src="/images/users/ww.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://www.mytappr.com/">
+            <img src="/images/users/tappr.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://zertico.com/">
+            <img src="/images/users/zertico.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://serviceseeking.com.au/">
+            <img src="/images/users/serviceseeking.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://weareathlon.com/">
+            <img src="/images/users/athlon.png" />
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://localsearch.com.au/">
+            <img src="/images/users/localSearch.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://microminimus.com">
+            <img src="/images/users/microminimus.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://shaken.com/">
+            <img src="/images/users/shaken.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://yebo.com.br/">
+            <img src="/images/users/yebo.png" />
+          </a>
+        </div>
+
+
+        <div class="column medium-2 text-center">
+          <a href="http://ajrintl.com/">
+            <img src="/images/users/ajr.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://rinica.com/">
+            <img src="/images/users/rinica.png" />
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="https://www.skovingulv.no">
+            <img src="/images/users/skovin.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://angelcompass.org/">
+            <img src="/images/users/angelcompass.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="https://www.gratwifi.eu">
+            <img src="/images/users/gratwifi_logo_facebook.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://yebo.com.br/">
+            <img src="" />
+          </a>
+        </div>
+
+
+        <div class="column medium-2 text-center">
+          <a href="http://ajrintl.com/">
+            <img src="" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://rinica.com/">
+            <img src="" />
+          </a>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://localsearch.com.au/">
+            <img src="" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://microminimus.com">
+            <img src="" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://shaken.com/">
+            <img src="" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://yebo.com.br/">
+            <img src="" />
+          </a>
+        </div>
+
+
+        <div class="column medium-2 text-center">
+          <a href="http://ajrintl.com/">
+            <img src="" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
+          <a href="http://rinica.com/">
+            <img src="" />
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="columns">
+          <p class="text-center">
+            Your logo here? <a href="https://gitter.im/trailblazer/chat">Send it to us →</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
