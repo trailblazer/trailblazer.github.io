@@ -533,10 +533,10 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   </div>
 </section>
 
-<section>
+<section id="trb-users">
 <div class="row">
     <div class="columns">
-      <a name="testimonials"></a>
+      <a name="users"></a>
 
       <h2>
         Companies using Trailblazer

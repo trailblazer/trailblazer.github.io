@@ -2,6 +2,8 @@
 layout: guide
 title: "Our Newsletter"
 description: "Trailblazer is a high-level architecture for Ruby. The newsletter broadcasts hottest changes about its gems: Cells, Reform, Representable, Roar, Disposable, and more."
+magellan: false
+header: false
 ---
 
 <section class="marketing-book book">
@@ -29,13 +31,10 @@ description: "Trailblazer is a high-level architecture for Ruby. The newsletter 
           <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
           <!--End mc_embed_signup-->
 
-
-
-          <!-- <a href="https://leanpub.com/trailblazer">
-          <img src="/images/3dbuch-freigestellt.png" />
-          </a> -->
         </div>
+      </div>
 
+      <div class="row">
         <div class="columns medium-9 medium-centered">
           <h1>TRB Newsletter</h1>
           <h2 class="subheader">Everything you need to know!</h2>
@@ -59,8 +58,6 @@ description: "Trailblazer is a high-level architecture for Ruby. The newsletter 
             <li><strong><a href="2016-march.html">March 2016</a></strong> Talks about coercion in Reform using Dry-Types, the nilify feature, compositional aspects in operations and presentations in Europe in Feburary.</li>
 
             <li><strong><a href="2016-january.html">January 2016</a></strong> January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia.</li>
-
-
           </ul>
         </div>
       </div>

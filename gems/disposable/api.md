@@ -281,10 +281,9 @@ Again, the model is left alone until you call `sync` or `save`.
 
 <a name="jsonb"></a>
 
-<h2>
-  Property::Hash
-  <span class="gem-version">0.3.2</span>
-</h2>
+## Property::Hash
+
+<span class="gem-version">0.3.2</span>
 
 The `Property::Hash` module allows working with generic hash fields with any level of nesting. Instead of clumsy hash operations, you have Ruby objects.
 

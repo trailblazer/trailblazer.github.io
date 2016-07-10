@@ -1,5 +1,5 @@
 ---
-layout: newsletter
+layout: guide
 description: "January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia."
 
 title: "Newsletter January 2016"
@@ -36,7 +36,7 @@ It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementa
 
 Formular will be released soon after a beta-test phase. Please contact us on our [Gitter channel](http://gitter.im/trailblazer/chat) if you're interested in giving Formular a go!
 
-### Dry-Validation and Reform
+## Dry-Validation and Reform
 
 The [Reform gem](https://github.com/apotonick/reform) is gaining more and more popularity and is a essential building block in Trailblazer. Its basic validation implementation comes from `ActiveModel::Validations`. While this makes the transition from model validations to form ojects very straight-forward, it brings a lot of legacy problems into Reform.
 
@@ -67,7 +67,7 @@ While there's still moving parts, several companies switched to this validation 
 
 Wanna see that in action? Check out the [Gemgem-Sinatra example application](https://github.com/apotonick/gemgem-sinatra/blob/1cfc38533e3cbf7be380d7afacd6c5580cb18614/concepts/post/operation/create.rb#L11)!
 
-### Sinatra and Trailblazer
+## Sinatra and Trailblazer
 
 A project that was a pleasure to work on is the new [Gemgem-Sinatra example ](https://github.com/apotonick/gemgem-sinatra) app - both because it shows how cool Trailblazer works with frameworks other than Rails, and also because it is *insanely fast*.
 
@@ -97,7 +97,7 @@ We basically rebuild the Gemgem project from the Trailblazer book, using Sequel 
 
 In the course of working on this project, I seriously started questioning myself why I'd ever use Rails again. Definitely check it out, Sinatra (or Padrino) with Trailblazer is extremely cool!
 
-### Arbitrary Options for Reform
+## Arbitrary Options for Reform
 
 Did you know that you can inject arbitrary objects besides the model into a Reform form instance? This is super helpful when you need dependencies other than your model's attributes, e.g. the current user.
 
@@ -127,7 +127,7 @@ class Post::Form < Reform::Form
 
 As most of Reform is implemented via Disposable's Twin, you can find the logic that gives you the described _options semantic_ [in the Disposable gem](https://github.com/apotonick/disposable/blob/3270bd16b0105cc48eb5c414f94b0003e04e78ac/lib/disposable/twin/setup.rb#L27).
 
-### Accessing the Parent Form
+## Accessing the Parent Form
 
 Another addition to Disposable is the new `Parent` module, which allows accessing the parent form in a Reform instance. This is necessary when you have nested forms that need dependencies from an upper form, for instance a nested comment validation requiring the parent post's ID.
 
@@ -155,7 +155,7 @@ You can then use the parent form in nested instances.
 
 A very helpful new addition that many users have asked for. Well, here it is!
 
-### Trailblazer Book and Trailblazer Primer
+## Trailblazer Book and Trailblazer Primer
 
 The [Trailblazer book](http://trailblazer.to/books/trailblazer) was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don't have it yet, [grab it now and get a $10 discount](http://leanpub.com/trailblazer/c/EPIgtwW2WG0z) until Feb 4!
 
@@ -165,7 +165,7 @@ While this book focuses on a Rails scenario, it can easily be adapted to other f
 
 Many future users have asked for a "quicker, more compressed" way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the [Trailblazer Primer](http://trailblazer.to/books/trailblazer-primer), a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.
 
-### Cells and Hamlit
+## Cells and Hamlit
 
 [Hamlit](https://github.com/k0kubun/hamlit) is a super fast implementation of Haml written by Takashi Kokubun.
 

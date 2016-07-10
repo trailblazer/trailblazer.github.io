@@ -1,5 +1,5 @@
 ---
-layout: newsletter
+layout: guide
 description: "March 2016 newsletter talks about coercion in Reform using Dry-Types, the nilify feature, compositional aspects in operations and presentations in Europe in Feburary."
 
 title: "Newsletter March 2016"
