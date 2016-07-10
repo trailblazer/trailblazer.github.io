@@ -39,7 +39,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
             A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
           </p>
 
-          <p>Check out who's using <a href="/users.html">Trailblazer in production →</a></p>
+          <p>Check out who's using <a href="#users">Trailblazer in production →</a></p>
 
            <a href="/guides/trailblazer-in-20-minutes.html" class="button radius">Get Started:<br>
             Trailblazer in 12 Minutes</a>
