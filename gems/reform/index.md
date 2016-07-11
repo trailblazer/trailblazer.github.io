@@ -374,52 +374,6 @@ Here's what the block parameters look like.
 As with the built-in coercion, this setter is only called in `#validate`.
 
 
-## Virtual Attributes
-
-Virtual fields come in handy when there's no direct mapping to a model attribute or when you plan on displaying but not processing a value.
-
-
-### Virtual Fields
-
-Often, fields like `password_confirmation` should neither be read from nor written back to the model. Reform comes with the `:virtual` option to handle that case.
-
-    class PasswordForm < Reform::Form
-      property :password
-      property :password_confirmation, virtual: true
-
-Here, the model won't be queried for a `password_confirmation` field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.
-
-    form.validate("password" => "123", "password_confirmation" => "321")
-
-    form.password_confirmation #=> "321"
-
-The nested hash in the block-`#save` provides the same value.
-
-    form.save do |nested|
-      nested[:password_confirmation] #=> "321"
-
-### Read-Only Fields
-
-When you want to show a value but skip processing it after submission the `:writeable` option is your friend.
-
-    class ProfileForm < Reform::Form
-      property :country, writeable: false
-
-This time reform will query the model for the value by calling `model.country`.
-
-You want to use this to display an initial value or to further process this field with JavaScript. However, after submission, the field is no longer considered: it won't be written to the model when saving.
-
-It is still readable in the nested hash and through the form itself.
-
-    form.save do |nested|
-      nested[:country] #=> "Australia"
-
-### Write-Only Fields
-
-A third alternative is to hide a field's value but write it to the database when syncing. This can be achieved using the `:readable` option.
-
-    property :credit_card_number, readable: false
-
 ## Validations From Models
 
 Sometimes when you still keep validations in your models (which you shouldn't) copying them to a form might not feel right. In that case, you can let Reform automatically copy them.
@@ -663,49 +617,6 @@ You can even write your own deserializer code in case you dislike Representable.
     end
 
 The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.
-
-
-### Skipping Properties when Validating
-
-In `#validate`, you can ignore properties now using `:skip_if` for deserialization.
-
-    property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
-
-This works for both properties and nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.
-
-For nested properties you can use `:skip_if: :all_blank` as a macro to ignore a nested form if all values are blank.
-
-Note that this still runs validations for the property, though.
-
-### Prepopulating Forms
-
-Docs: http://trailblazer.to/gems/reform/prepopulator.html
-
-
-You can also pass options to `#prepopulate`.
-
-Only do this for forms that are about to get rendered, though.
-
-Collections and partial collection population is covered in chapter 5.
-
-
-### Populator
-
-Docs: http://trailblazer.to/gems/reform/populator.html
-
-### Property Inflections
-
-When rendering a form you might need to access the options you provided to `property`.
-
-    property :title, type: String
-
-You can do this using `#options_for`.
-
-    form.options_for(:title) # => {:readable=>true, :coercion_type=>String}
-
-Note that Reform renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you're forward-compatible.
-
-
 
 
 it's like that: your form gets a minimal set of input, and then transforms that into an object graph. don't add public properties just to satisfy AR, solve that in the form
