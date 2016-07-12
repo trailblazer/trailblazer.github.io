@@ -15,6 +15,171 @@ Every Reform form object inherits from `Disposable::Twin`, making every form a t
 
 If you're looking for a specific feature, make sure to check the [Disposable documentation](/gems/disposable/api.html)
 
+## Form Class
+
+Forms are defined in classes. Often, these classes partially map to a model.
+
+{% tabs %}
+~~dry-validation
+    class AlbumForm < Reform::Form
+      property :title
+
+      validation do
+       required(:title).filled
+      end
+    end
+
+~~ActiveModel
+    class AlbumForm < Reform::Form
+      property :title
+
+      validates :title, presence: true
+    end
+{% endtabs %}
+
+Form fields are declared using `::property`.
+
+Validations leverage the respective validation engine's API, which be either `ActiveModel` or dry-validations.
+
+## Property
+
+Use `property` to map scalar fields of your model to the form.
+
+    class AlbumForm < Reform::Form
+      property :title
+    end
+
+This will create accessors on the form and read the initial value from the model.
+
+    model = Album.new(title: "Greatest Hits")
+
+    form = AlbumForm.new(model)
+    form.title #=> "Greatest Hits"
+
+## Collection
+
+When mapping an array field of the model, use `collection`.
+
+    class AlbumForm < Reform::Form
+      collection :song_titles
+    end
+
+This will create accessors on the form and read the initial
+
+    model = Album.new(song_titles: ["The Reflex", "Wild Boys"])
+
+    form = AlbumForm.new(model)
+    form.song_titles[0] #=> "The Reflex"
+
+## Nesting
+
+To create forms for nested objects, both `property` and `collection` accept a block for the nested form definition.
+
+    class AlbumForm < Reform::Form
+      property :artist do
+        property :name
+      end
+
+      collection :songs do
+        property :title
+      end
+    end
+
+Nesting will simply create an anonymous, nested `Reform::Form` class for the nested property.
+
+It's often helpful with `has_many` or `belongs_to` associations.
+
+    artist = Artist.new(name: "Duran Duran")
+    songs  = [Song.new(title: "The Reflex"), Song.new(title: "Wild Boys")]
+    model  = Album.new(artist: artist, songs: songs)
+
+The accessors will now be nested.
+
+    form   = AlbumForm.new(model)
+    form.artist.name #=> "Duran Duran"
+    form.songs[0].title #=> "The Reflex"
+
+All API semantics explained here may be applied to both the top form and nested forms.
+
+## Setup
+
+## Validate
+
+You can define validation for every form property and for nested forms.
+
+{% tabs %}
+~~dry-validation
+    class AlbumForm < Reform::Form
+      property :title
+
+      validation do
+       required(:title).filled
+      end
+
+      property :artist do
+        property :name
+
+        validation do
+         required(:name).filled
+        end
+      end
+    end
+
+~~ActiveModel
+    class AlbumForm < Reform::Form
+      property :title
+
+      validates :title, presence: true
+
+      property :artist do
+        property :name
+
+        validates :title, presence: true
+      end
+    end
+{% endtabs %}
+
+Validations will be run in `validate`.
+
+    form.validate(
+      {
+        title: "Best Of",
+        artist: {
+          name: "Billy Joel"
+        }
+      }
+    ) #=> true
+
+The returned value is the boolean result of the validations.
+
+Reform will read all values it knows from the incoming hash, and it **will ignore any unknown key/value pairs**. This makes `strong_parameters` redundant. Accepted values will be written to the form using the public setter, e.g. `form.title = "Best Of"`.
+
+After `validate`, the form's values will be overwritten.
+
+    form.artist.name #=> "Billy Joel"
+
+The model won't be touched, its values are still the original ones.
+
+    model.artist.name #=> "Duran Duran"
+
+## Errors
+
+After `validate`, you can access validation errors via `errors`.
+
+    form.errors #=> {title: ["must be filled"]}
+
+The returned `Errors` object exposes the following methods.
+
+{% tabs %}
+~~dry-validation
+{% endtabs %}
+
+## Sync
+
+
+
+## Form Option
+
 ## Virtual Attributes
 
 Virtual fields come in handy when there's no direct mapping to a model attribute or when you plan on displaying but not processing a value.

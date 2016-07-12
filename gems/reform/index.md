@@ -10,16 +10,16 @@ Reform provides form objects that maintain validations for one or multiple model
 
 A *form* doesn't have to be a UI component, necessarily! It can be an intermediate validation before writing data to the persistence layer. While form objects may be used to render graphical web forms, Reform is used in many pure-API applications for deserialization and validation.
 
-## Form Definition
 
-Forms are defined in separate classes. Often, these classes partially map to a model.
 
-    class AlbumForm < Reform::Form
-      property :title
-      validates :title, presence: true
-    end
+Note that validations no longer go into the model.
 
-Fields are declared using `::property`. Validations work almost exactly as you know it from Rails or other frameworks. Note that validations no longer go into the model.
+
+
+
+
+
+
 
 
 ## API
@@ -68,25 +68,6 @@ Nested forms and collections can be easily rendered with `fields_for`, etc. Note
 Optionally, you might want to use the `#prepopulate!` method to pre-populate fields and prepare the form for rendering.
 
 
-## Validation
-
-After form submission, you need to validate the input.
-
-    class SongsController
-      def create
-        @form = SongForm.new(Song.new)
-
-        #=> params: {song: {title: "Rio", length: "366"}}
-
-        if @form.validate(params[:song])
-
-The `#validate` method first updates the values of the form - the underlying model is still treated as immutuable and *remains unchanged*. It then runs all validations you provided in the form.
-
-It's the only entry point for updating the form. This is per design, as separating writing and validation doesn't make sense for a form.
-
-This allows rendering the form after `validate` with the data that has been submitted. However, don't get confused, the model's values are still the old, original values and are only changed after a `#save` or `#sync` operation.
-
-
 ## Syncing Back
 
 After validation, you have two choices: either call `#save` and let Reform sort out the rest. Or call `#sync`, which will write all the properties back to the model. In a nested form, this works recursively, of course.
@@ -129,48 +110,6 @@ You can always access the form's model. This is helpful when you were using popu
     end
 
 
-## Container
-
-While a form object will drastically improve your application architecture as a stand-alone object, forms work best in containers like Trailblazer's operation.
-
-
-## Disposable
-
-Every form in Reform is a _twin_. Twins are non-persistent domain objects from the [Disposable gem](https://github.com/apotonick/disposable). All features of Disposable, like renaming fields, change tracking, etc. are available in Reform, too.
-
-
-## Nesting
-
-Reform provides support for nested objects. Let's say the `Album` model keeps some associations.
-
-    class Album < ActiveRecord::Base
-      has_one  :artist
-      has_many :songs
-    end
-
-The implementation details do not really matter here, as long as your album exposes readers and writes like `Album#artist` and `Album#songs`, this allows you to define nested forms.
-
-
-    class AlbumForm < Reform::Form
-      property :title
-      validates :title, presence: true
-
-      property :artist do
-        property :full_name
-        validates :full_name, presence: true
-      end
-
-      collection :songs do
-        property :name
-      end
-    end
-
-You can also reuse an existing form from elsewhere using `:form`.
-
-    property :artist, form: ArtistForm
-
-## Nested Setup
-
 Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.
 
     album.songs #=> [<Song name:"Run To The Hills">]
@@ -178,21 +117,6 @@ Reform will wrap defined nested objects in their own forms. This happens automat
     form = AlbumForm.new(album)
     form.songs[0] #=> <SongForm model: <Song name:"Run To The Hills">>
     form.songs[0].name #=> "Run To The Hills"
-
-### Nested Rendering
-
-When rendering a nested form you can use the form's readers to access the nested forms.
-
-    = text_field :title,         @form.title
-    = text_field "artist[name]", @form.artist.name
-
-Or use something like `#fields_for` in a Rails environment.
-
-    = form_for @form do |f|
-      = f.text_field :title
-
-      = f.fields_for :artist do |a|
-        = a.text_field :name
 
 ## Nested Processing
 
