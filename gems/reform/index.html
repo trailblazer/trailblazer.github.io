@@ -62,6 +62,10 @@
   <div id="responsive-menu">
     <div class="top-bar-right">
       <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li>
+          <a class="button primary" href="http://www.railsbookbundle.com/">POST RAILS - BOOK BUNDLE</a>
+
+        </li>
         <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
         <li><a href="/newsletter/">NEWSLETTER</a></li>
         <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -77,8 +81,8 @@
             <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
           </ul>
         </li>
-        <li class="has-form">
-          <a href="https://leanpub.com/trailblazer" class="button radius secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        <li>
+          <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
         </li>
       </ul>
     </div>
@@ -107,7 +111,7 @@
           
             <header>
   <h1 class="doc-page-title">Reform</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 July 2016</span>
 
   <hr>
 
@@ -123,19 +127,7 @@
 
 <p>A <em>form</em> doesn’t have to be a UI component, necessarily! It can be an intermediate validation before writing data to the persistence layer. While form objects may be used to render graphical web forms, Reform is used in many pure-API applications for deserialization and validation.</p>
 
-<h2 id="form-definition" data-magellan-target="form-definition">Form Definition</h2>
-
-<p>Forms are defined in separate classes. Often, these classes partially map to a model.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  property :title
-  validates :title, presence: true
-end
-</code></pre>
-</div>
-
-<p>Fields are declared using <code class="highlighter-rouge">::property</code>. Validations work almost exactly as you know it from Rails or other frameworks. Note that validations no longer go into the model.</p>
+<p>Note that validations no longer go into the model.</p>
 
 <h2 id="api" data-magellan-target="api">API</h2>
 
@@ -195,27 +187,6 @@ end
 
 <p>Optionally, you might want to use the <code class="highlighter-rouge">#prepopulate!</code> method to pre-populate fields and prepare the form for rendering.</p>
 
-<h2 id="validation" data-magellan-target="validation">Validation</h2>
-
-<p>After form submission, you need to validate the input.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongsController
-  def create
-    @form = SongForm.new(Song.new)
-
-    #=&gt; params: {song: {title: "Rio", length: "366"}}
-
-    if @form.validate(params[:song])
-</code></pre>
-</div>
-
-<p>The <code class="highlighter-rouge">#validate</code> method first updates the values of the form - the underlying model is still treated as immutuable and <em>remains unchanged</em>. It then runs all validations you provided in the form.</p>
-
-<p>It’s the only entry point for updating the form. This is per design, as separating writing and validation doesn’t make sense for a form.</p>
-
-<p>This allows rendering the form after <code class="highlighter-rouge">validate</code> with the data that has been submitted. However, don’t get confused, the model’s values are still the old, original values and are only changed after a <code class="highlighter-rouge">#save</code> or <code class="highlighter-rouge">#sync</code> operation.</p>
-
 <h2 id="syncing-back" data-magellan-target="syncing-back">Syncing Back</h2>
 
 <p>After validation, you have two choices: either call <code class="highlighter-rouge">#save</code> and let Reform sort out the rest. Or call <code class="highlighter-rouge">#sync</code>, which will write all the properties back to the model. In a nested form, this works recursively, of course.</p>
@@ -265,54 +236,6 @@ end
 </code></pre>
 </div>
 
-<h2 id="container" data-magellan-target="container">Container</h2>
-
-<p>While a form object will drastically improve your application architecture as a stand-alone object, forms work best in containers like Trailblazer’s operation.</p>
-
-<h2 id="disposable" data-magellan-target="disposable">Disposable</h2>
-
-<p>Every form in Reform is a <em>twin</em>. Twins are non-persistent domain objects from the <a href="https://github.com/apotonick/disposable">Disposable gem</a>. All features of Disposable, like renaming fields, change tracking, etc. are available in Reform, too.</p>
-
-<h2 id="nesting" data-magellan-target="nesting">Nesting</h2>
-
-<p>Reform provides support for nested objects. Let’s say the <code class="highlighter-rouge">Album</code> model keeps some associations.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Album &lt; ActiveRecord::Base
-  has_one  :artist
-  has_many :songs
-end
-</code></pre>
-</div>
-
-<p>The implementation details do not really matter here, as long as your album exposes readers and writes like <code class="highlighter-rouge">Album#artist</code> and <code class="highlighter-rouge">Album#songs</code>, this allows you to define nested forms.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  property :title
-  validates :title, presence: true
-
-  property :artist do
-    property :full_name
-    validates :full_name, presence: true
-  end
-
-  collection :songs do
-    property :name
-  end
-end
-</code></pre>
-</div>
-
-<p>You can also reuse an existing form from elsewhere using <code class="highlighter-rouge">:form</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :artist, form: ArtistForm
-</code></pre>
-</div>
-
-<h2 id="nested-setup" data-magellan-target="nested-setup">Nested Setup</h2>
-
 <p>Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.</p>
 
 <div class="highlighter-rouge">
@@ -321,27 +244,6 @@ end
 form = AlbumForm.new(album)
 form.songs[0] #=&gt; &lt;SongForm model: &lt;Song name:"Run To The Hills"&gt;&gt;
 form.songs[0].name #=&gt; "Run To The Hills"
-</code></pre>
-</div>
-
-<h3 id="nested-rendering">Nested Rendering</h3>
-
-<p>When rendering a nested form you can use the form’s readers to access the nested forms.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>= text_field :title,         @form.title
-= text_field "artist[name]", @form.artist.name
-</code></pre>
-</div>
-
-<p>Or use something like <code class="highlighter-rouge">#fields_for</code> in a Rails environment.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>= form_for @form do |f|
-  = f.text_field :title
-
-  = f.fields_for :artist do |a|
-    = a.text_field :name
 </code></pre>
 </div>
 
@@ -564,69 +466,6 @@ end
 </div>
 
 <p>As with the built-in coercion, this setter is only called in <code class="highlighter-rouge">#validate</code>.</p>
-
-<h2 id="virtual-attributes" data-magellan-target="virtual-attributes">Virtual Attributes</h2>
-
-<p>Virtual fields come in handy when there’s no direct mapping to a model attribute or when you plan on displaying but not processing a value.</p>
-
-<h3 id="virtual-fields">Virtual Fields</h3>
-
-<p>Often, fields like <code class="highlighter-rouge">password_confirmation</code> should neither be read from nor written back to the model. Reform comes with the <code class="highlighter-rouge">:virtual</code> option to handle that case.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class PasswordForm &lt; Reform::Form
-  property :password
-  property :password_confirmation, virtual: true
-</code></pre>
-</div>
-
-<p>Here, the model won’t be queried for a <code class="highlighter-rouge">password_confirmation</code> field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.validate("password" =&gt; "123", "password_confirmation" =&gt; "321")
-
-form.password_confirmation #=&gt; "321"
-</code></pre>
-</div>
-
-<p>The nested hash in the block-<code class="highlighter-rouge">#save</code> provides the same value.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:password_confirmation] #=&gt; "321"
-</code></pre>
-</div>
-
-<h3 id="read-only-fields">Read-Only Fields</h3>
-
-<p>When you want to show a value but skip processing it after submission the <code class="highlighter-rouge">:writeable</code> option is your friend.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class ProfileForm &lt; Reform::Form
-  property :country, writeable: false
-</code></pre>
-</div>
-
-<p>This time reform will query the model for the value by calling <code class="highlighter-rouge">model.country</code>.</p>
-
-<p>You want to use this to display an initial value or to further process this field with JavaScript. However, after submission, the field is no longer considered: it won’t be written to the model when saving.</p>
-
-<p>It is still readable in the nested hash and through the form itself.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:country] #=&gt; "Australia"
-</code></pre>
-</div>
-
-<h3 id="write-only-fields">Write-Only Fields</h3>
-
-<p>A third alternative is to hide a field’s value but write it to the database when syncing. This can be achieved using the <code class="highlighter-rouge">:readable</code> option.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :credit_card_number, readable: false
-</code></pre>
-</div>
 
 <h2 id="validations-from-models" data-magellan-target="validations-from-models">Validations From Models</h2>
 
@@ -922,53 +761,6 @@ end
 
 <p>The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.</p>
 
-<h3 id="skipping-properties-when-validating">Skipping Properties when Validating</h3>
-
-<p>In <code class="highlighter-rouge">#validate</code>, you can ignore properties now using <code class="highlighter-rouge">:skip_if</code> for deserialization.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
-</code></pre>
-</div>
-
-<p>This works for both properties and nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.</p>
-
-<p>For nested properties you can use <code class="highlighter-rouge">:skip_if: :all_blank</code> as a macro to ignore a nested form if all values are blank.</p>
-
-<p>Note that this still runs validations for the property, though.</p>
-
-<h3 id="prepopulating-forms">Prepopulating Forms</h3>
-
-<p>Docs: http://trailblazer.to/gems/reform/prepopulator.html</p>
-
-<p>You can also pass options to <code class="highlighter-rouge">#prepopulate</code>.</p>
-
-<p>Only do this for forms that are about to get rendered, though.</p>
-
-<p>Collections and partial collection population is covered in chapter 5.</p>
-
-<h3 id="populator">Populator</h3>
-
-<p>Docs: http://trailblazer.to/gems/reform/populator.html</p>
-
-<h3 id="property-inflections">Property Inflections</h3>
-
-<p>When rendering a form you might need to access the options you provided to <code class="highlighter-rouge">property</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :title, type: String
-</code></pre>
-</div>
-
-<p>You can do this using <code class="highlighter-rouge">#options_for</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.options_for(:title) # =&gt; {:readable=&gt;true, :coercion_type=&gt;String}
-</code></pre>
-</div>
-
-<p>Note that Reform renames some options (e.g. <code class="highlighter-rouge">:type</code> internally becomes <code class="highlighter-rouge">:coercion_type</code>). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you’re forward-compatible.</p>
-
 <p>it’s like that: your form gets a minimal set of input, and then transforms that into an object graph. don’t add public properties just to satisfy AR, solve that in the form</p>
 
             </div>
@@ -980,18 +772,12 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#form-definition">Form Definition</a></li>
-<li><a href="#api">API</a></li>
+          <li><a href="#api">API</a></li>
 <li><a href="#setup">Setup</a></li>
 <li><a href="#rendering-forms">Rendering Forms</a></li>
-<li><a href="#validation">Validation</a></li>
 <li><a href="#syncing-back">Syncing Back</a></li>
 <li><a href="#saving-forms">Saving Forms</a></li>
 <li><a href="#saving-forms-manually">Saving Forms Manually</a></li>
-<li><a href="#container">Container</a></li>
-<li><a href="#disposable">Disposable</a></li>
-<li><a href="#nesting">Nesting</a></li>
-<li><a href="#nested-setup">Nested Setup</a></li>
 <li><a href="#nested-processing">Nested Processing</a></li>
 <li><a href="#populating-forms">Populating Forms</a></li>
 <li><a href="#installation-dry-validation">Installation: Dry-Validation</a></li>
@@ -1001,7 +787,6 @@ end
 <li><a href="#hash-fields">Hash Fields</a></li>
 <li><a href="#validation-shortform">Validation Shortform</a></li>
 <li><a href="#compositions">Compositions</a></li>
-<li><a href="#virtual-attributes">Virtual Attributes</a></li>
 <li><a href="#validations-from-models">Validations From Models</a></li>
 <li><a href="#agnosticism-mapping-data">Agnosticism: Mapping Data</a></li>
 <li><a href="#reform-rails">Reform-Rails</a></li>
