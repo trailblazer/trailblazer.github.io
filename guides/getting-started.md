@@ -74,3 +74,9 @@ Simply for a matter of readability, this should be done before you start definin
 {% endtabs %}
 
 Note that you can still use alternative validations per form class.
+
+
+
+## Stack
+
+* Slim recommended (works with all gems such as Formular)
