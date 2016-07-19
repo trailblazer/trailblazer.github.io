@@ -120,7 +120,14 @@ The added twin is _not_ passed to the model. Note that the nested song is a twin
 
 ## Sync
 
-Given the above state change on the twin, here is what happens after calling `#sync`.
+To write twin data back to the models, use `sync`. You have to include `Sync`.
+
+    class AlbumTwin < Disposable::Twin
+      feature Sync
+      #..
+    end
+
+Given the above state change on the twin, here is what happens when calling `#sync`.
 
 ```ruby
 album.title  #=> "Nice Try"
@@ -132,25 +139,30 @@ album.title  #=> "Skamobile"
 album.songs #=> [<Song name="Adondo" index=1>]
 ```
 
-`#sync` writes all configured attributes back to the models using public setters as `album.name=` or `album.songs=`. This is recursive and will sync the entire object graph.
+`#sync` writes all configured attributes back to the models using public setters such as `album.name=` or `album.songs=`. This works recursively and will sync the entire object graph.
 
-Note that `sync` might already trigger saving the model as persistence layers like ActiveRecord can't deal with `collection= []` and instantly persist that.
+<div class="callout warning">
+  <p>
+    Note that <code>sync</code> might unexpectedly trigger saving of the model. Some persistence layers, for instance ActiveRecord, can't deal with <code>collection= []</code> and instantly persist that.
+  </p>
+</div>
 
-You may implement your syncing manually by passing a block to `sync`.
+### Sync with Block
+
+You may implement your syncing manually by passing a block to `sync`. The block argument is a nested hash of property/value pairs.
 
 ```ruby
 twin.sync do |hash|
   hash #=> {
   #  "title"     => "Skamobile",
   #  "playable?" => true,
-  #  "songs"     => [{"name"=>"Adondo"...}..]
+  #  "songs"     => [{ "name"=>"Adondo", ..}],
+  #  "composer"  => nil
   # }
 end
 ```
 
-Invoking `sync` with block will _not_ write anything to the models.
-
-Needs to be included explicitly (`Sync`).
+Invoking `sync` with block will _not_ write anything to the models. Note that `nil` values are included into the hash, too (0.4.0).
 
 ## Save
 
