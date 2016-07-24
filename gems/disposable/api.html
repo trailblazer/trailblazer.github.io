@@ -22,6 +22,7 @@
     $(document).foundation();
 
     anchors.add("article h2");
+    anchors.add("article h3");
 
     hljs.initHighlightingOnLoad();
 
@@ -62,10 +63,6 @@
   <div id="responsive-menu">
     <div class="top-bar-right">
       <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-        <li>
-          <a class="button primary" href="http://www.railsbookbundle.com/">POST RAILS - BOOK BUNDLE</a>
-
-        </li>
         <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
         <li><a href="/newsletter/">NEWSLETTER</a></li>
         <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -111,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Disposable API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 10 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 July 2016</span>
 
   <hr>
 
@@ -262,7 +259,17 @@ album.artist.email #=&gt; "duran@duran.com"
 
 <h2 id="sync" data-magellan-target="sync">Sync</h2>
 
-<p>Given the above state change on the twin, here is what happens after calling <code class="highlighter-rouge">#sync</code>.</p>
+<p>To write twin data back to the models, use <code class="highlighter-rouge">sync</code>. You have to include <code class="highlighter-rouge">Sync</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class AlbumTwin &lt; Disposable::Twin
+  feature Sync
+  #..
+end
+</code></pre>
+</div>
+
+<p>Given the above state change on the twin, here is what happens when calling <code class="highlighter-rouge">#sync</code>.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">album</span><span class="p">.</span><span class="nf">title</span>  <span class="c1">#=&gt; "Nice Try"</span>
@@ -275,26 +282,31 @@ album.artist.email #=&gt; "duran@duran.com"
 </code></pre>
 </div>
 
-<p><code class="highlighter-rouge">#sync</code> writes all configured attributes back to the models using public setters as <code class="highlighter-rouge">album.name=</code> or <code class="highlighter-rouge">album.songs=</code>. This is recursive and will sync the entire object graph.</p>
+<p><code class="highlighter-rouge">#sync</code> writes all configured attributes back to the models using public setters such as <code class="highlighter-rouge">album.name=</code> or <code class="highlighter-rouge">album.songs=</code>. This works recursively and will sync the entire object graph.</p>
 
-<p>Note that <code class="highlighter-rouge">sync</code> might already trigger saving the model as persistence layers like ActiveRecord can’t deal with <code class="highlighter-rouge">collection= []</code> and instantly persist that.</p>
+<div class="callout warning">
+  <p>
+    Note that <code>sync</code> might unexpectedly trigger saving of the model. Some persistence layers, for instance ActiveRecord, can't deal with <code>collection= []</code> and instantly persist that.
+  </p>
+</div>
 
-<p>You may implement your syncing manually by passing a block to <code class="highlighter-rouge">sync</code>.</p>
+<h3 id="sync-with-block">Sync with Block</h3>
+
+<p>You may implement your syncing manually by passing a block to <code class="highlighter-rouge">sync</code>. The block argument is a nested hash of property/value pairs.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">sync</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="o">|</span>
   <span class="nb">hash</span> <span class="c1">#=&gt; {</span>
   <span class="c1">#  "title"     =&gt; "Skamobile",</span>
   <span class="c1">#  "playable?" =&gt; true,</span>
-  <span class="c1">#  "songs"     =&gt; [{"name"=&gt;"Adondo"...}..]</span>
+  <span class="c1">#  "songs"     =&gt; [{ "name"=&gt;"Adondo", ..}],</span>
+  <span class="c1">#  "composer"  =&gt; nil</span>
   <span class="c1"># }</span>
 <span class="k">end</span>
 </code></pre>
 </div>
 
-<p>Invoking <code class="highlighter-rouge">sync</code> with block will <em>not</em> write anything to the models.</p>
-
-<p>Needs to be included explicitly (<code class="highlighter-rouge">Sync</code>).</p>
+<p>Invoking <code class="highlighter-rouge">sync</code> with block will <em>not</em> write anything to the models. Note that <code class="highlighter-rouge">nil</code> values are included into the hash, too (0.4.0).</p>
 
 <h2 id="save" data-magellan-target="save">Save</h2>
 
