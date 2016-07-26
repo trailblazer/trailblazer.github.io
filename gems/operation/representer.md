@@ -149,7 +149,7 @@ You can set your own representer class if you don't want it to be inferred.
 
 ## Responder
 
-The `Operation::Responder` module adds methods to use an operation instance directly with Rails responders. This is why this module comes from the `traiblazer-rails` gem.
+The `Operation::Responder` module adds methods to use an operation instance directly with Rails responders. This is why this module comes from the `trailblazer-rails` gem.
 
 ```ruby
 class Create < Trailblazer::Operation

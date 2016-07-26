@@ -7,7 +7,7 @@ title: "Cells Render API"
 
 ## View Paths
 
-Every cell class can have multiple view paths. However, I advise you not to have more than two, better one, unless you're imlementing a cell in an engine. This is simply to prevent unexpected behavior.
+Every cell class can have multiple view paths. However, I advise you not to have more than two, better one, unless you're implementing a cell in an engine. This is simply to prevent unexpected behavior.
 
 View paths are set via the `::view_paths` method.
 
