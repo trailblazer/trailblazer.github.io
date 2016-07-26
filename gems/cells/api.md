@@ -71,7 +71,7 @@ The model is available via the `model` reader.
 
 ```ruby
 def show
-  model.rude? "Offensive content." : render
+  model.rude? ? "Offensive content." : render
 end
 ```
 
