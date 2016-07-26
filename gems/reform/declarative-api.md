@@ -62,7 +62,7 @@ Use `readable: false` to hide a value but still write it to the model.
 
 1. The form **won't** invoke `model.credit_card_number` and will display an empty field.
 2. In `validate`, the form calls `form.credit_card_number=`.
-3. In `sync, the setter `model.credit_card_number=` is called and the value written to the database.
+3. In `sync`, the setter `model.credit_card_number=` is called and the value written to the database.
 
 ## Access Protection
 
