@@ -157,8 +157,8 @@ cell.(:show, Time.now)
 All arguments after the method name are passed to the invoked method.
 
 ```ruby
-def show(when)
-  when #=> Now!
+def show(time)
+  time #=> Now!
 end
 ```
 
