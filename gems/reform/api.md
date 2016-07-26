@@ -101,6 +101,15 @@ The accessors will now be nested.
 
 All API semantics explained here may be applied to both the top form and nested forms.
 
+
+### Nesting: Explicit Form
+
+Sometimes you want to specify an explicit form constant rather than an inline form. Use the `form:` option here.
+
+    property :song, form: SongForm
+
+The nested `SongForm` refers to a stand-alone form class you have to provide.
+
 ## Setup
 
 ## Validate
@@ -176,96 +185,27 @@ The returned `Errors` object exposes the following methods.
 
 ## Sync
 
+## Save
 
 
-## Form Option
+### Turning Off Autosave
 
-## Virtual Attributes
+You can assign Reform to _not_ call `save` on a particular nested model (per default, it is called automatically on all nested models).
 
-Virtual fields come in handy when there's no direct mapping to a model attribute or when you plan on displaying but not processing a value.
+    class AlbumForm < Reform::Form
+      # ...
+
+      collection :songs, save: false do
+        # ..
+      end
+
+The `:save` options set to false won't save models.
 
 
-### Virtual
+## Populator
 
-Often, fields like `password_confirmation` should neither be read from nor written back to the model. Reform comes with the `:virtual` option to handle that case.
+Very often, you need to give Reform some information how to create or find nested objects when `validate`ing. This directive is called _populator_ and [documented here](http://trailblazer.to/gems/reform/populator.html).
 
-    class PasswordForm < Reform::Form
-      property :password
-      property :password_confirmation, virtual: true
-
-Here, the model won't be queried for a `password_confirmation` field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.
-
-    form.validate("password" => "123", "password_confirmation" => "321")
-
-    form.password_confirmation #=> "321"
-
-The nested hash in the block-`#save` provides the same value.
-
-    form.save do |nested|
-      nested[:password_confirmation] #=> "321"
-
-### Read-Only
-
-Use `writeable: false` to display a value but skip processing it in `validate`.
-
-    property :country, writeable: false
-
-1. The form will invoke `model.country` to read the initial value.
-2. It will invoke `form.country=` in `validate`.
-3. The model's setter `model.country` **won't** be called in `sync`.
-
-Non-writeable values are still readable in the nested hash and through the form itself.
-
-    form.save do |nested|
-      nested[:country] #=> "Australia"
-
-### Write-Only
-
-Use `readable: false` to hide a value but still write it to the model.
-
-    property :credit_card_number, readable: false
-
-1. The form **won't** invoke `model.credit_card_number` and will display an empty field.
-2. In `validate`, the form calls `form.credit_card_number=`.
-3. In `sync, the setter `model.credit_card_number=` is called and the value written to the database.
-
-## Access Protection
-
-Use `parse: false` to protect the form setters from being called in `validate`.
-
-    property :uuid, parse: false
-
-1. This will call `model.uuid` to display the field via the form.
-2. In `validate`, the form's setter **won't** be called, leaving the value as it is.
-3. In `sync`, the setter `model.uuid` is called and restored to the original value.
-
-Note that the `:parse` option works by leveraging [:deserializer](#deserializer).
-
-## Coercion
-
-Incoming form data often needs conversion to a specific type, like timestamps. Reform uses [dry-types](http://dry-rb.org/gems/dry-types/) for coercion. The DSL is seamlessly integrated with the `:type` option.
-
-Be sure to add `dry-types` to your `Gemfile` when requiring coercion.
-
-    gem "dry-types"
-
-To use coercion, you need to include the `Coercion` module into your form class.
-
-    require "reform/form/coercion"
-
-    class SongForm < Reform::Form
-      feature Coercion
-
-      property :written_at, type: Types::Form::DateTime
-    end
-
-    form.validate("written_at" => "26 September")
-
-Coercion only happens in `#validate`, *not* during construction.
-
-    form.written_at #=> <DateTime "2014 September 26 00:00">
-
-Available coercion types are [documented here](http://dry-rb.org/gems/dry-types/built-in-types/).
 
 ## Manual Coercion
 
@@ -320,7 +260,7 @@ Using `inherit:` here will extend the existing `songs` form with the `band_id` f
 
 ## Overriding Accessors
 
-You're free to override form accessors for presentation and coercion.
+You're free to override form accessors for presentation or coercion.
 
     class SongForm < Reform::Form
       property :title
@@ -331,6 +271,12 @@ You're free to override form accessors for presentation and coercion.
     end
 
 As always, use `super` for the original method.
+
+This can also be used to provide a default value.
+
+    def title
+      super || "not available"
+    end
 
 ## Forms In Modules
 
@@ -377,17 +323,6 @@ This is important so Reform can add your accessors after defining the default on
 
 safe args can be passed in constructor
 
-## Skip_if
-
-Use `:skip_if` to ignore properties in `#validate`.
-
-    property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
-
-This works for both properties and entire nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.
-
-For nested properties you can use `:skip_if: :all_blank` as a macro to ignore a nested form if all values are blank.
-
-Note that this still runs validations for the property.
 
 ## Inflection
 
@@ -400,3 +335,37 @@ Use `options_for` to access a property's configuration.
     form.options_for(:title) # => {:readable=>true, :coercion_type=>String}
 
 Note that Reform renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation.
+
+## Dirty Tracker
+
+Every form tracks changes in `#validate` and allows to check if a particular property value has changed using `#changed?`.
+
+    form.title => "Button Up"
+
+    form.validate("title" => "Just Kiddin'")
+    form.changed?(:title) #=> true
+
+When including `Sync::SkipUnchanged`, the form won't assign unchanged values anymore in `#sync`.
+
+
+## Deserializing and Population
+
+A form object is just a twin. In `validate`, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.
+
+Representers can be inferred from the contract automatically using `Disposable::Schema`. You may then extend your representer with hypermedia, etc. in order to render documents. Check out the Trailblazer book (chapter Hypermedia APIs) for a full explanation.
+
+You can even write your own deserializer code in case you dislike Representable.
+
+    class AlbumForm < Reform::Form
+      # ..
+
+      def deserialize!(document)
+        hash = YAML.parse(document)
+
+        self.title  = hash[:title]
+        self.artist = Artist.new if hash[:artist]
+      end
+    end
+
+The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.
+

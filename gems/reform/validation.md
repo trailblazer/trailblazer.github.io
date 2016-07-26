@@ -208,3 +208,13 @@ Instead, use your own virtual fields.
 
 
 This is discussed in the _Authentication_ chapter of the [Trailblazer book](https://leanpub.com/trailblazer).
+
+## Validations For File Uploads
+
+In case you're processing uploaded files with your form using CarrierWave, Paperclip, Dragonfly or Paperdragon we recommend using the awesome [file_validators](https://github.com/musaffa/file_validators) gem for file type and size validations.
+
+    class SongForm < Reform::Form
+      property :image
+
+      validates :image, file_size: {less_than: 2.megabytes},
+        file_content_type: {allow: ['image/jpeg', 'image/png', 'image/gif']}
