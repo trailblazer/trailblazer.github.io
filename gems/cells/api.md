@@ -368,7 +368,7 @@ This instantiates each collection cell as follows.
 CommentCell.new(comment, size: 9)
 ```
 
-The `join` method allows to customize the cell invocation. The block's return value is autmatically joined.
+The `join` method allows to customize the cell invocation. The block's return value is automatically joined.
 
 ```ruby
 cell(:comment, collection: Comment.all).join do |cell, i|
