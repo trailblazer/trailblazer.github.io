@@ -60,15 +60,29 @@ end
 
 The same semantics apply to `contract`.
 
-## contract! Method
+### contract! Method
 
-To automate injection or composition, you can override `Operation#contract!`.
+To automate injection or composition, you can override `Operation#contract!`. Note that you will still need to specify the virtual properties in the contract as above.
 
 ```ruby
 class Create < Trailblazer::Operation
 
 private
-  def contract!(model, options, contract_class)
-    contract_class.new(model, current_user: @current_user)
+  def contract!(model=nil, contract_class=nil)
+    contract_class ||= self.class.contract_class
+    @contract ||= contract_class.new(model,
+      current_user: @current_user,
+      operation: self)
+  end
+```
+
+Or if you don't require arguments when calling `contract`, simply use:
+
+```ruby
+class Create < Trailblazer::Operation
+
+private
+  def contract! *args
+    @contract ||= self.class.contract_class.new(nil, operation: self)
   end
 ```
