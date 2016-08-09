@@ -13,20 +13,67 @@ A *form* doesn't have to be a UI component, necessarily! It can be an intermedia
 Note that validations no longer go into the model.
 
 
-
 ## API
 
-Forms have a ridiculously simple API with only a handful of public methods.
+Forms are defined in classes. Often, these classes partially map to a model.
 
-1. `#initialize` always requires a model that the form represents.
-2. `#validate(params)` updates the form's fields with the input data (only the form, _not_ the model) and then runs all validations. The return value is the boolean result of the validations.
-3. `#errors` returns validation messages in a classic ActiveModel style.
-4. `#sync` writes form data back to the model. This will only use setter methods on the model(s).
-5. `#save` (optional) will call `#save` on the model and nested models. Note that this implies a `#sync` call.
-6. `#prepopulate!` (optional) will run pre-population hooks to "fill out" your form before rendering.
+{% tabs %}
+~~dry-validation
+    class AlbumForm < Reform::Form
+      property :title
 
-In addition to the main API, forms expose accessors to the defined properties. This is used for rendering or manual operations.
+      validation do
+       required(:title).filled
+      end
+    end
 
+~~ActiveModel
+    class AlbumForm < Reform::Form
+      property :title
+
+      validates :title, presence: true
+    end
+{% endtabs %}
+
+Form fields are specified using `property` and `collection`, validations for the fields using the respective validation engine's API.
+
+Forms can also be nested and map to more complex object graphs.
+
+{% tabs %}
+~~dry-validation
+    class AlbumForm < Reform::Form
+      property :title
+
+      validation do
+       required(:title).filled
+      end
+
+      property :artist do
+        property :name
+
+        validation do
+         required(:title).filled
+        end
+      end
+    end
+
+~~ActiveModel
+    class AlbumForm < Reform::Form
+      property :title
+
+      validates :title, presence: true
+
+      property :artist do
+        property :name
+
+        validation do
+         required(:name).filled
+        end
+      end
+    end
+{% endtabs %}
+
+While Reform is perfectly suited to map nested models with associations, it also allows mapping via composition, to hash fields, and more. Check out the [supported data types](data-types.html).
 
 ## Setup
 
@@ -48,7 +95,7 @@ This will also work as an editing form with an existing album.
 
 Reform will read property values from the model in setup. In our example, the `AlbumForm` will call `album.title` to populate the `title` field.
 
-## Rendering Forms
+## Rendering
 
 Your `@form` is now ready to be rendered, either do it yourself or use something like Rails' `#form_for`, `simple_form` or `formtastic`.
 
@@ -59,73 +106,30 @@ Nested forms and collections can be easily rendered with `fields_for`, etc. Note
 
 Optionally, you might want to use the `#prepopulate!` method to pre-populate fields and prepare the form for rendering.
 
-
-## Syncing Back
-
-After validation, you have two choices: either call `#save` and let Reform sort out the rest. Or call `#sync`, which will write all the properties back to the model. In a nested form, this works recursively, of course.
-
-It's then up to you what to do with the updated models - they're still unsaved.
+## Validation
 
 
-## Saving Forms
+## Persisting
 
-The easiest way to save the data is to call `#save` on the form.
+The easiest way to persist validated data is to call `#save` on the form.
 
-    if @form.validate(params[:song])
-      @form.save  #=> populates album with incoming data
-                  #   by calling @form.album.title=.
-    else
-      # handle validation errors.
+    if form.validate(params[:song])
+      form.save
     end
 
-This will sync the data to the model and then call `album.save`.
+This will write the data to the model(s) using [`sync`](api.html#sync) and then call `album.save`.
 
-Sometimes, you need to do saving manually.
+You may save data manually using [`save` with a block](api.html#save).
 
-## Saving Forms Manually
-
-Calling `#save` with a block will provide a nested hash of the form's properties and values. This does **not call `#save` on the models** and allows you to implement the saving yourself.
-
-The block parameter is a nested hash of the form input.
-
-    @form.save do |hash|
-      hash      #=> {title: "Greatest Hits"}
-      Album.create(hash)
+    form.save do |nested_hash|
+      Album.create(title: nested_hash["title"])
     end
 
-You can always access the form's model. This is helpful when you were using populators to set up objects when validating.
+Or you can let Reform write the validated data to the model(s) without saving anything.
 
-    @form.save do |hash|
-      album = @form.model
+    form.sync # the album is unsaved!
 
-      album.update_attributes(hash[:album])
-    end
-
-
-Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.
-
-    album.songs #=> [<Song name:"Run To The Hills">]
-
-    form = AlbumForm.new(album)
-    form.songs[0] #=> <SongForm model: <Song name:"Run To The Hills">>
-    form.songs[0].name #=> "Run To The Hills"
-
-## Nested Processing
-
-`validate` will assign values to the nested forms. `sync` and `save` work analogue to the non-nested form, just in a recursive way.
-
-The block form of `#save` would give you the following data.
-
-    @form.save do |nested|
-      nested #=> {title:  "Greatest Hits",
-             #    artist: {name: "Duran Duran"},
-             #    songs: [{title: "Hungry Like The Wolf"},
-             #            {title: "Last Chance On The Stairways"}]
-             #   }
-      end
-
-The manual saving with block is not encouraged. You should rather check the Disposable docs to find out how to implement your manual tweak with the official API.
-
+This will updated the model's attributes using its setter methods, but not `save` anything.
 
 ## Installation: Dry-Validation
 

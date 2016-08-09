@@ -118,6 +118,14 @@ Again, setters are only called in `validate`, *not* during construction.
 
 ## Deserializer
 
+A form object is just a twin. In `validate`, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.
+
+## Populator
+
+When deserializing the incoming input in `validate`, advanced logic might be necessary to find nested objects from the database, or populate the form with arbitrary nested objects.
+
+The `:populator` and its short-hand `:populate_if_empty` options provide custom deserialization logic and are [documented here](populator.html).
+
 ## Inheritance
 
 Forms can be derived from other forms and will inherit all properties and validations.

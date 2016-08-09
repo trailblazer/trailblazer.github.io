@@ -82,7 +82,7 @@ Here's the default call stack of methods involved when running an Operation.
 
 1. In case of a polymorphic setup when you want different operation classes to handle different contexts, configured [builders](builder.html) will be run by `::build_operation` to figure out the class to instantiate.
 2. Override `#setup_params!` to normalize the incoming parameters. This implies that you have to change the original hash.
-3. Override `#params` if you want to use a different params hash - which you simply return from this method. This allows to keep the original `params` immutable.
+3. Override `#params!` if you want to use a different params hash - which you simply return from this method. This allows to keep the original `params` immutable.
 3. Override `#model!` to compute the operation's model.
 3. Override `#setup_model!` for tasks such as adding nested models to the operation's model.
 4. Implement `#process` for your business logic.

@@ -3,7 +3,20 @@ layout: reform
 title: "Reform: Declarative API"
 ---
 
-## Disposable API
+## Overview
+
+Forms have a ridiculously simple API with only a handful of public methods.
+
+1. `#initialize` always requires a model that the form represents.
+2. `#validate(params)` updates the form's fields with the input data (only the form, _not_ the model) and then runs all validations. The return value is the boolean result of the validations.
+3. `#errors` returns validation messages in a classic ActiveModel style.
+4. `#sync` writes form data back to the model. This will only use setter methods on the model(s).
+5. `#save` (optional) will call `#save` on the model and nested models. Note that this implies a `#sync` call.
+6. `#prepopulate!` (optional) will run pre-population hooks to "fill out" your form before rendering.
+
+In addition to the main API, forms expose accessors to the defined properties. This is used for rendering or manual operations.
+
+### Disposable API
 
 Every Reform form object inherits from `Disposable::Twin`, making every form a twin and giving each form the entire twin API such as.
 
@@ -112,6 +125,8 @@ The nested `SongForm` refers to a stand-alone form class you have to provide.
 
 ## Setup
 
+Injecting Objects: safe args can be passed in constructor
+
 ## Validate
 
 You can define validation for every form property and for nested forms.
@@ -171,6 +186,10 @@ The model won't be touched, its values are still the original ones.
 
     model.artist.name #=> "Duran Duran"
 
+### Deserialization and Populator
+
+Very often, you need to give Reform some information how to create or find nested objects when `validate`ing. This directive is called _populator_ and [documented here](http://trailblazer.to/gems/reform/populator.html).
+
 ## Errors
 
 After `validate`, you can access validation errors via `errors`.
@@ -187,6 +206,49 @@ The returned `Errors` object exposes the following methods.
 
 ## Save
 
+### Saving Forms Manually
+
+Calling `#save` with a block will provide a nested hash of the form's properties and values. This does **not call `#save` on the models** and allows you to implement the saving yourself.
+
+The block parameter is a nested hash of the form input.
+
+    @form.save do |hash|
+      hash      #=> {title: "Greatest Hits"}
+      Album.create(hash)
+    end
+
+You can always access the form's model. This is helpful when you were using populators to set up objects when validating.
+
+    @form.save do |hash|
+      album = @form.model
+
+      album.update_attributes(hash[:album])
+    end
+
+
+Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.
+
+    album.songs #=> [<Song name:"Run To The Hills">]
+
+    form = AlbumForm.new(album)
+    form.songs[0] #=> <SongForm model: <Song name:"Run To The Hills">>
+    form.songs[0].name #=> "Run To The Hills"
+
+### Nested Saving
+
+`validate` will assign values to the nested forms. `sync` and `save` work analogue to the non-nested form, just in a recursive way.
+
+The block form of `#save` would give you the following data.
+
+    @form.save do |nested|
+      nested #=> {title:  "Greatest Hits",
+             #    artist: {name: "Duran Duran"},
+             #    songs: [{title: "Hungry Like The Wolf"},
+             #            {title: "Last Chance On The Stairways"}]
+             #   }
+      end
+
+The manual saving with block is not encouraged. You should rather check the Disposable docs to find out how to implement your manual tweak with the official API.
 
 ### Turning Off Autosave
 
@@ -200,28 +262,6 @@ You can assign Reform to _not_ call `save` on a particular nested model (per def
       end
 
 The `:save` options set to false won't save models.
-
-
-## Populator
-
-Very often, you need to give Reform some information how to create or find nested objects when `validate`ing. This directive is called _populator_ and [documented here](http://trailblazer.to/gems/reform/populator.html).
-
-
-## Manual Coercion
-
-To filter values manually, you can override the setter in the form.
-
-    class SongForm < Reform::Form
-      property :title
-
-      def title=(value)
-        super sanitize(value) # value is raw form input.
-      end
-    end
-
-Again, setters are only called in `validate`, *not* during construction.
-
-## Deserializer
 
 ## Inheritance
 
@@ -319,10 +359,39 @@ If you want to provide accessors in the module, you have to define them in the `
 
 This is important so Reform can add your accessors after defining the default ones.
 
-# Injecting Objects
+## Dirty Tracker
 
-safe args can be passed in constructor
+Every form tracks changes in `#validate` and allows to check if a particular property value has changed using `#changed?`.
 
+    form.title => "Button Up"
+
+    form.validate("title" => "Just Kiddin'")
+    form.changed?(:title) #=> true
+
+When including `Sync::SkipUnchanged`, the form won't assign unchanged values anymore in `#sync`.
+
+## Deserialization
+
+When invoking `validate`, Reform will parse the incoming hash and transform it into a graph of nested form objects that represent the input. This is called *deserialization*.
+
+The deserialization is an important (and outstanding) feature of Reform and happens by using an internal *representer* that is automatically created for you. You can either configure that representer using the [`:deserializer` option](declarative-api.html#deserializer) or provide code for deserialization yourself, bypassing any representer logic. The `deserialize!` method is called before the actual validation of the graph is run and can be used for deserialization logic.
+
+      class AlbumForm < Reform::Form
+        property :title
+
+        def deserialize!(document)
+          hash = YAML.parse(document)
+
+          self.title  = hash[:title]
+          self.artist = Artist.new if hash[:artist]
+        end
+      end
+
+We encourage you to use Reform's deserialization using a representer, though. The representer is highly configurable and optimized for its job of parsing different data structures into Ruby objects.
+
+## Population
+
+To hook into the [deserialization](#deserialization) process, the easiest way is using [the `:populator` option](populator.html). It allows manually creating, changing or adding nested objects to the form to represent the input.
 
 ## Inflection
 
@@ -335,37 +404,3 @@ Use `options_for` to access a property's configuration.
     form.options_for(:title) # => {:readable=>true, :coercion_type=>String}
 
 Note that Reform renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation.
-
-## Dirty Tracker
-
-Every form tracks changes in `#validate` and allows to check if a particular property value has changed using `#changed?`.
-
-    form.title => "Button Up"
-
-    form.validate("title" => "Just Kiddin'")
-    form.changed?(:title) #=> true
-
-When including `Sync::SkipUnchanged`, the form won't assign unchanged values anymore in `#sync`.
-
-
-## Deserializing and Population
-
-A form object is just a twin. In `validate`, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.
-
-Representers can be inferred from the contract automatically using `Disposable::Schema`. You may then extend your representer with hypermedia, etc. in order to render documents. Check out the Trailblazer book (chapter Hypermedia APIs) for a full explanation.
-
-You can even write your own deserializer code in case you dislike Representable.
-
-    class AlbumForm < Reform::Form
-      # ..
-
-      def deserialize!(document)
-        hash = YAML.parse(document)
-
-        self.title  = hash[:title]
-        self.artist = Artist.new if hash[:artist]
-      end
-    end
-
-The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.
-
