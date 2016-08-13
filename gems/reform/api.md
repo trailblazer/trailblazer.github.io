@@ -1,7 +1,11 @@
 ---
 layout: reform
-title: "Reform: Declarative API"
+title: "Reform: API"
 ---
+
+This document discusses Reform's declarative API to define form classes and the instance API that is used at run-time on the form object, e.g. to validate an incoming hash.
+
+More specific documentation about options to be passed to the `property` and `collection` method are to be found in the [options documentation](options.html).
 
 ## Overview
 
@@ -30,7 +34,7 @@ If you're looking for a specific feature, make sure to check the [Disposable doc
 
 ## Form Class
 
-Forms are defined in classes. Often, these classes partially map to a model.
+Forms are defined in classes. Often, these classes partially map to one or many model(s).
 
 {% tabs %}
 ~~dry-validation
@@ -62,12 +66,32 @@ Use `property` to map scalar fields of your model to the form.
       property :title
     end
 
-This will create accessors on the form and read the initial value from the model.
+This will create accessors on the form and read the initial value from the model in [setup](#setup).
 
     model = Album.new(title: "Greatest Hits")
+    form  = AlbumForm.new(model)
 
-    form = AlbumForm.new(model)
     form.title #=> "Greatest Hits"
+
+### Overriding Accessors
+
+You're free to override the form's accessors for presentation or coercion.
+
+    class AlbumForm < Reform::Form
+      property :title
+
+      def title
+        super.capitalize
+      end
+    end
+
+As always, use `super` for the original method.
+
+This can also be used to provide a default value.
+
+    def title
+      super || "not available"
+    end
 
 ## Collection
 
@@ -298,26 +322,6 @@ You can also partially override fields using `:inherit`.
 
 Using `inherit:` here will extend the existing `songs` form with the `band_id` field. Note that this simply uses [representable's inheritance mechanism](https://github.com/apotonick/representable/#partly-overriding-properties).
 
-## Overriding Accessors
-
-You're free to override form accessors for presentation or coercion.
-
-    class SongForm < Reform::Form
-      property :title
-
-      def title
-        super.capitalize
-      end
-    end
-
-As always, use `super` for the original method.
-
-This can also be used to provide a default value.
-
-    def title
-      super || "not available"
-    end
-
 ## Forms In Modules
 
 To maximize reusability, you can also define forms in modules and include them in other modules or classes.
@@ -374,7 +378,9 @@ When including `Sync::SkipUnchanged`, the form won't assign unchanged values any
 
 When invoking `validate`, Reform will parse the incoming hash and transform it into a graph of nested form objects that represent the input. This is called *deserialization*.
 
-The deserialization is an important (and outstanding) feature of Reform and happens by using an internal *representer* that is automatically created for you. You can either configure that representer using the [`:deserializer` option](declarative-api.html#deserializer) or provide code for deserialization yourself, bypassing any representer logic. The `deserialize!` method is called before the actual validation of the graph is run and can be used for deserialization logic.
+The deserialization is an important (and outstanding) feature of Reform and happens by using an internal *representer* that is automatically created for you. You can either configure that representer using the [`:deserializer` option](options.html#deserializer) or provide code for deserialization yourself, bypassing any representer logic.
+
+The `deserialize!` method is called before the actual validation of the graph is run and can be used for deserialization logic.
 
       class AlbumForm < Reform::Form
         property :title

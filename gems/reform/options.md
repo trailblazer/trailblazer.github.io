@@ -1,6 +1,6 @@
 ---
 layout: reform
-title: "Reform: Declarative API"
+title: "Reform: Options API"
 ---
 
 ## Disposable API
