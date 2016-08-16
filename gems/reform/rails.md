@@ -1,3 +1,37 @@
+## Reform-Rails
+
+The `reform` gem itself doesn't contain any Rails-specific code but will still work, e.g. for JSON APIs. For extensive Rails support, add the [`reform-rails` gem](https://github.com/trailblazer/reform-rails).
+
+```ruby
+gem "reform", ">= 2.2.0"
+gem "reform-rails"
+```
+
+Per default, `reform-rails` will assume you want `ActiveModel::Validations` as the validation engine. This will include the following into `Reform::Form`.
+
+* `Form::ActiveModel` for form builder compliance so your form works with `form_for` and friends.
+* `Reform::Form::ActiveModel::FormBuilderMethods` to make Reform consume Rails form builder's weird parameters, e.g. `{song_attributes: { number: 1 }}`.
+* Uniqueness validation for `ActiveRecord`.
+
+However, you can also use the new, [recommended `dry-validation`](validation.html#dry-validation) backend, and you should check that out!
+
+To do so, add the gem to your Gemfile.
+
+```ruby
+gem "reform", ">= 2.2.0"
+gem "reform-rails"
+gem "dry-validation"
+```
+
+And configure Reform in an initializer, e.g. `config/initializer/reform.rb` to load the new validation backend.
+
+```ruby
+ Rails.application.config.reform.validations = :dry
+```
+
+Make sure you use the API when writing dry validations.
+
+
 ## Uniqueness Validation
 
 Both ActiveRecord and Mongoid modules will support "native" uniqueness support from the model class when you use `validates_uniqueness_of`. They will provide options like `:scope`, etc.
