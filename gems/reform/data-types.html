@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Reform: Options API</title>
-<meta name="description" content="Reform: Options API - Trailblazer">
+<title>Trailblazer: Reform Data Types</title>
+<meta name="description" content="Reform Data Types - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Reform: Options API">
+<meta property="og:title" content="Reform Data Types">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/reform/options.html">
+<meta property="og:url" content="http://trailblazer.to/gems/reform/data-types.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Reform: Options API">
+<meta name="twitter:title" content="Reform Data Types">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -107,8 +107,8 @@
 
           
             <header>
-  <h1 class="doc-page-title">Reform: Options API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 August 2016</span>
+  <h1 class="doc-page-title">Reform Data Types</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 26 July 2016</span>
 
   <hr>
 
@@ -118,252 +118,92 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>This document describes available options for Reform’s declarative API.</p>
+              <h2 id="composition" data-magellan-target="composition">Composition</h2>
 
-<h2 id="disposable-api" data-magellan-target="disposable-api">Disposable API</h2>
-
-<p>Every Reform form object inherits from <code class="highlighter-rouge">Disposable::Twin</code>, making every form a twin and giving each form the entire twin API such as.</p>
-
-<ul>
-  <li>Defaults using <code class="highlighter-rouge">:default</code>.</li>
-  <li>Coercion using <code class="highlighter-rouge">:type</code> and <code class="highlighter-rouge">:nilify</code>.</li>
-  <li>Nesting</li>
-  <li>Composition</li>
-  <li>Hash fields</li>
-</ul>
-
-<p>If you’re looking for a specific feature, make sure to check the <a href="/gems/disposable/api.html">Disposable documentation</a></p>
-
-<h2 id="virtual-attributes" data-magellan-target="virtual-attributes">Virtual Attributes</h2>
-
-<p>Virtual fields come in handy when there’s no direct mapping to a model attribute or when you plan on displaying but not processing a value.</p>
-
-<h3 id="virtual">Virtual</h3>
-
-<p>Often, fields like <code class="highlighter-rouge">password_confirmation</code> should neither be read from nor written back to the model. Reform comes with the <code class="highlighter-rouge">:virtual</code> option to handle that case.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class PasswordForm &lt; Reform::Form
-  property :password
-  property :password_confirmation, virtual: true
-</code></pre>
-</div>
-
-<p>Here, the model won’t be queried for a <code class="highlighter-rouge">password_confirmation</code> field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.validate("password" =&gt; "123", "password_confirmation" =&gt; "321")
-
-form.password_confirmation #=&gt; "321"
-</code></pre>
-</div>
-
-<p>The nested hash in the block-<code class="highlighter-rouge">#save</code> provides the same value.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:password_confirmation] #=&gt; "321"
-</code></pre>
-</div>
-
-<h3 id="read-only">Read-Only</h3>
-
-<p>Use <code class="highlighter-rouge">writeable: false</code> to display a value but skip processing it in <code class="highlighter-rouge">validate</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :country, writeable: false
-</code></pre>
-</div>
-
-<ol>
-  <li>The form will invoke <code class="highlighter-rouge">model.country</code> to read the initial value.</li>
-  <li>It will invoke <code class="highlighter-rouge">form.country=</code> in <code class="highlighter-rouge">validate</code>.</li>
-  <li>The model’s setter <code class="highlighter-rouge">model.country</code> <strong>won’t</strong> be called in <code class="highlighter-rouge">sync</code>.</li>
-</ol>
-
-<p>Non-writeable values are still readable in the nested hash and through the form itself.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:country] #=&gt; "Australia"
-</code></pre>
-</div>
-
-<h3 id="write-only">Write-Only</h3>
-
-<p>Use <code class="highlighter-rouge">readable: false</code> to hide a value but still write it to the model.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :credit_card_number, readable: false
-</code></pre>
-</div>
-
-<ol>
-  <li>The form <strong>won’t</strong> invoke <code class="highlighter-rouge">model.credit_card_number</code> and will display an empty field.</li>
-  <li>In <code class="highlighter-rouge">validate</code>, the form calls <code class="highlighter-rouge">form.credit_card_number=</code>.</li>
-  <li>In <code class="highlighter-rouge">sync</code>, the setter <code class="highlighter-rouge">model.credit_card_number=</code> is called and the value written to the database.</li>
-</ol>
-
-<h2 id="access-protection" data-magellan-target="access-protection">Access Protection</h2>
-
-<p>Use <code class="highlighter-rouge">parse: false</code> to protect the form setters from being called in <code class="highlighter-rouge">validate</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :uuid, parse: false
-</code></pre>
-</div>
-
-<ol>
-  <li>This will call <code class="highlighter-rouge">model.uuid</code> to display the field via the form.</li>
-  <li>In <code class="highlighter-rouge">validate</code>, the form’s setter <strong>won’t</strong> be called, leaving the value as it is.</li>
-  <li>In <code class="highlighter-rouge">sync</code>, the setter <code class="highlighter-rouge">model.uuid</code> is called and restored to the original value.</li>
-</ol>
-
-<p>Note that the <code class="highlighter-rouge">:parse</code> option works by leveraging <a href="#deserializer">:deserializer</a>.</p>
-
-<h2 id="coercion" data-magellan-target="coercion">Coercion</h2>
-
-<p>Incoming form data often needs conversion to a specific type, like timestamps. Reform uses <a href="http://dry-rb.org/gems/dry-types/">dry-types</a> for coercion. The DSL is seamlessly integrated with the <code class="highlighter-rouge">:type</code> option.</p>
-
-<p>Be sure to add <code class="highlighter-rouge">dry-types</code> to your <code class="highlighter-rouge">Gemfile</code> when requiring coercion.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>gem "dry-types"
-</code></pre>
-</div>
-
-<p>To use coercion, you need to include the <code class="highlighter-rouge">Coercion</code> module into your form class.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "reform/form/coercion"
-
-class SongForm &lt; Reform::Form
-  feature Coercion
-
-  property :written_at, type: Types::Form::DateTime
-end
-
-form.validate("written_at" =&gt; "26 September")
-</code></pre>
-</div>
-
-<p>Coercion only happens in <code class="highlighter-rouge">#validate</code>, <em>not</em> during construction.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
-</code></pre>
-</div>
-
-<p>Available coercion types are <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented here</a>.</p>
-
-<h2 id="manual-coercion" data-magellan-target="manual-coercion">Manual Coercion</h2>
-
-<p>To filter values manually, you can override the setter in the form.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :title
-
-  def title=(value)
-    super sanitize(value) # value is raw form input.
-  end
-end
-</code></pre>
-</div>
-
-<p>Again, setters are only called in <code class="highlighter-rouge">validate</code>, <em>not</em> during construction.</p>
-
-<h2 id="deserializer" data-magellan-target="deserializer">Deserializer</h2>
-
-<p>A form object is just a twin. In <code class="highlighter-rouge">validate</code>, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.</p>
-
-<h2 id="populator" data-magellan-target="populator">Populator</h2>
-
-<p>When deserializing the incoming input in <code class="highlighter-rouge">validate</code>, advanced logic might be necessary to find nested objects from the database, or populate the form with arbitrary nested objects.</p>
-
-<p>The <code class="highlighter-rouge">:populator</code> and its short-hand <code class="highlighter-rouge">:populate_if_empty</code> options provide custom deserialization logic and are <a href="populator.html">documented here</a>.</p>
-
-<h2 id="inheritance" data-magellan-target="inheritance">Inheritance</h2>
-
-<p>Forms can be derived from other forms and will inherit all properties and validations.</p>
+<p>Reform allows to map multiple models to one form. The <a href="https://github.com/apotonick/disposable#composition">complete documentation</a> is here, however, this is how it works.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  property :title
+  include Composition
 
-  collection :songs do
-    property :title
+  property :id,    on: :album
+  property :title, on: :album
+  property :songs, on: :cd
+  property :cd_id, on: :cd, from: :id
 
-    validates :title, presence: true
-  end
+  validates :title, presence: true
 end
 </code></pre>
 </div>
 
-<p>Now, a simple inheritance can add fields.</p>
+<p>Note that Reform now needs to know about the source of properties. You can configure that by using the <code class="highlighter-rouge">on:</code> option.</p>
+
+<h3 id="composition-setup">Composition: Setup</h3>
+
+<p>When initializing a composition, you have to pass a hash that contains the composees.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class CompilationForm &lt; AlbumForm
-  property :composers do
-    property :name
-  end
+<pre class="highlight"><code>form = AlbumForm.new(album: album, cd: CD.find(1))
+</code></pre>
+</div>
+
+<p>The form now hides the fact that it represents more than one model. Accessors for properties are defined directly on the form.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>form.title #=&gt; "Greatest Hits"
+</code></pre>
+</div>
+
+<h3 id="composition-savesync">Composition: Save/Sync</h3>
+
+<p>On a composition form, <code class="highlighter-rouge">sync</code> will write data back to the composee models. <code class="highlighter-rouge">save</code> will additionally call <code class="highlighter-rouge">save</code> on all composee models.</p>
+
+<p>When using `#save’ with a block, here’s what the block parameters look like.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>form.save do |nested|
+  nested #=&gt;
+    {
+      album:  {
+        id:    9,
+        title: "Rio"
+      },
+      cd:     {
+        songs: [],
+        id: 1
+      }
+    }
 end
 </code></pre>
 </div>
 
-<p>This will <em>add</em> <code class="highlighter-rouge">composers</code> to the existing fields.</p>
+<p>The hash is now keyed by composee name with the private property names.</p>
 
-<p>You can also partially override fields using <code class="highlighter-rouge">:inherit</code>.</p>
+<h3 id="composition-activemodel">Composition: ActiveModel</h3>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class CompilationForm &lt; AlbumForm
-  property :songs, inherit: true do
-    property :band_id
-    validates :band_id, presence: true
-  end
-end
-</code></pre>
-</div>
-
-<p>Using <code class="highlighter-rouge">inherit:</code> here will extend the existing <code class="highlighter-rouge">songs</code> form with the <code class="highlighter-rouge">band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
-
-<h2 id="skipif" data-magellan-target="skipif">Skip_if</h2>
-
-<p>Use <code class="highlighter-rouge">:skip_if</code> to ignore properties in <code class="highlighter-rouge">#validate</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
-</code></pre>
-</div>
-
-<p>This works for both properties and entire nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.</p>
-
-<p>For nested properties you can use <code class="highlighter-rouge">:skip_if: :all_blank</code> as a macro to ignore a nested form if all values are blank.</p>
-
-<p>Note that this still runs validations for the property.</p>
-
-<h2 id="multiparameter-dates" data-magellan-target="multiparameter-dates">Multiparameter Dates</h2>
-
-<p>Composed multi-parameter dates as created by the Rails date helper are processed automatically when <code class="highlighter-rouge">multi_params: true</code> is set for the date property and the <code class="highlighter-rouge">MultiParameterAttributes</code> feature is included. As soon as Reform detects an incoming <code class="highlighter-rouge">release_date(i1)</code> or the like it is gonna be converted into a date.</p>
+<p>With ActiveModel, the form needs to have a main object configured. This is where ActiveModel-methods like <code class="highlighter-rouge">#persisted?</code> or ‘#id’ are delegated to. Use <code class="highlighter-rouge">::model</code> to define the main object.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  feature Reform::Form::ActiveModel::FormBuilderMethods
-  feature Reform::Form::MultiParameterAttributes
+  include Composition
 
-  collection :songs do
-    feature Reform::Form::ActiveModel::FormBuilderMethods
-    property :title
-    property :release_date, :multi_params =&gt; true
-    validates :title, :presence =&gt; true
-  end
+  property :id,    on: :album
+  property :title, on: :album
+  property :songs, on: :cd
+  property :cd_id, on: :cd, from: :id
+
+  model :album # only needed in ActiveModel context.
+
+  validates :title, presence: true
 end
 </code></pre>
 </div>
 
-<p>Note that the date will be <code class="highlighter-rouge">nil</code> when one of the components (year/month/day) is missing.</p>
+<h2 id="hash-fields" data-magellan-target="hash-fields">Hash Fields</h2>
 
-<h2 id="nilify" data-magellan-target="nilify">Nilify</h2>
+<p>Reform can also handle deeply nested hash fields from serialized hash columns. This is <a href="https://github.com/apotonick/disposable#struct">documented here</a>.</p>
+
+<h2 id="nesting" data-magellan-target="nesting">Nesting</h2>
 
             </div>
 
@@ -374,17 +214,9 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#disposable-api">Disposable API</a></li>
-<li><a href="#virtual-attributes">Virtual Attributes</a></li>
-<li><a href="#access-protection">Access Protection</a></li>
-<li><a href="#coercion">Coercion</a></li>
-<li><a href="#manual-coercion">Manual Coercion</a></li>
-<li><a href="#deserializer">Deserializer</a></li>
-<li><a href="#populator">Populator</a></li>
-<li><a href="#inheritance">Inheritance</a></li>
-<li><a href="#skipif">Skip_if</a></li>
-<li><a href="#multiparameter-dates">Multiparameter Dates</a></li>
-<li><a href="#nilify">Nilify</a></li>
+          <li><a href="#composition">Composition</a></li>
+<li><a href="#hash-fields">Hash Fields</a></li>
+<li><a href="#nesting">Nesting</a></li>
         </ul>
       
 </nav>
@@ -435,8 +267,8 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html">API</a></li>
-    <li><a href="/gems/reform/options.html" class="active">Options</a></li>
-    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html" class="active">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
