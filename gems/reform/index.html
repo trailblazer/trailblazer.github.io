@@ -141,6 +141,9 @@
   <li>
 <strong>POPULATOR</strong> Deserialization of the incoming data can be customized using populators. <a href="populator.html">→ POPULATOR</a>
 </li>
+  <li>
+<strong>VALIDATION GROUPS</strong> Validations can be chained or run when certain criterias match, only. <a href="validation.html#validation-groups">→ VALIDATION GROUPS</a>
+</li>
 </ul>
 
 <h2 id="api" data-magellan-target="api">API</h2>
@@ -148,12 +151,12 @@
 <p>Forms are defined in classes. Often, these classes partially map to a model.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-22">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-22-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-22-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-23">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-23-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-23-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-22">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-22-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-23">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-23-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -163,7 +166,7 @@
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-22-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-23-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -179,12 +182,12 @@ end
 <p>Forms can also be nested and map to more complex object graphs.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-44">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-44-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-44-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-45">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-45-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-45-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-44">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-44-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-45">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-45-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -202,7 +205,7 @@ end
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-44-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-45-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -347,12 +350,12 @@ end
 <h2 id="installation" data-magellan-target="installation">Installation</h2>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-173">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-173-0-dry-validation">Dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-173-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-174">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-174-0-dry-validation">Dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-174-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-173">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-173-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-174">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-174-0-dry-validation">
 <p>Add this your Gemfile.</p>
 
 <pre><code>gem "reform"
@@ -368,7 +371,7 @@ Reform::Form.class_eval do
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-173-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-174-1-activemodel">
 <p>Add this to your Gemfile.</p>
 
 <pre><code>gem "reform"
