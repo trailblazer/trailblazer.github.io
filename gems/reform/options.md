@@ -3,6 +3,8 @@ layout: reform
 title: "Reform: Options API"
 ---
 
+This document describes available options for Reform's declarative API.
+
 ## Disposable API
 
 Every Reform form object inherits from `Disposable::Twin`, making every form a twin and giving each form the entire twin API such as.

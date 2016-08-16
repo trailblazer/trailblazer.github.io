@@ -19,6 +19,7 @@ A *form* doesn't have to be a UI component, necessarily! It can be an intermedia
 * **DATA TYPES** Reform can map model attributes, compositions of objects, nested models, hash fields and more. [→ DATA TYPES](data-types.html)
 * **COERCION** When validating, the form can coerce input to arbitrary values using the dry-types gem. [→ COERCION](options.html#coercion)
 * **POPULATOR** Deserialization of the incoming data can be customized using populators. [→ POPULATOR](populator.html)
+* **VALIDATION GROUPS** Validations can be chained or run when certain criterias match, only. [→ VALIDATION GROUPS](validation.html#validation-groups)
 
 
 ## API
@@ -226,7 +227,9 @@ Things you should know when using ActiveModel with Reform.
 
   Should you require more complex mapping, use something such as ROM and pass it to the form object.
 
-
 * **SECURITY** Reform simply ignores unsolicited input in `validate`. It does so by only accepting values for defined `property`s. This makes half-baked solutions like `strong_parameter` or `attr_accessible` obsolete.
 
 
+## Architecture
+
+Coming soon.

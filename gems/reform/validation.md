@@ -5,7 +5,13 @@ title: "Validation"
 
 Validation in Reform happens in the `validate` method, and only there.
 
-Since Reform 2.0, you can pick your validation backend. This can either be `ActiveModel::Validations` or `dry-validation`. The validation examples included on this page are using `dry-validation`.
+Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.
+
+It returns the result boolean, and provide potential errors via `errors`.
+
+## Validation Engine
+
+Since Reform 2.0, you can pick your validation engine. This can either be `ActiveModel::Validations` or `dry-validation`. The validation examples included on this page are using `dry-validation`.
 
 <div class="callout secondary">
   <p>
@@ -13,9 +19,7 @@ Since Reform 2.0, you can pick your validation backend. This can either be `Acti
   </p>
 </div>
 
-## Refactoring Legacy Forms
-
-Note that you are not limited to one validation backend. When switching from `ActiveModel::Validation` to `dry-validation`, you should set the first as the default validation engine.
+Note that you are not limited to one validation engine. When switching from `ActiveModel::Validation` to `dry-validation`, you should set the first as the default validation engine.
 
 {% tabs %}
 ~~Rails
@@ -43,15 +47,10 @@ In forms you're upgrading to dry-validation, you can include the validation modu
 
 This replaces the ActiveModel backend with dry for this specific form class, only.
 
-## Overview
-
-Validation in Reform works by invoking `validate` and passing in a hash. This hash can be deeply nested, Reform will deserialize the fragments and their values to the form and its nested subforms, and once this is done, run validations.
-
-`Form#validate` will return the result boolean, and provide potential errors via `Form#errors`.
 
 ## Validation Groups
 
-Grouping validataions enables you to run them conditionally, or in a specific order. You can use `:if` to specify what group had to be successful for it to be validated.
+Grouping validations enables you to run them conditionally, or in a specific order. You can use `:if` to specify what group had to be successful for it to be validated.
 
     validation :default do
       required(:title).filled
