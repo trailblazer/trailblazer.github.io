@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 August 2016</span>
 
   <hr>
 
@@ -200,7 +200,7 @@ end
 <ol>
   <li>In case of a polymorphic setup when you want different operation classes to handle different contexts, configured <a href="builder.html">builders</a> will be run by <code class="highlighter-rouge">::build_operation</code> to figure out the class to instantiate.</li>
   <li>Override <code class="highlighter-rouge">#setup_params!</code> to normalize the incoming parameters. This implies that you have to change the original hash.</li>
-  <li>Override <code class="highlighter-rouge">#params</code> if you want to use a different params hash - which you simply return from this method. This allows to keep the original <code class="highlighter-rouge">params</code> immutable.</li>
+  <li>Override <code class="highlighter-rouge">#params!</code> if you want to use a different params hash - which you simply return from this method. This allows to keep the original <code class="highlighter-rouge">params</code> immutable.</li>
   <li>Override <code class="highlighter-rouge">#model!</code> to compute the operation’s model.</li>
   <li>Override <code class="highlighter-rouge">#setup_model!</code> for tasks such as adding nested models to the operation’s model.</li>
   <li>Implement <code class="highlighter-rouge">#process</code> for your business logic.</li>
@@ -482,10 +482,12 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
-    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">

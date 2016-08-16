@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Cells API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 26 July 2016</span>
 
   <hr>
 
@@ -190,7 +190,7 @@
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span>
-  <span class="n">model</span><span class="p">.</span><span class="nf">rude?</span> <span class="s2">"Offensive content."</span> <span class="p">:</span> <span class="n">render</span>
+  <span class="n">model</span><span class="p">.</span><span class="nf">rude?</span> <span class="p">?</span> <span class="s2">"Offensive content."</span> <span class="p">:</span> <span class="n">render</span>
 <span class="k">end</span>
 </code></pre>
 </div>
@@ -290,8 +290,8 @@
 <p>All arguments after the method name are passed to the invoked method.</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="k">when</span><span class="p">)</span>
-  <span class="k">when</span> <span class="c1">#=&gt; Now!</span>
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+  <span class="n">time</span> <span class="c1">#=&gt; Now!</span>
 <span class="k">end</span>
 </code></pre>
 </div>
@@ -525,7 +525,7 @@
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">join</code> method allows to customize the cell invocation. The block’s return value is autmatically joined.</p>
+<p>The <code class="highlighter-rouge">join</code> method allows to customize the cell invocation. The block’s return value is automatically joined.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Comment</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span> <span class="k">do</span> <span class="o">|</span><span class="n">cell</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
@@ -716,7 +716,7 @@ end
 </code></pre>
 </div>
 
-<p>When views can be found in the local <code class="highlighter-rouge">post</code> directory, they will be looked up in <code class="highlighter-rouge">comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
+<p>When views can’t be found in the local <code class="highlighter-rouge">post</code> directory, they will be looked up in <code class="highlighter-rouge">comment</code>. This starts to become helpful when using <a href="#nested-cells">composed cells</a>.</p>
 
 <p>If you only want to inherit views, not the entire class, use <code class="highlighter-rouge">::inherit_views</code>.</p>
 
@@ -738,8 +738,11 @@ end
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
   <span class="n">builds</span> <span class="k">do</span> <span class="o">|</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
-    <span class="no">PostCell</span>       <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Post</span><span class="p">)</span>
-    <span class="no">CommentCell</span>    <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Comment</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Post</span><span class="p">)</span>
+      <span class="no">PostCell</span>
+    <span class="k">elsif</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Comment</span><span class="p">)</span>
+      <span class="no">CommentCell</span>
+    <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre>
@@ -956,10 +959,12 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
-    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">

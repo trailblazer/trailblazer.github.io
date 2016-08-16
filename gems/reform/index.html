@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Reform</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 August 2016</span>
 
   <hr>
 
@@ -118,41 +118,117 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="overview">Overview</h1>
+              <p>Reform provides form objects to run validations for one or multiple models.</p>
 
-<p>Reform provides form objects that maintain validations for one or multiple models, where a <em>model</em> can be any kind of Ruby object. It is completely framework-agnostic and doesn’t care about your database.</p>
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
+
+<p>Validations no longer sit in model classes, but in forms. Once the data is coerced and validated, it can be written to the model.</p>
+
+<p>A <em>model</em> can be any kind of Ruby object. Reform is completely framework-agnostic and doesn’t care about your database.</p>
 
 <p>A <em>form</em> doesn’t have to be a UI component, necessarily! It can be an intermediate validation before writing data to the persistence layer. While form objects may be used to render graphical web forms, Reform is used in many pure-API applications for deserialization and validation.</p>
 
-<p>Note that validations no longer go into the model.</p>
+<ul>
+  <li>
+<strong>API</strong> In Reform, form classes define fields and validations for the input. This input can be validated using <code class="highlighter-rouge">validate</code> and written to the model using <code class="highlighter-rouge">sync</code> or <code class="highlighter-rouge">save</code>. <a href="api.html">→ API</a>
+</li>
+  <li>
+<strong>DATA TYPES</strong> Reform can map model attributes, compositions of objects, nested models, hash fields and more. <a href="data-types.html">→ DATA TYPES</a>
+</li>
+  <li>
+<strong>COERCION</strong> When validating, the form can coerce input to arbitrary values using the dry-types gem. <a href="options.html#coercion">→ COERCION</a>
+</li>
+  <li>
+<strong>POPULATOR</strong> Deserialization of the incoming data can be customized using populators. <a href="populator.html">→ POPULATOR</a>
+</li>
+</ul>
 
 <h2 id="api" data-magellan-target="api">API</h2>
 
-<p>Forms have a ridiculously simple API with only a handful of public methods.</p>
+<p>Forms are defined in classes. Often, these classes partially map to a model.</p>
 
-<ol>
-  <li>
-<code class="highlighter-rouge">#initialize</code> always requires a model that the form represents.</li>
-  <li>
-<code class="highlighter-rouge">#validate(params)</code> updates the form’s fields with the input data (only the form, <em>not</em> the model) and then runs all validations. The return value is the boolean result of the validations.</li>
-  <li>
-<code class="highlighter-rouge">#errors</code> returns validation messages in a classic ActiveModel style.</li>
-  <li>
-<code class="highlighter-rouge">#sync</code> writes form data back to the model. This will only use setter methods on the model(s).</li>
-  <li>
-<code class="highlighter-rouge">#save</code> (optional) will call <code class="highlighter-rouge">#save</code> on the model and nested models. Note that this implies a <code class="highlighter-rouge">#sync</code> call.</li>
-  <li>
-<code class="highlighter-rouge">#prepopulate!</code> (optional) will run pre-population hooks to “fill out” your form before rendering.</li>
-</ol>
+<div class="tabs-container">
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-22">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-22-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-22-1-activemodel">ActiveModel</a></li>
+</ul>
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-22">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-22-0-dry-validation">
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
 
-<p>In addition to the main API, forms expose accessors to the defined properties. This is used for rendering or manual operations.</p>
+  validation do
+   required(:title).filled
+  end
+end
+</code></pre>
+</div>
+<div class="tabs-panel" id="tabs-gemsreformindexmd-22-1-activemodel">
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  validates :title, presence: true
+end
+</code></pre>
+</div>
+  </div>
+</div>
+
+<p>Form fields are specified using <code class="highlighter-rouge">property</code> and <code class="highlighter-rouge">collection</code>, validations for the fields using the respective validation engine’s API.</p>
+
+<p>Forms can also be nested and map to more complex object graphs.</p>
+
+<div class="tabs-container">
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-44">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-44-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-44-1-activemodel">ActiveModel</a></li>
+</ul>
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-44">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-44-0-dry-validation">
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  validation do
+   required(:title).filled
+  end
+
+  property :artist do
+    property :name
+
+    validation do
+     required(:title).filled
+    end
+  end
+end
+</code></pre>
+</div>
+<div class="tabs-panel" id="tabs-gemsreformindexmd-44-1-activemodel">
+<pre><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  validates :title, presence: true
+
+  property :artist do
+    property :name
+
+    validation do
+     required(:name).filled
+    end
+  end
+end
+</code></pre>
+</div>
+  </div>
+</div>
+
+<p>While Reform is perfectly suited to map nested models with associations, it also allows mapping via composition, to hash fields, and more. Check out the <a href="data-types.html">supported data types</a>.</p>
 
 <h2 id="setup" data-magellan-target="setup">Setup</h2>
 
-<p>In your controller or operation you create a form instance and pass in the models you want to work on.</p>
+<p>In your controller or operation you create a form instance and pass in the models you want to validate data against.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumsController
+<pre class="highlight"><code>class AlbumsController &lt; ApplicationController
   def new
     @form = AlbumForm.new(Album.new)
   end
@@ -168,9 +244,20 @@ end
 </code></pre>
 </div>
 
-<p>Reform will read property values from the model in setup. In our example, the <code class="highlighter-rouge">AlbumForm</code> will call <code class="highlighter-rouge">album.title</code> to populate the <code class="highlighter-rouge">title</code> field.</p>
+<p>In setup, Reform will read values from the model.</p>
 
-<h2 id="rendering-forms" data-magellan-target="rendering-forms">Rendering Forms</h2>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>model = Album.find(1)
+model.title #=&gt; "The Aristocrats"
+
+@form = AlbumForm.new(model)
+@form.title #=&gt; "The Aristocrats"
+</code></pre>
+</div>
+
+<p>Once read, the original model’s values will never be accessed.</p>
+
+<h2 id="rendering" data-magellan-target="rendering">Rendering</h2>
 
 <p>Your <code class="highlighter-rouge">@form</code> is now ready to be rendered, either do it yourself or use something like Rails’ <code class="highlighter-rouge">#form_for</code>, <code class="highlighter-rouge">simple_form</code> or <code class="highlighter-rouge">formtastic</code>.</p>
 
@@ -184,581 +271,155 @@ end
 
 <p>Optionally, you might want to use the <code class="highlighter-rouge">#prepopulate!</code> method to pre-populate fields and prepare the form for rendering.</p>
 
-<h2 id="syncing-back" data-magellan-target="syncing-back">Syncing Back</h2>
+<h2 id="validation" data-magellan-target="validation">Validation</h2>
 
-<p>After validation, you have two choices: either call <code class="highlighter-rouge">#save</code> and let Reform sort out the rest. Or call <code class="highlighter-rouge">#sync</code>, which will write all the properties back to the model. In a nested form, this works recursively, of course.</p>
-
-<p>It’s then up to you what to do with the updated models - they’re still unsaved.</p>
-
-<h2 id="saving-forms" data-magellan-target="saving-forms">Saving Forms</h2>
-
-<p>The easiest way to save the data is to call <code class="highlighter-rouge">#save</code> on the form.</p>
+<p>A submitted form is processed via <code class="highlighter-rouge">validate</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>if @form.validate(params[:song])
-  @form.save  #=&gt; populates album with incoming data
-              #   by calling @form.album.title=.
-else
-  # handle validation errors.
-end
+<pre class="highlight"><code>result = @form.validate(title: "Greatest Hits")
 </code></pre>
 </div>
 
-<p>This will sync the data to the model and then call <code class="highlighter-rouge">album.save</code>.</p>
+<p>By passing the incoming hash to <code class="highlighter-rouge">validate</code>, the input is written to the form and validated.</p>
 
-<p>Sometimes, you need to do saving manually.</p>
-
-<h2 id="saving-forms-manually" data-magellan-target="saving-forms-manually">Saving Forms Manually</h2>
-
-<p>Calling <code class="highlighter-rouge">#save</code> with a block will provide a nested hash of the form’s properties and values. This does <strong>not call <code class="highlighter-rouge">#save</code> on the models</strong> and allows you to implement the saving yourself.</p>
-
-<p>The block parameter is a nested hash of the form input.</p>
+<p>This usually happens in a processing controller action.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>@form.save do |hash|
-  hash      #=&gt; {title: "Greatest Hits"}
-  Album.create(hash)
-end
-</code></pre>
-</div>
+<pre class="highlight"><code>def create
+  @form = AlbumForm.new(Album.new)
 
-<p>You can always access the form’s model. This is helpful when you were using populators to set up objects when validating.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>@form.save do |hash|
-  album = @form.model
-
-  album.update_attributes(hash[:album])
-end
-</code></pre>
-</div>
-
-<p>Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>album.songs #=&gt; [&lt;Song name:"Run To The Hills"&gt;]
-
-form = AlbumForm.new(album)
-form.songs[0] #=&gt; &lt;SongForm model: &lt;Song name:"Run To The Hills"&gt;&gt;
-form.songs[0].name #=&gt; "Run To The Hills"
-</code></pre>
-</div>
-
-<h2 id="nested-processing" data-magellan-target="nested-processing">Nested Processing</h2>
-
-<p><code class="highlighter-rouge">validate</code> will assign values to the nested forms. <code class="highlighter-rouge">sync</code> and <code class="highlighter-rouge">save</code> work analogue to the non-nested form, just in a recursive way.</p>
-
-<p>The block form of <code class="highlighter-rouge">#save</code> would give you the following data.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>@form.save do |nested|
-  nested #=&gt; {title:  "Greatest Hits",
-         #    artist: {name: "Duran Duran"},
-         #    songs: [{title: "Hungry Like The Wolf"},
-         #            {title: "Last Chance On The Stairways"}]
-         #   }
+  if @form.validate(params[:album])
+    # persist data
+    @form.save
   end
+end
 </code></pre>
 </div>
 
-<p>The manual saving with block is not encouraged. You should rather check the Disposable docs to find out how to implement your manual tweak with the official API.</p>
+<p>After validation, the form’s values reflect the validated data.</p>
 
-<h2 id="populating-forms" data-magellan-target="populating-forms">Populating Forms</h2>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>@form.validate(title: "Greatest Hits")
+@form.validate #=&gt; "Greatest Hits"
+</code></pre>
+</div>
 
-<p>Very often, you need to give Reform some information how to create or find nested objects when <code class="highlighter-rouge">validate</code>ing. This directive is called <em>populator</em> and <a href="http://trailblazer.to/gems/reform/populator.html">documented here</a>.</p>
+<p>Note that the model remains untouched - validation solely happens on the form object.</p>
 
-<h2 id="installation-dry-validation" data-magellan-target="installation-dry-validation">Installation: Dry-Validation</h2>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>model.title #=&gt; "The Aristocrats"
+</code></pre>
+</div>
 
+<p>Reform never writes anything to the models, until you tell it to do so.</p>
+
+<h2 id="persisting" data-magellan-target="persisting">Persisting</h2>
+
+<p>The easiest way to persist validated data is to call <code class="highlighter-rouge">#save</code> on the form.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>if form.validate(params[:song])
+  form.save
+end
+</code></pre>
+</div>
+
+<p>This will write the data to the model(s) using <a href="api.html#sync"><code class="highlighter-rouge">sync</code></a> and then call <code class="highlighter-rouge">album.save</code>.</p>
+
+<p>You may save data manually using <a href="api.html#save"><code class="highlighter-rouge">save</code> with a block</a>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>form.save do |nested_hash|
+  Album.create(title: nested_hash["title"])
+end
+</code></pre>
+</div>
+
+<p>Or you can let Reform write the validated data to the model(s) without saving anything.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>form.sync # the album is unsaved!
+</code></pre>
+</div>
+
+<p>This will updated the model’s attributes using its setter methods, but not <code class="highlighter-rouge">save</code> anything.</p>
+
+<h2 id="installation" data-magellan-target="installation">Installation</h2>
+
+<div class="tabs-container">
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-173">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-173-0-dry-validation">Dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-173-1-activemodel">ActiveModel</a></li>
+</ul>
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-173">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-173-0-dry-validation">
 <p>Add this your Gemfile.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>gem "reform"
+<pre><code>gem "reform"
+gem "dry-validation"
 </code></pre>
-</div>
 
 <p>Please use <a href="http://dry-rb.org/gems/dry-validation">dry-validation</a>, which is our recommended validation engine. Put the following snippet into an initializer.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "reform/form/dry"
+<pre><code>require "reform/form/dry"
 
 Reform::Form.class_eval do
   include Reform::Form::Dry
 end
 </code></pre>
 </div>
-
-<h2 id="installation-activemodel" data-magellan-target="installation-activemodel">Installation: ActiveModel</h2>
-
+<div class="tabs-panel" id="tabs-gemsreformindexmd-173-1-activemodel">
 <p>Add this to your Gemfile.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>gem "reform"
+<pre><code>gem "reform"
 gem "reform-rails"
 </code></pre>
-</div>
 
-<p>To use <code class="highlighter-rouge">ActiveModel</code> (not recommended as it is way behind).</p>
+<p>To use <code>ActiveModel</code> for validations put this into an initializer.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "reform/form/active_model/validations"
+<pre><code>require "reform/form/active_model/validations"
 
 Reform::Form.class_eval do
   include Reform::Form::ActiveModel::Validations
 end
 </code></pre>
-</div>
 
 <p>Things you should know when using ActiveModel with Reform.</p>
 
 <ul>
   <li>
-<code class="highlighter-rouge">ActiveModel</code> support is provided by the <code class="highlighter-rouge">reform-rails</code> gem. You have to add it to your <code class="highlighter-rouge">Gemfile</code>.</li>
-  <li>The above last step of including <code class="highlighter-rouge">ActiveModel::Validations</code> is done automatically in a Rails environment.</li>
-  <li>Reform works fine with Rails 3.1-4.2. However, inheritance of validations with <code class="highlighter-rouge">ActiveModel::Validations</code> is broken in Rails 3.2 and 4.0.</li>
+<code>ActiveModel</code> support is provided by the <code>reform-rails</code> gem. You have to add it to your <code>Gemfile</code>.</li>
+  <li>The above last step of including <code>ActiveModel::Validations</code> is done automatically in a Rails environment.</li>
+  <li>Reform works fine with Rails 3.1-4.2. However, inheritance of validations with <code>ActiveModel::Validations</code> is broken in Rails 3.2 and 4.0.</li>
 </ul>
-
-<h2 id="composition" data-magellan-target="composition">Composition</h2>
-
-<p>Reform allows to map multiple models to one form. The <a href="https://github.com/apotonick/disposable#composition">complete documentation</a> is here, however, this is how it works.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumTwin &lt; Reform::Form
-  include Composition
-
-  property :id,    on: :album
-  property :title, on: :album
-  property :songs, on: :cd
-  property :cd_id, on: :cd, from: :id
-end
-</code></pre>
+</div>
+  </div>
 </div>
 
-<p>When initializing a composition, you have to pass a hash that contains the composees.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>AlbumForm.new(album: album, cd: CD.find(1))
-</code></pre>
-</div>
-
-<h2 id="more" data-magellan-target="more">More</h2>
-
-<p>Reform comes many more optional features, like hash fields, coercion, virtual fields, and so on. Check the <a href="http://trailblazer.to/gems/reform">full documentation here</a>.</p>
-
-<p>=&gt; rendering
-=&gt; sync with block</p>
-
-<h2 id="hash-fields" data-magellan-target="hash-fields">Hash Fields</h2>
-
-<p>Reform can also handle deeply nested hash fields from serialized hash columns. This is <a href="https://github.com/apotonick/disposable#struct">documented here</a>.</p>
-
-<h2 id="validation-shortform" data-magellan-target="validation-shortform">Validation Shortform</h2>
-
-<p>Luckily, this can be shortened as follows.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :title, validates: {presence: true}
-  property :length, validates: {numericality: true}
-end
-</code></pre>
-</div>
-
-<p>Use <code class="highlighter-rouge">properties</code> to bulk-specify fields.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  properties :title, :length, validates: {presence: true} # both required!
-  validates :length, numericality: true
-end
-</code></pre>
-</div>
-
-<p>If the form wraps multiple models, via <a href="#compositions">composition</a>, you can access them like this:</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>@form.save do |nested|
-  song = @form.model[:song]
-  label = @form.model[:label]
-end
-</code></pre>
-</div>
-
-<p>Note that you can call <code class="highlighter-rouge">#sync</code> and <em>then</em> call <code class="highlighter-rouge">#save { |hsh| }</code> to save models yourself.</p>
-
-<h3 id="turning-off-autosave">Turning Off Autosave</h3>
-
-<p>You can assign Reform to <em>not</em> call <code class="highlighter-rouge">save</code> on a particular nested model (per default, it is called automatically on all nested models).</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  # ...
-
-  collection :songs, save: false do
-    # ..
-  end
-</code></pre>
-</div>
-
-<p>The <code class="highlighter-rouge">:save</code> options set to false won’t save models.</p>
-
-<h2 id="compositions" data-magellan-target="compositions">Compositions</h2>
-
-<p>Sometimes you might want to embrace two (or more) unrelated objects with a single form. While you could write a simple delegating composition yourself, reform comes with it built-in.</p>
-
-<p>Say we were to edit a song and the label data the record was released from. Internally, this would imply working on the <code class="highlighter-rouge">songs</code> table and the <code class="highlighter-rouge">labels</code> table.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongWithLabelForm &lt; Reform::Form
-  include Composition
-
-  property :title, on: :song
-  property :city,  on: :label
-
-  model :song # only needed in ActiveModel context.
-
-  validates :title, :city, presence: true
-end
-</code></pre>
-</div>
-
-<p>Note that reform needs to know about the owner objects of properties. You can do so by using the <code class="highlighter-rouge">on:</code> option.</p>
-
-<p>Also, the form needs to have a main object configured. This is where ActiveModel-methods like <code class="highlighter-rouge">#persisted?</code> or ‘#id’ are delegated to. Use <code class="highlighter-rouge">::model</code> to define the main object.</p>
-
-<h3 id="composition-setup">Composition: Setup</h3>
-
-<p>The constructor slightly differs.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>@form = SongWithLabelForm.new(song: Song.new, label: Label.new)
-</code></pre>
-</div>
-
-<h3 id="composition-rendering">Composition: Rendering</h3>
-
-<p>After you configured your composition in the form, reform hides the fact that you’re actually showing two different objects.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>= form_for @form do |f|
-  Song:     = f.input :title
-  Label in: = f.input :city
-</code></pre>
-</div>
-
-<h3 id="composition-processing">Composition: Processing</h3>
-
-<p>When using `#save’ without a block reform will use writer methods on the different objects to push validated data to the properties.</p>
-
-<p>Here’s what the block parameters look like.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>@form.save do |nested|
-
-  nested #=&gt; {
-         #   song:  {title: "Rio"}
-         #   label: {city: "London"}
-         #   }
-end
-</code></pre>
-</div>
-
-<p>As with the built-in coercion, this setter is only called in <code class="highlighter-rouge">#validate</code>.</p>
-
-<h2 id="validations-from-models" data-magellan-target="validations-from-models">Validations From Models</h2>
-
-<p>Sometimes when you still keep validations in your models (which you shouldn’t) copying them to a form might not feel right. In that case, you can let Reform automatically copy them.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :title
-
-  extend ActiveModel::ModelValidations
-  copy_validations_from Song
-end
-</code></pre>
-</div>
-
-<p>Note how <code class="highlighter-rouge">copy_validations_from</code> copies over the validations allowing you to stay DRY.</p>
-
-<p>This also works with Composition.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include Composition
-  # ...
-
-  extend ActiveModel::ModelValidations
-  copy_validations_from song: Song, band: Band
-end
-</code></pre>
-</div>
-
-<h2 id="agnosticism-mapping-data" data-magellan-target="agnosticism-mapping-data">Agnosticism: Mapping Data</h2>
-
-<p>Reform doesn’t really know whether it’s working with a PORO, an <code class="highlighter-rouge">ActiveRecord</code> instance or a <code class="highlighter-rouge">Sequel</code> row.</p>
-
-<p>When rendering the form, reform calls readers on the decorated model to retrieve the field data (<code class="highlighter-rouge">Song#title</code>, <code class="highlighter-rouge">Song#length</code>).</p>
-
-<p>When syncing a submitted form, the same happens using writers. Reform simply calls <code class="highlighter-rouge">Song#title=(value)</code>. No knowledge is required about the underlying database layer.</p>
-
-<p>The same applies to saving: Reform will call <code class="highlighter-rouge">#save</code> on the main model and nested models.</p>
-
-<p>Nesting forms only requires readers for the nested properties as <code class="highlighter-rouge">Album#songs</code>.</p>
-
-<h2 id="reform-rails" data-magellan-target="reform-rails">Reform-Rails</h2>
-
-<p>The <code class="highlighter-rouge">reform</code> gem itself doesn’t contain any Rails-specific code but will still work, e.g. for JSON APIs. For extensive Rails support, add the <a href="https://github.com/trailblazer/reform-rails"><code class="highlighter-rouge">reform-rails</code> gem</a>.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"reform"</span><span class="p">,</span> <span class="s2">"&gt;= 2.2.0"</span>
-<span class="n">gem</span> <span class="s2">"reform-rails"</span>
-</code></pre>
-</div>
-
-<p>Per default, <code class="highlighter-rouge">reform-rails</code> will assume you want <code class="highlighter-rouge">ActiveModel::Validations</code> as the validation engine. This will include the following into <code class="highlighter-rouge">Reform::Form</code>.</p>
+<h2 id="design-concepts" data-magellan-target="design-concepts">Design Concepts</h2>
 
 <ul>
   <li>
-<code class="highlighter-rouge">Form::ActiveModel</code> for form builder compliance so your form works with <code class="highlighter-rouge">form_for</code> and friends.</li>
+    <p><strong>FRAMEWORK-AGNOSTIC</strong> Reform is completely framework-agnostic and is used in many projects with Rails, Sinatra, Hanami and more.</p>
+
+    <p>For Rails, the <a href="rails.html">reform-rails gem</a> provides convenient glue code to make Reform work with Rails’ form builders and <code class="highlighter-rouge">ActiveModel::Validations</code>.</p>
+  </li>
   <li>
-<code class="highlighter-rouge">Reform::Form::ActiveModel::FormBuilderMethods</code> to make Reform consume Rails form builder’s weird parameters, e.g. <code class="highlighter-rouge"><span class="p">{</span><span class="err">song_attributes:</span><span class="w"> </span><span class="err">{</span><span class="w"> </span><span class="err">number:</span><span class="w"> </span><span class="err">1</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code>.</li>
-  <li>Uniqueness validation for <code class="highlighter-rouge">ActiveRecord</code>.</li>
+    <p><strong>ORMs</strong> Reform works with any ORM or PORO - it has zero knowledge about underlying databases per design. The only requirements are reader and writer methods on the model(s) for defined properties.</p>
+  </li>
+  <li>
+    <p><strong>DATA MAPPING</strong> Reform helps mapping one or many models to a form object. Nevertheless, Reform is <em>not</em> a full-blown data mapper. It still is a form object. Simple data mapping like composition, delegation or hash fields come from the <a href="/gems/disposable/index.html">Disposable</a> gem.</p>
+
+    <p>Should you require more complex mapping, use something such as ROM and pass it to the form object.</p>
+  </li>
+  <li>
+    <p><strong>SECURITY</strong> Reform simply ignores unsolicited input in <code class="highlighter-rouge">validate</code>. It does so by only accepting values for defined <code class="highlighter-rouge">property</code>s. This makes half-baked solutions like <code class="highlighter-rouge">strong_parameter</code> or <code class="highlighter-rouge">attr_accessible</code> obsolete.</p>
+  </li>
 </ul>
 
-<p>However, you can also use the new, <a href="validation.html#dry-validation">recommended <code class="highlighter-rouge">dry-validation</code></a> backend, and you should check that out!</p>
+<h2 id="architecture" data-magellan-target="architecture">Architecture</h2>
 
-<p>To do so, add the gem to your Gemfile.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"reform"</span><span class="p">,</span> <span class="s2">"&gt;= 2.2.0"</span>
-<span class="n">gem</span> <span class="s2">"reform-rails"</span>
-<span class="n">gem</span> <span class="s2">"dry-validation"</span>
-</code></pre>
-</div>
-
-<p>And configure Reform in an initializer, e.g. <code class="highlighter-rouge">config/initializer/reform.rb</code> to load the new validation backend.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code> <span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">reform</span><span class="p">.</span><span class="nf">validations</span> <span class="o">=</span> <span class="ss">:dry</span>
-</code></pre>
-</div>
-
-<p>Make sure you use the API when writing dry validations.</p>
-
-<h2 id="reform-rails-troubleshooting" data-magellan-target="reform-rails-troubleshooting">Reform-Rails: Troubleshooting</h2>
-
-<ol>
-  <li>In case you explicitely <em>don’t</em> want to have automatic support for <code class="highlighter-rouge">ActiveRecord</code> or <code class="highlighter-rouge">Mongoid</code> and form builder: <code class="highlighter-rouge">require reform/form</code>, only.</li>
-  <li>In some setups around Rails 4 the <code class="highlighter-rouge">Form::ActiveRecord</code> module is not loaded properly, usually triggering a <code class="highlighter-rouge">NoMethodError</code> saying <code class="highlighter-rouge">undefined method 'model'</code>. If that happened to you, <code class="highlighter-rouge">require 'reform/rails'</code> manually at the bottom of your <code class="highlighter-rouge">config/application.rb</code>.</li>
-  <li>Mongoid form gets loaded with the gem if <code class="highlighter-rouge">Mongoid</code> constant is defined.</li>
-</ol>
-
-<h2 id="activerecord-compatibility" data-magellan-target="activerecord-compatibility">ActiveRecord Compatibility</h2>
-
-<p>Reform provides the following <code class="highlighter-rouge">ActiveRecord</code> specific features. They’re mixed in automatically in a Rails/AR setup.</p>
-
-<ul>
-  <li>Uniqueness validations. Use <code class="highlighter-rouge">validates_uniqueness_of</code> in your form.</li>
-</ul>
-
-<p>As mentioned in the <a href="https://github.com/apotonick/reform#rails-integration">Rails Integration</a> section some Rails 4 setups do not properly load.</p>
-
-<p>You may want to include the module manually then.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include Reform::Form::ActiveRecord
-</code></pre>
-</div>
-
-<h2 id="mongoid-compatibility" data-magellan-target="mongoid-compatibility">Mongoid Compatibility</h2>
-
-<p>Reform provides the following <code class="highlighter-rouge">Mongoid</code> specific features. They’re mixed in automatically in a Rails/Mongoid setup.</p>
-
-<ul>
-  <li>Uniqueness validations. Use <code class="highlighter-rouge">validates_uniqueness_of</code> in your form.</li>
-</ul>
-
-<p>You may want to include the module manually then.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include Reform::Form::Mongoid
-</code></pre>
-</div>
-
-<h2 id="uniqueness-validation" data-magellan-target="uniqueness-validation">Uniqueness Validation</h2>
-
-<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support from the model class when you use <code class="highlighter-rouge">validates_uniqueness_of</code>. They will provide options like <code class="highlighter-rouge">:scope</code>, etc.</p>
-
-<p>You’re encouraged to use Reform’s non-writing <code class="highlighter-rouge">unique: true</code> validation, though. <a href="http://trailblazer.to/gems/reform/validation.html">Learn more</a></p>
-
-<h2 id="activemodel-compliance" data-magellan-target="activemodel-compliance">ActiveModel Compliance</h2>
-
-<p>Forms in Reform can easily be made ActiveModel-compliant.</p>
-
-<p>Note that this step is <em>not</em> necessary in a Rails environment.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include Reform::Form::ActiveModel
-end
-</code></pre>
-</div>
-
-<p>If you’re not happy with the <code class="highlighter-rouge">model_name</code> result, configure it manually via <code class="highlighter-rouge">::model</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class CoverSongForm &lt; Reform::Form
-  include Reform::Form::ActiveModel
-
-  model :song
-end
-</code></pre>
-</div>
-
-<p><code class="highlighter-rouge">::model</code> will configure ActiveModel’s naming logic. With <code class="highlighter-rouge">Composition</code>, this configures the main model of the form and should be called once.</p>
-
-<p>This is especially helpful when your framework tries to render <code class="highlighter-rouge">cover_song_path</code> although you want to go with <code class="highlighter-rouge">song_path</code>.</p>
-
-<h2 id="formbuilder-support" data-magellan-target="formbuilder-support">FormBuilder Support</h2>
-
-<p>To make your forms work with all the form gems like <code class="highlighter-rouge">simple_form</code> or Rails <code class="highlighter-rouge">form_for</code> you need to include another module.</p>
-
-<p>Again, this step is implicit in Rails and you don’t need to do it manually.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include Reform::Form::ActiveModel
-  include Reform::Form::ActiveModel::FormBuilderMethods
-end
-</code></pre>
-</div>
-
-<h3 id="simple-form">Simple Form</h3>
-
-<p>If you want full support for <code class="highlighter-rouge">simple_form</code> do as follows.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  include ActiveModel::ModelReflections
-</code></pre>
-</div>
-
-<p>Including this module will add <code class="highlighter-rouge">#column_for_attribute</code> and other methods need by form builders to automatically guess the type of a property.</p>
-
-<h2 id="validations-for-file-uploads" data-magellan-target="validations-for-file-uploads">Validations For File Uploads</h2>
-
-<p>In case you’re processing uploaded files with your form using CarrierWave, Paperclip, Dragonfly or Paperdragon we recommend using the awesome <a href="https://github.com/musaffa/file_validators">file_validators</a> gem for file type and size validations.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :image
-
-  validates :image, file_size: {less_than: 2.megabytes},
-    file_content_type: {allow: ['image/jpeg', 'image/png', 'image/gif']}
-</code></pre>
-</div>
-
-<h2 id="multiparameter-dates" data-magellan-target="multiparameter-dates">Multiparameter Dates</h2>
-
-<p>Composed multi-parameter dates as created by the Rails date helper are processed automatically when <code class="highlighter-rouge">multi_params: true</code> is set for the date property and the <code class="highlighter-rouge">MultiParameterAttributes</code> feature is included. As soon as Reform detects an incoming <code class="highlighter-rouge">release_date(i1)</code> or the like it is gonna be converted into a date.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  feature Reform::Form::ActiveModel::FormBuilderMethods
-  feature Reform::Form::MultiParameterAttributes
-
-  collection :songs do
-    feature Reform::Form::ActiveModel::FormBuilderMethods
-    property :title
-    property :release_date, :multi_params =&gt; true
-    validates :title, :presence =&gt; true
-  end
-end
-</code></pre>
-</div>
-
-<p>Note that the date will be <code class="highlighter-rouge">nil</code> when one of the components (year/month/day) is missing.</p>
-
-<h2 id="security" data-magellan-target="security">Security</h2>
-
-<p>By explicitely defining the form layout using <code class="highlighter-rouge">::property</code> there is no more need for protecting from unwanted input. <code class="highlighter-rouge">strong_parameter</code> or <code class="highlighter-rouge">attr_accessible</code> become obsolete. Reform will simply ignore undefined incoming parameters.</p>
-
-<h2 id="nesting-without-inline-representers" data-magellan-target="nesting-without-inline-representers">Nesting Without Inline Representers</h2>
-
-<p>When nesting form, you usually use a so-called inline form doing <code class="highlighter-rouge">property :song do .. end</code>.</p>
-
-<p>Sometimes you want to specify an explicit form rather than using an inline form. Use the <code class="highlighter-rouge">form:</code> option here.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :song, form: SongForm
-</code></pre>
-</div>
-
-<p>The nested <code class="highlighter-rouge">SongForm</code> is a stand-alone form class you have to provide.</p>
-
-<h2 id="default-values-for-presentation" data-magellan-target="default-values-for-presentation">Default Values For Presentation</h2>
-
-<p>In case you want to change a value for presentation or provide a default value, override the reader. This is only considered when the form is rendered (e.g. in <code class="highlighter-rouge">form_for</code>).</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :genre
-
-  def genre
-    super || 'Punkrock'
-  end
-end
-</code></pre>
-</div>
-
-<p>This will now be used when rendering the view.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>= f.input :genre # calls form.genre which provides default.
-</code></pre>
-</div>
-
-<h2 id="dirty-tracker" data-magellan-target="dirty-tracker">Dirty Tracker</h2>
-
-<p>Every form tracks changes in <code class="highlighter-rouge">#validate</code> and allows to check if a particular property value has changed using <code class="highlighter-rouge">#changed?</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.title =&gt; "Button Up"
-
-form.validate("title" =&gt; "Just Kiddin'")
-form.changed?(:title) #=&gt; true
-</code></pre>
-</div>
-
-<p>When including <code class="highlighter-rouge">Sync::SkipUnchanged</code>, the form won’t assign unchanged values anymore in <code class="highlighter-rouge">#sync</code>.</p>
-
-<h2 id="deserializing-and-population" data-magellan-target="deserializing-and-population">Deserializing and Population</h2>
-
-<p>A form object is just a twin. In <code class="highlighter-rouge">validate</code>, a representer is used to deserialize the incoming hash and populate the form twin graph. This means, you can use any representer you like and process data like JSON or XML, too.</p>
-
-<p>Representers can be inferred from the contract automatically using <code class="highlighter-rouge">Disposable::Schema</code>. You may then extend your representer with hypermedia, etc. in order to render documents. Check out the Trailblazer book (chapter Hypermedia APIs) for a full explanation.</p>
-
-<p>You can even write your own deserializer code in case you dislike Representable.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
-  # ..
-
-  def deserialize!(document)
-    hash = YAML.parse(document)
-
-    self.title  = hash[:title]
-    self.artist = Artist.new if hash[:artist]
-  end
-end
-</code></pre>
-</div>
-
-<p>The decoupling of deserializer and form object is one of the main reasons I wrote Reform 2.</p>
-
-<p>it’s like that: your form gets a minimal set of input, and then transforms that into an object graph. don’t add public properties just to satisfy AR, solve that in the form</p>
+<p>Coming soon.</p>
 
             </div>
 
@@ -769,37 +430,15 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#api">API</a></li>
+          <li><a href="#overview">Overview</a></li>
+<li><a href="#api">API</a></li>
 <li><a href="#setup">Setup</a></li>
-<li><a href="#rendering-forms">Rendering Forms</a></li>
-<li><a href="#syncing-back">Syncing Back</a></li>
-<li><a href="#saving-forms">Saving Forms</a></li>
-<li><a href="#saving-forms-manually">Saving Forms Manually</a></li>
-<li><a href="#nested-processing">Nested Processing</a></li>
-<li><a href="#populating-forms">Populating Forms</a></li>
-<li><a href="#installation-dry-validation">Installation: Dry-Validation</a></li>
-<li><a href="#installation-activemodel">Installation: ActiveModel</a></li>
-<li><a href="#composition">Composition</a></li>
-<li><a href="#more">More</a></li>
-<li><a href="#hash-fields">Hash Fields</a></li>
-<li><a href="#validation-shortform">Validation Shortform</a></li>
-<li><a href="#compositions">Compositions</a></li>
-<li><a href="#validations-from-models">Validations From Models</a></li>
-<li><a href="#agnosticism-mapping-data">Agnosticism: Mapping Data</a></li>
-<li><a href="#reform-rails">Reform-Rails</a></li>
-<li><a href="#reform-rails-troubleshooting">Reform-Rails: Troubleshooting</a></li>
-<li><a href="#activerecord-compatibility">ActiveRecord Compatibility</a></li>
-<li><a href="#mongoid-compatibility">Mongoid Compatibility</a></li>
-<li><a href="#uniqueness-validation">Uniqueness Validation</a></li>
-<li><a href="#activemodel-compliance">ActiveModel Compliance</a></li>
-<li><a href="#formbuilder-support">FormBuilder Support</a></li>
-<li><a href="#validations-for-file-uploads">Validations For File Uploads</a></li>
-<li><a href="#multiparameter-dates">Multiparameter Dates</a></li>
-<li><a href="#security">Security</a></li>
-<li><a href="#nesting-without-inline-representers">Nesting Without Inline Representers</a></li>
-<li><a href="#default-values-for-presentation">Default Values For Presentation</a></li>
-<li><a href="#dirty-tracker">Dirty Tracker</a></li>
-<li><a href="#deserializing-and-population">Deserializing and Population</a></li>
+<li><a href="#rendering">Rendering</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#persisting">Persisting</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#design-concepts">Design Concepts</a></li>
+<li><a href="#architecture">Architecture</a></li>
         </ul>
       
 </nav>
@@ -850,10 +489,12 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
-    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">

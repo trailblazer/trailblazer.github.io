@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Reform: Declarative API</title>
-<meta name="description" content="Reform: Declarative API - Trailblazer">
+<title>Trailblazer: Reform: API</title>
+<meta name="description" content="Reform: API - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Reform: Declarative API">
+<meta property="og:title" content="Reform: API">
 <meta property="og:site_name" content="Trailblazer">
 <meta property="og:url" content="http://trailblazer.to/gems/reform/api.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Reform: Declarative API">
+<meta name="twitter:title" content="Reform: API">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -107,8 +107,8 @@
 
           
             <header>
-  <h1 class="doc-page-title">Reform: Declarative API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 July 2016</span>
+  <h1 class="doc-page-title">Reform: API</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 August 2016</span>
 
   <hr>
 
@@ -118,7 +118,32 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h2 id="disposable-api" data-magellan-target="disposable-api">Disposable API</h2>
+              <p>This document discusses Reform’s declarative API to define form classes and the instance API that is used at run-time on the form object, e.g. to validate an incoming hash.</p>
+
+<p>More specific documentation about options to be passed to the <code class="highlighter-rouge">property</code> and <code class="highlighter-rouge">collection</code> method are to be found in the <a href="options.html">options documentation</a>.</p>
+
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
+
+<p>Forms have a ridiculously simple API with only a handful of public methods.</p>
+
+<ol>
+  <li>
+<code class="highlighter-rouge">#initialize</code> always requires a model that the form represents.</li>
+  <li>
+<code class="highlighter-rouge">#validate(params)</code> updates the form’s fields with the input data (only the form, <em>not</em> the model) and then runs all validations. The return value is the boolean result of the validations.</li>
+  <li>
+<code class="highlighter-rouge">#errors</code> returns validation messages in a classic ActiveModel style.</li>
+  <li>
+<code class="highlighter-rouge">#sync</code> writes form data back to the model. This will only use setter methods on the model(s).</li>
+  <li>
+<code class="highlighter-rouge">#save</code> (optional) will call <code class="highlighter-rouge">#save</code> on the model and nested models. Note that this implies a <code class="highlighter-rouge">#sync</code> call.</li>
+  <li>
+<code class="highlighter-rouge">#prepopulate!</code> (optional) will run pre-population hooks to “fill out” your form before rendering.</li>
+</ol>
+
+<p>In addition to the main API, forms expose accessors to the defined properties. This is used for rendering or manual operations.</p>
+
+<h3 id="disposable-api">Disposable API</h3>
 
 <p>Every Reform form object inherits from <code class="highlighter-rouge">Disposable::Twin</code>, making every form a twin and giving each form the entire twin API such as.</p>
 
@@ -134,15 +159,15 @@
 
 <h2 id="form-class" data-magellan-target="form-class">Form Class</h2>
 
-<p>Forms are defined in classes. Often, these classes partially map to a model.</p>
+<p>Forms are defined in classes. Often, these classes partially map to one or many model(s).</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformapimd-17">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-17-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformapimd-17-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformapimd-34">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-34-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformapimd-34-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformapimd-17">
-    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-17-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformapimd-34">
+    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-34-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -152,7 +177,7 @@
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformapimd-17-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformapimd-34-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -178,13 +203,39 @@ end
 </code></pre>
 </div>
 
-<p>This will create accessors on the form and read the initial value from the model.</p>
+<p>This will create accessors on the form and read the initial value from the model in <a href="#setup">setup</a>.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>model = Album.new(title: "Greatest Hits")
+form  = AlbumForm.new(model)
 
-form = AlbumForm.new(model)
 form.title #=&gt; "Greatest Hits"
+</code></pre>
+</div>
+
+<h3 id="overriding-accessors">Overriding Accessors</h3>
+
+<p>You’re free to override the form’s accessors for presentation or coercion.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
+  property :title
+
+  def title
+    super.capitalize
+  end
+end
+</code></pre>
+</div>
+
+<p>As always, use <code class="highlighter-rouge">super</code> for the original method.</p>
+
+<p>This can also be used to provide a default value.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def title
+  super || "not available"
+end
 </code></pre>
 </div>
 
@@ -248,19 +299,32 @@ form.songs[0].title #=&gt; "The Reflex"
 
 <p>All API semantics explained here may be applied to both the top form and nested forms.</p>
 
+<h3 id="nesting-explicit-form">Nesting: Explicit Form</h3>
+
+<p>Sometimes you want to specify an explicit form constant rather than an inline form. Use the <code class="highlighter-rouge">form:</code> option here.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>property :song, form: SongForm
+</code></pre>
+</div>
+
+<p>The nested <code class="highlighter-rouge">SongForm</code> refers to a stand-alone form class you have to provide.</p>
+
 <h2 id="setup" data-magellan-target="setup">Setup</h2>
+
+<p>Injecting Objects: safe args can be passed in constructor</p>
 
 <h2 id="validate" data-magellan-target="validate">Validate</h2>
 
 <p>You can define validation for every form property and for nested forms.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformapimd-105">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-105-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformapimd-105-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformapimd-153">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-153-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformapimd-153-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformapimd-105">
-    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-105-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformapimd-153">
+    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-153-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -278,7 +342,7 @@ form.songs[0].title #=&gt; "The Reflex"
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformapimd-105-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformapimd-153-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -327,6 +391,10 @@ end
 </code></pre>
 </div>
 
+<h3 id="deserialization-and-populator">Deserialization and Populator</h3>
+
+<p>Very often, you need to give Reform some information how to create or find nested objects when <code class="highlighter-rouge">validate</code>ing. This directive is called <em>populator</em> and <a href="http://trailblazer.to/gems/reform/populator.html">documented here</a>.</p>
+
 <h2 id="errors" data-magellan-target="errors">Errors</h2>
 
 <p>After <code class="highlighter-rouge">validate</code>, you can access validation errors via <code class="highlighter-rouge">errors</code>.</p>
@@ -339,157 +407,87 @@ end
 <p>The returned <code class="highlighter-rouge">Errors</code> object exposes the following methods.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformapimd-168"><li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-168-0-dry-validation">dry-validation</a></li></ul>
-  <div class="tabs-content" data-tabs-content="gemsreformapimd-168">
-    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-168-0-dry-validation">
+  <ul class="tabs" data-tabs="" id="gemsreformapimd-220"><li class="tabs-title is-active"><a href="#tabs-gemsreformapimd-220-0-dry-validation">dry-validation</a></li></ul>
+  <div class="tabs-content" data-tabs-content="gemsreformapimd-220">
+    <div class="tabs-panel is-active" id="tabs-gemsreformapimd-220-0-dry-validation">
 </div>
   </div>
 </div>
 
 <h2 id="sync" data-magellan-target="sync">Sync</h2>
 
-<h2 id="form-option" data-magellan-target="form-option">Form Option</h2>
+<h2 id="save" data-magellan-target="save">Save</h2>
 
-<h2 id="virtual-attributes" data-magellan-target="virtual-attributes">Virtual Attributes</h2>
+<h3 id="saving-forms-manually">Saving Forms Manually</h3>
 
-<p>Virtual fields come in handy when there’s no direct mapping to a model attribute or when you plan on displaying but not processing a value.</p>
+<p>Calling <code class="highlighter-rouge">#save</code> with a block will provide a nested hash of the form’s properties and values. This does <strong>not call <code class="highlighter-rouge">#save</code> on the models</strong> and allows you to implement the saving yourself.</p>
 
-<h3 id="virtual">Virtual</h3>
-
-<p>Often, fields like <code class="highlighter-rouge">password_confirmation</code> should neither be read from nor written back to the model. Reform comes with the <code class="highlighter-rouge">:virtual</code> option to handle that case.</p>
+<p>The block parameter is a nested hash of the form input.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class PasswordForm &lt; Reform::Form
-  property :password
-  property :password_confirmation, virtual: true
-</code></pre>
-</div>
-
-<p>Here, the model won’t be queried for a <code class="highlighter-rouge">password_confirmation</code> field when creating and rendering the form. When saving the form, the input value is not written to the decorated model. It is only readable in validations and when saving the form manually.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.validate("password" =&gt; "123", "password_confirmation" =&gt; "321")
-
-form.password_confirmation #=&gt; "321"
-</code></pre>
-</div>
-
-<p>The nested hash in the block-<code class="highlighter-rouge">#save</code> provides the same value.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:password_confirmation] #=&gt; "321"
-</code></pre>
-</div>
-
-<h3 id="read-only">Read-Only</h3>
-
-<p>Use <code class="highlighter-rouge">writeable: false</code> to display a value but skip processing it in <code class="highlighter-rouge">validate</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :country, writeable: false
-</code></pre>
-</div>
-
-<ol>
-  <li>The form will invoke <code class="highlighter-rouge">model.country</code> to read the initial value.</li>
-  <li>It will invoke <code class="highlighter-rouge">form.country=</code> in <code class="highlighter-rouge">validate</code>.</li>
-  <li>The model’s setter <code class="highlighter-rouge">model.country</code> <strong>won’t</strong> be called in <code class="highlighter-rouge">sync</code>.</li>
-</ol>
-
-<p>Non-writeable values are still readable in the nested hash and through the form itself.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>form.save do |nested|
-  nested[:country] #=&gt; "Australia"
-</code></pre>
-</div>
-
-<h3 id="write-only">Write-Only</h3>
-
-<p>Use <code class="highlighter-rouge">readable: false</code> to hide a value but still write it to the model.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :credit_card_number, readable: false
-</code></pre>
-</div>
-
-<ol>
-  <li>The form <strong>won’t</strong> invoke <code class="highlighter-rouge">model.credit_card_number</code> and will display an empty field.</li>
-  <li>In <code class="highlighter-rouge">validate</code>, the form calls <code class="highlighter-rouge">form.credit_card_number=</code>.</li>
-  <li>In <code class="highlighter-rouge">sync, the setter </code>model.credit_card_number=` is called and the value written to the database.</li>
-</ol>
-
-<h2 id="access-protection" data-magellan-target="access-protection">Access Protection</h2>
-
-<p>Use <code class="highlighter-rouge">parse: false</code> to protect the form setters from being called in <code class="highlighter-rouge">validate</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>property :uuid, parse: false
-</code></pre>
-</div>
-
-<ol>
-  <li>This will call <code class="highlighter-rouge">model.uuid</code> to display the field via the form.</li>
-  <li>In <code class="highlighter-rouge">validate</code>, the form’s setter <strong>won’t</strong> be called, leaving the value as it is.</li>
-  <li>In <code class="highlighter-rouge">sync</code>, the setter <code class="highlighter-rouge">model.uuid</code> is called and restored to the original value.</li>
-</ol>
-
-<p>Note that the <code class="highlighter-rouge">:parse</code> option works by leveraging <a href="#deserializer">:deserializer</a>.</p>
-
-<h2 id="coercion" data-magellan-target="coercion">Coercion</h2>
-
-<p>Incoming form data often needs conversion to a specific type, like timestamps. Reform uses <a href="http://dry-rb.org/gems/dry-types/">dry-types</a> for coercion. The DSL is seamlessly integrated with the <code class="highlighter-rouge">:type</code> option.</p>
-
-<p>Be sure to add <code class="highlighter-rouge">dry-types</code> to your <code class="highlighter-rouge">Gemfile</code> when requiring coercion.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>gem "dry-types"
-</code></pre>
-</div>
-
-<p>To use coercion, you need to include the <code class="highlighter-rouge">Coercion</code> module into your form class.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "reform/form/coercion"
-
-class SongForm &lt; Reform::Form
-  feature Coercion
-
-  property :written_at, type: Types::Form::DateTime
+<pre class="highlight"><code>@form.save do |hash|
+  hash      #=&gt; {title: "Greatest Hits"}
+  Album.create(hash)
 end
-
-form.validate("written_at" =&gt; "26 September")
 </code></pre>
 </div>
 
-<p>Coercion only happens in <code class="highlighter-rouge">#validate</code>, <em>not</em> during construction.</p>
+<p>You can always access the form’s model. This is helpful when you were using populators to set up objects when validating.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>form.written_at #=&gt; &lt;DateTime "2014 September 26 00:00"&gt;
+<pre class="highlight"><code>@form.save do |hash|
+  album = @form.model
+
+  album.update_attributes(hash[:album])
+end
 </code></pre>
 </div>
 
-<p>Available coercion types are <a href="http://dry-rb.org/gems/dry-types/built-in-types/">documented here</a>.</p>
-
-<h2 id="manual-coercion" data-magellan-target="manual-coercion">Manual Coercion</h2>
-
-<p>To filter values manually, you can override the setter in the form.</p>
+<p>Reform will wrap defined nested objects in their own forms. This happens automatically when instantiating the form.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :title
+<pre class="highlight"><code>album.songs #=&gt; [&lt;Song name:"Run To The Hills"&gt;]
 
-  def title=(value)
-    super sanitize(value) # value is raw form input.
+form = AlbumForm.new(album)
+form.songs[0] #=&gt; &lt;SongForm model: &lt;Song name:"Run To The Hills"&gt;&gt;
+form.songs[0].name #=&gt; "Run To The Hills"
+</code></pre>
+</div>
+
+<h3 id="nested-saving">Nested Saving</h3>
+
+<p><code class="highlighter-rouge">validate</code> will assign values to the nested forms. <code class="highlighter-rouge">sync</code> and <code class="highlighter-rouge">save</code> work analogue to the non-nested form, just in a recursive way.</p>
+
+<p>The block form of <code class="highlighter-rouge">#save</code> would give you the following data.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>@form.save do |nested|
+  nested #=&gt; {title:  "Greatest Hits",
+         #    artist: {name: "Duran Duran"},
+         #    songs: [{title: "Hungry Like The Wolf"},
+         #            {title: "Last Chance On The Stairways"}]
+         #   }
   end
-end
 </code></pre>
 </div>
 
-<p>Again, setters are only called in <code class="highlighter-rouge">validate</code>, <em>not</em> during construction.</p>
+<p>The manual saving with block is not encouraged. You should rather check the Disposable docs to find out how to implement your manual tweak with the official API.</p>
 
-<h2 id="deserializer" data-magellan-target="deserializer">Deserializer</h2>
+<h3 id="turning-off-autosave">Turning Off Autosave</h3>
+
+<p>You can assign Reform to <em>not</em> call <code class="highlighter-rouge">save</code> on a particular nested model (per default, it is called automatically on all nested models).</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class AlbumForm &lt; Reform::Form
+  # ...
+
+  collection :songs, save: false do
+    # ..
+  end
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">:save</code> options set to false won’t save models.</p>
 
 <h2 id="inheritance" data-magellan-target="inheritance">Inheritance</h2>
 
@@ -534,23 +532,6 @@ end
 </div>
 
 <p>Using <code class="highlighter-rouge">inherit:</code> here will extend the existing <code class="highlighter-rouge">songs</code> form with the <code class="highlighter-rouge">band_id</code> field. Note that this simply uses <a href="https://github.com/apotonick/representable/#partly-overriding-properties">representable’s inheritance mechanism</a>.</p>
-
-<h2 id="overriding-accessors" data-magellan-target="overriding-accessors">Overriding Accessors</h2>
-
-<p>You’re free to override form accessors for presentation and coercion.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongForm &lt; Reform::Form
-  property :title
-
-  def title
-    super.capitalize
-  end
-end
-</code></pre>
-</div>
-
-<p>As always, use <code class="highlighter-rouge">super</code> for the original method.</p>
 
 <h2 id="forms-in-modules" data-magellan-target="forms-in-modules">Forms In Modules</h2>
 
@@ -602,24 +583,47 @@ end
 
 <p>This is important so Reform can add your accessors after defining the default ones.</p>
 
-<h1 id="injecting-objects">Injecting Objects</h1>
+<h2 id="dirty-tracker" data-magellan-target="dirty-tracker">Dirty Tracker</h2>
 
-<p>safe args can be passed in constructor</p>
-
-<h2 id="skipif" data-magellan-target="skipif">Skip_if</h2>
-
-<p>Use <code class="highlighter-rouge">:skip_if</code> to ignore properties in <code class="highlighter-rouge">#validate</code>.</p>
+<p>Every form tracks changes in <code class="highlighter-rouge">#validate</code> and allows to check if a particular property value has changed using <code class="highlighter-rouge">#changed?</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>property :hit, skip_if: lambda { |fragment, *| fragment["title"].blank? }
+<pre class="highlight"><code>form.title =&gt; "Button Up"
+
+form.validate("title" =&gt; "Just Kiddin'")
+form.changed?(:title) #=&gt; true
 </code></pre>
 </div>
 
-<p>This works for both properties and entire nested forms. The property will simply be ignored when deserializing, as if it had never been in the incoming hash/document.</p>
+<p>When including <code class="highlighter-rouge">Sync::SkipUnchanged</code>, the form won’t assign unchanged values anymore in <code class="highlighter-rouge">#sync</code>.</p>
 
-<p>For nested properties you can use <code class="highlighter-rouge">:skip_if: :all_blank</code> as a macro to ignore a nested form if all values are blank.</p>
+<h2 id="deserialization" data-magellan-target="deserialization">Deserialization</h2>
 
-<p>Note that this still runs validations for the property.</p>
+<p>When invoking <code class="highlighter-rouge">validate</code>, Reform will parse the incoming hash and transform it into a graph of nested form objects that represent the input. This is called <em>deserialization</em>.</p>
+
+<p>The deserialization is an important (and outstanding) feature of Reform and happens by using an internal <em>representer</em> that is automatically created for you. You can either configure that representer using the <a href="options.html#deserializer"><code class="highlighter-rouge">:deserializer</code> option</a> or provide code for deserialization yourself, bypassing any representer logic.</p>
+
+<p>The <code class="highlighter-rouge">deserialize!</code> method is called before the actual validation of the graph is run and can be used for deserialization logic.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>  class AlbumForm &lt; Reform::Form
+    property :title
+
+    def deserialize!(document)
+      hash = YAML.parse(document)
+
+      self.title  = hash[:title]
+      self.artist = Artist.new if hash[:artist]
+    end
+  end
+</code></pre>
+</div>
+
+<p>We encourage you to use Reform’s deserialization using a representer, though. The representer is highly configurable and optimized for its job of parsing different data structures into Ruby objects.</p>
+
+<h2 id="population" data-magellan-target="population">Population</h2>
+
+<p>To hook into the <a href="#deserialization">deserialization</a> process, the easiest way is using <a href="populator.html">the <code class="highlighter-rouge">:populator</code> option</a>. It allows manually creating, changing or adding nested objects to the form to represent the input.</p>
 
 <h2 id="inflection" data-magellan-target="inflection">Inflection</h2>
 
@@ -648,7 +652,7 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#disposable-api">Disposable API</a></li>
+          <li><a href="#overview">Overview</a></li>
 <li><a href="#form-class">Form Class</a></li>
 <li><a href="#property">Property</a></li>
 <li><a href="#collection">Collection</a></li>
@@ -657,16 +661,12 @@ end
 <li><a href="#validate">Validate</a></li>
 <li><a href="#errors">Errors</a></li>
 <li><a href="#sync">Sync</a></li>
-<li><a href="#form-option">Form Option</a></li>
-<li><a href="#virtual-attributes">Virtual Attributes</a></li>
-<li><a href="#access-protection">Access Protection</a></li>
-<li><a href="#coercion">Coercion</a></li>
-<li><a href="#manual-coercion">Manual Coercion</a></li>
-<li><a href="#deserializer">Deserializer</a></li>
+<li><a href="#save">Save</a></li>
 <li><a href="#inheritance">Inheritance</a></li>
-<li><a href="#overriding-accessors">Overriding Accessors</a></li>
 <li><a href="#forms-in-modules">Forms In Modules</a></li>
-<li><a href="#skipif">Skip_if</a></li>
+<li><a href="#dirty-tracker">Dirty Tracker</a></li>
+<li><a href="#deserialization">Deserialization</a></li>
+<li><a href="#population">Population</a></li>
 <li><a href="#inflection">Inflection</a></li>
         </ul>
       
@@ -718,10 +718,12 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html" class="active">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
-    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">

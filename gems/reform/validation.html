@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Validation</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 August 2016</span>
 
   <hr>
 
@@ -120,7 +120,7 @@
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p>Validation in Reform happens in the <code class="highlighter-rouge">validate</code> method, and only there.</p>
 
-<p>Since Reform 2.0, you can pick your validation backend. This can either be <code class="highlighter-rouge">ActiveModel::Validations</code> or <code class="highlighter-rouge">dry-validation</code>.</p>
+<p>Since Reform 2.0, you can pick your validation backend. This can either be <code class="highlighter-rouge">ActiveModel::Validations</code> or <code class="highlighter-rouge">dry-validation</code>. The validation examples included on this page are using <code class="highlighter-rouge">dry-validation</code>.</p>
 
 <div class="callout secondary">
   <p>
@@ -130,7 +130,7 @@
 
 <h2 id="refactoring-legacy-forms" data-magellan-target="refactoring-legacy-forms">Refactoring Legacy Forms</h2>
 
-<p>Note that you are not limited to one validation backend. When switching from ActiveModel::Validation to dry-validation, you should set the first as the default validation engine.</p>
+<p>Note that you are not limited to one validation backend. When switching from <code class="highlighter-rouge">ActiveModel::Validation</code> to <code class="highlighter-rouge">dry-validation</code>, you should set the first as the default validation engine.</p>
 
 <div class="tabs-container">
   <ul class="tabs" data-tabs="" id="gemsreformvalidationmd-15">
@@ -176,6 +176,54 @@ end
 
 <p><code class="highlighter-rouge">Form#validate</code> will return the result boolean, and provide potential errors via <code class="highlighter-rouge">Form#errors</code>.</p>
 
+<h2 id="validation-groups" data-magellan-target="validation-groups">Validation Groups</h2>
+
+<p>Grouping validataions enables you to run them conditionally, or in a specific order. You can use <code class="highlighter-rouge">:if</code> to specify what group had to be successful for it to be validated.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>validation :default do
+  required(:title).filled
+end
+
+validation :unique, if: :default do
+  configure do
+    def unique?(value)
+      # ..
+    end
+  end
+
+  required(:title, &amp;:unique?)
+end
+</code></pre>
+</div>
+
+<p>This will only run the database-consuming <code class="highlighter-rouge">:unique</code> validation group if the <code class="highlighter-rouge">:default</code> group was valid.</p>
+
+<p>Chaining groups works via the <code class="highlighter-rouge">:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code class="highlighter-rouge">:if</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>validation :email, after: :default do
+  configure do
+    def email?(value)
+      # ..
+    end
+  end
+  required(:email, &amp;:email?)
+end
+</code></pre>
+</div>
+
+<p>At any time you can extend an existing group using <code class="highlighter-rouge">:inherit</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>validation :email, inherit: true do
+  required(:email).filled
+end
+</code></pre>
+</div>
+
+<p>This appends validations to the existing <code class="highlighter-rouge">:email</code> group.</p>
+
 <h2 id="dry-validation" data-magellan-target="dry-validation">Dry-validation</h2>
 
 <p>Dry-validation is the preferred backend for defining and executing validations.</p>
@@ -191,21 +239,25 @@ class AlbumForm &lt; Reform::Form
   property :title
 
   validation :default do
-    key(:title, &amp;:filled?)
+    required(:title).filled
   end
 end
 </code></pre>
 </div>
 
-<p>Custom predicates have to be defined in the validation group.</p>
+<p>Custom predicates have to be defined in the validation group. If you need access to your form you must add <code class="highlighter-rouge">option :form</code> to your configure block.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>validation :default do
-  key(:title) { |title| title.filled? &amp; title.unique? }
+  configure do
+    option :form
 
-  def unique?(value)
-    Album.find_by(title: value).nil?
+    def unique?(value)
+      Album.where.not(id: form.model.id).find_by(title: value).nil?
+    end
   end
+
+  required(:title).filled(:unique?)
 end
 </code></pre>
 </div>
@@ -214,16 +266,20 @@ end
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>validation :default do
-  key(:confirm_password, &amp;:same_password?)
+  configure do
+    option :form
 
-  def same_password?(value)
-    value == form.password
+    def same_password?(value)
+      value == form.password
+    end
   end
+
+  required(:confirm_password).filled(:same_password?)
 end
 </code></pre>
 </div>
 
-<p>Make sure to read the documentation for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.</p>
+<p>Make sure to read the <a href="http://dry-rb.org/gems/dry-validation">documentation</a> for dry-validation, as it contains some very powerful concepts like high-level rules that give you much richer validation semantics as compared to AM:V.</p>
 
 <h3 id="dry-error-messages">Dry: Error Messages</h3>
 
@@ -231,9 +287,11 @@ end
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>validation :default do
-  configure { |config|
+  configure do
     config.messages_file = 'config/error_messages.yml'
-  }
+  end
+  # ..
+end
 </code></pre>
 </div>
 
@@ -261,50 +319,7 @@ end
 </code></pre>
 </div>
 
-<h2 id="validation-group" data-magellan-target="validation-group">Validation Group</h2>
-
-<p>Grouping validataions allows running them conditionally. You can use <code class="highlighter-rouge">:if</code> to specify what group had to be successful validated.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>validation :default do
-  key(:title, &amp;:filled?)
-end
-
-validation :unique, if: :default do
-  key(:title, &amp;:unique?)
-
-  def unique?(value)
-  # ..
-end
-</code></pre>
-</div>
-
-<p>This will only run the database-consuming <code class="highlighter-rouge">:unique</code> validation group if the <code class="highlighter-rouge">:default</code> group was valid.</p>
-
-<p>Chaining groups works via the <code class="highlighter-rouge">:after</code> option. This will run the group regardless of the former result. Note that it still can be combined with <code class="highlighter-rouge">:if</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>validation :email, after: :default do
-  key(:email, &amp;:email?)
-
-  def email?(value)
-  # ..
-end
-</code></pre>
-</div>
-
-<p>At any time you can extend an existing group using <code class="highlighter-rouge">:inherit</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>validation :email, inherit: true do
-  key(:email, &amp;:filled?)
-end
-</code></pre>
-</div>
-
-<p>This appends validations to the existing <code class="highlighter-rouge">:email</code> group.</p>
-
-<h2 id="uniqueness-validation" data-magellan-target="uniqueness-validation">Uniqueness Validation</h2>
+<h3 id="uniqueness-validation">Uniqueness Validation</h3>
 
 <p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support where the validation is basically delegated to the “real” model class. This happens when you use <code class="highlighter-rouge">validates_uniqueness_of</code> and will respect options like <code class="highlighter-rouge">:scope</code>, etc.</p>
 
@@ -315,6 +330,7 @@ end
 
   property :title
   validates_uniqueness_of :title, scope: [:album_id, :artist_id]
+end
 </code></pre>
 </div>
 
@@ -322,7 +338,7 @@ end
 
 <p>This is not Reform’s fault but a design flaw in ActiveRecord’s validators.</p>
 
-<h1 id="unique-validation">Unique Validation</h1>
+<h3 id="unique-validation">Unique Validation</h3>
 
 <p>You’re encouraged to use Reform’s non-writing <code class="highlighter-rouge">unique: true</code> validation, though.</p>
 
@@ -347,7 +363,7 @@ end
 
 <p>Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
 
-<h2 id="confirm-validation" data-magellan-target="confirm-validation">Confirm Validation</h2>
+<h3 id="confirm-validation">Confirm Validation</h3>
 
 <p>Likewise, the <code class="highlighter-rouge">confirm: true</code> validation from ActiveResource is considered dangerous and should not be used. It also writes to the model and probably changes application state.</p>
 
@@ -361,10 +377,24 @@ end
   validate :passwork_ok? do
     errors.add(:password, "Password mismatch") if password != password_confirmation
   end
+end
 </code></pre>
 </div>
 
 <p>This is discussed in the <em>Authentication</em> chapter of the <a href="https://leanpub.com/trailblazer">Trailblazer book</a>.</p>
+
+<h2 id="validations-for-file-uploads" data-magellan-target="validations-for-file-uploads">Validations For File Uploads</h2>
+
+<p>In case you’re processing uploaded files with your form using CarrierWave, Paperclip, Dragonfly or Paperdragon we recommend using the awesome <a href="https://github.com/musaffa/file_validators">file_validators</a> gem for file type and size validations.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  property :image
+
+  validates :image, file_size: {less_than: 2.megabytes},
+    file_content_type: {allow: ['image/jpeg', 'image/png', 'image/gif']}
+</code></pre>
+</div>
 
             </div>
 
@@ -377,11 +407,10 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#refactoring-legacy-forms">Refactoring Legacy Forms</a></li>
 <li><a href="#overview">Overview</a></li>
+<li><a href="#validation-groups">Validation Groups</a></li>
 <li><a href="#dry-validation">Dry-validation</a></li>
 <li><a href="#activemodel">ActiveModel</a></li>
-<li><a href="#validation-group">Validation Group</a></li>
-<li><a href="#uniqueness-validation">Uniqueness Validation</a></li>
-<li><a href="#confirm-validation">Confirm Validation</a></li>
+<li><a href="#validations-for-file-uploads">Validations For File Uploads</a></li>
         </ul>
       
 </nav>
@@ -432,10 +461,12 @@ end
         </a>
     </li>
     <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
     <li><a href="/gems/reform/populator.html">Populator</a></li>
-    <li><a href="/gems/reform/nested_forms.html">Nested Forms</a></li>
     <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
     <li><a href="/gems/reform/validation.html" class="active">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
     <li><a href="/gems/reform/debugging.html">Debugging</a></li>
     <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">
