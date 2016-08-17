@@ -146,17 +146,19 @@
 </li>
 </ul>
 
+<p>For a technical architecture overview, read the <a href="#architecture">Architecture</a> section.</p>
+
 <h2 id="api" data-magellan-target="api">API</h2>
 
 <p>Forms are defined in classes. Often, these classes partially map to a model.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-23">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-23-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-23-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-24">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-24-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-24-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-23">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-23-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-24">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-24-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -166,7 +168,7 @@
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-23-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-24-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -182,12 +184,12 @@ end
 <p>Forms can also be nested and map to more complex object graphs.</p>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-45">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-45-0-dry-validation">dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-45-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-46">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-46-0-dry-validation">dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-46-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-45">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-45-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-46">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-46-0-dry-validation">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -205,7 +207,7 @@ end
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-45-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-46-1-activemodel">
 <pre><code>class AlbumForm &lt; Reform::Form
   property :title
 
@@ -350,12 +352,12 @@ end
 <h2 id="installation" data-magellan-target="installation">Installation</h2>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-174">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-174-0-dry-validation">Dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-174-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-175">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-175-0-dry-validation">Dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-175-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-174">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-174-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-175">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-175-0-dry-validation">
 <p>Add this your Gemfile.</p>
 
 <pre><code>gem "reform"
@@ -371,7 +373,7 @@ Reform::Form.class_eval do
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-174-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-175-1-activemodel">
 <p>Add this to your Gemfile.</p>
 
 <pre><code>gem "reform"
@@ -422,7 +424,43 @@ end
 
 <h2 id="architecture" data-magellan-target="architecture">Architecture</h2>
 
-<p>Coming soon.</p>
+<p>When experiencing Reform for the first time, it might seem to do a lot, too much: It decorates a model, parses the incoming data into some object graph, validates the data somehow and supports writing this data back to the model.</p>
+
+<p>Actually, Reform is very simple and consists of several smaller objects. Each object has a very specific scope one does exactly one thing, where the actual form object orchestrates between those.</p>
+
+<div class="row colums text-center">
+<p>
+
+  <img src="/images/diagrams/reform-architecture.png">
+</p>
+</div>
+
+<p><strong>SETUP</strong> When instantiating the form object with a model, it will read its properties’ values from the model. Internally, this happens because a <a href="https://github.com/apotonick/reform/blob/777ea4730bec913582bae78fece78bbb76fb22c4/lib/reform/contract.rb#L6">form is simply a <code class="highlighter-rouge">Twin</code></a>. <a href="/gems/disposable">Twins are light-weight decorator objects</a> from the Disposable gem.</p>
+
+<p>For nested properties or collections, nested form objects will be created and wrap the respective contained models.</p>
+
+<p><strong>DESERIALIZATION</strong> In the <code class="highlighter-rouge">validate</code> method, the incoming hash or document is parsed. Each known field is assigned to the form object, each nested fragment will be mapped to a nested form. This process is known as <em>deserialization</em>.</p>
+
+<p>The internal deserializer used for this is actually a <em>representer</em> from the Representable gem. It is <a href="https://github.com/apotonick/reform/blob/777ea4730bec913582bae78fece78bbb76fb22c4/lib/reform/form/validate.rb#L43">inferred automatically by Reform</a>, but theoretically, you could provide your own deserializer that goes through the document and then calls setters on the form.</p>
+
+<p><strong>POPULATOR</strong> Nested fragments in the document often need to be mapped to existing or new models. This is where <em>populators</em> in Reform help to find the respective model(s), wrap them in a nested form object, and create a virtual object graph of the parsed data.</p>
+
+<p>Populators are code snippets you define in the form class, but they are called from the deserializing representer and help parsing the document into a graph of objects.</p>
+
+<p><strong>VIRTUAL OBJECT GRAPH</strong> After deserialization, the form object graph represents the input. All data in <code class="highlighter-rouge">validate</code> has been written to the virtual graph, <strong>not to the model</strong>. Once this graph is setup, it can be validated.</p>
+
+<p>The deserialization process is the pivotal part in Reform. Where simple validation engines only allow formal validations, Reform allows rich business validations such as <em>“When user signed in, and it’s the first order, allow maximum 10 items in the shopping cart!”</em>.</p>
+
+<p><strong>VALIDATION</strong> For the actual validation, Reform uses existing solutions such as dry-validation or <code class="highlighter-rouge">ActiveModel::Validations</code>. It passes the data to the validation engine in the appropriate format - usually, this is a hash representing the virtual object graph and its data.</p>
+
+<p>The validation is then completely up to the engine. Reform doesn’t know what is happening, it is only interested in the result and error messages. Both are exposed via the form object after validation has been finished.</p>
+
+<p>The decoupled validation is why Reform provides multiple validation engines.</p>
+
+<p><strong>SYNC/SAVE</strong></p>
+
+<p>After the <code class="highlighter-rouge">validate</code> call, nothing has been written to the model(s), yet. This has to be explicitly invoked via <code class="highlighter-rouge">sync</code> or <code class="highlighter-rouge">save</code>. Now, Reform will use its basic twin functionality again and write the virtual data to the models using public setter methods. Again, Reform knows nothing about ORMs or model specifics.</p>
+
 
             </div>
 
