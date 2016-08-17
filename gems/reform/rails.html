@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Reform with Rails</title>
+<meta name="description" content="Reform with Rails - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+    anchors.add("article h3");
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Reform with Rails">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/gems/reform/rails.html">
+<meta property="og:description" content="">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Reform with Rails">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+
+    <div class="top-bar">
+  <div class="top-bar-title">
+    <ul class="menu horizontal">
+      <li>
+        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+      </li>
+      <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="responsive-menu">
+    <div class="top-bar-right">
+      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+        <li><a href="/newsletter/">NEWSLETTER</a></li>
+        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+        <li><a href="/guides">GUIDES</a></li>
+        <li>
+          <a href="#">GEMS</a>
+          <ul class="menu vertical">
+            <li class=""><a href="/gems/cells">CELLS</a></li>
+            <li class=""><a href="/gems/operation">OPERATION</a></li>
+            <li class=""><a href="/gems/reform">REFORM</a></li>
+            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+            <li class=""><a href="/gems/roar">ROAR</a></li>
+            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Hero -->
+<div class="hero gems-hero reform-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          Reform
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="reform-body">
+
+          
+            <header>
+  <h1 class="doc-page-title">Reform with Rails</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 August 2016</span>
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <p>Reform works with any framework, but comes with additional Rails glue code.</p>
+
+<h2 id="reform-rails" data-magellan-target="reform-rails">Reform-Rails</h2>
+
+<p>The <code class="highlighter-rouge">reform</code> gem itself doesn’t contain any Rails-specific code but will still work, e.g. for JSON APIs. For extensive Rails support, add the <a href="https://github.com/trailblazer/reform-rails"><code class="highlighter-rouge">reform-rails</code> gem</a>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"reform"</span><span class="p">,</span> <span class="s2">"&gt;= 2.2.0"</span>
+<span class="n">gem</span> <span class="s2">"reform-rails"</span>
+</code></pre>
+</div>
+
+<p>Per default, <code class="highlighter-rouge">reform-rails</code> will assume you want <code class="highlighter-rouge">ActiveModel::Validations</code> as the validation engine. This will include the following into <code class="highlighter-rouge">Reform::Form</code>.</p>
+
+<ul>
+  <li>
+<code class="highlighter-rouge">Form::ActiveModel</code> for form builder compliance so your form works with <code class="highlighter-rouge">form_for</code> and friends.</li>
+  <li>
+<code class="highlighter-rouge">Reform::Form::ActiveModel::FormBuilderMethods</code> to make Reform consume Rails form builder’s weird parameters, e.g. <code class="highlighter-rouge"><span class="p">{</span><span class="err">song_attributes:</span><span class="w"> </span><span class="err">{</span><span class="w"> </span><span class="err">number:</span><span class="w"> </span><span class="err">1</span><span class="w"> </span><span class="p">}</span><span class="err">}</span></code>.</li>
+  <li>Uniqueness validation for <code class="highlighter-rouge">ActiveRecord</code>.</li>
+</ul>
+
+<p>However, you can also use the new, <a href="validation.html#dry-validation">recommended <code class="highlighter-rouge">dry-validation</code></a> backend, and you should check that out!</p>
+
+<p>To do so, add the gem to your Gemfile.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"reform"</span><span class="p">,</span> <span class="s2">"&gt;= 2.2.0"</span>
+<span class="n">gem</span> <span class="s2">"reform-rails"</span>
+<span class="n">gem</span> <span class="s2">"dry-validation"</span>
+</code></pre>
+</div>
+
+<p>And configure Reform in an initializer, e.g. <code class="highlighter-rouge">config/initializer/reform.rb</code> to load the new validation backend.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code> <span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">reform</span><span class="p">.</span><span class="nf">validations</span> <span class="o">=</span> <span class="ss">:dry</span>
+</code></pre>
+</div>
+
+<p>Make sure you use the API when writing dry validations.</p>
+
+<h2 id="uniqueness-validation" data-magellan-target="uniqueness-validation">Uniqueness Validation</h2>
+
+<p>Both ActiveRecord and Mongoid modules will support “native” uniqueness support from the model class when you use <code class="highlighter-rouge">validates_uniqueness_of</code>. They will provide options like <code class="highlighter-rouge">:scope</code>, etc.</p>
+
+<p>You’re encouraged to use Reform’s non-writing <code class="highlighter-rouge">unique: true</code> validation, though. <a href="http://trailblazer.to/gems/reform/validation.html">Learn more</a></p>
+
+<h2 id="activemodel-compliance" data-magellan-target="activemodel-compliance">ActiveModel Compliance</h2>
+
+<p>Forms in Reform can easily be made ActiveModel-compliant.</p>
+
+<p>Note that this step is <em>not</em> necessary in a Rails environment.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+end
+</code></pre>
+</div>
+
+<p>If you’re not happy with the <code class="highlighter-rouge">model_name</code> result, configure it manually via <code class="highlighter-rouge">::model</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class CoverSongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+
+  model :song
+end
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">::model</code> will configure ActiveModel’s naming logic. With <code class="highlighter-rouge">Composition</code>, this configures the main model of the form and should be called once.</p>
+
+<p>This is especially helpful when your framework tries to render <code class="highlighter-rouge">cover_song_path</code> although you want to go with <code class="highlighter-rouge">song_path</code>.</p>
+
+<h2 id="formbuilder-support" data-magellan-target="formbuilder-support">FormBuilder Support</h2>
+
+<p>To make your forms work with all the form gems like <code class="highlighter-rouge">simple_form</code> or Rails <code class="highlighter-rouge">form_for</code> you need to include another module.</p>
+
+<p>Again, this step is implicit in Rails and you don’t need to do it manually.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveModel
+  include Reform::Form::ActiveModel::FormBuilderMethods
+end
+</code></pre>
+</div>
+
+<h3 id="simple-form">Simple Form</h3>
+
+<p>If you want full support for <code class="highlighter-rouge">simple_form</code> do as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include ActiveModel::ModelReflections
+</code></pre>
+</div>
+
+<p>Including this module will add <code class="highlighter-rouge">#column_for_attribute</code> and other methods need by form builders to automatically guess the type of a property.</p>
+
+<h2 id="validation-shortform" data-magellan-target="validation-shortform">Validation Shortform</h2>
+
+<p>Luckily, this can be shortened as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  property :title, validates: {presence: true}
+  property :length, validates: {numericality: true}
+end
+</code></pre>
+</div>
+
+<p>Use <code class="highlighter-rouge">properties</code> to bulk-specify fields.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  properties :title, :length, validates: {presence: true} # both required!
+  validates :length, numericality: true
+end
+</code></pre>
+</div>
+
+<h2 id="validations-from-models" data-magellan-target="validations-from-models">Validations From Models</h2>
+
+<p>Sometimes when you still keep validations in your models (which you shouldn’t) copying them to a form might not feel right. In that case, you can let Reform automatically copy them.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  property :title
+
+  extend ActiveModel::ModelValidations
+  copy_validations_from Song
+end
+</code></pre>
+</div>
+
+<p>Note how <code class="highlighter-rouge">copy_validations_from</code> copies over the validations allowing you to stay DRY.</p>
+
+<p>This also works with Composition.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include Composition
+  # ...
+
+  extend ActiveModel::ModelValidations
+  copy_validations_from song: Song, band: Band
+end
+</code></pre>
+</div>
+
+<h2 id="activerecord-compatibility" data-magellan-target="activerecord-compatibility">ActiveRecord Compatibility</h2>
+
+<p>Reform provides the following <code class="highlighter-rouge">ActiveRecord</code> specific features. They’re mixed in automatically in a Rails/AR setup.</p>
+
+<ul>
+  <li>Uniqueness validations. Use <code class="highlighter-rouge">validates_uniqueness_of</code> in your form.</li>
+</ul>
+
+<p>As mentioned in the <a href="https://github.com/apotonick/reform#rails-integration">Rails Integration</a> section some Rails 4 setups do not properly load.</p>
+
+<p>You may want to include the module manually then.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include Reform::Form::ActiveRecord
+</code></pre>
+</div>
+
+<h2 id="mongoid-compatibility" data-magellan-target="mongoid-compatibility">Mongoid Compatibility</h2>
+
+<p>Reform provides the following <code class="highlighter-rouge">Mongoid</code> specific features. They’re mixed in automatically in a Rails/Mongoid setup.</p>
+
+<ul>
+  <li>Uniqueness validations. Use <code class="highlighter-rouge">validates_uniqueness_of</code> in your form.</li>
+</ul>
+
+<p>You may want to include the module manually then.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongForm &lt; Reform::Form
+  include Reform::Form::Mongoid
+</code></pre>
+</div>
+
+<h2 id="troubleshooting" data-magellan-target="troubleshooting">Troubleshooting</h2>
+
+<ol>
+  <li>In case you explicitely <em>don’t</em> want to have automatic support for <code class="highlighter-rouge">ActiveRecord</code> or <code class="highlighter-rouge">Mongoid</code> and form builder: <code class="highlighter-rouge">require reform/form</code>, only.</li>
+  <li>In some setups around Rails 4 the <code class="highlighter-rouge">Form::ActiveRecord</code> module is not loaded properly, usually triggering a <code class="highlighter-rouge">NoMethodError</code> saying <code class="highlighter-rouge">undefined method 'model'</code>. If that happened to you, <code class="highlighter-rouge">require 'reform/rails'</code> manually at the bottom of your <code class="highlighter-rouge">config/application.rb</code>.</li>
+  <li>Mongoid form gets loaded with the gem if <code class="highlighter-rouge">Mongoid</code> constant is defined.</li>
+</ol>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#reform-rails">Reform-Rails</a></li>
+<li><a href="#uniqueness-validation">Uniqueness Validation</a></li>
+<li><a href="#activemodel-compliance">ActiveModel Compliance</a></li>
+<li><a href="#formbuilder-support">FormBuilder Support</a></li>
+<li><a href="#validation-shortform">Validation Shortform</a></li>
+<li><a href="#validations-from-models">Validations From Models</a></li>
+<li><a href="#activerecord-compatibility">ActiveRecord Compatibility</a></li>
+<li><a href="#mongoid-compatibility">Mongoid Compatibility</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/api.html">API</a></li>
+    <li><a href="/gems/operation/contract.html">Contract</a></li>
+    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/collection.html">Collection</a></li>
+    <li><a href="/gems/operation/callback.html">Callback</a></li>
+    <li><a href="/gems/operation/controller.html">Controller</a></li>
+    <li><a href="/gems/operation/representer.html">Representer</a></li>
+    <li><a href="/gems/operation/model.html">Model</a></li>
+    <li><a href="/gems/operation/policy.html">Policy</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html" class="active">Rails</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/getting-started.html">Getting Started</a></li>
+    <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
+    <li><a href="/guides/grape.html">Grape</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Get the book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="https://github.com/apotonick">Nick Sutterer</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>
