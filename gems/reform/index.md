@@ -60,7 +60,7 @@ Forms can also be nested and map to more complex object graphs.
         property :name
 
         validation do
-         required(:title).filled
+         required(:name).filled
         end
       end
     end
