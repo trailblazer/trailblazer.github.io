@@ -66,7 +66,7 @@ A resolver allows you to use both the operation model and the policy in the buil
       policy Thing::Policy, :create?
       model Thing, :create
 
-      builds -> (model, policy, params)
+      builds -> (model, policy, params) do
         return Admin if policy.admin?
         return SignedIn if params[:current_user]
       end
