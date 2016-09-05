@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Cells API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 26 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 September 2016</span>
 
   <hr>
 
@@ -737,6 +737,8 @@ end
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="k">class</span> <span class="nc">CommentCell</span> <span class="o">&lt;</span> <span class="no">Cell</span><span class="o">::</span><span class="no">ViewModel</span>
+  <span class="kp">include</span> <span class="o">::</span><span class="no">Cell</span><span class="o">::</span><span class="no">Builder</span>
+
   <span class="n">builds</span> <span class="k">do</span> <span class="o">|</span><span class="n">model</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
     <span class="k">if</span> <span class="n">model</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Post</span><span class="p">)</span>
       <span class="no">PostCell</span>

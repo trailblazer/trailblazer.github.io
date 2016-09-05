@@ -108,7 +108,7 @@
           
             <header>
   <h1 class="doc-page-title">Reform</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 August 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 September 2016</span>
 
   <hr>
 
@@ -201,7 +201,7 @@ end
     property :name
 
     validation do
-     required(:title).filled
+     required(:name).filled
     end
   end
 end
@@ -216,9 +216,7 @@ end
   property :artist do
     property :name
 
-    validation do
-     required(:name).filled
-    end
+    validates :name, presence: true
   end
 end
 </code></pre>
@@ -352,12 +350,12 @@ end
 <h2 id="installation" data-magellan-target="installation">Installation</h2>
 
 <div class="tabs-container">
-  <ul class="tabs" data-tabs="" id="gemsreformindexmd-175">
-<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-175-0-dry-validation">Dry-validation</a></li>
-<li class="tabs-title"><a href="#tabs-gemsreformindexmd-175-1-activemodel">ActiveModel</a></li>
+  <ul class="tabs" data-tabs="" id="gemsreformindexmd-173">
+<li class="tabs-title is-active"><a href="#tabs-gemsreformindexmd-173-0-dry-validation">Dry-validation</a></li>
+<li class="tabs-title"><a href="#tabs-gemsreformindexmd-173-1-activemodel">ActiveModel</a></li>
 </ul>
-  <div class="tabs-content" data-tabs-content="gemsreformindexmd-175">
-    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-175-0-dry-validation">
+  <div class="tabs-content" data-tabs-content="gemsreformindexmd-173">
+    <div class="tabs-panel is-active" id="tabs-gemsreformindexmd-173-0-dry-validation">
 <p>Add this your Gemfile.</p>
 
 <pre><code>gem "reform"
@@ -373,7 +371,7 @@ Reform::Form.class_eval do
 end
 </code></pre>
 </div>
-<div class="tabs-panel" id="tabs-gemsreformindexmd-175-1-activemodel">
+<div class="tabs-panel" id="tabs-gemsreformindexmd-173-1-activemodel">
 <p>Add this to your Gemfile.</p>
 
 <pre><code>gem "reform"
