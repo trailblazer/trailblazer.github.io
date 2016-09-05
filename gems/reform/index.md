@@ -21,6 +21,7 @@ A *form* doesn't have to be a UI component, necessarily! It can be an intermedia
 * **POPULATOR** Deserialization of the incoming data can be customized using populators. [→ POPULATOR](populator.html)
 * **VALIDATION GROUPS** Validations can be chained or run when certain criterias match, only. [→ VALIDATION GROUPS](validation.html#validation-groups)
 
+For a technical architecture overview, read the [Architecture](#architecture) section.
 
 ## API
 
@@ -232,4 +233,41 @@ Things you should know when using ActiveModel with Reform.
 
 ## Architecture
 
-Coming soon.
+When experiencing Reform for the first time, it might seem to do a lot, too much: It decorates a model, parses the incoming data into some object graph, validates the data somehow and supports writing this data back to the model.
+
+Actually, Reform is very simple and consists of several smaller objects. Each object has a very specific scope one does exactly one thing, where the actual form object orchestrates between those.
+
+<div class="row colums text-center">
+<p>
+
+  <img src="/images/diagrams/reform-architecture.png">
+</p>
+</div>
+
+**SETUP** When instantiating the form object with a model, it will read its properties' values from the model. Internally, this happens because a [form is simply a `Twin`](https://github.com/apotonick/reform/blob/777ea4730bec913582bae78fece78bbb76fb22c4/lib/reform/contract.rb#L6). [Twins are light-weight decorator objects](/gems/disposable) from the Disposable gem.
+
+For nested properties or collections, nested form objects will be created and wrap the respective contained models.
+
+**DESERIALIZATION** In the `validate` method, the incoming hash or document is parsed. Each known field is assigned to the form object, each nested fragment will be mapped to a nested form. This process is known as *deserialization*.
+
+The internal deserializer used for this is actually a *representer* from the Representable gem. It is [inferred automatically by Reform](https://github.com/apotonick/reform/blob/777ea4730bec913582bae78fece78bbb76fb22c4/lib/reform/form/validate.rb#L43), but theoretically, you could provide your own deserializer that goes through the document and then calls setters on the form.
+
+**POPULATOR** Nested fragments in the document often need to be mapped to existing or new models. This is where *populators* in Reform help to find the respective model(s), wrap them in a nested form object, and create a virtual object graph of the parsed data.
+
+Populators are code snippets you define in the form class, but they are called from the deserializing representer and help parsing the document into a graph of objects.
+
+**VIRTUAL OBJECT GRAPH** After deserialization, the form object graph represents the input. All data in `validate` has been written to the virtual graph, **not to the model**. Once this graph is setup, it can be validated.
+
+The deserialization process is the pivotal part in Reform. Where simple validation engines only allow formal validations, Reform allows rich business validations such as *"When user signed in, and it's the first order, allow maximum 10 items in the shopping cart!"*.
+
+**VALIDATION** For the actual validation, Reform uses existing solutions such as dry-validation or `ActiveModel::Validations`. It passes the data to the validation engine in the appropriate format - usually, this is a hash representing the virtual object graph and its data.
+
+The validation is then completely up to the engine. Reform doesn't know what is happening, it is only interested in the result and error messages. Both are exposed via the form object after validation has been finished.
+
+The decoupled validation is why Reform provides multiple validation engines.
+
+**SYNC/SAVE**
+
+After the `validate` call, nothing has been written to the model(s), yet. This has to be explicitly invoked via `sync` or `save`. Now, Reform will use its basic twin functionality again and write the virtual data to the models using public setter methods. Again, Reform knows nothing about ORMs or model specifics.
+
+

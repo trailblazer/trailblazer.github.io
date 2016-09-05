@@ -355,6 +355,16 @@ Comment::Create.('{"body": "Solnic rules!"}').to_json
 
 Representers in Trailblazer are provided by the [Roar gem](/gems/roar) and are completely optional.
 
+## Installation
+
+Using Trailblazer is a matter of installing a few gems that will help you apply the style to your application.
+
+```ruby
+gem "trailblazer"
+```
+
+Usually, the `trailblazer` gem or the `trailblazer-rails` gem in a Rails environment will be sufficient to start. However, since Trailblazer is very modular, many combinations are possible, so make sure to check out the [installation guide](getting-started.html), too.
+
 ## What We Didn't Talk About
 
 Trailblazer has many more features that will help writing better software.

@@ -1,3 +1,10 @@
+---
+layout: reform
+title: "Reform with Rails"
+---
+
+Reform works with any framework, but comes with additional Rails glue code.
+
 ## Reform-Rails
 
 The `reform` gem itself doesn't contain any Rails-specific code but will still work, e.g. for JSON APIs. For extensive Rails support, add the [`reform-rails` gem](https://github.com/trailblazer/reform-rails).
@@ -77,7 +84,7 @@ Again, this step is implicit in Rails and you don't need to do it manually.
 If you want full support for `simple_form` do as follows.
 
     class SongForm < Reform::Form
-      include ActiveModel::ModelReflections
+      include Reform::Form::ActiveModel::ModelReflections
 
 Including this module will add `#column_for_attribute` and other methods need by form builders to automatically guess the type of a property.
 
