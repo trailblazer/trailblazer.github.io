@@ -35,6 +35,8 @@ In a Ruby environment, you'd usually monkey-patch the `Form` class.
 
 In forms you're upgrading to dry-validation, you can include the validation module explicitly.
 
+    require 'reform/form/dry'
+
     module Album::Contract
       class Create < Reform::Form
         feature Reform::Form::Dry # override the default.
