@@ -206,7 +206,7 @@ For uniqueness validation of multiple fields, use the `:scope` option.
 validates :user_id, unique: { scope: [:user_id, :song_id] }
 ```
 
-Feel free to [help us here](https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb)!
+Feel free to [help us here](https://github.com/trailblazer/reform-rails/blob/master/lib/reform/form/validation/unique_validator.rb)!
 
 ### Confirm Validation
 
