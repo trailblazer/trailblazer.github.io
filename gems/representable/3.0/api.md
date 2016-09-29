@@ -465,7 +465,7 @@ end
 
 Coercing values only happens when rendering or parsing a document. Representable does not create accessors in your model as `virtus` does.
 
-Note that we think coercion in the representer is wrong, and should happen on the underlying object. We have a rich [coercion/constraint API for twins](/gems/disposable/coercion.html).
+Note that we think coercion in the representer is wrong, and should happen on the underlying object. We have a rich [coercion/constraint API for twins](disposable/api.html#coercion).
 
 
 ## Symbol Keys

@@ -16,7 +16,7 @@ This is newsletter no. 1, the first ever, and I'm excited to tell you what has h
 
 ### Formular - A New Form Builder for Ruby
 
-One of the coolest projects we've been working on the last weeks is the [Formular gem](https://github.com/apotonick/formular), a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.
+One of the coolest projects we've been working on the last weeks is the [Formular gem](https://github.com/trailblazer/formular), a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.
 
 Formular is built without using any outdated Rails helpers, making it insanely fast and usable in many frameworks, namely Rails, Hanami, or Sinatra. Its API is following the best practices established by existing form builders, without inheriting all the problems originating from strong coupling.
 
@@ -30,7 +30,7 @@ Formular is built without using any outdated Rails helpers, making it insanely f
     = f.radio :owner, label: "Konsti", value: 2
 ```
 
-It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended [with plain Ruby classes](https://github.com/apotonick/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb). It is incredibly simple to add new frontends or extend existing behavior.
+It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended [with plain Ruby classes](https://github.com/trailblazer/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb). It is incredibly simple to add new frontends or extend existing behavior.
 
 Formular will be released soon after a beta-test phase. Please contact us on our [Gitter channel](http://gitter.im/trailblazer/chat) if you're interested in giving Formular a go!
 
@@ -155,13 +155,13 @@ A very helpful new addition that many users have asked for. Well, here it is!
 
 ## Trailblazer Book and Trailblazer Primer
 
-The [Trailblazer book](http://trailblazer.to/books/trailblazer) was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don't have it yet, [grab it now and get a $10 discount](http://leanpub.com/trailblazer/c/EPIgtwW2WG0z) until Feb 4!
+The [Trailblazer book](https://leanpub.com/trailblazer) was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don't have it yet, [grab it now and get a $10 discount](http://leanpub.com/trailblazer/c/EPIgtwW2WG0z) until Feb 4!
 
 It will teach you everything about engineering complex Rails applications with Trailblazer from authorization, validations, operations and persistence to hypermedia API parsing and rendering.
 
 While this book focuses on a Rails scenario, it can easily be adapted to other frameworks.
 
-Many future users have asked for a "quicker, more compressed" way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the [Trailblazer Primer](http://trailblazer.to/books/trailblazer-primer), a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.
+Many future users have asked for a "quicker, more compressed" way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the [Trailblazer Primer](https://leanpub.com/trailblazer-primer), a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.
 
 ## Cells and Hamlit
 
