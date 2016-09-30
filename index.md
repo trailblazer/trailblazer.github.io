@@ -440,7 +440,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
           <p>In the book, <b>we build a realistic Rails application with Trailblazer</b> that discusses convoluted requirements such as dynamic forms, polymorphic rendering and processing for signed-in users, file uploads, pagination, a JSON document API sitting on top of that, and many more problems you run into when building web applications.</p>
 
-          <p>Check out the <a href="/books/trailblazer.html">full book description</a> for a few more details about the content.</p>
+          <p>Check out the <a href="https://leanpub.com/trailblazer">full book description</a> for a few more details about the content.</p>
 
           <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
           <a href="https://leanpub.com/trailblazer" class="button radius">Buy Book</a>
@@ -651,4 +651,3 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
     </div>
   </div>
 </section>
-
