@@ -182,7 +182,7 @@ You can define validation for every form property and for nested forms.
       property :artist do
         property :name
 
-        validates :title, presence: true
+        validates :name, presence: true
       end
     end
 {% endtabs %}
