@@ -1,6 +1,6 @@
 ---
 layout: operation
-title: "Trailblazer 2.0 Release Notes"
+title: "Trailblazer 2.0 - What's New?"
 ---
 
 Please find the complete list of [changes here](https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200).
@@ -23,6 +23,8 @@ You now have to include the respective modules to extend the operation for contr
 There's only one way to invoke an operation now: `Operation::call`. You can't instantiate using `::new` and `::run` was removed. All exceptions have been removed, `call` will never throw anything unless your code is seriously broken.
 
 Instead, `call` will - per default - return the [result object](#result-object), but you're free to return whatever you feel like.
+
+Internally, the class method `::call` will invoke the instance method `#call`, which you're allowed to override.
 
 ```ruby
 class Create < Trailblazer::Operation
@@ -125,8 +127,10 @@ The API of the result object allows using it with simple conditionals. Note that
 
 ```ruby
 result = Create.({})
-if result["state"] == :created and result[:valid]
+if result["state"] == :created and result["valid"]
   redirect_to "/success/#{result["model"].id}"
+elsif result["state"] == :updated and result["valid"]
+  redirect_to "/news/#{result["model"].id}"
 ```
 
 ## Pattern Matching
@@ -134,6 +138,8 @@ if result["state"] == :created and result[:valid]
 You can also use [pattern matching](https://github.com/dry-rb/dry-matcher) with the result object.
 
 This will help us implement generic endpoints (TO BE DOCUMENTED).
+
+## Endpoint
 
 ## Dependency Injection
 
