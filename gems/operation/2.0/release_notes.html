@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Trailblazer 2.0 Release Notes</title>
-<meta name="description" content="Trailblazer 2.0 Release Notes - Trailblazer">
+<title>Trailblazer: Trailblazer 2.0 - What's New?</title>
+<meta name="description" content="Trailblazer 2.0 - What's New? - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Trailblazer 2.0 Release Notes">
+<meta property="og:title" content="Trailblazer 2.0 - What's New?">
 <meta property="og:site_name" content="Trailblazer">
 <meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/release_notes.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Trailblazer 2.0 Release Notes">
+<meta name="twitter:title" content="Trailblazer 2.0 - What's New?">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -110,7 +110,7 @@
 
           
             <header>
-  <h1 class="doc-page-title">Trailblazer 2.0 Release Notes</h1>
+  <h1 class="doc-page-title">Trailblazer 2.0 - What's New?</h1>
   <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 28 October 2016</span>
 
   <hr>
@@ -249,8 +249,10 @@
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="no">Create</span><span class="o">.</span><span class="p">({})</span>
-<span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">==</span> <span class="ss">:created</span> <span class="n">and</span> <span class="n">result</span><span class="p">[</span><span class="ss">:valid</span><span class="p">]</span>
+<span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">==</span> <span class="ss">:created</span> <span class="n">and</span> <span class="n">result</span><span class="p">[</span><span class="s2">"valid"</span><span class="p">]</span>
   <span class="n">redirect_to</span> <span class="s2">"/success/</span><span class="si">#{</span><span class="n">result</span><span class="p">[</span><span class="s2">"model"</span><span class="p">].</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">elsif</span> <span class="n">result</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">==</span> <span class="ss">:updated</span> <span class="n">and</span> <span class="n">result</span><span class="p">[</span><span class="s2">"valid"</span><span class="p">]</span>
+  <span class="n">redirect_to</span> <span class="s2">"/news/</span><span class="si">#{</span><span class="n">result</span><span class="p">[</span><span class="s2">"model"</span><span class="p">].</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span>
 </code></pre>
 </div>
 
@@ -259,6 +261,8 @@
 <p>You can also use <a href="https://github.com/dry-rb/dry-matcher">pattern matching</a> with the result object.</p>
 
 <p>This will help us implement generic endpoints (TO BE DOCUMENTED).</p>
+
+<h2 id="endpoint" data-magellan-target="endpoint">Endpoint</h2>
 
 <h2 id="dependency-injection" data-magellan-target="dependency-injection">Dependency Injection</h2>
 
@@ -368,6 +372,7 @@ end
 <li><a href="#skills">Skills</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#pattern-matching">Pattern Matching</a></li>
+<li><a href="#endpoint">Endpoint</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#dry-container">Dry-container</a></li>
 <li><a href="#dry-validation-contract">Dry-validation Contract</a></li>
