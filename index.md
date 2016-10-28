@@ -637,6 +637,12 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
             <img src="/images/users/gratwifi_logo_facebook.png" />
           </a>
         </div>
+
+        <div class="column medium-2 text-center">
+          <a href="https://mobidev.biz" target="_blank">
+            <img src="/images/users/mobidev.png" />
+          </a>
+        </div>
       </div>
 
 

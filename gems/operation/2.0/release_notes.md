@@ -1,0 +1,177 @@
+---
+layout: operation
+title: "Trailblazer 2.0 Release Notes"
+---
+
+Please find the complete list of [changes here](https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200).
+
+## Call
+
+There's only one way to invoke an operation now: `Operation::call`. You can't instantiate using `::new` and `::run` was removed. All exceptions have been removed, `call` will never throw anything unless your code is seriously broken.
+
+Instead, `call` will - per default - return the [result object](#result-object), but you're free to return whatever you feel like.
+
+```ruby
+class Create < Trailblazer::Operation
+  def call(params)
+    "Great!"
+  end
+end
+
+Create.({}) #=> "Great!"
+```
+
+Unless you really want to change things, you should override `process`, though, the way we did it in 1.x. Trailblazer will return the result object for you.
+
+```ruby
+class Create < Trailblazer::Operation
+  def process(params)
+    "Great!"
+  end
+end
+
+Create.({}) #=> <Result ..>
+```
+
+## Params and Dependencies
+
+You no longer merge dependencies such as the current user into `params`, you can pass an arbitrary list of containers or hashes to `call`, after the `params` hash.
+
+`params` is treated as immutable unless *you want to* mess around with it.
+
+```ruby
+params = { id: 1 }
+
+Create.(params, "user.current" => Object) # just an example for the current user
+```
+
+Any dependency passed into the operation is called *skill*. Skills, or dependencies, can be accessed via `#[]`.
+
+```ruby
+class Create < Trailblazer::Operation
+  def process(params)
+    puts self["user.current"]
+  end
+end
+
+Create.(params, "user.current" => Object) #=> "Object"
+```
+
+## Skills
+
+The way Trailblazer 2.0 manages dependencies is extremely simple implemented and also a pleasure to use. You can assign any skill on class level you want. Note that for skills we always use string names (because we can segment them).
+
+```ruby
+class Create < Trailblazer::Operation
+  self["contract.params.class"] = MyContract
+end
+
+Create["contract.params.class"] #=> MyContract
+```
+
+In `call`, run-time dependencies such as the current user and class skills are made available via `#[]`.
+
+```ruby
+class Create < Trailblazer::Operation
+  self["contract.params.class"] = MyContract
+
+  def process(params)
+    puts self["contract.params.class"]
+    puts self["user.current"]
+  end
+end
+
+Create.({ id: 1}, "user.current" => Object)
+#=> MyContract
+#=> Object
+```
+
+You can also set skills on the instance level. This **won't override anything** on the class level or other containers and is disposed of after the operation instance is destroyed.
+
+```ruby
+class Create < Trailblazer::Operation
+  def process(params)
+    self["state"] = :created
+  end
+end
+```
+
+## Result Object
+
+Per default, the `call` method returns a result object. Currently, this is simply the immutable *operation instance* (it's not really immutable, yet, but that's easily achievable).
+
+That makes is super simple to read all kinds of states from it.
+
+```ruby
+Create.({})["state"]                 #=> :created
+Create.({})["contract.params.class"] #=> MyContract
+```
+
+
+The API of the result object allows using it with simple conditionals. Note that this way, you can expose any kind of information to the caller.
+
+```ruby
+result = Create.({})
+if result["state"] == :created and result[:valid]
+  redirect_to "/success/#{result["model"].id}"
+```
+
+## Pattern Matching
+
+You can also use [pattern matching](https://github.com/dry-rb/dry-matcher) with the result object.
+
+This will help us implement generic endpoints (TO BE DOCUMENTED).
+
+## Dependency Injection
+
+The operation uses the skill mechanism to manage all its dependencies, too, such as policies, contracts, representers, and so on.
+
+```ruby
+class Create < Trailblazer::Operation
+  include Contract
+  contract do
+    property :id
+  end
+
+  puts self["contract.default.class"] #=> <Contract class we just defined...>
+end
+```
+
+This allows to inject dependencies and thus override the skill configured on the class layer.
+
+```ruby
+result = Create.({ id: 1 }, "contract.default.class" => Module)
+result["contract.default.class"] #=> Module, not the class-level value.
+```
+
+You can inject models, contract classes, policies, or whatever needs to get into the operation.
+
+## Dry-container
+
+The skill mechanics also support injecting [Dry::Container](https://github.com/dry-rb/dry-container) to provide additional (or all!) dependencies.
+
+```ruby
+my_container = Dry::Container.new
+my_container.register("user_repository", -> { Object })
+
+Create.({}, my_container)["user_repository"] #=> Object
+```
+
+That means that all kinds of dependencies, such as contracts or policies, can be managed by Dry's loading and container logic.
+
+## Pipetree
+
+## Operation Gem
+
+## Dry-validation Contract
+
+
+as many contracts as you want
+
+## API Consistency
+
+You might've noticed that APIs and object structures in Trailblazer frequently change and you might miss Rails' consistency already. However, keep in mind that we change things to *help* you building better software. In our [Trailblazer consulting] projects, we identify design flaws together with the teams we help, and build solutions. And that might hurt sometimes. Nevertheless, we try to ease your pain with the `compat` gem, upgrading help, and we're very confident that the 2.0 API is extremely stable and easily extended without breaking API changes.
+
+## What's Next?
+
+* Deserializer layer that can happen *before* validation, or whenever you want. This separate the deserialization/population from the actual validation and might make many people happy.
