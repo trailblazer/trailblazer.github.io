@@ -64,6 +64,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.O IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -87,6 +88,7 @@
     </div>
   </div>
 </div>
+
 
     <!-- Hero -->
 <div class="hero gems-hero operation-hero">
@@ -120,6 +122,18 @@
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p>Please find the complete list of <a href="https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200">changes here</a>.</p>
+
+<p>The estimated release date is November 25. 2016, that is. 😜</p>
+
+<h2 id="installation--structure" data-magellan-target="installation--structure">Installation / Structure</h2>
+
+<p><strong>We will provide installation instructions as soon as the code is presentable.</strong></p>
+
+<p>The core logic has been extracted to the <a href="https://github.com/trailblazer/operation/"><code class="highlighter-rouge">trailblazer-operation</code> gem</a> that can be used even if you dislike Trailblazer’s semantics. But, why would you?</p>
+
+<p>Additional functionaliy like <code class="highlighter-rouge">Contract</code>, <code class="highlighter-rouge">Policy</code>, etc. comes in the <a href="https://github.com/trailblazer/trailblazer/"><code class="highlighter-rouge">trailblazer</code> gem</a>.</p>
+
+<p>You now have to include the respective modules to extend the operation for contract, callbacks, and so on.</p>
 
 <h2 id="call" data-magellan-target="call">Call</h2>
 
@@ -231,7 +245,7 @@
 </code></pre>
 </div>
 
-<p>The API of the result object allows using it with simple conditionals. Note that this way, you can expose any kind of information to the caller.</p>
+<p>The API of the result object allows using it with simple conditionals. Note that this way you can expose any kind of information to the caller.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="no">Create</span><span class="o">.</span><span class="p">({})</span>
@@ -286,17 +300,52 @@
 
 <p>That means that all kinds of dependencies, such as contracts or policies, can be managed by Dry’s loading and container logic.</p>
 
-<h2 id="pipetree" data-magellan-target="pipetree">Pipetree</h2>
-
-<h2 id="operation-gem" data-magellan-target="operation-gem">Operation Gem</h2>
-
 <h2 id="dry-validation-contract" data-magellan-target="dry-validation-contract">Dry-validation Contract</h2>
 
-<p>as many contracts as you want</p>
+<p>Besides the fact that you now can have as many contracts as you need, Trailblazer also support <a href="http://dry-rb.org/gems/dry-validation/"><code class="highlighter-rouge">Dry::Validation::Schema</code> contracts</a> instead of a full-blown Reform object.</p>
+
+<p>This is helpful for simple, formal validations where you don’t need deserialization, for example to validate some unrelated parts of the <code class="highlighter-rouge">params</code>
+.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="kp">include</span> <span class="no">Contract</span>
+
+  <span class="n">contract</span> <span class="s2">"params"</span><span class="p">,</span> <span class="p">(</span><span class="no">Dry</span><span class="o">::</span><span class="no">Validation</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
+    <span class="n">required</span><span class="p">(</span><span class="ss">:id</span><span class="p">).</span><span class="nf">filled</span>
+  <span class="k">end</span><span class="p">)</span>
+
+  <span class="n">contract</span> <span class="no">MyContract</span> <span class="c1"># the main contract</span>
+</code></pre>
+</div>
+
+<p>Now, have a look how to use those two contract.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>  def process(params)
+    validate(params, name: "params") do |f|
+      puts "params have :id!" # done with dry-validation, without Reform!
+    end
+
+    validate(params) do |f|
+      f.save # normal contract and behavior.
+    end
+  end
+end
+</code></pre>
+</div>
+
+<h2 id="pipetree" data-magellan-target="pipetree">Pipetree</h2>
+
+<p>Example with callbacks in pipeline.</p>
 
 <h2 id="api-consistency" data-magellan-target="api-consistency">API Consistency</h2>
 
-<p>You might’ve noticed that APIs and object structures in Trailblazer frequently change and you might miss Rails’ consistency already. However, keep in mind that we change things to <em>help</em> you building better software. In our [Trailblazer consulting] projects, we identify design flaws together with the teams we help, and build solutions. And that might hurt sometimes. Nevertheless, we try to ease your pain with the <code class="highlighter-rouge">compat</code> gem, upgrading help, and we’re very confident that the 2.0 API is extremely stable and easily extended without breaking API changes.</p>
+<p>You might’ve noticed that APIs and object structures in Trailblazer frequently change and you might miss Rails’ consistency already.</p>
+
+<p>Please keep in mind that we change things to <em>help</em> you building better software. When we do Trailblazer consulting, we identify design flaws together with the teams we help, and build solutions.</p>
+
+<p>Those solutions are shipped as fast as we can. And that might hurt sometimes. Nevertheless, we try to ease your pain with the <code class="highlighter-rouge">compat</code> gem, <a href="/inc/help.html">upgrading help</a>, and we’re very confident that the 2.0 API is extremely stable and easily extended without breaking API changes.</p>
 
 <h2 id="whats-next" data-magellan-target="whats-next">What’s Next?</h2>
 
@@ -313,16 +362,16 @@
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#call">Call</a></li>
+          <li><a href="#installation--structure">Installation / Structure</a></li>
+<li><a href="#call">Call</a></li>
 <li><a href="#params-and-dependencies">Params and Dependencies</a></li>
 <li><a href="#skills">Skills</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#pattern-matching">Pattern Matching</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#dry-container">Dry-container</a></li>
-<li><a href="#pipetree">Pipetree</a></li>
-<li><a href="#operation-gem">Operation Gem</a></li>
 <li><a href="#dry-validation-contract">Dry-validation Contract</a></li>
+<li><a href="#pipetree">Pipetree</a></li>
 <li><a href="#api-consistency">API Consistency</a></li>
 <li><a href="#whats-next">What’s Next?</a></li>
         </ul>
