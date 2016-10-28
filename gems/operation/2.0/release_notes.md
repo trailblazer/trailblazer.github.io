@@ -5,6 +5,19 @@ title: "Trailblazer 2.0 Release Notes"
 
 Please find the complete list of [changes here](https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200).
 
+The estimated release date is November 25. 2016, that is. 😜
+
+## Installation / Structure
+
+**We will provide installation instructions as soon as the code is presentable.**
+
+The core logic has been extracted to the [`trailblazer-operation` gem](https://github.com/trailblazer/operation/) that can be used even if you dislike Trailblazer's semantics. But, why would you?
+
+Additional functionaliy like `Contract`, `Policy`, etc. comes in the [`trailblazer` gem](https://github.com/trailblazer/trailblazer/).
+
+You now have to include the respective modules to extend the operation for contract, callbacks, and so on.
+
+
 ## Call
 
 There's only one way to invoke an operation now: `Operation::call`. You can't instantiate using `::new` and `::run` was removed. All exceptions have been removed, `call` will never throw anything unless your code is seriously broken.
@@ -108,7 +121,7 @@ Create.({})["contract.params.class"] #=> MyContract
 ```
 
 
-The API of the result object allows using it with simple conditionals. Note that this way, you can expose any kind of information to the caller.
+The API of the result object allows using it with simple conditionals. Note that this way you can expose any kind of information to the caller.
 
 ```ruby
 result = Create.({})
@@ -159,18 +172,51 @@ Create.({}, my_container)["user_repository"] #=> Object
 
 That means that all kinds of dependencies, such as contracts or policies, can be managed by Dry's loading and container logic.
 
-## Pipetree
-
-## Operation Gem
-
 ## Dry-validation Contract
 
+Besides the fact that you now can have as many contracts as you need, Trailblazer also support [`Dry::Validation::Schema` contracts](http://dry-rb.org/gems/dry-validation/) instead of a full-blown Reform object.
 
-as many contracts as you want
+This is helpful for simple, formal validations where you don't need deserialization, for example to validate some unrelated parts of the `params`
+.
+
+```ruby
+class Create < Trailblazer::Operation
+  include Contract
+
+  contract "params", (Dry::Validation.Schema do
+    required(:id).filled
+  end)
+
+  contract MyContract # the main contract
+```
+
+Now, have a look how to use those two contract.
+
+```
+  def process(params)
+    validate(params, name: "params") do |f|
+      puts "params have :id!" # done with dry-validation, without Reform!
+    end
+
+    validate(params) do |f|
+      f.save # normal contract and behavior.
+    end
+  end
+end
+```
+
+## Pipetree
+
+Example with callbacks in pipeline.
+
 
 ## API Consistency
 
-You might've noticed that APIs and object structures in Trailblazer frequently change and you might miss Rails' consistency already. However, keep in mind that we change things to *help* you building better software. In our [Trailblazer consulting] projects, we identify design flaws together with the teams we help, and build solutions. And that might hurt sometimes. Nevertheless, we try to ease your pain with the `compat` gem, upgrading help, and we're very confident that the 2.0 API is extremely stable and easily extended without breaking API changes.
+You might've noticed that APIs and object structures in Trailblazer frequently change and you might miss Rails' consistency already.
+
+Please keep in mind that we change things to *help* you building better software. When we do Trailblazer consulting, we identify design flaws together with the teams we help, and build solutions.
+
+Those solutions are shipped as fast as we can. And that might hurt sometimes. Nevertheless, we try to ease your pain with the `compat` gem, [upgrading help](/inc/help.html), and we're very confident that the 2.0 API is extremely stable and easily extended without breaking API changes.
 
 ## What's Next?
 
