@@ -46,46 +46,47 @@
   </head>
   <body>
 
-    <div class="top-bar">
-  <div class="top-bar-title">
-    <ul class="menu horizontal">
-      <li>
-        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
-      </li>
-      <li>
+    <div data-sticky-container>
+  <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
+    <div class="top-bar-title">
+      <ul class="menu horizontal">
+        <li>
+          <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+        </li>
+        <li>
         <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
           <button class="menu-icon" type="button" data-toggle></button>
         </span>
-      </li>
-    </ul>
-  </div>
-
-  <div id="responsive-menu">
-    <div class="top-bar-right">
-      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
-        <li><a href="/newsletter/">NEWSLETTER</a></li>
-        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
-        <li><a href="/guides">GUIDES</a></li>
-        <li>
-          <a href="#">GEMS</a>
-          <ul class="menu vertical">
-            <li class=""><a href="/gems/cells">CELLS</a></li>
-            <li class=""><a href="/gems/operation">OPERATION</a></li>
-            <li class=""><a href="/gems/reform">REFORM</a></li>
-            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
-            <li class=""><a href="/gems/roar">ROAR</a></li>
-            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
         </li>
       </ul>
     </div>
+
+    <div id="responsive-menu">
+      <div class="top-bar-right">
+        <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+          <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+          <li><a href="/newsletter/">NEWSLETTER</a></li>
+          <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+          <li><a href="/guides">GUIDES</a></li>
+          <li>
+            <a href="#">GEMS</a>
+            <ul class="menu vertical">
+              <li class=""><a href="/gems/cells">CELLS</a></li>
+              <li class=""><a href="/gems/operation">OPERATION</a></li>
+              <li class=""><a href="/gems/reform">REFORM</a></li>
+              <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+              <li class=""><a href="/gems/roar">ROAR</a></li>
+              <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
-
 
     <!-- Hero -->
 <div class="hero gems-hero reform-hero">
@@ -108,7 +109,7 @@
           
             <header>
   <h1 class="doc-page-title">Validation</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 August 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 27 September 2016</span>
 
   <hr>
 
@@ -160,7 +161,9 @@
 <p>In forms you’re upgrading to dry-validation, you can include the validation module explicitly.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>module Album::Contract
+<pre class="highlight"><code>require 'reform/form/dry'
+
+module Album::Contract
   class Create &lt; Reform::Form
     feature Reform::Form::Dry # override the default.
 
@@ -359,7 +362,7 @@ end
 </code></pre>
 </div>
 
-<p>Feel free to <a href="https://github.com/apotonick/reform/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
+<p>Feel free to <a href="https://github.com/trailblazer/reform-rails/blob/master/lib/reform/form/validation/unique_validator.rb">help us here</a>!</p>
 
 <h3 id="confirm-validation">Confirm Validation</h3>
 
@@ -399,7 +402,7 @@ end
             <div class="large-3 columns sticky-container" data-sticky-container>
 
               
-                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large" data-margin-top="5">
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>

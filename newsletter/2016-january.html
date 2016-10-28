@@ -46,46 +46,47 @@
   </head>
   <body>
 
-    <div class="top-bar">
-  <div class="top-bar-title">
-    <ul class="menu horizontal">
-      <li>
-        <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
-      </li>
-      <li>
+    <div data-sticky-container>
+  <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
+    <div class="top-bar-title">
+      <ul class="menu horizontal">
+        <li>
+          <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+        </li>
+        <li>
         <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
           <button class="menu-icon" type="button" data-toggle></button>
         </span>
-      </li>
-    </ul>
-  </div>
-
-  <div id="responsive-menu">
-    <div class="top-bar-right">
-      <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-        <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
-        <li><a href="/newsletter/">NEWSLETTER</a></li>
-        <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
-        <li><a href="/guides">GUIDES</a></li>
-        <li>
-          <a href="#">GEMS</a>
-          <ul class="menu vertical">
-            <li class=""><a href="/gems/cells">CELLS</a></li>
-            <li class=""><a href="/gems/operation">OPERATION</a></li>
-            <li class=""><a href="/gems/reform">REFORM</a></li>
-            <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
-            <li class=""><a href="/gems/roar">ROAR</a></li>
-            <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
         </li>
       </ul>
     </div>
+
+    <div id="responsive-menu">
+      <div class="top-bar-right">
+        <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+          <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+          <li><a href="/newsletter/">NEWSLETTER</a></li>
+          <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+          <li><a href="/guides">GUIDES</a></li>
+          <li>
+            <a href="#">GEMS</a>
+            <ul class="menu vertical">
+              <li class=""><a href="/gems/cells">CELLS</a></li>
+              <li class=""><a href="/gems/operation">OPERATION</a></li>
+              <li class=""><a href="/gems/reform">REFORM</a></li>
+              <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+              <li class=""><a href="/gems/roar">ROAR</a></li>
+              <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
-
 
     <!-- Hero -->
 <div class="hero gems-hero guide-hero">
@@ -108,7 +109,7 @@
           
             <header>
   <h1 class="doc-page-title">Newsletter January 2016</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 10 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 September 2016</span>
 
   <hr>
 
@@ -129,7 +130,7 @@ Hello, and Hi from the Trailblazer team!</p>
 
 <h3 id="formular---a-new-form-builder-for-ruby">Formular - A New Form Builder for Ruby</h3>
 
-<p>One of the coolest projects we’ve been working on the last weeks is the <a href="https://github.com/apotonick/formular">Formular gem</a>, a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.</p>
+<p>One of the coolest projects we’ve been working on the last weeks is the <a href="https://github.com/trailblazer/formular">Formular gem</a>, a new form rendering gem like SimpleForm, but, as opposed to many other form builders out there, completely framework-agnostic.</p>
 
 <p>Formular is built without using any outdated Rails helpers, making it insanely fast and usable in many frameworks, namely Rails, Hanami, or Sinatra. Its API is following the best practices established by existing form builders, without inheriting all the problems originating from strong coupling.</p>
 
@@ -144,7 +145,7 @@ Hello, and Hi from the Trailblazer team!</p>
 </code></pre>
 </div>
 
-<p>It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended <a href="https://github.com/apotonick/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb">with plain Ruby classes</a>. It is incredibly simple to add new frontends or extend existing behavior.</p>
+<p>It ships with extensions for Foundation 5 and Bootstrap 3. Again, the implementational approach here is different. Instead of configuring, Formular gets extended <a href="https://github.com/trailblazer/formular/blob/210461c543c63634ddeb69b2db9c326cd0c920da/lib/formular/frontend/bootstrap3.rb">with plain Ruby classes</a>. It is incredibly simple to add new frontends or extend existing behavior.</p>
 
 <p>Formular will be released soon after a beta-test phase. Please contact us on our <a href="http://gitter.im/trailblazer/chat">Gitter channel</a> if you’re interested in giving Formular a go!</p>
 
@@ -276,13 +277,13 @@ Hello, and Hi from the Trailblazer team!</p>
 
 <h2 id="trailblazer-book-and-trailblazer-primer" data-magellan-target="trailblazer-book-and-trailblazer-primer">Trailblazer Book and Trailblazer Primer</h2>
 
-<p>The <a href="http://trailblazer.to/books/trailblazer">Trailblazer book</a> was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don’t have it yet, <a href="http://leanpub.com/trailblazer/c/EPIgtwW2WG0z">grab it now and get a $10 discount</a> until Feb 4!</p>
+<p>The <a href="https://leanpub.com/trailblazer">Trailblazer book</a> was published a few months ago, without any noteable marketing it has already attracted more than 600 readers. If you don’t have it yet, <a href="http://leanpub.com/trailblazer/c/EPIgtwW2WG0z">grab it now and get a $10 discount</a> until Feb 4!</p>
 
 <p>It will teach you everything about engineering complex Rails applications with Trailblazer from authorization, validations, operations and persistence to hypermedia API parsing and rendering.</p>
 
 <p>While this book focuses on a Rails scenario, it can easily be adapted to other frameworks.</p>
 
-<p>Many future users have asked for a “quicker, more compressed” way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the <a href="http://trailblazer.to/books/trailblazer-primer">Trailblazer Primer</a>, a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.</p>
+<p>Many future users have asked for a “quicker, more compressed” way to see Trailblazer in action. While they appreciate the details of discussion in the Trailblazer book, most users want to start programming and learn about it later, which is why I will soon start writing the <a href="https://leanpub.com/trailblazer-primer">Trailblazer Primer</a>, a very brief HOWTO about adding Trailblazer to existing applications without in-depth explanations.</p>
 
 <h2 id="cells-and-hamlit" data-magellan-target="cells-and-hamlit">Cells and Hamlit</h2>
 
@@ -311,7 +312,7 @@ Hello, and Hi from the Trailblazer team!</p>
             <div class="large-3 columns sticky-container" data-sticky-container>
 
               
-                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large">
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large" data-margin-top="5">
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
