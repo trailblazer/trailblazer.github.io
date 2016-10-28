@@ -141,6 +141,8 @@
 
 <p>Instead, <code class="highlighter-rouge">call</code> will - per default - return the <a href="#result-object">result object</a>, but you’re free to return whatever you feel like.</p>
 
+<p>Internally, the class method <code class="highlighter-rouge">::call</code> will invoke the instance method <code class="highlighter-rouge">#call</code>, which you’re allowed to override.</p>
+
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
   <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
