@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Representable: YAML</title>
-<meta name="description" content="Representable: YAML - Trailblazer">
+<title>Trailblazer: Operation Policies</title>
+<meta name="description" content="Operation Policies - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Representable: YAML">
+<meta property="og:title" content="Operation Policies">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/representable/3.0/yaml.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/policy.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Representable: YAML">
+<meta name="twitter:title" content="Operation Policies">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -91,12 +91,12 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero representable-hero">
+<div class="hero gems-hero operation-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
         <h1 id="project_title">
-          Representable
+          Operation
         </h1>
       </div>
     </div>
@@ -106,12 +106,12 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="representable-body">
+        <article class="operation-body">
 
           
             <header>
-  <h1 class="doc-page-title">Representable: YAML</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <h1 class="doc-page-title">Operation Policies</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
 
   <hr>
 
@@ -121,37 +121,132 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="representable-yaml">Representable YAML</h1>
+              <h1 id="policy">Policy</h1>
 
-<p>Representable also comes with a YAML representer. Like <a href="xml.html">XML</a>, the declarative API is almost identical.</p>
+<p>Trailblazer supports “pundit-style” policy classes. They can be hooked into operations and prevent the operation from running its <code class="highlighter-rouge">#process</code> method by raising an exception if the policy rule returned <code class="highlighter-rouge">false</code>.</p>
 
-<h2 id="flow-style-lists" data-magellan-target="flow-style-lists">Flow Style Lists</h2>
+<h2 id="policy-classes" data-magellan-target="policy-classes">Policy Classes</h2>
 
-<p>A nice feature is that <code class="highlighter-rouge">#collection</code> also accepts a <code class="highlighter-rouge">:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
+<p>The format of a policy class is heavily inspired by the excellent <a href="https://github.com/elabs/pundit">Pundit</a> gem. In fact, you can reuse your pundit policies without any code changes in Trailblazer.</p>
+
+<p>A policy file per concept is recommendable.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::YAML
+<pre class="highlight"><code>class Thing::Policy
+  def initialize(user, thing)
+    @user, @thing = user, thing
+  end
 
-  property :title
-  property :id
-  collection :composers, style: :flow
+  def create?
+    admin?
+  end
+
+  def admin?
+    @user.admin == true
+  end
+  # ..
 end
 </code></pre>
 </div>
 
-<h3 id="public-api">Public API</h3>
+<p>This class would probably be best located at <code class="highlighter-rouge">app/concepts/thing/policy.rb</code>.</p>
 
-<p>To render and parse, you invoke <code class="highlighter-rouge">to_yaml</code> and <code class="highlighter-rouge">from_yaml</code>.</p>
+<h2 id="operation-policy" data-magellan-target="operation-policy">Operation Policy</h2>
+
+<p>Use <code class="highlighter-rouge">::policy</code> to hook the policy class along with a query action into your operation.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_yaml
-#=&gt;
----
-title: Fallout
-composers: [Stewart Copeland, Sting]
+<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
+  include Trailblazer::Operation::Policy
+
+  policy Thing::Policy, :create?
 </code></pre>
 </div>
+
+<p>The policy is evaluated in <code class="highlighter-rouge">#setup!</code>, raises an exception if <code class="highlighter-rouge">false</code> and thus suppresses running <code class="highlighter-rouge">#process</code>. It is a great way to protect your operations from unauthorized users.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Thing::Create.(current_user: User.find_normal_user, thing: {})
+</code></pre>
+</div>
+
+<p>This will raise a <code class="highlighter-rouge">Trailblazer::NotAuthorizedError</code>.</p>
+
+<h2 id="policy-creation" data-magellan-target="policy-creation">Policy Creation</h2>
+
+<p>To instantiate the <code class="highlighter-rouge">Thing::Policy</code> object internally, per default the <code class="highlighter-rouge">params[:current_user]</code> and the operation’s <code class="highlighter-rouge">model</code> is passed into the constructor. You can override that via <code class="highlighter-rouge">Operation#evaluate_policy</code>.</p>
+
+<h2 id="queries" data-magellan-target="queries">Queries</h2>
+
+<p>After <code class="highlighter-rouge">#setup!</code>, the policy instance is available at any point in your operation code.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def process(params)
+  notify_admin! if policy.admin?
+</code></pre>
+</div>
+
+<p>This won’t raise an exception.</p>
+
+<h2 id="pundit" data-magellan-target="pundit">Pundit</h2>
+
+<p>Pundit policy classes can be used directly in operations.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
+  include Trailblazer::Operation::Policy
+
+  policy ThingPolicy, :create?
+</code></pre>
+</div>
+
+<p>As a matter of course, you may call other rule queries on the internal policy object later on.</p>
+
+<h2 id="guard" data-magellan-target="guard">Guard</h2>
+
+<p>Instead of using policies, you can also use a simple guard.</p>
+
+<p>A guard is like an inline policy that doesn’t require you to define a policy class. It is run in <code class="highlighter-rouge">#setup!</code>, too, like a real policy, but isn’t accessable in the operation after that.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
+  include Policy::Guard
+
+  policy do |params|
+    params[:current_user].present? # true when present.
+  end
+</code></pre>
+</div>
+
+<p>If you prefer a separate class as your guard, you can provide a <code class="highlighter-rouge">Callable</code> object.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Thing::Authorization
+  include Uber::Callable # marks instance as callable.
+
+  def call(operation, params)
+    params[:current_user].present?
+  end
+end
+</code></pre>
+</div>
+
+<p>Pass the guard <em>instance</em> to <code class="highlighter-rouge">Operation::policy</code> to register it.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
+  include Policy::Guard
+  policy Authorization.new
+</code></pre>
+</div>
+
+<p>The same works with <code class="highlighter-rouge">Proc</code>, which will receive <code class="highlighter-rouge">params</code> only but is executed in operation context (subject to change).</p>
+
+<p>Note that you can’t mix <code class="highlighter-rouge">Policy</code> and guards in one class.</p>
+
+<h2 id="resolver" data-magellan-target="resolver">Resolver</h2>
+
+<p>You can use policies in your builders, too. Please refer to the <a href="builder.html#resolver">builder docs</a> to learn about that.</p>
 
             </div>
 
@@ -162,7 +257,13 @@ composers: [Stewart Copeland, Sting]
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#flow-style-lists">Flow Style Lists</a></li>
+          <li><a href="#policy-classes">Policy Classes</a></li>
+<li><a href="#operation-policy">Operation Policy</a></li>
+<li><a href="#policy-creation">Policy Creation</a></li>
+<li><a href="#queries">Queries</a></li>
+<li><a href="#pundit">Pundit</a></li>
+<li><a href="#guard">Guard</a></li>
+<li><a href="#resolver">Resolver</a></li>
         </ul>
       
 </nav>
@@ -234,7 +335,7 @@ composers: [Stewart Copeland, Sting]
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
     <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
     <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
-    <li><a href="/gems/representable/3.0/yaml.html" class="active">YAML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
     <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">
 

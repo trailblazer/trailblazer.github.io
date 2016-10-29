@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Representable: YAML</title>
-<meta name="description" content="Representable: YAML - Trailblazer">
+<title>Trailblazer: Operation::Model</title>
+<meta name="description" content="Operation::Model - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Representable: YAML">
+<meta property="og:title" content="Operation::Model">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/representable/3.0/yaml.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/model.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Representable: YAML">
+<meta name="twitter:title" content="Operation::Model">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -91,12 +91,12 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero representable-hero">
+<div class="hero gems-hero operation-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
         <h1 id="project_title">
-          Representable
+          Operation
         </h1>
       </div>
     </div>
@@ -106,12 +106,12 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="representable-body">
+        <article class="operation-body">
 
           
             <header>
-  <h1 class="doc-page-title">Representable: YAML</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <h1 class="doc-page-title">Operation::Model</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
 
   <hr>
 
@@ -121,37 +121,69 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="representable-yaml">Representable YAML</h1>
+              <h1 id="operationmodel">Operation::Model</h1>
 
-<p>Representable also comes with a YAML representer. Like <a href="xml.html">XML</a>, the declarative API is almost identical.</p>
+<p>Including <code class="highlighter-rouge">Model</code> will add simple CRUD semantics to your operation to find/create a model in <code class="highlighter-rouge">#setup!</code>.</p>
 
-<h2 id="flow-style-lists" data-magellan-target="flow-style-lists">Flow Style Lists</h2>
-
-<p>A nice feature is that <code class="highlighter-rouge">#collection</code> also accepts a <code class="highlighter-rouge">:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
+<p>Note that this is not limited to ActiveRecord.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::YAML
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  include Model
+  model Comment, :create
+</code></pre>
+</div>
 
-  property :title
-  property :id
-  collection :composers, style: :flow
+<p>Using the <code class="highlighter-rouge">::model</code> method you <em>have to</em> define what model class to work with. The second argument specifies the action.</p>
+
+<p>This will override <code class="highlighter-rouge">model!</code> as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  def model!
+    Comment.new
+  end
+</code></pre>
+</div>
+
+<p>The model is automatically created for you in <code class="highlighter-rouge">#setup!</code> and hence available in <code class="highlighter-rouge">process</code>.</p>
+
+<h2 id="validation" data-magellan-target="validation">Validation</h2>
+
+<p>In <code class="highlighter-rouge">validate</code>, you don’t need to provide the model anymore.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def process(params)
+  model #=&gt; &lt;Comment body=""&gt; # created via #model!.
+  validate(params[:thing]) do
+    ..
+  end
 end
 </code></pre>
 </div>
 
-<h3 id="public-api">Public API</h3>
+<h2 id="actions" data-magellan-target="actions">Actions</h2>
 
-<p>To render and parse, you invoke <code class="highlighter-rouge">to_yaml</code> and <code class="highlighter-rouge">from_yaml</code>.</p>
+<p>The following actions for <code class="highlighter-rouge">::model</code> are available.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_yaml
-#=&gt;
----
-title: Fallout
-composers: [Stewart Copeland, Sting]
-</code></pre>
-</div>
+<ul>
+  <li>
+<code class="highlighter-rouge">:create</code> calls <code class="highlighter-rouge">Comment.new</code>
+</li>
+  <li>
+<code class="highlighter-rouge">:update</code> or <code class="highlighter-rouge">:find</code> will execute <code class="highlighter-rouge">Comment.find(params[:id])</code>
+</li>
+</ul>
+
+<p>In <code class="highlighter-rouge">process</code>, you now have a new or existing <code class="highlighter-rouge">model</code> available.</p>
+
+<h2 id="api" data-magellan-target="api">API</h2>
+
+<p>You may override <code class="highlighter-rouge">#instantiate_model!</code>, <code class="highlighter-rouge">create_model!</code> or <code class="highlighter-rouge">update_model!</code> from the <code class="highlighter-rouge">Model</code> module if you need to change behavior.</p>
+
+<h2 id="discussion" data-magellan-target="discussion">Discussion</h2>
+
+<p>Note that this is really simple behavior. Do not use this module when you plan to use more complex models.</p>
 
             </div>
 
@@ -162,7 +194,10 @@ composers: [Stewart Copeland, Sting]
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#flow-style-lists">Flow Style Lists</a></li>
+          <li><a href="#validation">Validation</a></li>
+<li><a href="#actions">Actions</a></li>
+<li><a href="#api">API</a></li>
+<li><a href="#discussion">Discussion</a></li>
         </ul>
       
 </nav>
@@ -234,7 +269,7 @@ composers: [Stewart Copeland, Sting]
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
     <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
     <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
-    <li><a href="/gems/representable/3.0/yaml.html" class="active">YAML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
     <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">
 

@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Testing Operations</title>
-<meta name="description" content="Testing Operations - Trailblazer">
+<title>Trailblazer: Trailblazer: Operation</title>
+<meta name="description" content="Trailblazer: Operation - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Testing Operations">
+<meta property="og:title" content="Trailblazer: Operation">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/testing.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Testing Operations">
+<meta name="twitter:title" content="Trailblazer: Operation">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -73,7 +73,7 @@
             <a href="#">GEMS</a>
             <ul class="menu vertical">
               <li class=""><a href="/gems/cells">CELLS</a></li>
-              <li class=""><a href="/gems/operation">OPERATION</a></li>
+              <li class=""><a href="/gems/operation/index.html">OPERATION</a></li>
               <li class=""><a href="/gems/reform">REFORM</a></li>
               <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
               <li class=""><a href="/gems/roar">ROAR</a></li>
@@ -110,8 +110,8 @@
 
           
             <header>
-  <h1 class="doc-page-title">Testing Operations</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <h1 class="doc-page-title">Trailblazer: Operation</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
 
   <hr>
 
@@ -121,11 +121,241 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="testing-operations">Testing Operations</h1>
+              <p><strong>Note: This describes version 1.1.</strong></p>
 
-<h2 id="factorygirl" data-magellan-target="factorygirl">FactoryGirl</h2>
+<p>An operation is a service object.</p>
 
-<p>In Trailblazer, you should never use factories for setting up a test environment. At some point, this will result in a diverging test and application state. Where production code might have set a tiny flag, your factory will skip this - diverge</p>
+<p>Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called <em>command</em>.</p>
+
+<p><img src="/images/diagrams/stack.png" style="width: 70%"></p>
+
+<p>Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.</p>
+
+<p>Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to include features like policies, representers or callbacks.</p>
+
+<h2 id="api" data-magellan-target="api">API</h2>
+
+<p>An operation is to be seen as a <em>function</em> as in <em>Functional Programming</em>. You invoke an operation using the implicit <code class="highlighter-rouge">::call</code> class method.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>op = Comment::Create.(comment: {body: "MVC is so 90s."})
+</code></pre>
+</div>
+
+<p>This will instantiate the <code class="highlighter-rouge">Comment::Create</code> operation for you, run it and return this very instance. The reason the instance is returned is to allow you accessing its contract, validation errors, or other objects you might need for presentation.</p>
+
+<p><strong>Consider this operation instance as a throw-away immutable object.</strong> Don’t use it for anything but presentation or you will have unwanted side-effects.</p>
+
+<h2 id="operation-class" data-magellan-target="operation-class">Operation Class</h2>
+
+<p>All you need in an operation is a <code class="highlighter-rouge">#process</code> method.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
+  def process(params)
+    puts params
+  end
+end
+</code></pre>
+</div>
+
+<p>Running this operation will result in the following.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."})
+#=&gt; {comment: {body: "MVC is so 90s."}}
+</code></pre>
+</div>
+
+<p>The params from the invocation get passed into <code class="highlighter-rouge">#process</code>.</p>
+
+<h2 id="model" data-magellan-target="model">Model</h2>
+
+<p>Normally, operations are working on <em>models</em>. This term does absolutely not limit you to ActiveRecord-style ORM models, though, but can be just anything, for example a <code class="highlighter-rouge">OpenStruct</code> composition or a ROM model.</p>
+
+<p>Assigning <code class="highlighter-rouge">@model</code> will allow accessing your operation model from the outside.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Comment::Update &lt; Trailblazer::Operation
+  def process(params)
+    @model = Comment.find params[:id]
+  end
+end
+
+op = Comment::Update.(id: 1)
+op.model #=&gt; &lt;Comment id: 1&gt;
+</code></pre>
+</div>
+
+<p>Since every public function in your application is implemented as an operation, you don’t access models directly anymore on the outside.</p>
+
+<h2 id="contract" data-magellan-target="contract">Contract</h2>
+
+<p>The cool thing about Trailblazer’s operation is that it integrates the validation process using a form object.</p>
+
+<p>This is often done wrong in Rails applications where the controller first instantiates a form and then passes it to a service object. In Trailblazer, the operation is the place for all business logic.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
+  contract do
+    property :body, validates: {presence: true}
+  end
+
+  def process(params)
+    @model = Comment.new
+
+    validate(params[:comment], @model) do
+      contract.save
+    end
+  end
+end
+</code></pre>
+</div>
+
+<p>Using the <code class="highlighter-rouge">::contract</code> block you can define a <code class="highlighter-rouge">Reform::Form</code> class that the operation will use for validation (and rendering). <a href="/gems/reform">Any Reform feature</a> like nesting, populators or complex validations can be used here.</p>
+
+<p>The <code class="highlighter-rouge">validate</code> block is only executed when the validation was successful and allows you to save the model and run arbitrary post-processing code. Here, we use the contract’s <code class="highlighter-rouge">save</code> which will push the validated data to the model and then save it.</p>
+
+<p><a href="/gems/operation/api.html#contract">Learn more</a></p>
+
+<h2 id="operationmodel" data-magellan-target="operationmodel">Operation::Model</h2>
+
+<p>Normally, a <code class="highlighter-rouge">Create</code> operation will instantiate a new model object, whereas <code class="highlighter-rouge">Update</code>, <code class="highlighter-rouge">Show</code>, or <code class="highlighter-rouge">Delete</code> operations need to find a particular model.</p>
+
+<p>This is such a common workflow for CRUD operations that it is built into Trailblazer in the <code class="highlighter-rouge">Operation::Model</code> module.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Comment::Create &lt; Trailblazer::Operation
+  include Model
+  model Comment, :create
+
+  contract do
+    property :body, validates: {presence: true}
+  end
+
+  def process(params)
+    validate(params[:comment]) do
+      contract.save
+    end
+  end
+end
+</code></pre>
+</div>
+
+<p>Now, the operation takes care of creating the model in <code class="highlighter-rouge">validate</code>. Note that there is zero coupling to ActiveRecord: <code class="highlighter-rouge">Model</code> will only call <code class="highlighter-rouge">Comment.new</code> or <code class="highlighter-rouge">Comment.find(id)</code> on the configured model class to accomplish its job, allowing any kind of persistence layer with that API.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."}).model #=&gt; &lt;Comment body="MVC .."&gt;
+</code></pre>
+</div>
+
+<p><a href="model.html">Learn more</a></p>
+
+<h2 id="run" data-magellan-target="run">Run</h2>
+
+<p>There’s two different invocation styles.</p>
+
+<p>The <strong>call style</strong> will return the operation when the validation was successful. With invalid data, it will raise an <code class="highlighter-rouge">InvalidContract</code> exception.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Comment::Create.(comment: {body: "MVC is so 90s."}) #=&gt; &lt;Comment::Create @model=..&gt;
+Comment::Create.(comment: {}) #=&gt; exception raised!
+</code></pre>
+</div>
+
+<p>The call style is popular for tests and on the console.</p>
+
+<p>The <strong>run style</strong> returns a result set <code class="highlighter-rouge">[result, operation]</code> in both cases.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>res, operation = Comment::Create.run(comment: {body: "MVC is so 90s."})
+</code></pre>
+</div>
+
+<p>However, it also accepts a block that’s run in case of a <em>successful validation</em>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>res, operation = Comment::Create.run(comment: {}) do |op|
+  # this is not run, because validation not successful.
+  puts "Hey, #{op.model} was created!" and return
+end
+
+puts "That's wrong: #{operation.errors}"
+</code></pre>
+</div>
+
+<p>This style is often used in framework bindings for Rails, Lotus or Roda when hooking the operation call into the endpoint.</p>
+
+<h2 id="design-goals" data-magellan-target="design-goals">Design Goals</h2>
+
+<p>Operations decouple the business logic from the actual framework and from the persistence layer.</p>
+
+<p>This makes it really easy to update or swap the underlying framework or ORM. For instance, operations written in a Rails environment can be run in Sinatra or Lotus as the only coupling happens when querying or writing to the database.</p>
+
+<h2 id="testing-operations" data-magellan-target="testing-operations">Testing Operations</h2>
+
+<p>Operations are incredibly simple to test. All edge-cases can cleanly be tested in unit tests, without the HTTP overhead.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>describe Comment::Create do
+  it "works" do
+    comment = Comment::Create.(comment: {body: "Operation rules!"}).model
+    expect(comment.body).to eq("Operation rules!")
+  end
+end
+</code></pre>
+</div>
+
+<h2 id="testing-with-operations" data-magellan-target="testing-with-operations">Testing With Operations</h2>
+
+<p>Another huge advantage is: operations can be used in any environment like scripts, background jobs and will do the exact same as in a controller. This is extremely helpful to use operations as a replacement for test factories.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>describe Comment::Update do
+  it "updates" do
+    comment = Comment::Create.(..) # this is a factory.
+
+    Comment::Update.(id: comment.id, comment: {body: "FTW!"})
+    expect(comment.body).to eq("FTW!")
+  end
+end
+</code></pre>
+</div>
+
+<h2 id="presenting-operations" data-magellan-target="presenting-operations">Presenting Operations</h2>
+
+<p>The operation is not only helpful for validating and processing data, it can also be used when rendering the form.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>operation = Comment::Update.present(id: 1)
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Comment::Update</code> will now run the model-finding logic and create the form object for you. It will <em>not</em> run <code class="highlighter-rouge">#process</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># Operation finds the model..
+operation.model #=&gt; &lt;Comment body="FTW!"&gt;
+# and provides the Reform object.
+@form = operation.contract #=&gt; &lt;Reform::Form ..&gt;
+</code></pre>
+</div>
+
+<p>As Reform works with most form builders out-of-the-box, you can pass the form right into it.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>= simple_form_for @form do |f|
+  = f.input :body
+  = f.button :submit
+</code></pre>
+</div>
+
+<p>This normally covers the logic for two controller actions, e.g. <code class="highlighter-rouge">new</code> and <code class="highlighter-rouge">create</code>.</p>
+
+<h2 id="more" data-magellan-target="more">More</h2>
+
+<p>Operation has many optional features like authorization, callbacks, polymorphic builders, etc.</p>
+
 
             </div>
 
@@ -136,7 +366,17 @@
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#factorygirl">FactoryGirl</a></li>
+          <li><a href="#api">API</a></li>
+<li><a href="#operation-class">Operation Class</a></li>
+<li><a href="#model">Model</a></li>
+<li><a href="#contract">Contract</a></li>
+<li><a href="#operationmodel">Operation::Model</a></li>
+<li><a href="#run">Run</a></li>
+<li><a href="#design-goals">Design Goals</a></li>
+<li><a href="#testing-operations">Testing Operations</a></li>
+<li><a href="#testing-with-operations">Testing With Operations</a></li>
+<li><a href="#presenting-operations">Presenting Operations</a></li>
+<li><a href="#more">More</a></li>
         </ul>
       
 </nav>
@@ -151,7 +391,7 @@
       <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
         <ul class="vertical menu side-nav">
     <li class="heading">
-        <a href="/gems/operation">
+        <a href="/gems/operation/index.html">
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
         </a>
     </li>

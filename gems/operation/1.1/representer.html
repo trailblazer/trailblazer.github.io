@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Representable: YAML</title>
-<meta name="description" content="Representable: YAML - Trailblazer">
+<title>Trailblazer: Operation with Representers</title>
+<meta name="description" content="Operation with Representers - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Representable: YAML">
+<meta property="og:title" content="Operation with Representers">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/representable/3.0/yaml.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/representer.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Representable: YAML">
+<meta name="twitter:title" content="Operation with Representers">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -91,12 +91,12 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero representable-hero">
+<div class="hero gems-hero operation-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
         <h1 id="project_title">
-          Representable
+          Operation
         </h1>
       </div>
     </div>
@@ -106,12 +106,12 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="representable-body">
+        <article class="operation-body">
 
           
             <header>
-  <h1 class="doc-page-title">Representable: YAML</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <h1 class="doc-page-title">Operation with Representers</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
 
   <hr>
 
@@ -121,35 +121,203 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="representable-yaml">Representable YAML</h1>
+              <h1 id="operationrepresenter">Operation::Representer</h1>
 
-<p>Representable also comes with a YAML representer. Like <a href="xml.html">XML</a>, the declarative API is almost identical.</p>
+<p>Representer are a concept from Representable and <a href="/gems/roar">Roar</a> and help to parse and render documents, as found in JSON or XML APIs.</p>
 
-<h2 id="flow-style-lists" data-magellan-target="flow-style-lists">Flow Style Lists</h2>
+<p>Operations usually receive the <code class="highlighter-rouge">params</code> hash and pass this to the form’s <code class="highlighter-rouge">#validate</code> method. The same works with documents, with the exception that the form needs a representer to deserialize the document.</p>
 
-<p>A nice feature is that <code class="highlighter-rouge">#collection</code> also accepts a <code class="highlighter-rouge">:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
+<p>With <code class="highlighter-rouge">Representer</code> included, operations can infer a representer from the contract class. The representer can be further customized in the <code class="highlighter-rouge">::representer</code> block.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::YAML
+<pre class="highlight"><code>class Song::Create &lt; Trailblazer::Operation
+  include Representer
 
-  property :title
-  property :id
-  collection :composers, style: :flow
+  contract do
+    property :name
+    validates :name, presence: true
+  end
+
+  representer do
+    # inherited :name
+    include Roar::JSON::HAL
+
+    link(:self) { song_path(represented.id) }
+  end
+
+  def process(params)
+    validate(params[:song]) do # params[:song] is a JSON document.
+      contract.save
+    end
+  end
 end
 </code></pre>
 </div>
 
-<h3 id="public-api">Public API</h3>
+<h2 id="deserialization" data-magellan-target="deserialization">Deserialization</h2>
 
-<p>To render and parse, you invoke <code class="highlighter-rouge">to_yaml</code> and <code class="highlighter-rouge">from_yaml</code>.</p>
+<p>You now invoke the operation with a JSON document, not with a hash anymore.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_yaml
-#=&gt;
----
-title: Fallout
-composers: [Stewart Copeland, Sting]
+<pre class="highlight"><code>Song::Create.(song: '{"title": "Fury"}')
+</code></pre>
+</div>
+
+<p>In <code class="highlighter-rouge">Operation#validate</code>, the incoming <code class="highlighter-rouge">params[:song]</code> will now be treated as a document.</p>
+
+<p>The operation’s representer will be passed into the form’s <code class="highlighter-rouge">validate</code> and used as the deserializer, as it can read JSON and understands the format’s specific semantics.</p>
+
+<p>If you prefer to use the <code class="highlighter-rouge">params</code> hash for deserialization, include <code class="highlighter-rouge">Deserializer::Hash</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  include Representer
+  include Representer::Deserializer::Hash
+</code></pre>
+</div>
+
+<p>You can now pass the params hash into operation call. This will still use the representer, but no JSON parsing will happen.</p>
+
+<h2 id="validation" data-magellan-target="validation">Validation</h2>
+
+<p>After deserialization/population is finished, validation and processing is analogue to a “normal” non-representer operation.</p>
+
+<h2 id="rendering" data-magellan-target="rendering">Rendering</h2>
+
+<p>The <code class="highlighter-rouge">Representer</code> module also imports <code class="highlighter-rouge">to_json</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Song::Create.(song: '{"title": "Fury"}').to_json
+#=&gt; '{"title": "Fury","_links":{"self":"/songs/1"}}'
+</code></pre>
+</div>
+
+<p>In <code class="highlighter-rouge">to_json</code>, the operation’s <em>model</em> will be passed to the representer and rendered using the representer.</p>
+
+<p>For a better understanding, here are the pseudo mechanics.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>module Representer
+  def to_json(options={})
+    self.class.representer. # retrieve operation's representer.
+      new(represented).     # instantiate decorator. #represented returns #model.
+      to_json(options)      # call decorator's rendering.
+  end
+end
+</code></pre>
+</div>
+
+<p>If you want to render the contract instead (or anything else), override <code class="highlighter-rouge">Operation#represented</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Show &lt; Trailblazer::Operation
+  include Trailblazer::Operation::Representer
+
+  def represented
+    contract
+  end
+</code></pre>
+</div>
+
+<h3 id="passing-options">Passing Options</h3>
+
+<p>Note that you can also pass your own options to the rendering.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Show &lt; Trailblazer::Operation
+  include Trailblazer::Operation::Representer
+
+  def to_json(*)
+    super(
+      include:      [:title, :comments],
+      user_options: { is_admin: policy.signed_in? }
+    )
+  end
+</code></pre>
+</div>
+
+<p>To learn how Representable processes options, read <a href="/gems/representable/3.0/api.html#user-options">the docs</a>.</p>
+
+<h2 id="input-and-output-representers" data-magellan-target="input-and-output-representers">Input and Output Representers</h2>
+
+<p>The idea when including <code class="highlighter-rouge">Representer</code> is that you want the same representer to deserialize input and render the response document.</p>
+
+<p>Sometimes, this is not desired, and you want to use different representers for handling input and output.</p>
+
+<p>To use a representer for rendering, only, include <code class="highlighter-rouge">Rendering</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  extend Representer::DSL
+  include Representer::Rendering
+
+  representer do # will be used in #to_json.
+    property :genre, as: :songGenre
+  end
+</code></pre>
+</div>
+
+<p>This will only add <code class="highlighter-rouge">Operation#to_json</code>. Parsing will still be done without a representer.</p>
+
+<p>Alternatively, you can implement the rendering yourself by only including a <code class="highlighter-rouge">Deserializer</code> module.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  extend Representer::DSL
+  include Representer::Deserializer::Hash
+
+  representer do # will be used in #validate.
+    property :genre, as: :songGenre
+  end
+
+  def to_json(*)
+    Create::Representer.new(model).to_json
+  end
+</code></pre>
+</div>
+
+<p>Note that you need to always extend <code class="highlighter-rouge">Representer::DSL</code> to import the <code class="highlighter-rouge">representer</code> block.</p>
+
+<h2 id="composable-interface" data-magellan-target="composable-interface">Composable Interface</h2>
+
+<p>You can set your own representer class if you don’t want it to be inferred.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  self.representer_class = SongRepresenter
+</code></pre>
+</div>
+
+<h2 id="responder" data-magellan-target="responder">Responder</h2>
+
+<p>The <code class="highlighter-rouge">Operation::Responder</code> module adds methods to use an operation instance directly with Rails responders. This is why this module comes from the <code class="highlighter-rouge">trailblazer-rails</code> gem.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="kp">include</span> <span class="no">Responder</span>
+  <span class="kp">include</span> <span class="no">Representer</span>
+
+  <span class="n">representer</span> <span class="p">.</span><span class="nf">.</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>The operation can now be passed to <code class="highlighter-rouge">respond_to</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">create</span>
+  <span class="n">op</span> <span class="o">=</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="n">respond_to</span> <span class="n">op</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>This is done automatically when using <code class="highlighter-rouge">Trailblazer::Controller#respond</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">create</span>
+  <span class="n">respond</span> <span class="no">Comment</span><span class="o">::</span><span class="no">Create</span>
+<span class="k">end</span>
 </code></pre>
 </div>
 
@@ -162,7 +330,12 @@ composers: [Stewart Copeland, Sting]
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#flow-style-lists">Flow Style Lists</a></li>
+          <li><a href="#deserialization">Deserialization</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#rendering">Rendering</a></li>
+<li><a href="#input-and-output-representers">Input and Output Representers</a></li>
+<li><a href="#composable-interface">Composable Interface</a></li>
+<li><a href="#responder">Responder</a></li>
         </ul>
       
 </nav>
@@ -234,7 +407,7 @@ composers: [Stewart Copeland, Sting]
     <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
     <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
     <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
-    <li><a href="/gems/representable/3.0/yaml.html" class="active">YAML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
     <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
     <li class="divider">
 
