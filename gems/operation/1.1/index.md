@@ -1,10 +1,11 @@
 ---
 layout: operation
-permalink: /gems/operation/
 title: "Trailblazer: Operation"
+redirect_from:
+  - /gems/operation/index.html
 ---
 
-# Trailblazer::Operation
+**Note: This describes version 1.1.**
 
 An operation is a service object.
 

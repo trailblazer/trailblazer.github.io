@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation::Controller"
+redirect_from:
+  - /gems/operation/controller.html
 ---
 
 # Operation::Controller

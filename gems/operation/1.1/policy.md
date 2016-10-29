@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation Policies"
+redirect_from:
+  - /gems/operation/policy.html
 ---
 
 # Policy

@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation with Representers"
+redirect_from:
+  - /gems/operation/representer.html
 ---
 
 # Operation::Representer

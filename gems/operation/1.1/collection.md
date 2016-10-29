@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation Collection"
+redirect_from:
+  - /gems/operation/collection.html
 ---
 
 # Collections

@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation: Contract"
+redirect_from:
+  - /gems/operation/contract.html
 ---
 
 # Operation: Contract

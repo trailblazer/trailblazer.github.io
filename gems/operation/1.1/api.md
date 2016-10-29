@@ -1,12 +1,10 @@
 ---
 layout: operation
 title: "Operation API"
+redirect_from:
+  - /gems/operation/api.html
 ---
 
-
-
-
-# Operation API
 
 This document discusses the callstack from top to bottom.
 

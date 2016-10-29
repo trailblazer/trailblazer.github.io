@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation Callbacks"
+redirect_from:
+  - /gems/operation/callback.html
 ---
 
 ## Overview

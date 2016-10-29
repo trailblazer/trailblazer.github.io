@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Operation::Model"
+redirect_from:
+  - /gems/operation/model.html
 ---
 
 # Operation::Model
