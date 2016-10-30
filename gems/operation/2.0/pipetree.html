@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Testing Operations</title>
-<meta name="description" content="Testing Operations - Trailblazer">
+<title>Trailblazer: Operation Pipetree</title>
+<meta name="description" content="Operation Pipetree - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Testing Operations">
+<meta property="og:title" content="Operation Pipetree">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/testing.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/pipetree.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Testing Operations">
+<meta name="twitter:title" content="Operation Pipetree">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -110,8 +110,8 @@
 
           
             <header>
-  <h1 class="doc-page-title">Testing Operations</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
+  <h1 class="doc-page-title">Operation Pipetree</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 30 October 2016</span>
 
   <hr>
 
@@ -121,11 +121,30 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="testing-operations">Testing Operations</h1>
+              <p>The “flow pipetree” is concept for designing the control flow within an operation while maximising reusability, encapsulation and rewiring. Its control semantics help you reducing <code class="highlighter-rouge">if</code>/<code class="highlighter-rouge">else</code> deciders and it’s also pretty awesome to debug!</p>
 
-<h2 id="factorygirl" data-magellan-target="factorygirl">FactoryGirl</h2>
+<p>The flow pipetree is a mix of the <a href="http://dry-rb.org/gems/dry-monads/"><code class="highlighter-rouge">Either</code> monad</a> and <a href="http://zohaib.me/railway-programming-pattern-in-elixir/">“Railway-oriented programming”</a>, but not entirely the same.</p>
 
-<p>In Trailblazer, you should never use factories for setting up a test environment. At some point, this will result in a diverging test and application state. Where production code might have set a tiny flag, your factory will skip this - diverge</p>
+<h2 id="operation-pipetree" data-magellan-target="operation-pipetree">Operation Pipetree</h2>
+
+<p>The flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the <code class="highlighter-rouge">Operation::call</code> method and takes over control of what to run when.</p>
+
+<p>A pipetree is a pipeline, or an array of functions.</p>
+
+<p>–&gt; Example of Builder, Contract, Policy</p>
+
+<p>step
+»Build,»New,»Call,»New,»Call
+Edit[“pipetree”]</p>
+
+<h2 id="default-functions" data-magellan-target="default-functions">Default Functions</h2>
+
+<h2 id="extending" data-magellan-target="extending">Extending</h2>
+
+<h2 id="section" data-magellan-target="section">&amp;</h2>
+<p>## &gt;
+## |
+## %</p>
 
             </div>
 
@@ -136,7 +155,10 @@
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#factorygirl">FactoryGirl</a></li>
+          <li><a href="#operation-pipetree">Operation Pipetree</a></li>
+<li><a href="#default-functions">Default Functions</a></li>
+<li><a href="#extending">Extending</a></li>
+<li><a href="#section">&amp;</a></li>
         </ul>
       
 </nav>
