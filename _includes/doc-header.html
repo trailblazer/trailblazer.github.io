@@ -1,6 +1,14 @@
-<header>
+<header id="doc-header">
   <h1 class="doc-page-title">{{ page.title }}</h1>
   <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated {% last_modified_at %d %B %Y %}</span>
+
+  {% if page.gems[0] %}
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/{{page.gems[0][1]}}">{{ page.gems[0][0] }}</a>
+      <span class="version">v{{page.gems[0][2]}}</span>
+    </span>
+  {% endif %}
 
   <hr/>
 
