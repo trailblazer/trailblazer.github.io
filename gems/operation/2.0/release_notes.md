@@ -133,6 +133,12 @@ elsif result["state"] == :updated and result["valid"]
   redirect_to "/news/#{result["model"].id}"
 ```
 
+
+["model"]
+["valid"]
+["errors.contract"]
+
+
 ## Pattern Matching
 
 You can also use [pattern matching](https://github.com/dry-rb/dry-matcher) with the result object.

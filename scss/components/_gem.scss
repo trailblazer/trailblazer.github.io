@@ -2,6 +2,7 @@
 
 $cells-color: #CE2458;
 $operation-color: #17C2AA;
+$operation2-color: #af111c;
 $reform-color: #F04694;
 $representable-color: #10A6F7;
 $roar-color: #F4A608;
@@ -44,6 +45,9 @@ $generic-color: #D52027;
 
 .operation-body {
   @include gems-color($operation-color)
+}
+.operation2-body {
+  @include gems-color($operation2-color)
 }
 
 
