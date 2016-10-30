@@ -91,7 +91,7 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero operation-hero">
+<div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
@@ -106,7 +106,7 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="operation-body">
+        <article class="operation2-body">
 
           
             <header>
@@ -121,7 +121,7 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>The “flow pipetree” is concept for designing the control flow within an operation while maximising reusability, encapsulation and rewiring. Its control semantics help you reducing <code class="highlighter-rouge">if</code>/<code class="highlighter-rouge">else</code> deciders and it’s also pretty awesome to debug!</p>
+              <p>The “flow pipetree” is a concept for designing the control flow within an operation while maximising reusability, encapsulation and rewiring. Its control semantics help you reducing <code class="highlighter-rouge">if</code>/<code class="highlighter-rouge">else</code> deciders and it’s also pretty awesome to debug!</p>
 
 <p>The flow pipetree is a mix of the <a href="http://dry-rb.org/gems/dry-monads/"><code class="highlighter-rouge">Either</code> monad</a> and <a href="http://zohaib.me/railway-programming-pattern-in-elixir/">“Railway-oriented programming”</a>, but not entirely the same.</p>
 
@@ -129,15 +129,138 @@
 
 <p>The flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the <code class="highlighter-rouge">Operation::call</code> method and takes over control of what to run when.</p>
 
-<p>A pipetree is a pipeline, or an array of functions.</p>
+<p>A pipetree is a an array of <strong><em>functions</em></strong>. Each function in this pipeline is called a <strong><em>step</em></strong>.</p>
 
-<p>–&gt; Example of Builder, Contract, Policy</p>
+<h2 id="initial-pipetree" data-magellan-target="initial-pipetree">Initial Pipetree</h2>
 
-<p>step
-»Build,»New,»Call,»New,»Call
-Edit[“pipetree”]</p>
+<p>An empty operation has a very comprehensible pipetree.</p>
 
-<h2 id="default-functions" data-magellan-target="default-functions">Default Functions</h2>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
+end
+
+puts Edit["pipetree"].inspect(style: :rows)
+
+ 1 &gt;&gt;New
+ 2 &gt;&gt;Call
+</code></pre>
+</div>
+
+<p>There are only two steps: In <code class="highlighter-rouge">New</code>, the operation instance is created, in <code class="highlighter-rouge">Call</code> the operation’s <code class="highlighter-rouge">#call</code> method is invoked, which will in turn run your <code class="highlighter-rouge">process</code> method.</p>
+
+<p>Usually, when including Trailblazer operation modules, those modules will hook themselves into the pipetree in the desired position.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
+  include Builder
+  include Policy::Guard
+  include Contract
+  include Model
+end
+
+puts Edit["pipetree"].inspect(style: :rows)
+
+ 0 &gt;&gt;Build
+ 1 &gt;&gt;New
+ 2 &gt;Model::Build
+ 3 &amp;Policy::Evaluate
+ 5 &gt;&gt;Call
+</code></pre>
+</div>
+
+<p>Here, the <code class="highlighter-rouge">Builder</code> is run as the very first step since it decides the actual class to instantiate, <code class="highlighter-rouge">Policy::Evaluate</code> is run after the model’s logic as it needs the model, and so on.</p>
+
+<h2 id="control-flow-outgoing" data-magellan-target="control-flow-outgoing">Control Flow: Outgoing</h2>
+
+<p>Each step must either return a <code class="highlighter-rouge">Left</code> object when something went wrong, or a <code class="highlighter-rouge">Right</code> when things are, well, al<em>right</em>. This is a common pattern we copied from the <code class="highlighter-rouge">Either</code> monad as found in many functional languages.</p>
+
+<p>For example, the <code class="highlighter-rouge">Policy::Evaluate</code> step could be implemented as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Policy::Evaluate = -&gt;(input, options) { options["user.current"].admin? ? Pipetree::Right : Pipetree::Left }
+</code></pre>
+</div>
+
+<p>This step would make the further execution of the pipetree stop if the current user wasn’t an admin, by emitting a <code class="highlighter-rouge">Left</code> object.</p>
+
+<p>Every step in the pipetree will return such a <code class="highlighter-rouge">Left</code> or <code class="highlighter-rouge">Right</code> result.</p>
+
+<h2 id="control-flow-incoming" data-magellan-target="control-flow-incoming">Control Flow: Incoming</h2>
+
+<p>Now, returning the “direction” is one thing. However, when hooking steps into the pipetree, you can also specify the <em>incoming direction</em>. In other words, you can say if your step wants to be executed for an incoming <code class="highlighter-rouge">Left</code> (for example an error handler) or a <code class="highlighter-rouge">Right</code>.</p>
+
+<p>Use <code class="highlighter-rouge">&gt;</code> to add a step that is expecting a <code class="highlighter-rouge">Right</code>, a successful, direction.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
+  include Policy
+
+  SuccessfulPolicyLogger = -&gt;(input, options) { options["log.policy"] = "Success!" }
+
+  self.&gt; SuccessfulPolicyLogger, after: Policy::Evaluate
+end
+</code></pre>
+</div>
+
+<p>Resulting in the following pipetree.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>puts Edit["pipetree"].inspect(style: :rows)
+
+ 0 &gt;&gt;New
+ 1 &amp;Policy::Evaluate
+ 2 &gt;SuccessfulPolicyLogger
+ 3 &gt;&gt;Call
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">SuccessfulPolicyLogger</code> will only be executed if its predecessor in the pipe returns a <code class="highlighter-rouge">Right</code>.</p>
+
+<p>— examples how it’s run</p>
+
+<p>If you need a <code class="highlighter-rouge">Left</code>-expecting step, such as a policy breach logger, use <code class="highlighter-rouge">&lt;</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
+  # ..
+  PolicyBreachLogger = -&gt;(input, options) { options["log.policy"] = "FAIL!" }
+
+  self.&gt; SuccessfulPolicyLogger, after: Policy::Evaluate
+  self.&lt; PolicyBreachLogger, after: Policy::Evaluate
+end
+</code></pre>
+</div>
+
+<p>And the pipetree.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>puts Edit["pipetree"].inspect(style: :rows)
+
+ 0 &gt;&gt;New
+ 1 &amp;Policy::Evaluate
+ 2 &lt;PolicyBreachLogger
+ 3 &gt;SuccessfulPolicyLogger
+ 4 &gt;&gt;Call
+</code></pre>
+</div>
+
+<p>It all depends on the direction result of the former pipetree. If it’s <code class="highlighter-rouge">Left</code> with an error, the <code class="highlighter-rouge">PolicyBreachLogger</code> is involved, if there’s a <code class="highlighter-rouge">Right</code> travelling down the pipetree, it’s <code class="highlighter-rouge">SuccessfulPolicyLogger</code>’s turn.</p>
+
+<h2 id="whatever" data-magellan-target="whatever">Whatever</h2>
+
+<p>If you don’t care about the incoming direction, use <code class="highlighter-rouge">%</code> - we call it the <em>“whatever”</em> operator inspired by SQL’s wildcard symbol.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
+  # ..
+  GenericLogger = -&gt;(input, options) { options["log.message"] = "Policy OK? #{options["policy.evaluator"]["valid"].inspect}" }
+
+  self.% GenericLogger, after: Policy::Evaluate
+end
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">GenericLogger</code> will be run either way.</p>
 
 <h2 id="extending" data-magellan-target="extending">Extending</h2>
 
@@ -145,6 +268,8 @@ Edit[“pipetree”]</p>
 <p>## &gt;
 ## |
 ## %</p>
+
+<h2 id="debugging" data-magellan-target="debugging">Debugging</h2>
 
             </div>
 
@@ -156,9 +281,13 @@ Edit[“pipetree”]</p>
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#operation-pipetree">Operation Pipetree</a></li>
-<li><a href="#default-functions">Default Functions</a></li>
+<li><a href="#initial-pipetree">Initial Pipetree</a></li>
+<li><a href="#control-flow-outgoing">Control Flow: Outgoing</a></li>
+<li><a href="#control-flow-incoming">Control Flow: Incoming</a></li>
+<li><a href="#whatever">Whatever</a></li>
 <li><a href="#extending">Extending</a></li>
 <li><a href="#section">&amp;</a></li>
+<li><a href="#debugging">Debugging</a></li>
         </ul>
       
 </nav>
