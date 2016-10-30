@@ -139,6 +139,26 @@ end
 </code></pre>
 </div>
 
+<p>The following will pass.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : User.admin )
+result["policy.result"] #=&gt; {"valid" =&gt; true}
+</code></pre>
+</div>
+
+<p>Whereas this fails.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : nil )
+result["policy.result"] #=&gt; {"valid" =&gt; false}
+</code></pre>
+</div>
+
+<p>Learn more about <a href="skill.md">→ dependency injection</a> to pass params and current user into the operation.</p>
+
+<h3 id="guard-callable">Guard Callable</h3>
+
 <p>It also accepts a <code class="highlighter-rouge">Callable</code> object. The object’s <code class="highlighter-rouge">call</code> method signature: <code class="highlighter-rouge">call(operation, options)</code></p>
 
 <div class="highlighter-rouge">
