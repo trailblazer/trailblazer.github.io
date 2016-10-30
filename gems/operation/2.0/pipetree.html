@@ -125,13 +125,40 @@
 
 <p>The flow pipetree is a mix of the <a href="http://dry-rb.org/gems/dry-monads/"><code class="highlighter-rouge">Either</code> monad</a> and <a href="http://zohaib.me/railway-programming-pattern-in-elixir/">“Railway-oriented programming”</a>, but not entirely the same.</p>
 
-<h2 id="operation-pipetree" data-magellan-target="operation-pipetree">Operation Pipetree</h2>
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
 
-<p>The flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the <code class="highlighter-rouge">Operation::call</code> method and takes over control of what to run when.</p>
+<div class="row">
+  <div class="columns medium-3">
+    <img src="/images/diagrams/pipetree.png">
+  </div>
+  <div class="columns medium-9">
+    <p>
+      A pipetree is a an array of <em><strong>functions</strong></em>. Each function in this pipeline is called a <em><strong>step</strong></em>. In the diagram, every box, like <code>Builder</code> or <code>Rollback</code> represents a step.
+      </p>
+      <p>
+        The steps are executed from top to bottom. It starts with <code>Build</code>, then <code>New</code>, then <code>Validation</code> is invoked. Here, it depends on the result of the step. If <code>Validation</code> was successful, it stays on the <em>right</em> track and invoke <code>Persist</code> and so on. Otherwise, it'll change to the <em>left</em> track and call <code>LogInvalid</code>, then <code>Rollback</code>.
+      </p>
 
-<p>A pipetree is a an array of <strong><em>functions</em></strong>. Each function in this pipeline is called a <strong><em>step</em></strong>.</p>
+      <p>As a last step, ignoring the result of the former step, a wildcart step <code>LogResult</code> is <em>always</em> run.</p>
+
+      <p>This is just one example of a flow pipetree your operation could implement. The possibilities how to plug together flows that implement complex domain logic are endless.</p>
+
+      <p>In these sections we will discuss the following questions.
+
+      </p>
+<ul>
+        <li>How do we define a pipetree and add steps?</li>
+        <li>Where can I set what track my step is on?</li>
+        <li>How can a step emit different results to change the track?</li>
+        <li>Where do we transport state and additional results?</li>
+      </ul>
+      
+  </div>
+</div>
 
 <h2 id="initial-pipetree" data-magellan-target="initial-pipetree">Initial Pipetree</h2>
+
+<p>The flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the <code class="highlighter-rouge">Operation::call</code> method and takes over control of what to run when.</p>
 
 <p>An empty operation has a very comprehensible pipetree.</p>
 
@@ -280,7 +307,7 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#operation-pipetree">Operation Pipetree</a></li>
+          <li><a href="#overview">Overview</a></li>
 <li><a href="#initial-pipetree">Initial Pipetree</a></li>
 <li><a href="#control-flow-outgoing">Control Flow: Outgoing</a></li>
 <li><a href="#control-flow-incoming">Control Flow: Incoming</a></li>
