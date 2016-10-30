@@ -3,6 +3,8 @@ layout: operation2
 title: "Operation Policy"
 ---
 
+This document discusses the `Policy` module and [`Policy::Guard`](#guard).
+
 ## Guard
 
 A guard is a proc that's executed before `Call`, making it the simplest form of a policy.
@@ -17,6 +19,20 @@ You can use `::policy` and pass a proc. The proc is executed in operation instan
       include Policy::Guard
       policy -> { self["params"][:id] == 1 && self["user.current"].admin? }
     end
+
+The following will pass.
+
+    result = Create.( { id: 1 }, "user.current" : User.admin )
+    result["policy.result"] #=> {"valid" => true}
+
+Whereas this fails.
+
+    result = Create.( { id: 1 }, "user.current" : nil )
+    result["policy.result"] #=> {"valid" => false}
+
+Learn more about [→ dependency injection](skill.md) to pass params and current user into the operation.
+
+### Guard Callable
 
 It also accepts a `Callable` object. The object's `call` method signature: `call(operation, options)`
 
