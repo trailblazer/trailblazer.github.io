@@ -5,7 +5,7 @@ gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0"]
 ---
 
-The "flow pipetree" structures the control flow in an operation.
+The "flow pipetree" structures and directs the control flow in an operation.
 
 All major steps like building the operation, deserializing incoming parameters, validating, triggering callbacks, etc. are orchestrated via the pipetree. It maximises reusability, helps rewiring or skipping steps and reduces `if`/`else` deciders troughout your code. And it's also pretty awesome to [debug](#debugging)!
 
@@ -27,7 +27,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 
       <p>As a last step, ignoring the result of the former step, a wildcart step <code>LogResult</code> is <em>always</em> run.</p>
 
-      <p>This is just one example of a flow pipetree your operation could implement. The possibilities how to plug together flows that implement complex domain logic are endless.</p>
+      <p>This is just one example of a flow pipetree your operation could implement. The possibilities are endless how to plug together flows for complex domain logic.</p>
 
       <p>In these sections we will discuss the following questions.
 
@@ -44,7 +44,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 
 ## Initial Pipetree
 
-The flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the `Operation::call` method and takes over control of what to run when.
+As discussed, the flow within the operation is controlled by a pipetree and this mysterious pipetree is simply invoked in the `Operation::call` method and takes over control of what to run when.
 
 An empty operation has a very comprehensible pipetree.
 
@@ -77,23 +77,9 @@ Usually, when including Trailblazer operation modules, those modules will hook t
 
 Here, the `Builder` is run as the very first step since it decides the actual class to instantiate, `Policy::Evaluate` is run after the model's logic as it needs the model, and so on.
 
-## Control Flow: Outgoing
+## Adding Steps: Right Track
 
-Each step must either return a `Left` object when something went wrong, or a `Right` when things are, well, al<em>right</em>. This is a common pattern we copied from the `Either` monad as found in many functional languages.
-
-For example, the `Policy::Evaluate` step could be implemented as follows.
-
-    Policy::Evaluate = ->(input, options) { options["user.current"].admin? ? Pipetree::Right : Pipetree::Left }
-
-This step would make the further execution of the pipetree stop if the current user wasn't an admin, by emitting a `Left` object.
-
-Every step in the pipetree will return such a `Left` or `Right` result.
-
-## Control Flow: Incoming
-
-Now, returning the "direction" is one thing. However, when hooking steps into the pipetree, you can also specify the *incoming direction*. In other words, you can say if your step wants to be executed for an incoming `Left` (for example an error handler) or a `Right`.
-
-Use `>` to add a step that is expecting a `Right`, a successful, direction.
+You can add your own or existing steps to the right track using `Operation::>`. The right track is supposed to implement the correct, happy path of the opreation, the *right* thing, so to speak.
 
     class Edit < Trailblazer::Operation
       include Policy
@@ -112,31 +98,69 @@ Resulting in the following pipetree.
      2 >SuccessfulPolicyLogger
      3 >>Call
 
-The `SuccessfulPolicyLogger` will only be executed if its predecessor in the pipe returns a `Right`.
+The `SuccessfulPolicyLogger` will, of course, only be executed if its predecessor `Policy::Evaluate` doesn't defer to the left track. To learn how a step can defer, we should look at how they're implemented.
 
---- examples how it's run
+## Step Implementation
 
-If you need a `Left`-expecting step, such as a policy breach logger, use `<`.
+The simplest step can be a proc in Trailblazer.
+
+    SuccessfulPolicyLogger = ->(input, options) { options["log.policy"] = "Success!" }
+
+It receives `input` which is usually the operation instance, and `options` which is the operation's skill hash. You're free to write to `options`.
+
+The way you attach your step to the pipetree decides whether or not its returned value is meaningful.
+
+[TODO: you will also be able to use an operation instance method soon.]
+
+## Changing Tracks
+
+The return value of a step is key to defer to another track.
+
+If added with the `>` method, the step won't be able to defer to the left track, regardless of what it returns or does.
+
+An easy way to allow a step to change the track is to attach it using `&`. Now, the step's return value is evaluated, if `falsey`, it will defer to the left track.
+
+    class Edit < Trailblazer::Operation
+      MyValidator = ->(input, options) { options["params"][:id].blank? }
+      self.& MyValidator, after: SuccessfulPolicyLogger
+
+Which gives us the pipetree below.
+
+     0 >>New
+     1 &Policy::Evaluate
+     2 >SuccessfulPolicyLogger
+     3 &MyValidator
+     4 >>Call
+
+If `MyValidator` returns `false`, the `Call` step will never be reached.
+
+## Adding Steps: Left Track
+
+The left track is meant to handle errors or inconsistencies, such as invalid data, exceptions and so on.
+
+Steps you add here are for error management.
+
+Adding a step to the left track happens with the `<` method.
 
     class Edit < Trailblazer::Operation
       # ..
-      PolicyBreachLogger = ->(input, options) { options["log.policy"] = "FAIL!" }
+      PolicyBreachLogger = ->(input, options) { Notify::Mail.("more breaches!") }
+      self.& PolicyBreachLogger, after: Policy::Evaluate
 
-      self.> SuccessfulPolicyLogger, after: Policy::Evaluate
-      self.< PolicyBreachLogger, after: Policy::Evaluate
-    end
-
-And the pipetree.
-
-    puts Edit["pipetree"].inspect(style: :rows)
+With an amazing pipetree.
 
      0 >>New
      1 &Policy::Evaluate
      2 <PolicyBreachLogger
      3 >SuccessfulPolicyLogger
-     4 >>Call
+     4 &MyValidator
+     5 >>Call
 
-It all depends on the direction result of the former pipetree. If it's `Left` with an error, the `PolicyBreachLogger` is involved, if there's a `Right` travelling down the pipetree, it's `SuccessfulPolicyLogger`'s turn.
+Obviously, the `PolicyBreachLogger` step is never called when the operation is on the right track (no pun intended).
+
+
+
+--- examples how it's run
 
 ## Whatever
 
@@ -150,8 +174,6 @@ If you don't care about the incoming direction, use `%` - we call it the *"whate
     end
 
 The `GenericLogger` will be run either way.
-
-## Extending
 
 ## &
 ## >
