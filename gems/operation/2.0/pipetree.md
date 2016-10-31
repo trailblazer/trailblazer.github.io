@@ -11,6 +11,32 @@ All major steps like building the operation, deserializing incoming parameters, 
 
 The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-monads/) and ["Railway-oriented programming"](http://zohaib.me/railway-programming-pattern-in-elixir/), but not entirely the same.
 
+[→ Overview](#overview)
+
+## Cheat Sheet
+
+#### Step Example
+
+    Persist  = ->(input, options) { options["model"].save }
+    Validate = ->(input, options) { options["params"]["id"].present? }
+    Warn     = ->(input, options) { Kernel.warn options["errors.contract"].inspect }
+
+#### Pipetree Operators
+
+| **`::>`** | Add step to **right** track. Result irrelevant, stays on **right**. | `Create.> Persist` |
+| **`::&`** | Add step to **right** track. `falsey` result defers to *left*track. | `Create.& Validate` |
+| **`::<`** | Add step to **left** track. Result irrelevant, stays on **left**. | `Create.< Warn` |
+
+#### Operator Options
+
+<!-- | **`delete`** | Create["pipetree"].delete Persist | -->
+
+| **`:replace`** | `Create.> Sequel::Persist, replace: Mysql::Persist`  |
+| **`:before`** | `Create.> Deserializer, before: Validate`  |
+| **`:after`** | `Create.> EvaluateResult, after: Validate`  |
+| **`:append`** | `Create.> ResultLogger, append: true` |
+| **`:prepend`** | `Create.> JSONParse, prepend: true` |
+
 ## Overview
 
 <div class="row">
@@ -106,9 +132,9 @@ The simplest step can be a proc in Trailblazer.
 
     SuccessfulPolicyLogger = ->(input, options) { options["log.policy"] = "Success!" }
 
-It receives `input` which is usually the operation instance, and `options` which is the operation's skill hash. You're free to write to `options`.
+It receives `input` which is usually the operation instance, and `options` which is the operation's skill hash. As always, you're free to write to `options`.
 
-The way you attach your step to the pipetree decides whether or not its returned value is meaningful.
+The way you *attach* your step to the pipetree decides whether or not its returned value is meaningful.
 
 [TODO: you will also be able to use an operation instance method soon.]
 
@@ -175,9 +201,16 @@ If you don't care about the incoming direction, use `%` - we call it the *"whate
 
 The `GenericLogger` will be run either way.
 
-## &
-## >
-## |
-## %
-
 ## Debugging
+
+At any point, you may inspect the operation's pipetree.
+
+    class Create < Trailblazer::Operation
+      def process(params)
+        # what's going on here?
+        puts self["pipetree"].inspect
+      end
+
+Or, from the outside.
+
+    puts Create["pipetree"].inspect
