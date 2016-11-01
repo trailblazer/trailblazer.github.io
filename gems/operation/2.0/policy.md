@@ -1,6 +1,8 @@
 ---
 layout: operation2
 title: "Operation Policy"
+gems:
+  - ["trailblazer", "trailblazer/trailblazer", "2.0"]
 ---
 
 This document discusses the `Policy` module and [`Policy::Guard`](#guard).
