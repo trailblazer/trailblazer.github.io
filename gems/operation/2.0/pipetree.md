@@ -41,7 +41,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 
 <div class="row">
   <div class="columns medium-3">
-    <img src="/images/diagrams/pipetree.png">
+    <img src="/images/diagrams/pipetree.png" alt="Two parallel, vertical tracks, where steps like validation or logger sit either on the right (success) or the left (error). They are executed from top to bottom. Tracks can be changed after a step.">
   </div>
   <div class="columns medium-9">
     <p>
