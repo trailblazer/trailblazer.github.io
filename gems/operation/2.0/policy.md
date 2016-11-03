@@ -11,7 +11,7 @@ This document discusses the `Policy` module and [`Policy::Guard`](#guard).
 
 A guard is a proc that's executed before `Call`, making it the simplest form of a policy.
 
-If its result is `falsey`, the pipetree won't be further executed and a policy breach is reported in `self["policy.result"]`.
+If its result is `falsey`, the pipetree won't be further executed and a policy breach is reported in `self["result.policy"]`.
 
 ### Guard Example
 
@@ -25,12 +25,12 @@ You can use `::policy` and pass a proc. The proc is executed in operation instan
 The following will pass.
 
     result = Create.( { id: 1 }, "user.current" : User.admin )
-    result["policy.result"] #=> {"valid" => true}
+    result["result.policy"].success? #=> true
 
 Whereas this fails.
 
     result = Create.( { id: 1 }, "user.current" : nil )
-    result["policy.result"] #=> {"valid" => false}
+    result["result.policy"].success? #=> false
 
 Learn more about [→ dependency injection](skill.md) to pass params and current user into the operation.
 
@@ -54,11 +54,12 @@ Note that your guard class has to be marked as `Uber::Callable`.
 
 ### Guard Pipetree
 
-Per default, `Policy::Evaluate` hooks in before `Call`.
+Per default, `policy.guard.evaluate` hooks in before `operation.call`.
 
     Create["pipetree"] #=>
-     0 >>New
-     1 &Policy::Evaluate
-     2 >>Call
+       0 =======================>>operation.new
+       1 ================&policy.guard.evaluate
+       2 ======================>>operation.call
+       3 ===========operation.result===========
 
 It returns `Left` on breach.
