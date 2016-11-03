@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation Policy</title>
-<meta name="description" content="Operation Policy - Trailblazer">
+<title>Trailblazer: Operation Contract</title>
+<meta name="description" content="Operation Contract - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Operation Policy">
+<meta property="og:title" content="Operation Contract">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/policy.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/contract.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation Policy">
+<meta name="twitter:title" content="Operation Contract">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -110,13 +110,13 @@
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation Policy</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 30 October 2016</span>
+  <h1 class="doc-page-title">Operation Contract</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 03 November 2016</span>
 
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer">trailblazer</a>
+      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
       <span class="version">v2.0</span>
     </span>
   
@@ -129,79 +129,21 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>This document discusses the <code class="highlighter-rouge">Policy</code> module and <a href="#guard"><code class="highlighter-rouge">Policy::Guard</code></a>.</p>
+              <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
 
-<h2 id="guard" data-magellan-target="guard">Guard</h2>
+<h2 id="result" data-magellan-target="result">Result</h2>
 
-<p>A guard is a proc that’s executed before <code class="highlighter-rouge">Call</code>, making it the simplest form of a policy.</p>
-
-<p>If its result is <code class="highlighter-rouge">falsey</code>, the pipetree won’t be further executed and a policy breach is reported in <code class="highlighter-rouge">self["result.policy"]</code>.</p>
-
-<h3 id="guard-example">Guard Example</h3>
-
-<p>You can use <code class="highlighter-rouge">::policy</code> and pass a proc. The proc is executed in operation instance context, allowing you to access the data using <code class="highlighter-rouge">self[]</code>.</p>
+<p>The operation will store the validation result for every contract in its own result object.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  include Policy::Guard
-  policy -&gt; { self["params"][:id] == 1 &amp;&amp; self["user.current"].admin? }
-end
+<pre class="highlight"><code>result = Create.({ id: 1 })
+
+result["result.contract"].success? #=&gt; true
+result["result.contract"].errors #=&gt; {}
 </code></pre>
 </div>
 
-<p>The following will pass.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : User.admin )
-result["result.policy"].success? #=&gt; true
-</code></pre>
-</div>
-
-<p>Whereas this fails.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : nil )
-result["result.policy"].success? #=&gt; false
-</code></pre>
-</div>
-
-<p>Learn more about <a href="skill.md">→ dependency injection</a> to pass params and current user into the operation.</p>
-
-<h3 id="guard-callable">Guard Callable</h3>
-
-<p>It also accepts a <code class="highlighter-rouge">Callable</code> object. The object’s <code class="highlighter-rouge">call</code> method signature: <code class="highlighter-rouge">call(operation, options)</code></p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Update &lt; Create
-  class MyGuard
-    include Uber::Callable
-    def call(operation, options)
-      operation["params"][:id] == 1
-    end
-  end
-
-  include Policy::Guard
-  policy MyGuard.new
-end
-</code></pre>
-</div>
-
-<p>Note that your guard class has to be marked as <code class="highlighter-rouge">Uber::Callable</code>.</p>
-
-<h3 id="guard-pipetree">Guard Pipetree</h3>
-
-<p>Per default, <code class="highlighter-rouge">policy.guard.evaluate</code> hooks in before <code class="highlighter-rouge">operation.call</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create["pipetree"] #=&gt;
-   0 =======================&gt;&gt;operation.new
-   1 ================&amp;policy.guard.evaluate
-   2 ======================&gt;&gt;operation.call
-   3 ===========operation.result===========
-</code></pre>
-</div>
-
-<p>It returns <code class="highlighter-rouge">Left</code> on breach.</p>
+<p>The path is <code class="highlighter-rouge">result.contract[.name]</code>, e.g. <code class="highlighter-rouge">result["result.contract.params"]</code>.</p>
 
             </div>
 
@@ -212,7 +154,8 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#guard">Guard</a></li>
+          <li><a href="#cheatsheet">Cheatsheet</a></li>
+<li><a href="#result">Result</a></li>
         </ul>
       
 </nav>

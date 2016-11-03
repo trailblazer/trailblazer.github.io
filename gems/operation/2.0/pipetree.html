@@ -159,7 +159,7 @@ Warn     = -&gt;(input, options) { Kernel.warn options["errors.contract"].inspec
     </tr>
     <tr>
       <td><strong><code class="highlighter-rouge">::&amp;</code></strong></td>
-      <td>Add step to <strong>right</strong> track. <code class="highlighter-rouge">falsey</code> result defers to <em>left</em>track.</td>
+      <td>Add step to <strong>right</strong> track. <code class="highlighter-rouge">falsey</code> result deviates to <em>left</em>track.</td>
       <td><code class="highlighter-rouge">Create.&amp; Validate</code></td>
     </tr>
     <tr>
@@ -203,7 +203,7 @@ Warn     = -&gt;(input, options) { Kernel.warn options["errors.contract"].inspec
 
 <div class="row">
   <div class="columns medium-3">
-    <img src="/images/diagrams/pipetree.png">
+    <img src="/images/diagrams/pipetree.png" alt="Two parallel, vertical tracks, where steps like validation or logger sit either on the right (success) or the left (error). They are executed from top to bottom. Tracks can be changed after a step.">
   </div>
   <div class="columns medium-9">
     <p>
@@ -298,7 +298,7 @@ end
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">SuccessfulPolicyLogger</code> will, of course, only be executed if its predecessor <code class="highlighter-rouge">Policy::Evaluate</code> doesn’t defer to the left track. To learn how a step can defer, we should look at how they’re implemented.</p>
+<p>The <code class="highlighter-rouge">SuccessfulPolicyLogger</code> will, of course, only be executed if its predecessor <code class="highlighter-rouge">Policy::Evaluate</code> doesn’t deviate to the left track. To learn how a step can deviate, we should look at how they’re implemented.</p>
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
 
@@ -317,11 +317,11 @@ end
 
 <h2 id="changing-tracks" data-magellan-target="changing-tracks">Changing Tracks</h2>
 
-<p>The return value of a step is key to defer to another track.</p>
+<p>The return value of a step is key to deviate to another track.</p>
 
-<p>If added with the <code class="highlighter-rouge">&gt;</code> method, the step won’t be able to defer to the left track, regardless of what it returns or does.</p>
+<p>If added with the <code class="highlighter-rouge">&gt;</code> method, the step won’t be able to deviate to the left track, regardless of what it returns or does.</p>
 
-<p>An easy way to allow a step to change the track is to attach it using <code class="highlighter-rouge">&amp;</code>. Now, the step’s return value is evaluated, if <code class="highlighter-rouge">falsey</code>, it will defer to the left track.</p>
+<p>An easy way to allow a step to change the track is to attach it using <code class="highlighter-rouge">&amp;</code>. Now, the step’s return value is evaluated, if <code class="highlighter-rouge">falsey</code>, it will deviate to the left track.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Edit &lt; Trailblazer::Operation
