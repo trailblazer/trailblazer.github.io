@@ -640,7 +640,7 @@ You can expand the state's cache key by appending a versioner block to the `::ca
 
 ```ruby
 class CartCell < Cell::Rails
-  cache :show do |options|
+  cache :show do
     order.id
   end
 ```
@@ -651,7 +651,7 @@ As everywhere in Rails, you can also return an array.
 
 ```ruby
 class CartCell < Cell::Rails
-  cache :show do |options|
+  cache :show do
     [id, options[:items].md5]
   end
 ```
