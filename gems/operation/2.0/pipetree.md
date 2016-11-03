@@ -24,7 +24,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 #### Pipetree Operators
 
 | **`::>`** | Add step to **right** track. Result irrelevant, stays on **right**. | `Create.> Persist` |
-| **`::&`** | Add step to **right** track. `falsey` result defers to *left*track. | `Create.& Validate` |
+| **`::&`** | Add step to **right** track. `falsey` result deviates to *left*track. | `Create.& Validate` |
 | **`::<`** | Add step to **left** track. Result irrelevant, stays on **left**. | `Create.< Warn` |
 
 #### Operator Options
@@ -124,7 +124,7 @@ Resulting in the following pipetree.
      2 >SuccessfulPolicyLogger
      3 >>Call
 
-The `SuccessfulPolicyLogger` will, of course, only be executed if its predecessor `Policy::Evaluate` doesn't defer to the left track. To learn how a step can defer, we should look at how they're implemented.
+The `SuccessfulPolicyLogger` will, of course, only be executed if its predecessor `Policy::Evaluate` doesn't deviate to the left track. To learn how a step can deviate, we should look at how they're implemented.
 
 ## Step Implementation
 
@@ -140,11 +140,11 @@ The way you *attach* your step to the pipetree decides whether or not its return
 
 ## Changing Tracks
 
-The return value of a step is key to defer to another track.
+The return value of a step is key to deviate to another track.
 
-If added with the `>` method, the step won't be able to defer to the left track, regardless of what it returns or does.
+If added with the `>` method, the step won't be able to deviate to the left track, regardless of what it returns or does.
 
-An easy way to allow a step to change the track is to attach it using `&`. Now, the step's return value is evaluated, if `falsey`, it will defer to the left track.
+An easy way to allow a step to change the track is to attach it using `&`. Now, the step's return value is evaluated, if `falsey`, it will deviate to the left track.
 
     class Edit < Trailblazer::Operation
       MyValidator = ->(input, options) { options["params"][:id].blank? }
