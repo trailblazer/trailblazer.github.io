@@ -133,7 +133,7 @@
 
 <h2 id="guard" data-magellan-target="guard">Guard</h2>
 
-<p>A guard is a proc that’s executed before <code class="highlighter-rouge">Call</code>, making it the simplest form of a policy.</p>
+<p>A guard is a proc that’s executed before <code class="highlighter-rouge">operation.call</code>, making it the simplest form of a policy.</p>
 
 <p>If its result is <code class="highlighter-rouge">falsey</code>, the pipetree won’t be further executed and a policy breach is reported in <code class="highlighter-rouge">self["result.policy"]</code>.</p>
 
