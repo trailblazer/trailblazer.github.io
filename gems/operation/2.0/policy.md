@@ -9,7 +9,7 @@ This document discusses the `Policy` module and [`Policy::Guard`](#guard).
 
 ## Guard
 
-A guard is a proc that's executed before `Call`, making it the simplest form of a policy.
+A guard is a proc that's executed before `operation.call`, making it the simplest form of a policy.
 
 If its result is `falsey`, the pipetree won't be further executed and a policy breach is reported in `self["result.policy"]`.
 
