@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation::Model</title>
-<meta name="description" content="Operation::Model - Trailblazer">
+<title>Trailblazer: Endpoint</title>
+<meta name="description" content="Endpoint - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -32,14 +32,14 @@
 </script>
 
 
-<meta property="og:title" content="Operation::Model">
+<meta property="og:title" content="Endpoint">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/model.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/endpoint.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation::Model">
+<meta name="twitter:title" content="Endpoint">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -91,7 +91,7 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero operation-hero">
+<div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
@@ -106,13 +106,19 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="operation-body">
+        <article class="operation2-body">
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation::Model</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
+  <h1 class="doc-page-title">Endpoint</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 November 2016</span>
 
+  
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/trailblazer/trailblazer-endpoint">trailblazer-endpoint</a>
+      <span class="version">v2.0</span>
+    </span>
   
 
   <hr>
@@ -123,69 +129,137 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="operationmodel">Operation::Model</h1>
+              <p><code class="highlighter-rouge">Endpoint</code> defines possible outcomes when running an operation and provides a neat matcher mechanism using the <a href="http://dry-rb.org/gems/dry-matcher/"><code class="highlighter-rouge">dry-matcher</code> gem</a> to handle those predefined scenarios.</p>
 
-<p>Including <code class="highlighter-rouge">Model</code> will add simple CRUD semantics to your operation to find/create a model in <code class="highlighter-rouge">#setup!</code>.</p>
+<p>It is both usable without Trailblazer and helps to implements endpoint in all frameworks, including Rails and Hanami.</p>
 
-<p>Note that this is not limited to ActiveRecord.</p>
+<p>To get a quick overview how endpoints work in Rails, jump to the <a href="#rails">→Rails section</a>.</p>
+
+<h2 id="outcomes" data-magellan-target="outcomes">Outcomes</h2>
+
+<p>An endpoint is supposed to be run either in a controller action, or directly hooked to a Rack route. It runs the specified operation, and then inspects the result object to find out what scenario is met.</p>
+
+<p>Possible outcomes are:</p>
+
+<ul>
+  <li>
+<strong><code class="highlighter-rouge">not_found</code></strong> when a model via <a href="model.html#find_by"><code class="highlighter-rouge">Model</code> configured as <code class="highlighter-rouge">:find_by</code></a> is not found.</li>
+  <li>
+<strong><code class="highlighter-rouge">unauthenticated</code></strong> when a policy via <a href="policy.html"><code class="highlighter-rouge">Policy</code></a> reports a breach.</li>
+  <li>
+<strong><code class="highlighter-rouge">unauthorized</code></strong> when a policy via <a href="policy.html"><code class="highlighter-rouge">Policy</code></a> reports a breach (NOT YET IMPLEMENTED).</li>
+  <li>
+<strong><code class="highlighter-rouge">created</code></strong> when an operation successfully ran through the pipetree to create one or more models.</li>
+  <li>
+<strong><code class="highlighter-rouge">success</code></strong> when an operation was run successfully.</li>
+  <li>
+<strong><code class="highlighter-rouge">present</code></strong> when an operation is supposed to load model that will then be presented.</li>
+</ul>
+
+<p>All outcomes are detected via a <code class="highlighter-rouge">Matcher</code> object <a href="https://github.com/trailblazer/trailblazer-endpoint/blob/master/lib/trailblazer/endpoint.rb#L7">implemented in the <code class="highlighter-rouge">endpoint</code> gem</a> using <a href="http://wiki.c2.com/?PatternMatching">pattern matching</a> to do so. Please note that in the current state, those heuristics are still work-in-progress and <a href="https://gitter.im/trailblazer/chat">we need your help</a> to define them properly.</p>
+
+<p>Naturally, you may <a href="#adding-outcomes">add your own</a> domain-specific outcomes.</p>
+
+<h2 id="handlers" data-magellan-target="handlers">Handlers</h2>
+
+<p>While <code class="highlighter-rouge">Matcher</code> is the authorative source for deciding the state of the operation, it is up to you how to react to those well-defined states. This happens using <em>handlers</em> that you can define manually, or use a built-in set. Currently, we have handlers for <a href="#rails">Rails controllers</a> and <a href="#Hanami">Hanami::Router</a>.</p>
+
+<p>You can pass a block to <code class="highlighter-rouge">Endpoint#call</code> with your handlers and hand in the <code class="highlighter-rouge">Result</code> object.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  include Model
-  model Comment, :create
+<pre class="highlight"><code>result = Song::Create.({ title: "SVT" }, "user.current" =&gt; User.root)
+
+Trailblazer::Endpoint.new.(result) do |m|
+  m.success         { |result| puts "Model #{result["model"]} was created successfully." }
+  m.unauthenticated { |result| puts "You ain't root!" }
+end
 </code></pre>
 </div>
 
-<p>Using the <code class="highlighter-rouge">::model</code> method you <em>have to</em> define what model class to work with. The second argument specifies the action.</p>
+<p>While the state decisions are abstracted away, handling those outcomes lies in the programmer’s hands.</p>
 
-<p>This will override <code class="highlighter-rouge">model!</code> as follows.</p>
+<h3 id="handler-proc">Handler Proc</h3>
+
+<p>You can also organize common outcomes in a callable object, such as a proc.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  def model!
-    Comment.new
-  end
+<pre class="highlight"><code>MyHandlers = -&gt;(m) do
+  m.success         { |result| puts "Model #{result["model"]} was created successfully." }
+  m.unauthenticated { |result| puts "You ain't root!" }
+end
 </code></pre>
 </div>
 
-<p>The model is automatically created for you in <code class="highlighter-rouge">#setup!</code> and hence available in <code class="highlighter-rouge">process</code>.</p>
-
-<h2 id="validation" data-magellan-target="validation">Validation</h2>
-
-<p>In <code class="highlighter-rouge">validate</code>, you don’t need to provide the model anymore.</p>
+<p>And then, hand them into <code class="highlighter-rouge">Endpoint#call</code> as the second argument.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>def process(params)
-  model #=&gt; &lt;Comment body=""&gt; # created via #model!.
-  validate(params[:thing]) do
-    ..
+<pre class="highlight"><code>Trailblazer::Endpoint.new.(result, MyHandlers)
+</code></pre>
+</div>
+
+<h3 id="handler-proc-and-block">Handler: Proc and Block</h3>
+
+<p>When handing in a proc <em>and</em> using a block, the block takes precedence over the proc object’s handlers. This is meant to ad-hoc-override generic behavior.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Trailblazer::Endpoint.new.(result, MyHandlers) do |m|
+  m.unauthenticated { |result| raise "Break-in!" }
+end
+</code></pre>
+</div>
+
+<p>With a successful outcome, the generic handler from <code class="highlighter-rouge">MyHandlers</code> is applied. Running this without a current user will raise an exception from the block, though.</p>
+
+<h2 id="adding-outcomes" data-magellan-target="adding-outcomes">Adding Outcomes</h2>
+
+<h2 id="rails" data-magellan-target="rails">Rails</h2>
+
+<p>Standard <a href="#handlers">handlers</a> are provided for Rails and are meant to replace responders.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>require "trailblazer/endpoint/rails" # do that in `config/initializers/trailblazer.rb`!
+
+class SongsController &lt; ApplicationController
+  include Trailblazer::Endpoint::Controller
+
+  def create
+    endpoint Song::Create, path: songs_path, args: [ params, { "user.current" =&gt; current_user } ]
   end
 end
 </code></pre>
 </div>
 
-<h2 id="actions" data-magellan-target="actions">Actions</h2>
+<p><code class="highlighter-rouge">endpoint</code> will run <code class="highlighter-rouge">Song::Create</code>, use the pre-defined matchers to find out the scenario, and run a generic handler for it.</p>
 
-<p>The following actions for <code class="highlighter-rouge">::model</code> are available.</p>
+<h3 id="rails-handlers">Rails Handlers</h3>
+
+<p>The generic behavior works as follows.</p>
 
 <ul>
   <li>
-<code class="highlighter-rouge">:create</code> calls <code class="highlighter-rouge">Comment.new</code>
-</li>
-  <li>
-<code class="highlighter-rouge">:update</code> or <code class="highlighter-rouge">:find</code> will execute <code class="highlighter-rouge">Comment.find(params[:id])</code>
-</li>
+<strong><code class="highlighter-rouge">not_found</code></strong> calls <code class="highlighter-rouge">head 404</code>.
+TODO: add descriptions once it’s stable.</li>
 </ul>
 
-<p>In <code class="highlighter-rouge">process</code>, you now have a new or existing <code class="highlighter-rouge">model</code> available.</p>
+<p>Check out <a href="https://github.com/trailblazer/trailblazer-endpoint/blob/master/lib/trailblazer/endpoint/rails.rb">the implementation</a> for more details, it’s very readable.</p>
 
-<h2 id="api" data-magellan-target="api">API</h2>
+<h3 id="rails-ad-hoc-overriding">Rails Ad-Hoc Overriding</h3>
 
-<p>You may override <code class="highlighter-rouge">#instantiate_model!</code>, <code class="highlighter-rouge">create_model!</code> or <code class="highlighter-rouge">update_model!</code> from the <code class="highlighter-rouge">Model</code> module if you need to change behavior.</p>
+<p>To run your custom logic in a specific controller action, pass a block to <code class="highlighter-rouge">endpoint</code>.</p>
 
-<h2 id="discussion" data-magellan-target="discussion">Discussion</h2>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsController &lt; ApplicationController
+  def create
+    endpoint Create, path: songs_path, args: [ params, { "user.current" =&gt; current_user } ] do |m|
+      m.created { |result| render json: result["representer.serializer.class"].new(result["model"]), status: 999 }
+    end
+  end
+</code></pre>
+</div>
 
-<p>Note that this is really simple behavior. Do not use this module when you plan to use more complex models.</p>
+<p>TODO: explain <code class="highlighter-rouge">:path</code> etc, and make it optional.</p>
+
+<h2 id="hanami" data-magellan-target="hanami">Hanami</h2>
 
             </div>
 
@@ -196,10 +270,11 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#validation">Validation</a></li>
-<li><a href="#actions">Actions</a></li>
-<li><a href="#api">API</a></li>
-<li><a href="#discussion">Discussion</a></li>
+          <li><a href="#outcomes">Outcomes</a></li>
+<li><a href="#handlers">Handlers</a></li>
+<li><a href="#adding-outcomes">Adding Outcomes</a></li>
+<li><a href="#rails">Rails</a></li>
+<li><a href="#hanami">Hanami</a></li>
         </ul>
       
 </nav>
@@ -228,7 +303,7 @@ end
     <li><a href="/gems/operation/model.html">Model</a></li>
     <li><a href="/gems/operation/policy.html">Policy</a></li>
     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
-    <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
+    <li><a href="/gems/operation/2.0/endpoint.html" class="active">Endpoint</a></li>
     <li class="divider">
 
     <li class="heading">
