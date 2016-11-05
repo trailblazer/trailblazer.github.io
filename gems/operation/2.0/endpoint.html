@@ -170,6 +170,12 @@ end
 
 <p>The only interface is the result object returned by the operation. Endpoint doesn’t know anything about internals of the operation.</p>
 
+<div class="highlighter-rouge">
+<pre class="highlight"><code>result = Song::Create.(...)
+Trailblazer::Endpoint.new.(result)
+</code></pre>
+</div>
+
 <p>Instead, pre-defined outcomes are matched and trigger behavior in form of handlers.</p>
 
 <h2 id="outcomes" data-magellan-target="outcomes">Outcomes</h2>
