@@ -164,11 +164,17 @@ end
 
 <p>It is very beautiful.</p>
 
-<h2 id="outcomes" data-magellan-target="outcomes">Outcomes</h2>
+<h2 id="interface" data-magellan-target="interface">Interface</h2>
 
 <p>An endpoint is supposed to be run either in a controller action, or directly hooked to a Rack route. It runs the specified operation, and then inspects the result object to find out what scenario is met.</p>
 
-<p>Possible outcomes are:</p>
+<p>The only interface is the result object returned by the operation. Endpoint doesn’t know anything about internals of the operation.</p>
+
+<p>Instead, pre-defined outcomes are matched and trigger behavior in form of handlers.</p>
+
+<h2 id="outcomes" data-magellan-target="outcomes">Outcomes</h2>
+
+<p>Possible pre-defined outcomes are:</p>
 
 <ul>
   <li>
@@ -300,6 +306,7 @@ TODO: add descriptions once it’s stable.</li>
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#overview">Overview</a></li>
+<li><a href="#interface">Interface</a></li>
 <li><a href="#outcomes">Outcomes</a></li>
 <li><a href="#handlers">Handlers</a></li>
 <li><a href="#adding-outcomes">Adding Outcomes</a></li>
