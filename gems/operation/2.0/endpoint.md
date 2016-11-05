@@ -7,15 +7,47 @@ gems:
 
 `Endpoint` defines possible outcomes when running an operation and provides a neat matcher mechanism using the [`dry-matcher` gem](http://dry-rb.org/gems/dry-matcher/) to handle those predefined scenarios.
 
-It is both usable without Trailblazer and helps to implements endpoint in all frameworks, including Rails and Hanami.
+It is usable without Trailblazer and helps to implements endpoint in all frameworks, including Rails and Hanami.
 
 To get a quick overview how endpoints work in Rails, jump to the [→Rails section](#rails).
 
+## Overview
+
+It replaces the following common pattern with a clean, generic mechanic.
+
+    # run operation
+    result = Song::Create.(...)
+
+    # react on outcome:
+    if result.success? && ....
+      # do this
+    elsif result.success? && something_else
+      # do that
+    elsif # and so on
+
+In place of hard-to-read and hard-wired decider trees, a simple pattern matching happens behind the scenes.
+
+    Trailblazer::Endpoint.new.(result) do |m|
+      m.success         { |result| puts "Model #{result["model"]} was created successfully." }
+      m.unauthenticated { |result| puts "You ain't root!" }
+    end
+
+It is very beautiful.
+
+## Interface
+
+An endpoint is supposed to be run either in a controller action, or directly hooked to a Rack route. It runs the specified operation, and then inspects the [result object](api.html#result-object) to find out what scenario is met.
+
+The only interface is the result object returned by the operation. Endpoint doesn't know anything about internals of the operation.
+
+    result = Song::Create.(...)
+    Trailblazer::Endpoint.new.(result)
+
+Instead, pre-defined outcomes are matched and trigger behavior in form of handlers.
+
 ## Outcomes
 
-An endpoint is supposed to be run either in a controller action, or directly hooked to a Rack route. It runs the specified operation, and then inspects the result object to find out what scenario is met.
-
-Possible outcomes are:
+Possible pre-defined outcomes are:
 
 * **`not_found`** when a model via [`Model` configured as `:find_by`](model.html#find_by) is not found.
 * **`unauthenticated`** when a policy via [`Policy`](policy.html) reports a breach.
@@ -32,8 +64,9 @@ Naturally, you may [add your own](#adding-outcomes) domain-specific outcomes.
 
 While `Matcher` is the authorative source for deciding the state of the operation, it is up to you how to react to those well-defined states. This happens using *handlers* that you can define manually, or use a built-in set. Currently, we have handlers for [Rails controllers](#rails) and [Hanami::Router](#Hanami).
 
-You can pass a block to `Endpoint#call` with your handlers and hand in the `Result` object.
+You can pass a block to `Endpoint#call` with your own handlers and hand in the `Result` object.
 
+    # run operation.
     result = Song::Create.({ title: "SVT" }, "user.current" => User.root)
 
     Trailblazer::Endpoint.new.(result) do |m|
