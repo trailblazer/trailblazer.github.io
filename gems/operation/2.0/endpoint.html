@@ -135,6 +135,35 @@
 
 <p>To get a quick overview how endpoints work in Rails, jump to the <a href="#rails">→Rails section</a>.</p>
 
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
+
+<p>It replaces the following common pattern with a clean, generic mechanic.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># run operation
+result = Song::Create.(...)
+
+# react on outcome:
+if result.success? &amp;&amp; ....
+  # do this
+elsif result.success? &amp;&amp; something_else
+  # do that
+elsif # and so on
+</code></pre>
+</div>
+
+<p>In place of hard-to-read and hard-wired decider trees, a simple pattern matching happens behind the scenes.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Trailblazer::Endpoint.new.(result) do |m|
+  m.success         { |result| puts "Model #{result["model"]} was created successfully." }
+  m.unauthenticated { |result| puts "You ain't root!" }
+end
+</code></pre>
+</div>
+
+<p>It is very beautiful.</p>
+
 <h2 id="outcomes" data-magellan-target="outcomes">Outcomes</h2>
 
 <p>An endpoint is supposed to be run either in a controller action, or directly hooked to a Rack route. It runs the specified operation, and then inspects the result object to find out what scenario is met.</p>
@@ -270,7 +299,8 @@ TODO: add descriptions once it’s stable.</li>
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#outcomes">Outcomes</a></li>
+          <li><a href="#overview">Overview</a></li>
+<li><a href="#outcomes">Outcomes</a></li>
 <li><a href="#handlers">Handlers</a></li>
 <li><a href="#adding-outcomes">Adding Outcomes</a></li>
 <li><a href="#rails">Rails</a></li>
