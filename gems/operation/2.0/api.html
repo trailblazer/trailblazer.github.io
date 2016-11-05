@@ -182,9 +182,19 @@ result["my.message"] #=&gt; "Process was run!"
 </code></pre>
 </div>
 
-<p>Every piece in the operation adds its own data to the result object, so it’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code></p>
+<h3 id="result-naming">Result: Naming</h3>
+
+<p>Every piece in the operation adds its own data to the result object, so it’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
+
+<p>Some steps, such as <a href="contract.html"><code class="highlighter-rouge">Contract</code></a> or <a href="policy.html"><code class="highlighter-rouge">Policy</code></a> will add nested result objects under their own keys, like <code class="highlighter-rouge">["result.policy"]</code>. It’s a convention to add binary <code class="highlighter-rouge">Result</code> objects to the “global” result under the <code class="highlighter-rouge">["result.XXX"]</code> key.</p>
 
 <p>Please note that the result object is also used to transport externally <a href="#dependencies">injected dependencies and class dependencies.</a>.</p>
+
+<h3 id="result-interpretation">Result: Interpretation</h3>
+
+<p>The result object represents the interface between the operation’s inner happenings and the outer world, or, in other worlds, between implementation and user.</p>
+
+<p>It’s up to you how you interpret all this available data. The binary state will help you, but arbitrary state can be transported. For a generic handling in HTTP context (Rails controllers or Rack routes), see <a href="endpoint.html">→ <code class="highlighter-rouge">Endpoint</code></a>.</p>
 
 <h2 id="dependencies" data-magellan-target="dependencies">Dependencies</h2>
 
