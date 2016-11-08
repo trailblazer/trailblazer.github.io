@@ -17,3 +17,8 @@ The operation will store the validation result for every contract in its own res
     result["result.contract"].errors #=> {}
 
 The path is `result.contract[.name]`, e.g. `result["result.contract.params"]`.
+
+
+## Dry-Schema
+
+Show how to use schema for params even before op is instantiated (see contract_test).
