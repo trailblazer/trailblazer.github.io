@@ -1,11 +1,15 @@
 #doc-header {
   .version {
-    background-color: #cecece;
+    /* background-color: #cecece; */ /* defined via $color in _gem.scss. */
     border-radius: 3px;
-    padding: 3px;
-    font-size: 8pt;
+    padding: 6px;
+    font-size: 11pt;
     margin-left: 3px;
     color: #FFF;
     font-weight: normal;
+
+  }
+  .other {
+    background-color: #cecece;
   }
 }

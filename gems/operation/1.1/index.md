@@ -3,6 +3,8 @@ layout: operation
 title: "Trailblazer: Operation"
 redirect_from:
   - /gems/operation/index.html
+gems:
+  - ["operation", "trailblazer/trailblazer-operation", "1.1", "2.0"]
 ---
 
 **Note: This describes version 1.1.**

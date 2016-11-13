@@ -6,7 +6,17 @@
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
       <a href="https://github.com/{{page.gems[0][1]}}">{{ page.gems[0][0] }}</a>
+
+      <a href="/{{ page.path | version_path : page.gems[0][2] }}">
       <span class="version">v{{page.gems[0][2]}}</span>
+      </a>
+
+    {% if page.gems[0][3] %}
+      <a href="/{{ page.path | version_path : page.gems[0][3] }}">
+        <span class="version other">v{{page.gems[0][3]}}</span>
+      </a>
+    {% endif %}
+
     </span>
   {% endif %}
 

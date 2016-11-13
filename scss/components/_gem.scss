@@ -36,6 +36,10 @@ $generic-color: #D52027;
     border: 1px solid lighten($color, 20%);
     background: lighten($color, 60%);
   }
+
+  .version {
+    background-color: $color;
+  }
 }
 
 

@@ -72,4 +72,3 @@ module Jekyll
 end
 
 Liquid::Template.register_tag('tabs', Jekyll::TabsTag)
-
