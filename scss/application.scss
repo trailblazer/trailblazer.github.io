@@ -50,6 +50,10 @@
   padding-left: 0;
 }
 
+.top-navbar {
+  z-index: 99;
+}
+
 $topbar-height: 55px;
 .top-bar .menu a {
     height: $topbar-height;
