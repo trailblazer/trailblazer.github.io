@@ -1,16 +1,19 @@
 .top-footer {
   background: lighten($tuatara, 3);
   color: lighten($tuatara, 35);
+  padding: 3em 0;
 
   h3 {
     color: lighten($tuatara, 46);
   }
 
-  padding: 3em 0;
+  .email {
+    height: 2.84rem;
+  }
 }
 
 footer {
-  background: $tuatara;
+  background: $black;
   min-height: 150px;
   padding: 3em 0;
   color: lighten($tuatara, 32);
