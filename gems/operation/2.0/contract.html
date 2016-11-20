@@ -333,7 +333,9 @@ end
 
 <p>Schema validations don’t need a model and hence you don’t have to instantiate them.</p>
 
-<p>Dry’s schemas can even be executed <strong>before</strong> the operation gets instantiated, if you want that. This is great for a quick formal check. If that fails, the operation won’t be instantiated which will save time massively.</p>
+<h3 id="dry-guard-schema">Dry: Guard Schema</h3>
+
+<p>Dry’s schemas can even be executed <strong>before</strong> the operation gets instantiated, if you want that. This is called a <em>guard schema</em> and great for a quick formal check. If that fails, the operation won’t be instantiated which will save time massively.</p>
 
 <pre><code>require "dry/validation"
 class Delete &lt; Trailblazer::Operation
@@ -350,9 +352,32 @@ end
 
 <p>Use schemas for formal, linear validations. Use Reform forms when there’s a more complex deserialization with nesting and object state happening.</p>
 
+<h3 id="dry-explicit-schema">Dry: Explicit Schema</h3>
+
+<p>As always, you can also use an <em>explicit</em> schema.</p>
+
+<pre><code># app/concepts/comment/contract/params.rb
+require "dry/validation"
+MySchema = Dry::Validation.Schema do
+  required(:id).filled
+end
+</code></pre>
+
+<p>Just reference the schema constant in the <code class="highlighter-rouge">contract</code> method.</p>
+
+<pre><code># app/concepts/comment/delete.rb
+class Delete &lt; Trailblazer::Operation
+  extend Contract::DSL
+  contract "params", MySchema
+  
+  self.| Contract::Validate[name: "params"], before: "operation.new"
+end
+</code></pre>
+
 <p>—- do it yourself
 — contract.default / result.
-— -procedural</p>
+— -procedural
+— key:</p>
 
 <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
 
