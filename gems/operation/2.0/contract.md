@@ -41,6 +41,65 @@ After defining, you have to create and invoke the Reform object in your operatio
 
 {{  "contract_test.rb:overv-reform" | tsnippet : "bla" }}
 
+For a better understanding, here's the compiled pipetree.
+
+{{  "contract_test.rb:overv-reform-pipe" | tsnippet }}
+
+With a Reform contract the relevant steps are as follows.
+
+1. Since every Reform object needs a model, use [the `Model` macro](model.html) to instantiate or find it.
+2. Let the `Contract` macro instantiate the Reform object for you. The object will per default be pushed to `self["contract.default"]`.
+3. Let `Contract::Validate` extract the correct hash from the params. If this fails because the params are not a hash or the specified key can't be found, it deviates to left track.
+3. Instruct `Contract::Validate` to validate the params against this contract. When validation turns out to be successful, it will remain on the right track. Otherwise, when invalid, deviate to the left track.
+4. Use the `Persist` macro to call `sync` or `save` on the contract in case of a successful validation.
+
+## Default Contract
+
+You don't have to assign a name for a contract when using only one per operation.
+
+{{  "contract_test.rb:overv-reform" | tsnippet : "contractonly" }}
+
+The name will be `default`. The contract class will be available via `self["contract.default.class"]`.
+
+    Create["contract.default.class"] #=> Reform::Form subclass
+
+After running the operation, the contract instance is available via `self["contract.default"]`.
+
+    result = Create.(..)
+    result["contract.default"] #=> <Reform::Form ...>
+
+You can pass a name to `contract`.
+
+{{  "contract_test.rb:contract-name" | tsnippet : "pipe" }}
+
+## Multiple Contracts
+
+Since `contract` can be called multiple times, this allows you to maintain as many contracts as you need per operation.
+
+Naming also works when referencing constants.
+
+{{  "contract_test.rb:contract-ref" | tsnippet }}
+
+When using named contracts, you can still use the `Contract` macros, but now you need to say what contract you're referring to using the `name:` option.
+
+{{  "contract_test.rb:contract-name" | tsnippet : "contract" }}
+
+
+## Dry-Schema
+
+It is possible to use a [Dry::Schema](dry-rb.org/gems/dry-validation/) directly as a contract. This is great for stateless, formal validations, e.g. to make sure the params have the right format.
+
+{{  "contract_test.rb:dry-schema" | tsnippet : "form" }}
+
+Schema validations don't need a model and hence you don't have to instantiate them.
+
+Dry's schemas can even be executed **before** the operation gets instantiated, if you want that. This is great for a quick formal check. If that fails, the operation won't be instantiated which will save time massively.
+
+{{  "contract_test.rb:dry-schema-first" | tsnippet : "more" }}
+
+Use schemas for formal, linear validations. Use Reform forms when there's a more complex deserialization with nesting and object state happening.
+
+
 ---- do it yourself
 --- contract.default / result.
 --- -procedural
@@ -58,7 +117,3 @@ The operation will store the validation result for every contract in its own res
 
 The path is `result.contract[.name]`, e.g. `result["result.contract.params"]`.
 
-
-## Dry-Schema
-
-Show how to use schema for params even before op is instantiated (see contract_test).
