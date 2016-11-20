@@ -35,6 +35,16 @@ This class can now be referenced in the operation.
 
 The explicit file/class convention is the preferred Trailblazer style as it keeps classes small and maximizes reusability. Please make sure you're following Trailblazer's naming convention to avoid friction. # TODO: link.
 
+## Pipetree
+
+After defining, you have to create and invoke the Reform object in your operation. The easiest way is to use `Contract`'s macros for that.
+
+{{  "contract_test.rb:overv-reform" | tsnippet : "bla" }}
+
+---- do it yourself
+--- contract.default / result.
+--- -procedural
+
 ## Cheatsheet
 
 ## Result
