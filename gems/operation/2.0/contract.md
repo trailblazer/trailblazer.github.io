@@ -93,12 +93,23 @@ It is possible to use a [Dry::Schema](dry-rb.org/gems/dry-validation/) directly 
 
 Schema validations don't need a model and hence you don't have to instantiate them.
 
-Dry's schemas can even be executed **before** the operation gets instantiated, if you want that. This is great for a quick formal check. If that fails, the operation won't be instantiated which will save time massively.
+### Dry: Guard Schema
+
+Dry's schemas can even be executed **before** the operation gets instantiated, if you want that. This is called a *guard schema* and great for a quick formal check. If that fails, the operation won't be instantiated which will save time massively.
 
 {{  "contract_test.rb:dry-schema-first" | tsnippet : "more" }}
 
 Use schemas for formal, linear validations. Use Reform forms when there's a more complex deserialization with nesting and object state happening.
 
+### Dry: Explicit Schema
+
+As always, you can also use an *explicit* schema.
+
+{{  "contract_test.rb:dry-schema-explsch" | tsnippet }}
+
+Just reference the schema constant in the `contract` method.
+
+{{  "contract_test.rb:dry-schema-expl" | tsnippet }}
 
 ---- do it yourself
 --- contract.default / result.

@@ -22,7 +22,7 @@ module Torture
         next if ln =~ /#~/
 
         code << ln and next unless code.nil?
-        code = "" if ln =~ /\#:#{section}/ # beginning of our section.
+        code = "" if ln =~ /\#:#{section}$/ # beginning of our section.
       end
 
       indented = ""
@@ -34,3 +34,5 @@ module Torture
 end
 
 Liquid::Template.register_filter(Torture::SnippetFilter)
+
+# TODO: TEST :bla and :blabla (two different sections)
