@@ -20,6 +20,10 @@
     anchors.add("article h2");
     anchors.add("article h3");
 
+    hljs.configure({
+      languages: ['ruby', 'haml']
+    });
+
     hljs.initHighlightingOnLoad();
 
     // $('#code-slider').slick({arrows: true, dots: true});
