@@ -24,6 +24,10 @@
     anchors.add("article h2");
     anchors.add("article h3");
 
+    hljs.configure({
+      languages: ['ruby', 'haml']
+    });
+
     hljs.initHighlightingOnLoad();
 
     // $('#code-slider').slick({arrows: true, dots: true});
@@ -46,7 +50,7 @@
   </head>
   <body>
 
-    <div data-sticky-container>
+    <div data-sticky-container class="top-navbar">
   <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
     <div class="top-bar-title">
       <ul class="menu horizontal">
@@ -111,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Reform Data Types</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 17 August 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 August 2016</span>
 
   
 
