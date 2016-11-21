@@ -374,10 +374,56 @@ class Delete &lt; Trailblazer::Operation
 end
 </code></pre>
 
-<p>—- do it yourself
-— contract.default / result.
-— -procedural
-— key:</p>
+<h2 id="extracting-params" data-magellan-target="extracting-params">Extracting Params</h2>
+
+<p>Per default, <code class="highlighter-rouge">Contract::Validate</code> will use <code class="highlighter-rouge">self["params"]</code> as the data to be validated. Use the <code class="highlighter-rouge">key:</code> option if you want to validate a nested hash from the original params structure.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Contract::DSL
+  
+  contract do
+    property :title
+  end
+  
+  self.| Model[Song, :create]
+  self.| Contract[]
+  self.| Contract::Validate[key: "song"]
+  self.| Persist[method: :sync]
+end
+</code></pre>
+
+<p>Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.</p>
+
+<h3 id="manual-extraction">Manual Extraction</h3>
+
+<p>You can plug your own complex logic to extract params for validation into the pipe.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Contract::DSL
+  
+  contract do
+    property :title
+  end
+  
+  def type
+    "evergreen" # this is how you could do polymorphic lookups.
+  end
+  
+  self.| Model[Song, :create]
+  self.| Contract[]
+  self.&amp; :extract_params!
+  self.| Contract::Validate[skip_extract: true]
+  self.| Persist[method: :sync]
+  
+  def extract_params!(options)
+    options["params.validate"] = options["params"][type]
+  end
+end
+</code></pre>
+
+<p>Note that you have to set the <code class="highlighter-rouge">self["params.validate"]</code> field in your own step, and - obviously - this has to happen before the actual validation.</p>
+
+<p>Keep in mind that <code class="highlighter-rouge">&amp;</code> will deviate to the left track if your <code class="highlighter-rouge">extract_params!</code> logic returns falsey.</p>
 
 <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
 
@@ -395,6 +441,9 @@ result["result.contract"].errors #=&gt; {}
 
 <p>The path is <code class="highlighter-rouge">result.contract[.name]</code>, e.g. <code class="highlighter-rouge">result["result.contract.params"]</code>.</p>
 
+<p>—- do it yourself
+— contract.default / result.
+— -procedural</p>
 
             </div>
 
@@ -411,6 +460,7 @@ result["result.contract"].errors #=&gt; {}
 <li><a href="#default-contract">Default Contract</a></li>
 <li><a href="#multiple-contracts">Multiple Contracts</a></li>
 <li><a href="#dry-schema">Dry-Schema</a></li>
+<li><a href="#extracting-params">Extracting Params</a></li>
 <li><a href="#cheatsheet">Cheatsheet</a></li>
 <li><a href="#result">Result</a></li>
         </ul>
