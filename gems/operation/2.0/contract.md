@@ -111,9 +111,59 @@ Just reference the schema constant in the `contract` method.
 
 {{  "contract_test.rb:dry-schema-expl" | tsnippet }}
 
----- do it yourself
---- contract.default / result.
---- -procedural
+## Extracting Params
+
+Per default, `Contract::Validate` will use `self["params"]` as the data to be validated. Use the `key:` option if you want to validate a nested hash from the original params structure.
+
+{{  "contract_test.rb:key" | tsnippet }}
+
+Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.
+
+### Manual Extraction
+
+You can plug your own complex logic to extract params for validation into the pipe.
+
+{{  "contract_test.rb:key-extr" | tsnippet }}
+
+Note that you have to set the `self["params.validate"]` field in your own step, and - obviously - this has to happen before the actual validation.
+
+Keep in mind that `&` will deviate to the left track if your `extract_params!` logic returns falsey.
+
+## Naming Interface
+
+You don't have to use the `contract` interface to register contract classes in your operation. Use the `constant:` option to point the `Contract` builder directly to a class.
+
+{{  "contract_test.rb:constant" | tsnippet }}
+
+No DSL is used here.
+
+Instead, the `Contract` step will build the contract instance and register it under `self["contract.default"]`, which will then be used in the `Validate` step.
+
+### Explicit Naming
+
+Explicit naming for the contract is possible, too.
+
+{{  "contract_test.rb:constant-name" | tsnippet }}
+
+Here, you have to use the `name:` option to tell each step what dependency to use.
+
+## Dependency Injection
+
+In fact, the operation doesn't need any reference to a contract class at all.
+
+{{  "contract_test.rb:di-constant" | tsnippet }}
+
+The contract can be injected when calling the operation.
+
+A prerequisite for that is that the contract class is defined.
+
+{{  "contract_test.rb:di-constant-contract" | tsnippet }}
+
+When calling, you now have to provide the default contract class as a dependency.
+
+{{  "contract_test.rb:di-contract-call" | tsnippet }}
+
+This will work with any name if you follow [the naming conventions](#explicit-naming).
 
 ## Cheatsheet
 
@@ -128,3 +178,7 @@ The operation will store the validation result for every contract in its own res
 
 The path is `result.contract[.name]`, e.g. `result["result.contract.params"]`.
 
+
+---- do it yourself
+--- contract.default / result.
+--- -procedural
