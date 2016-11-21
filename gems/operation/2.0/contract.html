@@ -425,6 +425,78 @@ end
 
 <p>Keep in mind that <code class="highlighter-rouge">&amp;</code> will deviate to the left track if your <code class="highlighter-rouge">extract_params!</code> logic returns falsey.</p>
 
+<h2 id="naming-interface" data-magellan-target="naming-interface">Naming Interface</h2>
+
+<p>You don’t have to use the <code class="highlighter-rouge">contract</code> interface to register contract classes in your operation. Use the <code class="highlighter-rouge">constant:</code> option to point the <code class="highlighter-rouge">Contract</code> builder directly to a class.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :title
+    validates :title, length: 2..33
+  end
+  
+  self.| Model[Song, :create]
+  self.| Contract[constant: MyContract]
+  self.| Contract::Validate[]
+  self.| Persist[method: :sync]
+end
+</code></pre>
+
+<p>No DSL is used here.</p>
+
+<p>Instead, the <code class="highlighter-rouge">Contract</code> step will build the contract instance and register it under <code class="highlighter-rouge">self["contract.default"]</code>, which will then be used in the <code class="highlighter-rouge">Validate</code> step.</p>
+
+<h3 id="explicit-naming">Explicit Naming</h3>
+
+<p>Explicit naming for the contract is possible, too.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :title
+    validates :title, length: 2..33
+  end
+  
+  self.| Model[Song, :create]
+  self.| Contract[constant: MyContract, name: "form"]
+  self.| Contract::Validate[name: "form"]
+  self.| Persist[method: :sync, name: "contract.form"]
+end
+</code></pre>
+
+<p>Here, you have to use the <code class="highlighter-rouge">name:</code> option to tell each step what dependency to use.</p>
+
+<h2 id="dependency-injection" data-magellan-target="dependency-injection">Dependency Injection</h2>
+
+<p>In fact, the operation doesn’t need any reference to a contract class at all.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Model[Song, :create]
+  self.| Contract[]
+  self.| Contract::Validate[]
+  self.| Persist[method: :sync]
+end
+</code></pre>
+
+<p>The contract can be injected when calling the operation.</p>
+
+<p>A prerequisite for that is that the contract class is defined.</p>
+
+<pre><code>class MyContract &lt; Reform::Form
+  property :title
+  validates :title, length: 2..33
+end
+</code></pre>
+
+<p>When calling, you now have to provide the default contract class as a dependency.</p>
+
+<pre><code>Create.(
+  { title: "Anthony's Song" },
+  "contract.default.class" =&gt; MyContract
+)
+</code></pre>
+
+<p>This will work with any name if you follow <a href="#explicit-naming">the naming conventions</a>.</p>
+
 <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
 
 <h2 id="result" data-magellan-target="result">Result</h2>
@@ -461,6 +533,8 @@ result["result.contract"].errors #=&gt; {}
 <li><a href="#multiple-contracts">Multiple Contracts</a></li>
 <li><a href="#dry-schema">Dry-Schema</a></li>
 <li><a href="#extracting-params">Extracting Params</a></li>
+<li><a href="#naming-interface">Naming Interface</a></li>
+<li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#cheatsheet">Cheatsheet</a></li>
 <li><a href="#result">Result</a></li>
         </ul>
