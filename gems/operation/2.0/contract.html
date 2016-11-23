@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Contract</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 20 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 21 November 2016</span>
 
   
     <span class="doc-last-updated">
@@ -435,6 +435,8 @@ end
     validates :title, length: 2..33
   end
   
+  
+  
   self.| Model[Song, :create]
   self.| Contract[constant: MyContract]
   self.| Contract::Validate[]
@@ -497,6 +499,39 @@ end
 
 <p>This will work with any name if you follow <a href="#explicit-naming">the naming conventions</a>.</p>
 
+<h2 id="manual-build" data-magellan-target="manual-build">Manual Build</h2>
+
+<p>To manually build the contract instance, e.g. to inject the current user, use <code class="highlighter-rouge">builder:</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Contract::DSL
+  
+  contract do
+    property :title
+    property :current_user, virtual: true
+    validates :current_user, presence: true
+  end
+  
+  self.| Model[Song, :create]
+  self.| Contract[builder: :default_contract!]
+  self.| Contract::Validate[]
+  self.| Persist[method: :sync]
+  
+  def default_contract!(constant:, model:)
+    constant.new(model, current_user: self["user.current"])
+  end
+end
+</code></pre>
+
+<p>Note how the contract’s class and the appropriate model are offered as kw arguments. You’re free to ignore these options and use your own assets.</p>
+
+<p>As always, you may also use a proc.</p>
+
+<pre><code>  self.| Contract[builder: -&gt;(operation, constant:, model:) {
+    constant.new(model, current_user: operation["user.current"])
+  }]
+</code></pre>
+
 <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
 
 <h2 id="result" data-magellan-target="result">Result</h2>
@@ -535,6 +570,7 @@ result["result.contract"].errors #=&gt; {}
 <li><a href="#extracting-params">Extracting Params</a></li>
 <li><a href="#naming-interface">Naming Interface</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
+<li><a href="#manual-build">Manual Build</a></li>
 <li><a href="#cheatsheet">Cheatsheet</a></li>
 <li><a href="#result">Result</a></li>
         </ul>
