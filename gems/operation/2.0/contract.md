@@ -7,7 +7,7 @@ gems:
 
 A *contract* is an abstraction to handle validation of arbitrary data or object state. It is a fully self-contained object that is orchestrated by the operation.
 
-The `Contract` module helps you defining contracts and assists with instantiating and validating data using those contracts at runtime.
+The `Contract` module helps you defining contracts and assists with instantiating and validating data with those contracts at runtime.
 
 ## Overview: Reform
 
@@ -15,10 +15,16 @@ Most contracts are [Reform](/gems/reform) objects that you can define and valida
 
 {{  "contract_test.rb:overv-reform" | tsnippet }}
 
-Using contracts consists of two steps.
+Using contracts consists of four steps.
 
-* Defining the contract class(es) used in the operation.
-* Plugging creation and validation into  the operation's pipetree.
+* [Defining the contract](#contract-definition) class(es) used in the operation.
+* [Plugging](#pipetree) creation and validation into the operation's pipetree.
+* [Run the validation](#validation), and if successful, write the sane data to the model(s). This will usually be done in the `Persist` step.
+* After the operation has been run, [interpret the result](#result-object). For instance, a controller calling an operation will render a erroring form for invalid input.
+
+Here's how the result would look like after running the `Create` operation with invalid data.
+
+{{  "contract_test.rb:result" | tsnippet }}
 
 ## Contract Definition
 
@@ -52,6 +58,34 @@ With a Reform contract the relevant steps are as follows.
 3. Let `Contract::Validate` extract the correct hash from the params. If this fails because the params are not a hash or the specified key can't be found, it deviates to left track.
 3. Instruct `Contract::Validate` to validate the params against this contract. When validation turns out to be successful, it will remain on the right track. Otherwise, when invalid, deviate to the left track.
 4. Use the `Persist` macro to call `sync` or `save` on the contract in case of a successful validation.
+
+## Validate
+
+The `Contract::Validate` step in the pipe is responsible to validate the incoming params against its contract. This boils down to the following simple code.
+
+    contract.validate(params)
+
+Given the contract is a Reform object, the step invokes the `validate` method for you and passes in the params from the operation call.
+
+Note that Reform comes with sophisticated deserialization semantics for nested forms, it might be worth reading [a bit about Reform](/gems/reform) to fully understand what you can do in the `Validate` step.
+
+After the validation, the sane data sits in the contract. No model is touched for validation, you still need to push the validated data from the contract to the model(s).
+
+This typically happens via the `Persist` step which usually sits right after the validation in the pipe. Since `Validate` will deviate to the left track in case of an unsuccessful validation, this step is only called for valid data.
+
+## Persist
+
+To push data from the contract to the model(s), use `Persist`. Again, this simply calls Reform's persisting for you and can be reduced to the following snippet.
+
+    contract.save
+
+You can also configure the `Persist` step to call `sync` instead of Reform's `save`.
+
+    self.| Persist[method: :sync]
+
+This will only write the contract's data to the model without calling `save` on it.
+
+Read more about how Reform handles validations and persisting.
 
 ## Default Contract
 
@@ -165,20 +199,29 @@ When calling, you now have to provide the default contract class as a dependency
 
 This will work with any name if you follow [the naming conventions](#explicit-naming).
 
-## Cheatsheet
+## Manual Build
 
-## Result
+To manually build the contract instance, e.g. to inject the current user, use `builder:`.
+
+{{  "contract_test.rb:builder-option" | tsnippet }}
+
+Note how the contract's class and the appropriate model are offered as kw arguments. You're free to ignore these options and use your own assets.
+
+As always, you may also use a proc.
+
+{{  "contract_test.rb:builder-proc" | tsnippet }}
+
+## Result Object
 
 The operation will store the validation result for every contract in its own result object.
 
-    result = Create.({ id: 1 })
+The path is `result.contract.#{name}`.
 
-    result["result.contract"].success? #=> true
-    result["result.contract"].errors #=> {}
+{{  "contract_test.rb:result" | tsnippet }}
 
-The path is `result.contract[.name]`, e.g. `result["result.contract.params"]`.
+Each result object responds to `success?`, `failure?`, and `errors`, which is an `Errors` object. TODO: design/document Errors. WE ARE CURRENTLY WORKING ON A UNIFIED API FOR ERRORS (FOR DRY AND REFORM).
 
+## Cheatsheet
 
 ---- do it yourself
---- contract.default / result.
 --- -procedural

@@ -13,6 +13,7 @@ The generic logic can be found in the trailblazer-operation gem. Higher-level ab
 
 * Overview
 * Flow Control
+* Papi::Operation extend Contract::DSL
 
 
 <hr>
