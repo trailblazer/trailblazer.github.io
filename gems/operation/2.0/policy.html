@@ -127,6 +127,10 @@
       </a>
 
     
+      <a href="/gems/operation/1.1/policy.html">
+        <span class="version other">v1.1</span>
+      </a>
+    
 
     </span>
   
@@ -141,77 +145,86 @@
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p>This document discusses the <code class="highlighter-rouge">Policy</code> module and <a href="#guard"><code class="highlighter-rouge">Policy::Guard</code></a>.</p>
 
-<h2 id="guard" data-magellan-target="guard">Guard</h2>
+<h2 id="guard-overview" data-magellan-target="guard-overview">Guard: Overview</h2>
 
-<p>A guard is a proc that’s executed before <code class="highlighter-rouge">operation.call</code>, making it the simplest form of a policy.</p>
+<p>A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as <code class="highlighter-rouge">falsey</code>, the pipe won’t be further processed and a policy breach is reported in <code class="highlighter-rouge">Result["result.policy"]</code>.</p>
 
-<p>If its result is <code class="highlighter-rouge">falsey</code>, the pipetree won’t be further executed and a policy breach is reported in <code class="highlighter-rouge">self["result.policy"]</code>.</p>
-
-<h3 id="guard-example">Guard Example</h3>
-
-<p>You can use <code class="highlighter-rouge">::policy</code> and pass a proc. The proc is executed in operation instance context, allowing you to access the data using <code class="highlighter-rouge">self[]</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  include Policy::Guard
-  policy -&gt; { self["params"][:id] == 1 &amp;&amp; self["user.current"].admin? }
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Policy::Guard[ -&gt;(options) { options["params"][:pass] } ]
+  self.| :process
+  
+  def process(*)
+    self["x"] = true
+  end
 end
 </code></pre>
-</div>
 
-<p>The following will pass.</p>
+<p>The only way to make the above operation invoke the second step <code class="highlighter-rouge">:process</code> is as follows.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : User.admin )
-result["result.policy"].success? #=&gt; true
+<pre class="highlight"><code>result = Create.({ pass: true })
+result["x"] #=&gt; true
 </code></pre>
 </div>
 
-<p>Whereas this fails.</p>
+<p>Any other input will result in an abortion of the pipe after the guard.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.( { id: 1 }, "user.current" : nil )
+<pre class="highlight"><code>result = Create.()
+result["x"] #=&gt; nil
 result["result.policy"].success? #=&gt; false
 </code></pre>
 </div>
 
 <p>Learn more about <a href="skill.md">→ dependency injection</a> to pass params and current user into the operation.</p>
 
-<h3 id="guard-callable">Guard Callable</h3>
+<h2 id="guard-api" data-magellan-target="guard-api">Guard: API</h2>
 
-<p>It also accepts a <code class="highlighter-rouge">Callable</code> object. The object’s <code class="highlighter-rouge">call</code> method signature: <code class="highlighter-rouge">call(operation, options)</code></p>
+<p>The <code class="highlighter-rouge">Policy::Guard</code> macro helps you inserting your guard logic. If not defined, it will be evaluated where you insert it. → <a href="#guard-class-level">Class-level guards</a></p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Update &lt; Create
-  class MyGuard
-    include Uber::Callable
-    def call(operation, options)
-      operation["params"][:id] == 1
-    end
-  end
-
-  include Policy::Guard
-  policy MyGuard.new
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Policy::Guard[ -&gt;(options) { options["params"][:pass] } ]
+  self.| :process
+  # ...
 end
 </code></pre>
-</div>
 
-<p>Note that your guard class has to be marked as <code class="highlighter-rouge">Uber::Callable</code>.</p>
+<p>The <code class="highlighter-rouge">Skill</code> options object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>.</p>
 
-<h3 id="guard-pipetree">Guard Pipetree</h3>
+<h3 id="guard-callable">Guard: Callable</h3>
 
-<p>Per default, <code class="highlighter-rouge">policy.guard.evaluate</code> hooks in before <code class="highlighter-rouge">operation.call</code>.</p>
+<p>As always, the guard can also be a <code class="highlighter-rouge">Callable</code>-marked object.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create["pipetree"] #=&gt;
-   0 =======================&gt;&gt;operation.new
-   1 ================&amp;policy.guard.evaluate
-   2 ======================&gt;&gt;operation.call
-   3 ===========operation.result===========
+<pre><code>class MyGuard
+  include Uber::Callable
+  
+  def call(options)
+    options["params"][:pass]
+  end
+end
 </code></pre>
-</div>
 
-<p>It returns <code class="highlighter-rouge">Left</code> on breach.</p>
+<p>Insert the object instance via the <code class="highlighter-rouge">Policy::Guard</code> macro.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Policy::Guard[ MyGuard.new ]
+  self.| :process
+  # ...
+end
+</code></pre>
+
+<h3 id="guard-class-level">Guard: Class-level</h3>
+
+<p>You can also place any kind of guard before the operation instantiation using <code class="highlighter-rouge">before:</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Policy::Guard[ -&gt;(options) { options["current_user"] == Module } ],
+    before: "operation.new"
+  # ...
+end
+</code></pre>
+
+<p>This is helpful to clear out breaches quickly.</p>
 
             </div>
 
@@ -222,7 +235,8 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#guard">Guard</a></li>
+          <li><a href="#guard-overview">Guard: Overview</a></li>
+<li><a href="#guard-api">Guard: API</a></li>
         </ul>
       
 </nav>
