@@ -141,7 +141,14 @@ Should the `validate!` step return a falsey value, the pipetree will change trac
 
 Check the [API docs for pipetree](pipetree.html) to learn more about tracks.
 
+## Step Macros
+
+Trailblazer provides predefined steps to for all kinds of business logic.
+
+* [Contract](contract.html) implements contracts, validation and persisting verified data using the model layer.
+
 ## Orchestration
+
 
 ## Result Object
 

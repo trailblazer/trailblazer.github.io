@@ -2,7 +2,7 @@
 layout: operation2
 title: "Operation Builder"
 gems:
-  - ["trailblazer", "trailblazer/trailblazer", "2.0"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 Different application contexts like _"admin user"_ vs. _"signed in"_ can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.

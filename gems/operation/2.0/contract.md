@@ -19,7 +19,7 @@ Using contracts consists of four steps.
 
 * [Defining the contract](#contract-definition) class(es) used in the operation.
 * [Plugging](#pipetree) creation and validation into the operation's pipetree.
-* [Run the validation](#validation), and if successful, write the sane data to the model(s). This will usually be done in the `Persist` step.
+* [Run the validation](#validate), and if successful, write the sane data to the model(s). This will usually be done in the `Persist` step.
 * After the operation has been run, [interpret the result](#result-object). For instance, a controller calling an operation will render a erroring form for invalid input.
 
 Here's how the result would look like after running the `Create` operation with invalid data.

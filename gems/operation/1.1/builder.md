@@ -3,6 +3,8 @@ layout: operation
 title: "Operation Builder"
 redirect_from:
   - /gems/operation/builder.html
+gems:
+  - ["operation", "trailblazer/trailblazer-operation", "1.1", "2.0"]
 ---
 
 Different contexts like _"admin user"_ vs. _"signed in"_ can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
