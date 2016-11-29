@@ -3,6 +3,8 @@ layout: operation
 title: "Operation Policies"
 redirect_from:
   - /gems/operation/policy.html
+gems:
+  - ["trailblazer", "trailblazer/trailblazer", "1.1", "2.0"]
 ---
 
 # Policy

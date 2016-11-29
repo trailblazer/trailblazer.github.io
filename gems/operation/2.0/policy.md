@@ -2,64 +2,53 @@
 layout: operation2
 title: "Operation Policy"
 gems:
-  - ["trailblazer", "trailblazer/trailblazer", "2.0"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 This document discusses the `Policy` module and [`Policy::Guard`](#guard).
 
-## Guard
+## Guard: Overview
 
-A guard is a proc that's executed before `operation.call`, making it the simplest form of a policy.
+A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as `falsey`, the pipe won't be further processed and a policy breach is reported in `Result["result.policy"]`.
 
-If its result is `falsey`, the pipetree won't be further executed and a policy breach is reported in `self["result.policy"]`.
+{{  "guard_test.rb:proc" | tsnippet }}
 
-### Guard Example
+The only way to make the above operation invoke the second step `:process` is as follows.
 
-You can use `::policy` and pass a proc. The proc is executed in operation instance context, allowing you to access the data using `self[]`.
+    result = Create.({ pass: true })
+    result["x"] #=> true
 
-    class Create < Trailblazer::Operation
-      include Policy::Guard
-      policy -> { self["params"][:id] == 1 && self["user.current"].admin? }
-    end
+Any other input will result in an abortion of the pipe after the guard.
 
-The following will pass.
-
-    result = Create.( { id: 1 }, "user.current" : User.admin )
-    result["result.policy"].success? #=> true
-
-Whereas this fails.
-
-    result = Create.( { id: 1 }, "user.current" : nil )
+    result = Create.()
+    result["x"] #=> nil
     result["result.policy"].success? #=> false
 
 Learn more about [→ dependency injection](skill.md) to pass params and current user into the operation.
 
-### Guard Callable
+## Guard: API
 
-It also accepts a `Callable` object. The object's `call` method signature: `call(operation, options)`
+The `Policy::Guard` macro helps you inserting your guard logic. If not defined, it will be evaluated where you insert it. → [Class-level guards](#guard-class-level)
 
-    class Update < Create
-      class MyGuard
-        include Uber::Callable
-        def call(operation, options)
-          operation["params"][:id] == 1
-        end
-      end
+{{  "guard_test.rb:proc" | tsnippet : "pipeonly" }}
 
-      include Policy::Guard
-      policy MyGuard.new
-    end
+The `Skill` options object is passed into the guard and allows you to read and inspect data like `params` or `current_user`.
 
-Note that your guard class has to be marked as `Uber::Callable`.
+### Guard: Callable
 
-### Guard Pipetree
+As always, the guard can also be a `Callable`-marked object.
 
-Per default, `policy.guard.evaluate` hooks in before `operation.call`.
+{{  "guard_test.rb:callable" | tsnippet }}
 
-    Create["pipetree"] #=>
-       0 =======================>>operation.new
-       1 ================&policy.guard.evaluate
-       2 ======================>>operation.call
-       3 ===========operation.result===========
+Insert the object instance via the `Policy::Guard` macro.
 
-It returns `Left` on breach.
+{{  "guard_test.rb:callable-op" | tsnippet : "pipe-only" }}
+
+
+### Guard: Class-level
+
+You can also place any kind of guard before the operation instantiation using `before:`.
+
+{{  "guard_test.rb:class-level" | tsnippet : "pipe--only" }}
+
+This is helpful to clear out breaches quickly.
