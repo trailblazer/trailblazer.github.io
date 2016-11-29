@@ -78,7 +78,7 @@ Or, a `Uber::Callable`-marked object.
       end
     end
 
-    property :artist, populator: ArtistPopulator
+    property :artist, populator: ArtistPopulator.new
 
 This is especially helpful when the populator gets complex and could benefit from inheritance/mixins.
 
