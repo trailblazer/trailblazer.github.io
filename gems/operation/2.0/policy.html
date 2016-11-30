@@ -200,7 +200,7 @@ end
 
 <p>After running the <code class="highlighter-rouge">Pundit</code> step, its result is readable from the <code class="highlighter-rouge">Result</code> object.</p>
 
-<pre><code>result = Create.({}, "user.current" =&gt; Module)
+<pre><code>result = Create.({}, "current_user" =&gt; Module)
 result["result.policy.default"].success? #=&gt; true
 result["result.policy.default"]["policy"] #=&gt; #&lt;MyPolicy ...&gt;
 </code></pre>
@@ -220,7 +220,7 @@ end
 
 <p>The result will be stored in <code class="highlighter-rouge">"result.policy.#{name}"</code></p>
 
-<pre><code>result = Create.({}, "user.current" =&gt; Module)
+<pre><code>result = Create.({}, "current_user" =&gt; Module)
 result["result.policy.after_model"].success? #=&gt; true
 </code></pre>
 
