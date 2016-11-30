@@ -487,6 +487,20 @@ end
 </code></pre>
 </div>
 
+<p>To skip from a <code class="highlighter-rouge">Uber::Callable</code>-marked object, return <code class="highlighter-rouge">Representable::Pipeline::Stop</code></p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsPopulator
+  def call(options)
+    return Representable::Pipeline::Stop if fragment["id"]
+    # ...
+  end
+end
+
+collection :songs, populator: SongsPopulator.new
+</code></pre>
+</div>
+
 <p>This won’t process items that have an <code class="highlighter-rouge">"id"</code> field in their corresponding fragment.</p>
 
 <h2 id="uninitialized-collections" data-magellan-target="uninitialized-collections">Uninitialized Collections</h2>

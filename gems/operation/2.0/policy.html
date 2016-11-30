@@ -143,11 +143,102 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>This document discusses the <code class="highlighter-rouge">Policy</code> module and <a href="#guard"><code class="highlighter-rouge">Policy::Guard</code></a>.</p>
+              <p>This document discusses the <code class="highlighter-rouge">Policy</code> module, <a href="#pundit"><code class="highlighter-rouge">Policy::Pundit</code></a>, and <a href="#guard"><code class="highlighter-rouge">Policy::Guard</code></a>.</p>
 
-<h2 id="guard-overview" data-magellan-target="guard-overview">Guard: Overview</h2>
+<h2 id="pundit" data-magellan-target="pundit">Pundit</h2>
 
-<p>A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as <code class="highlighter-rouge">falsey</code>, the pipe won’t be further processed and a policy breach is reported in <code class="highlighter-rouge">Result["result.policy"]</code>.</p>
+<p>The <code class="highlighter-rouge">Policy::Pundit</code> module allows using <a href="https://github.com/elabs/pundit">Pundit</a>-compatible policy classes in an operation.</p>
+
+<p>A Pundit policy has various rule methods and a special constructor that receives the current user and the current model.</p>
+
+<p>class MyPolicy
+    def initialize(user, model)
+      @user, @model = user, model
+    end</p>
+
+<pre><code>def create?
+  @user == Module &amp;&amp; @model.id.nil?
+end   end
+</code></pre>
+
+<p>In pundit policies, it is a convention to have access to those objects at runtime and build rules on top of those.</p>
+
+<p>You can plug this policy into your pipe at any point. However, this must be inserted after the <code class="highlighter-rouge">"model"</code> skill is available.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Model[ Song, :create ]
+  self.| Policy::Pundit[ MyPolicy, :create? ]
+  # ...
+end
+</code></pre>
+
+<p>Note that you don’t have to create the model via the <code class="highlighter-rouge">Model</code> macro - you can use any logic you want. The <code class="highlighter-rouge">Pundit</code> macro will grab the model from <code class="highlighter-rouge">["model"]</code>, though.</p>
+
+<p>This policy will only pass when the operation is invoked as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Create.({}, "user.current" =&gt; Module)
+</code></pre>
+</div>
+
+<p>Any other call will cause a policy breach and stop the pipe from executing after the <code class="highlighter-rouge">Policy::Pundit</code> step.</p>
+
+<h2 id="pundit-api" data-magellan-target="pundit-api">Pundit: API</h2>
+
+<p>Add your polices using the <code class="highlighter-rouge">Policy::Pundit</code> macro. It accepts the policy class name, and the rule method to call.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Model[ Song, :create ]
+  self.| Policy::Pundit[ MyPolicy, :create? ]
+  # ...
+end
+</code></pre>
+
+<p>The step will create the policy instance automatically for you and passes the <code class="highlighter-rouge">"model"</code> and the <code class="highlighter-rouge">"current_user"</code> skill into the policies constructor. Just make sure those dependencies are available before the step is executed.</p>
+
+<p>If the policy returns <code class="highlighter-rouge">falsey</code>, it <a href="pipetree.html">deviates to the left track</a>.</p>
+
+<p>After running the <code class="highlighter-rouge">Pundit</code> step, its result is readable from the <code class="highlighter-rouge">Result</code> object.</p>
+
+<pre><code>result = Create.({}, "user.current" =&gt; Module)
+result["result.policy.default"].success? #=&gt; true
+result["result.policy.default"]["policy"] #=&gt; #&lt;MyPolicy ...&gt;
+</code></pre>
+
+<p>Note that the actual policy instance is available via <code class="highlighter-rouge">["result.policy.#{name}"]["policy"]</code> to be reinvoked with other rules (e.g. in the view layer).</p>
+
+<h2 id="pundit-name" data-magellan-target="pundit-name">Pundit: Name</h2>
+
+<p>You can add any number of Pundit policies to your pipe. Make sure to use <code class="highlighter-rouge">name:</code> to name them, though.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Model[ Song, :create ]
+  self.| Policy::Pundit[ MyPolicy, :create?, name: "after_model" ]
+  # ...
+end
+</code></pre>
+
+<p>The result will be stored in <code class="highlighter-rouge">"result.policy.#{name}"</code></p>
+
+<pre><code>result = Create.({}, "user.current" =&gt; Module)
+result["result.policy.after_model"].success? #=&gt; true
+</code></pre>
+
+<h2 id="pundit-dependency-injection" data-magellan-target="pundit-dependency-injection">Pundit: Dependency Injection</h2>
+
+<p>Override a configured policy using dependency injection.</p>
+
+<pre><code>Create.({},
+  "current_user"        =&gt; Module,
+  "policy.default.eval" =&gt; Trailblazer::Operation::Policy::Pundit.build(AnotherPolicy, :create?)
+)
+</code></pre>
+
+<p>You can inject it using <code class="highlighter-rouge">"policy.#{name}.eval"</code>. It can be any object responding to <code class="highlighter-rouge">call</code>.</p>
+
+<h2 id="guard" data-magellan-target="guard">Guard</h2>
+
+<p>A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as <code class="highlighter-rouge">falsey</code>, the pipe won’t be further processed and a policy breach is reported in <code class="highlighter-rouge">Result["result.policy.default"]</code>.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
   self.| Policy::Guard[ -&gt;(options) { options["params"][:pass] } ]
@@ -172,7 +263,7 @@ result["x"] #=&gt; true
 <div class="highlighter-rouge">
 <pre class="highlight"><code>result = Create.()
 result["x"] #=&gt; nil
-result["result.policy"].success? #=&gt; false
+result["result.policy.default"].success? #=&gt; false
 </code></pre>
 </div>
 
@@ -191,7 +282,7 @@ end
 
 <p>The <code class="highlighter-rouge">Skill</code> options object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>.</p>
 
-<h3 id="guard-callable">Guard: Callable</h3>
+<h2 id="guard-callable" data-magellan-target="guard-callable">Guard: Callable</h2>
 
 <p>As always, the guard can also be a <code class="highlighter-rouge">Callable</code>-marked object.</p>
 
@@ -213,7 +304,7 @@ end
 end
 </code></pre>
 
-<h3 id="guard-class-level">Guard: Class-level</h3>
+<h2 id="guard-class-level" data-magellan-target="guard-class-level">Guard: Class-level</h2>
 
 <p>You can also place any kind of guard before the operation instantiation using <code class="highlighter-rouge">before:</code>.</p>
 
@@ -226,6 +317,36 @@ end
 
 <p>This is helpful to clear out breaches quickly.</p>
 
+<h2 id="guard-name" data-magellan-target="guard-name">Guard: Name</h2>
+
+<p>The guard name defaults to <code class="highlighter-rouge">default</code> and can be set via <code class="highlighter-rouge">name:</code>. This allows having multiple guards.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  self.| Policy::Guard[ -&gt;(options) { options["current_user"] }, name: :user ]
+  # ...
+end
+</code></pre>
+
+<p>The result will sit in <code class="highlighter-rouge">result.policy.#{name}</code>.</p>
+
+<pre><code>result = Create.({}, "current_user" =&gt; true)
+result["result.policy.user"].success? #=&gt; true
+</code></pre>
+
+<h2 id="guard-dependency-injection" data-magellan-target="guard-dependency-injection">Guard: Dependency Injection</h2>
+
+<p>Instead of using the configured guard, you can inject any callable object that returns a <code class="highlighter-rouge">Result</code> object. Do so by overriding the <code class="highlighter-rouge">policy.#{name}.eval</code> path when calling the operation.</p>
+
+<pre><code>Create.({},
+  "current_user"        =&gt; Module,
+  "policy.default.eval" =&gt; Trailblazer::Operation::Policy::Guard.build(-&gt;(options) { false })
+)
+</code></pre>
+
+<p>An easy way to let Trailblazer build a compatible object for you is using <code class="highlighter-rouge">Guard.build</code>.</p>
+
+<p>This is helpful to override a certain policy for testing, or to invoke it with special rights, e.g. for an admin.</p>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -235,8 +356,16 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#guard-overview">Guard: Overview</a></li>
+          <li><a href="#pundit">Pundit</a></li>
+<li><a href="#pundit-api">Pundit: API</a></li>
+<li><a href="#pundit-name">Pundit: Name</a></li>
+<li><a href="#pundit-dependency-injection">Pundit: Dependency Injection</a></li>
+<li><a href="#guard">Guard</a></li>
 <li><a href="#guard-api">Guard: API</a></li>
+<li><a href="#guard-callable">Guard: Callable</a></li>
+<li><a href="#guard-class-level">Guard: Class-level</a></li>
+<li><a href="#guard-name">Guard: Name</a></li>
+<li><a href="#guard-dependency-injection">Guard: Dependency Injection</a></li>
         </ul>
       
 </nav>
