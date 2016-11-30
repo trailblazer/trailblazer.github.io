@@ -78,7 +78,7 @@ Or, a `Uber::Callable`-marked object.
       end
     end
 
-    property :artist, populator: ArtistPopulator
+    property :artist, populator: ArtistPopulator.new
 
 This is especially helpful when the populator gets complex and could benefit from inheritance/mixins.
 
@@ -293,6 +293,17 @@ Since Reform 2.1, populators can skip processing of a fragment by returning `ski
         return skip! if fragment["id"]
         # ..
       end
+
+To skip from a `Uber::Callable`-marked object, return `Representable::Pipeline::Stop`
+
+    class SongsPopulator
+      def call(options)
+        return Representable::Pipeline::Stop if fragment["id"]
+        # ...
+      end
+    end
+    
+    collection :songs, populator: SongsPopulator.new
 
 This won't process items that have an `"id"` field in their corresponding fragment.
 
