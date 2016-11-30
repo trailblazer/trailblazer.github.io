@@ -294,6 +294,17 @@ Since Reform 2.1, populators can skip processing of a fragment by returning `ski
         # ..
       end
 
+To skip from a `Uber::Callable`-marked object, return `Representable::Pipeline::Stop`
+
+    class SongsPopulator
+      def call(options)
+        return Representable::Pipeline::Stop if fragment["id"]
+        # ...
+      end
+    end
+    
+    collection :songs, populator: SongsPopulator.new
+
 This won't process items that have an `"id"` field in their corresponding fragment.
 
 ## Uninitialized Collections
