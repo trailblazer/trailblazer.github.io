@@ -5,7 +5,63 @@ gems:
   - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
-This document discusses the `Policy` module and [`Policy::Guard`](#guard).
+This document discusses the `Policy` module, [`Policy::Pundit`](#pundit), and [`Policy::Guard`](#guard).
+
+## Pundit: Overview
+
+The `Policy::Pundit` module allows using [Pundit](https://github.com/elabs/pundit)-compatible policy classes in an operation.
+
+A Pundit policy has various rule methods and a special constructor that receives the current user and the current model.
+
+{{  "pundit_test.rb:policy" | tsnippet }}
+
+In pundit policies, it is a convention to have access to those objects at runtime and build rules on top of those.
+
+You can plug this policy into your pipe at any point. However, this must be inserted after the `"model"` skill is available.
+
+{{  "pundit_test.rb:pundit" | tsnippet }}
+
+Note that you don't have to create the model via the `Model` macro - you can use any logic you want. The `Pundit` macro will grab the model from `["model"]`, though.
+
+This policy will only pass when the operation is invoked as follows.
+
+    Create.({}, "user.current" => Module)
+
+Any other call will cause a policy breach and stop the pipe from executing after the `Policy::Pundit` step.
+
+### Pundit: API
+
+Add your polices using the `Policy::Pundit` macro. It accepts the policy class name, and the rule method to call.
+
+{{  "pundit_test.rb:pundit" | tsnippet }}
+
+The step will create the policy instance automatically for you and passes the `"model"` and the `"current_user"` skill into the policies constructor. Just make sure those dependencies are available before the step is executed.
+
+If the policy returns `falsey`, it [deviates to the left track](pipetree.html).
+
+After running the `Pundit` step, its result is readable from the `Result` object.
+
+{{  "pundit_test.rb:pundit-result" | tsnippet }}
+
+Note that the actual policy instance is available via `["result.policy.#{name}"]["policy"]` to be reinvoked with other rules (e.g. in the view layer).
+
+### Pundit: Name
+
+You can add any number of Pundit policies to your pipe. Make sure to use `name:` to name them, though.
+
+{{  "pundit_test.rb:name" | tsnippet }}
+
+The result will be stored in `"result.policy.#{name}"`
+
+{{  "pundit_test.rb:name-call" | tsnippet }}
+
+### Pundit: Dependency Injection
+
+Override a configured policy using dependency injection.
+
+{{  "pundit_test.rb:di-call" | tsnippet }}
+
+You can inject it using `"policy.#{name}.eval"`. It can be any object responding to `call`.
 
 ## Guard: Overview
 
