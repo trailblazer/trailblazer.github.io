@@ -220,11 +220,30 @@ end
 
 <p>The behavior is identical to referencing the representer class constant.</p>
 
+<h2 id="parsing-infer" data-magellan-target="parsing-infer">Parsing: Infer</h2>
+
+<p>A representer can also be infered from the contract’s schema. All you need to do is define the format, e.g. <code class="highlighter-rouge">Representable::JSON</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :id
+  end
+  
+  self.| Model[ Song, :new ]
+  self.| Contract::Build[ constant: MyContract ]
+  self.| Contract::Validate[ representer: Representer.infer(MyContract, format: Representable::JSON) ]
+  self.| Persist[ method: :sync ]
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">Operation::Representer.infer</code> method will return a representer class.</p>
+
 <h2 id="parsing-dependency-injection" data-magellan-target="parsing-dependency-injection">Parsing: Dependency Injection</h2>
 
 <p>You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.</p>
 
 <pre><code>require "representable/xml"
+  
 class MyXMLRepresenter &lt; Representable::Decorator
   include Representable::XML
   property :id
@@ -232,14 +251,28 @@ class MyXMLRepresenter &lt; Representable::Decorator
 end
 </code></pre>
 
-<p>The representer can be injected using the well-defined injection interface.</p>
+<p>The representer can be injected using Trailblazer’s well-defined injection interface.</p>
 
 <pre><code>result = Create.({},
   "document.json" =&gt; '&lt;body&gt;&lt;id&gt;1&lt;/id&gt;&lt;/body&gt;',
-  "representer.default.class" =&gt; MyXMLRepresenter)
+  "representer.default.class" =&gt; MyXMLRepresenter # injection
+)
 </code></pre>
 
 <p>Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn’t know anything about the swapped documents.</p>
+
+<h2 id="rendering" data-magellan-target="rendering">Rendering</h2>
+
+<p>Rendering a document after the operation processed is part of the presentation layer, which should <em>not</em> happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.</p>
+
+<p>However, you may use the result object to grab representers and models.</p>
+
+<pre><code>result = Create.({}, "document.json" =&gt; '{"id": 1}')
+json   = result["representer.default.class"].new(result["model"]).to_json
+json #=&gt; '{"id":1}'
+</code></pre>
+
+<p>Luckily, <a href="endpoint.html"><code class="highlighter-rouge">Endpoint</code></a> and <code class="highlighter-rouge">respond</code> in Rails controllers help you with this.</p>
 
             </div>
 
@@ -253,7 +286,9 @@ end
           <li><a href="#parsing">Parsing</a></li>
 <li><a href="#parsing-explicit">Parsing: Explicit</a></li>
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
+<li><a href="#parsing-infer">Parsing: Infer</a></li>
 <li><a href="#parsing-dependency-injection">Parsing: Dependency Injection</a></li>
+<li><a href="#rendering">Rendering</a></li>
         </ul>
       
 </nav>
