@@ -7,7 +7,7 @@ gems:
 
 This document discusses the `Policy` module, [`Policy::Pundit`](#pundit), and [`Policy::Guard`](#guard).
 
-## Pundit: Overview
+## Pundit
 
 The `Policy::Pundit` module allows using [Pundit](https://github.com/elabs/pundit)-compatible policy classes in an operation.
 
@@ -29,7 +29,7 @@ This policy will only pass when the operation is invoked as follows.
 
 Any other call will cause a policy breach and stop the pipe from executing after the `Policy::Pundit` step.
 
-### Pundit: API
+## Pundit: API
 
 Add your polices using the `Policy::Pundit` macro. It accepts the policy class name, and the rule method to call.
 
@@ -45,7 +45,7 @@ After running the `Pundit` step, its result is readable from the `Result` object
 
 Note that the actual policy instance is available via `["result.policy.#{name}"]["policy"]` to be reinvoked with other rules (e.g. in the view layer).
 
-### Pundit: Name
+## Pundit: Name
 
 You can add any number of Pundit policies to your pipe. Make sure to use `name:` to name them, though.
 
@@ -55,7 +55,7 @@ The result will be stored in `"result.policy.#{name}"`
 
 {{  "pundit_test.rb:name-call" | tsnippet }}
 
-### Pundit: Dependency Injection
+## Pundit: Dependency Injection
 
 Override a configured policy using dependency injection.
 
@@ -63,7 +63,7 @@ Override a configured policy using dependency injection.
 
 You can inject it using `"policy.#{name}.eval"`. It can be any object responding to `call`.
 
-## Guard: Overview
+## Guard
 
 A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as `falsey`, the pipe won't be further processed and a policy breach is reported in `Result["result.policy.default"]`.
 
@@ -90,7 +90,7 @@ The `Policy::Guard` macro helps you inserting your guard logic. If not defined, 
 
 The `Skill` options object is passed into the guard and allows you to read and inspect data like `params` or `current_user`.
 
-### Guard: Callable
+## Guard: Callable
 
 As always, the guard can also be a `Callable`-marked object.
 
@@ -101,7 +101,7 @@ Insert the object instance via the `Policy::Guard` macro.
 {{  "guard_test.rb:callable-op" | tsnippet : "pipe-only" }}
 
 
-### Guard: Class-level
+## Guard: Class-level
 
 You can also place any kind of guard before the operation instantiation using `before:`.
 
@@ -109,7 +109,7 @@ You can also place any kind of guard before the operation instantiation using `b
 
 This is helpful to clear out breaches quickly.
 
-### Guard: Name
+## Guard: Name
 
 The guard name defaults to `default` and can be set via `name:`. This allows having multiple guards.
 
@@ -119,7 +119,7 @@ The result will sit in `result.policy.#{name}`.
 
 {{  "guard_test.rb:name-result" | tsnippet }}
 
-### Guard: Dependency Injection
+## Guard: Dependency Injection
 
 Instead of using the configured guard, you can inject any callable object that returns a `Result` object. Do so by overriding the `policy.#{name}.eval` path when calling the operation.
 

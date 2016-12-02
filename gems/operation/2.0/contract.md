@@ -7,6 +7,8 @@ gems:
 
 A *contract* is an abstraction to handle validation of arbitrary data or object state. It is a fully self-contained object that is orchestrated by the operation.
 
+The actual validation can be implemented using Reform with `ActiveModel::Validation` or dry-validation, or a [`Dry::Schema` directly](#dry-schema) without Reform.
+
 The `Contract` module helps you defining contracts and assists with instantiating and validating data with those contracts at runtime.
 
 ## Overview: Reform

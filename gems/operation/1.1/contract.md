@@ -3,6 +3,8 @@ layout: operation
 title: "Operation: Contract"
 redirect_from:
   - /gems/operation/contract.html
+gems:
+  - ["trailblazer", "trailblazer/trailblazer", "1.1", "2.0"]
 ---
 
 # Operation: Contract
