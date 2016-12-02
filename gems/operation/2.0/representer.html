@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation: Contract</title>
-<meta name="description" content="Operation: Contract - Trailblazer">
+<title>Trailblazer: Operation Representer</title>
+<meta name="description" content="Operation Representer - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,14 +36,14 @@
 </script>
 
 
-<meta property="og:title" content="Operation: Contract">
+<meta property="og:title" content="Operation Representer">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/contract.html">
+<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/representer.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation: Contract">
+<meta name="twitter:title" content="Operation Representer">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -95,7 +95,7 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero operation-hero">
+<div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
@@ -110,25 +110,25 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="operation-body">
+        <article class="operation2-body">
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation: Contract</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
+  <h1 class="doc-page-title">Operation Representer</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 02 December 2016</span>
 
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer">trailblazer</a>
+      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
 
-      <a href="/gems/operation/1.1/contract.html">
-      <span class="version">v1.1</span>
+      <a href="/gems/operation/2.0/representer.html">
+      <span class="version">v2.0</span>
       </a>
 
     
-      <a href="/gems/operation/2.0/contract.html">
-        <span class="version other">v2.0</span>
+      <a href="/gems/operation/1.1/representer.html">
+        <span class="version other">v1.1</span>
       </a>
     
 
@@ -143,93 +143,103 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="operation-contract">Operation: Contract</h1>
+              <p>Representers help to parse and render documents for JSON or XML APIs.</p>
 
-<p>The operation’s contract is one of the pivotal elements in Trailblazer. It integrates the deserialization and validation into your service object.</p>
+<p>After defining a representer, it can either parse an incoming document into an object graph, or, the other way round, serialize a nested object into a document.</p>
 
-<p>[DOCS STILL UNDER CONSTRUCTION]</p>
+<p>You can use representers from the <a href="/gems/representable">Representable</a> gem with your operations.</p>
 
-<h2 id="composition" data-magellan-target="composition">Composition</h2>
+<h2 id="parsing" data-magellan-target="parsing">Parsing</h2>
 
-<p>Contracts don’t have to map to one model, only.</p>
+<p>In Trailblazer, incoming is usually deserialized (parsed) into an object graph, then validated, then persisted. Transforming the data into one or many objects is done by a representer.</p>
 
-<p>If your contract embraces several models using <code class="highlighter-rouge">Composition</code>, you can easily pass the composition hash via <code class="highlighter-rouge">validate</code>. Note that composition is a <a href="/gems/reform/#composition">Reform feature</a>. Do not forget the <code class="highlighter-rouge">on:</code> option when defining your compositional mapping.</p>
+<p>Normally, this happens internally in the Reform object, which receives the data in <code class="highlighter-rouge">validate</code> and then uses an automatically infered representer to parse the data onto itself.</p>
 
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
-  <span class="n">contract</span> <span class="k">do</span>
-    <span class="kp">include</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span><span class="o">::</span><span class="no">Composition</span>
+<!-- Basically, this happens. -->
 
-    <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>   <span class="ss">on: :comment</span>
-    <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">on: :author</span>
-  <span class="k">end</span>
+<p>TODO: more explanations about generic parsing.</p>
 
-  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">comment</span> <span class="o">=</span> <span class="no">Comment</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
-    <span class="n">author</span>  <span class="o">=</span> <span class="n">comment</span><span class="p">.</span><span class="nf">author</span>
+<h2 id="parsing-explicit" data-magellan-target="parsing-explicit">Parsing: Explicit</h2>
 
-    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">comment: </span><span class="n">comment</span><span class="p">,</span> <span class="ss">author: </span><span class="n">author</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<p>In the <code class="highlighter-rouge">Contract::Validate</code> macro, you can specify a representer used to deserialize the incoming document onto the contract.</p>
+
+<p>This requires a representer class.</p>
+
+<pre><code>class MyRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+  property :id
+end
 </code></pre>
-</div>
 
-<p>The second argument to <code class="highlighter-rouge">validate</code> is the contract’s model. As per Reform’s API, for compositions this must be a hash.</p>
+<p>While this representer could be used stand-alone, the operation helps you to leverage it for parsing.</p>
 
-<h2 id="injection" data-magellan-target="injection">Injection</h2>
-
-<p>It is possible to inject additional dependencies into the contract, which are not part of the original model(s). This often is a <code class="highlighter-rouge">current_user</code> or the operation instance itself.</p>
-
-<p>Those dependencies have to be virtual properties in the contract. They can then be passed as the third argument to <code class="highlighter-rouge">validate</code>.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
-  <span class="n">contract</span> <span class="k">do</span>
-    <span class="n">property</span> <span class="ss">:current_user</span><span class="p">,</span> <span class="ss">virtual: </span><span class="kp">true</span>
-    <span class="n">property</span> <span class="ss">:operation</span><span class="p">,</span>    <span class="ss">virtual: </span><span class="kp">true</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span>
-      <span class="ss">current_user: </span><span class="n">params</span><span class="p">[</span><span class="ss">:current_user</span><span class="p">],</span>
-      <span class="ss">operation:    </span><span class="nb">self</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
-
-    <span class="k">end</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :id
+  end
+  
+  self.| Model[ Song, :new ]
+  self.| Contract::Build[ constant: MyContract ]
+  self.| Contract::Validate[ representer: MyRepresenter ]
+  self.| Persist[ method: :sync ]
+end
 </code></pre>
-</div>
 
-<p>The same semantics apply to <code class="highlighter-rouge">contract</code>.</p>
+<p>Note that the contract can also be an inline contract.</p>
 
-<h3 id="contract-method">contract! Method</h3>
+<p>You may now pass a JSON document instead of a hash into the operation’s call.</p>
 
-<p>To automate injection or composition, you can override <code class="highlighter-rouge">Operation#contract!</code>. Note that you will still need to specify the virtual properties in the contract as above.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
-
-<span class="kp">private</span>
-  <span class="k">def</span> <span class="nf">contract!</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="kp">nil</span><span class="p">,</span> <span class="n">contract_class</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
-    <span class="n">contract_class</span> <span class="o">||=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">contract_class</span>
-    <span class="vi">@contract</span> <span class="o">||=</span> <span class="n">contract_class</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
-      <span class="ss">current_user: </span><span class="vi">@current_user</span><span class="p">,</span>
-      <span class="ss">operation: </span><span class="nb">self</span><span class="p">)</span>
-  <span class="k">end</span>
+<pre><code>Create.({}, "document.json" =&gt; '{"id": 1}')
 </code></pre>
-</div>
 
-<p>Or if you don’t require arguments when calling <code class="highlighter-rouge">contract</code>, simply use:</p>
+<p>This parses the JSON document and the representer will assign the property values and objects to the contract. Afterwards, the contract validates itself with the normal mechanics.</p>
 
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+<p>In fact, the contract doesn’t even know its data was parsed from a JSON or XML document.</p>
 
-<span class="kp">private</span>
-  <span class="k">def</span> <span class="nf">contract!</span> <span class="o">*</span><span class="n">args</span>
-    <span class="vi">@contract</span> <span class="o">||=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">contract_class</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">,</span> <span class="ss">operation: </span><span class="nb">self</span><span class="p">)</span>
-  <span class="k">end</span>
+<h2 id="parsing-inline-representer" data-magellan-target="parsing-inline-representer">Parsing: Inline Representer</h2>
+
+<p>If you quickly want to try a representer or you’re facing a small amount of properties, only, you can use an inline representer.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :id
+  end
+  
+  extend Representer::DSL
+  
+  representer do
+    property :id
+  end
+  
+  self.| Model[ Song, :new ]
+  self.| Contract::Build[ constant: MyContract ]
+  self.| Contract::Validate[ representer: self["representer.default.class"] ]
+  self.| Persist[ method: :sync ]
+end
 </code></pre>
-</div>
+
+<p>The behavior is identical to referencing the representer class constant.</p>
+
+<h2 id="parsing-dependency-injection" data-magellan-target="parsing-dependency-injection">Parsing: Dependency Injection</h2>
+
+<p>You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.</p>
+
+<pre><code>require "representable/xml"
+class MyXMLRepresenter &lt; Representable::Decorator
+  include Representable::XML
+  property :id
+  alias_method :from_json, :from_xml # FIXME. introduce #parse.
+end
+</code></pre>
+
+<p>The representer can be injected using the well-defined injection interface.</p>
+
+<pre><code>result = Create.({},
+  "document.json" =&gt; '&lt;body&gt;&lt;id&gt;1&lt;/id&gt;&lt;/body&gt;',
+  "representer.default.class" =&gt; MyXMLRepresenter)
+</code></pre>
+
+<p>Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn’t know anything about the swapped documents.</p>
 
             </div>
 
@@ -240,8 +250,10 @@
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#composition">Composition</a></li>
-<li><a href="#injection">Injection</a></li>
+          <li><a href="#parsing">Parsing</a></li>
+<li><a href="#parsing-explicit">Parsing: Explicit</a></li>
+<li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
+<li><a href="#parsing-dependency-injection">Parsing: Dependency Injection</a></li>
         </ul>
       
 </nav>

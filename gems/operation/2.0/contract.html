@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Contract</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 23 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 November 2016</span>
 
   
     <span class="doc-last-updated">
@@ -145,6 +145,8 @@
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p>A <em>contract</em> is an abstraction to handle validation of arbitrary data or object state. It is a fully self-contained object that is orchestrated by the operation.</p>
 
+<p>The actual validation can be implemented using Reform with <code class="highlighter-rouge">ActiveModel::Validation</code> or dry-validation, or a <a href="#dry-schema"><code class="highlighter-rouge">Dry::Schema</code> directly</a> without Reform.</p>
+
 <p>The <code class="highlighter-rouge">Contract</code> module helps you defining contracts and assists with instantiating and validating data with those contracts at runtime.</p>
 
 <h2 id="overview-reform" data-magellan-target="overview-reform">Overview: Reform</h2>
@@ -163,7 +165,7 @@ class Create &lt; Trailblazer::Operation
     validates :length, numericality: true
   end
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
@@ -214,7 +216,7 @@ class Create &lt; Trailblazer::Operation
   
   contract MyContract
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
@@ -230,7 +232,7 @@ end
 <pre><code># app/concepts/comment/create.rb
 class Create &lt; Trailblazer::Operation
   # ...
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
@@ -357,7 +359,7 @@ end
 <pre><code># app/concepts/comment/update.rb
 class Update &lt; Trailblazer::Operation
   # ...
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[name: "params"]
   self.| Contract::Validate[name: "params"]
 end
@@ -436,7 +438,7 @@ end
     property :title
   end
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.| Contract::Validate[key: "song"]
   self.| Persist[method: :sync]
@@ -460,7 +462,7 @@ end
     "evergreen" # this is how you could do polymorphic lookups.
   end
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.&amp; :extract_params!
   self.| Contract::Validate[skip_extract: true]
@@ -488,7 +490,7 @@ end
   
   
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[constant: MyContract]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
@@ -509,7 +511,7 @@ end
     validates :title, length: 2..33
   end
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[constant: MyContract, name: "form"]
   self.| Contract::Validate[name: "form"]
   self.| Persist[method: :sync, name: "contract.form"]
@@ -523,7 +525,7 @@ end
 <p>In fact, the operation doesn’t need any reference to a contract class at all.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
@@ -563,13 +565,13 @@ end
     validates :current_user, presence: true
   end
   
-  self.| Model[Song, :create]
+  self.| Model[Song, :new]
   self.| Contract::Build[builder: :default_contract!]
   self.| Contract::Validate[]
   self.| Persist[method: :sync]
   
   def default_contract!(constant:, model:)
-    constant.new(model, current_user: self["user.current"])
+    constant.new(model, current_user: self["current_user"])
   end
 end
 </code></pre>
@@ -579,7 +581,7 @@ end
 <p>As always, you may also use a proc.</p>
 
 <pre><code>  self.| Contract::Build[builder: -&gt;(operation, constant:, model:) {
-    constant.new(model, current_user: operation["user.current"])
+    constant.new(model, current_user: operation["current_user"])
   }]
 </code></pre>
 
