@@ -52,14 +52,32 @@ If you quickly want to try a representer or you're facing a small amount of prop
 
 The behavior is identical to referencing the representer class constant.
 
+## Parsing: Infer
+
+A representer can also be infered from the contract's schema. All you need to do is define the format, e.g. `Representable::JSON`.
+
+{{  "representer_test.rb:infer" | tsnippet }}
+
+The `Operation::Representer.infer` method will return a representer class.
+
 ## Parsing: Dependency Injection
 
 You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.
 
 {{  "representer_test.rb:di-rep" | tsnippet }}
 
-The representer can be injected using the well-defined injection interface.
+The representer can be injected using Trailblazer's well-defined injection interface.
 
 {{  "representer_test.rb:di-call" | tsnippet }}
 
 Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn't know anything about the swapped documents.
+
+## Rendering
+
+Rendering a document after the operation processed is part of the presentation layer, which should *not* happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.
+
+However, you may use the result object to grab representers and models.
+
+{{  "representer_test.rb:render" | tsnippet }}
+
+Luckily, [`Endpoint`](endpoint.html) and `respond` in Rails controllers help you with this.
