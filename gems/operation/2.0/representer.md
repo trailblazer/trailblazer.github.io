@@ -21,6 +21,7 @@ Normally, this happens internally in the Reform object, which receives the data 
 
 TODO: more explanations about generic parsing.
 
+NOTE: parsing needs Representable >= 3.0.2.
 
 ## Parsing: Explicit
 
@@ -72,12 +73,48 @@ The representer can be injected using Trailblazer's well-defined injection inter
 
 Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn't know anything about the swapped documents.
 
+## Naming
+
+Without a name specified, the representer will be named `default`.
+
+
+{{  "representer_test.rb:naming" | tsnippet }}
+
+To maintain multiple representers per operation, you may name them.
+
+    representer :parse, MyRepresenter
+    representer :errors, ErrorsRepresenter
+
+They are now accessable via their named path.
+
+    Create["representer.parse.class"] #=> MyRepresenter
+
+
 ## Rendering
 
-Rendering a document after the operation processed is part of the presentation layer, which should *not* happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.
+Rendering a document after the operation finished is part of the presentation layer, which should *not* happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.
 
 However, you may use the result object to grab representers and models.
 
 {{  "representer_test.rb:render" | tsnippet }}
 
 Luckily, [`Endpoint`](endpoint.html) and `respond` in Rails controllers help you with this.
+
+## Full Example
+
+Often, an operation will maintain multiple representers, e.g. for parsing, to render into a specific media format, and to handle error cases.
+
+You could have a generic errors representer.
+
+{{  "representer_test.rb:errors-rep" | tsnippet }}
+
+Using naming, the operation may then contain several representers.
+
+{{  "representer_test.rb:full" | tsnippet }}
+
+An exemplary controller method to handle both outcomes could look like the following snippet.
+
+{{  "representer_test.rb:full-call" | tsnippet }}
+
+
+Make sure to check out [Endpoint](endpoint.html) which bundles the most common outcomes for you and is easily extendable.

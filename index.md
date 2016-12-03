@@ -13,7 +13,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
         <h1>
           <img src="images/logo.svg">
         </h1>
-        <h2>A High-level Architecture For The Web</h2>
+        <h2>A High-Level Architecture For The Web</h2>
       </div>
     </div>
   </div>
