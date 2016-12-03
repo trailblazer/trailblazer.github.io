@@ -159,6 +159,8 @@
 
 <p>TODO: more explanations about generic parsing.</p>
 
+<p>NOTE: parsing needs Representable &gt;= 3.0.2.</p>
+
 <h2 id="parsing-explicit" data-magellan-target="parsing-explicit">Parsing: Explicit</h2>
 
 <p>In the <code class="highlighter-rouge">Contract::Validate</code> macro, you can specify a representer used to deserialize the incoming document onto the contract.</p>
@@ -189,7 +191,7 @@ end
 
 <p>You may now pass a JSON document instead of a hash into the operation’s call.</p>
 
-<pre><code>Create.({}, "document.json" =&gt; '{"id": 1}')
+<pre><code>Create.({}, "document" =&gt; '{"id": 1}')
 </code></pre>
 
 <p>This parses the JSON document and the representer will assign the property values and objects to the contract. Afterwards, the contract validates itself with the normal mechanics.</p>
@@ -247,32 +249,117 @@ end
 class MyXMLRepresenter &lt; Representable::Decorator
   include Representable::XML
   property :id
-  alias_method :from_json, :from_xml # FIXME. introduce #parse.
 end
 </code></pre>
 
 <p>The representer can be injected using Trailblazer’s well-defined injection interface.</p>
 
 <pre><code>result = Create.({},
-  "document.json" =&gt; '&lt;body&gt;&lt;id&gt;1&lt;/id&gt;&lt;/body&gt;',
+  "document" =&gt; '&lt;body&gt;&lt;id&gt;1&lt;/id&gt;&lt;/body&gt;',
   "representer.default.class" =&gt; MyXMLRepresenter # injection
 )
 </code></pre>
 
 <p>Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn’t know anything about the swapped documents.</p>
 
+<h2 id="naming" data-magellan-target="naming">Naming</h2>
+
+<p>Without a name specified, the representer will be named <code class="highlighter-rouge">default</code>.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Representer::DSL
+  representer MyRepresenter
+end
+  
+Create["representer.default.class"] #=&gt; MyRepresenter
+</code></pre>
+
+<p>To maintain multiple representers per operation, you may name them.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>representer :parse, MyRepresenter
+representer :errors, ErrorsRepresenter
+</code></pre>
+</div>
+
+<p>They are now accessable via their named path.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Create["representer.parse.class"] #=&gt; MyRepresenter
+</code></pre>
+</div>
+
 <h2 id="rendering" data-magellan-target="rendering">Rendering</h2>
 
-<p>Rendering a document after the operation processed is part of the presentation layer, which should <em>not</em> happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.</p>
+<p>Rendering a document after the operation finished is part of the presentation layer, which should <em>not</em> happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.</p>
 
 <p>However, you may use the result object to grab representers and models.</p>
 
-<pre><code>result = Create.({}, "document.json" =&gt; '{"id": 1}')
+<pre><code>result = Create.({}, "document" =&gt; '{"id": 1}')
 json   = result["representer.default.class"].new(result["model"]).to_json
 json #=&gt; '{"id":1}'
 </code></pre>
 
 <p>Luckily, <a href="endpoint.html"><code class="highlighter-rouge">Endpoint</code></a> and <code class="highlighter-rouge">respond</code> in Rails controllers help you with this.</p>
+
+<h2 id="full-example" data-magellan-target="full-example">Full Example</h2>
+
+<p>Often, an operation will maintain multiple representers, e.g. for parsing, to render into a specific media format, and to handle error cases.</p>
+
+<p>You could have a generic errors representer.</p>
+
+<pre><code>class ErrorsRepresenter &lt; Representable::Decorator
+  include Representable::JSON
+  collection :errors
+end
+</code></pre>
+
+<p>Using naming, the operation may then contain several representers.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  extend Contract::DSL
+  extend Representer::DSL
+  
+  contract do
+    property :title
+    validates :title, presence: true
+  end
+  
+  representer :parse do
+    property :title
+  end
+  
+  representer :render do
+    include Roar::JSON::HAL
+  
+    property :id
+    property :title
+    link(:self) { "/songs/#{represented.id}" }
+  end
+  
+  representer :errors, ErrorsRepresenter # explicit reference.
+  
+  self.| Model[ Song, :new ]
+  self.| Contract::Build[ ]
+  self.| Contract::Validate[ representer: self["representer.parse.class"] ]
+  self.| Persist[ method: :sync ]
+end
+</code></pre>
+
+<p>An exemplary controller method to handle both outcomes could look like the following snippet.</p>
+
+<pre><code>def create
+  result = Create.(params, "document" =&gt; request.body.read)
+  
+  if result.success?
+    result["representer.render.class"].new(result["model"]).to_json
+  else
+    result["representer.errors.class"].new(result["result.contract.default"]).to_json
+  end
+end
+</code></pre>
+
+<p>Make sure to check out <a href="endpoint.html">Endpoint</a> which bundles the most common outcomes for you and is easily extendable.</p>
 
             </div>
 
@@ -288,7 +375,9 @@ json #=&gt; '{"id":1}'
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
 <li><a href="#parsing-infer">Parsing: Infer</a></li>
 <li><a href="#parsing-dependency-injection">Parsing: Dependency Injection</a></li>
+<li><a href="#naming">Naming</a></li>
 <li><a href="#rendering">Rendering</a></li>
+<li><a href="#full-example">Full Example</a></li>
         </ul>
       
 </nav>
