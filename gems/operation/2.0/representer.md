@@ -233,7 +233,38 @@ They are now accessable via their named path.
     Create["representer.parse.class"] #=> MyRepresenter
 
 
-## Rendering
+## Rendering: Introduction
+
+In a document API system, after processing the operation, you usually want to render a response document. While you could use something like `ActiveModel::Serializer` for this, it makes sense to reuse a representer.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::JSON # the document format.
+
+      property :title
+      property :band
+    end
+
+Given the following model.
+
+    song  #=> #<struct Song title="Let Them Eat War" band="Bad Religion">
+
+The mechanics when rendering are very similar to what happens when parsing.
+
+    SongRepresenter.new(song).to_json #=> '{"title":"Let Them Eat War","band": "Bad Religion"}'
+
+In pseudo-code, the representer literally only walks through its schema, asks the model for the property values and serializes them into a document.
+
+    # SongRepresenter#to_json
+      json = {}
+      json[:title] = song.title
+      json[:band]  = song.band
+      json.to_json
+
+Representers are very helpful when introducing media formats such as HAL or JSON API, or when having to render complex XML documents from a nested object graph. The only requirement they have are the model's readers.
+
+Go and read a bit about [Representable](/gems/representable) to learn more about mapping, aliases, media formats, and more.
+
+## Rendering: Example
 
 Rendering a document after the operation finished is part of the presentation layer, which should *not* happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.
 
