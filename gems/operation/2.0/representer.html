@@ -149,11 +149,97 @@
 
 <p>You can use representers from the <a href="/gems/representable">Representable</a> gem with your operations.</p>
 
-<h2 id="parsing" data-magellan-target="parsing">Parsing</h2>
+<p>Check the <a href="#full-example">→ full example</a> for a quick overview.</p>
 
-<p>In Trailblazer, incoming is usually deserialized (parsed) into an object graph, then validated, then persisted. Transforming the data into one or many objects is done by a representer.</p>
+<h2 id="parsing-introduction" data-magellan-target="parsing-introduction">Parsing: Introduction</h2>
+
+<p>In Trailblazer, the normal workflow is to deserialize (parse) incoming data into an object graph, then validate this data structure, then persist parts of it. Transforming the incoming data into one or many objects is done by a representer.</p>
 
 <p>Normally, this happens internally in the Reform object, which receives the data in <code class="highlighter-rouge">validate</code> and then uses an automatically infered representer to parse the data onto itself.</p>
+
+<p>However, let’s discuss representers first and ignore the validation layer.</p>
+
+<p>What the representer does and how it interacts with the contract (or any Ruby object) can be explained in a simple example.</p>
+
+<p>Imagine the following incoming <strong>document</strong> from a form submission.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"title"</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="nt">"Let Them Eat War"</span><span class="err">,</span><span class="w">
+  </span><span class="nt">"band"</span><span class="w">  </span><span class="err">=&gt;</span><span class="w"> </span><span class="nt">"Bad Religion"</span><span class="w">
+</span><span class="err">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>In this case the document is a hash, but Representable allows parsing JSON, XML and YAML, too.</p>
+
+<p>To process this document a <strong>representer</strong> must be defined.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::Hash # the document format.
+
+  property :title
+  property :band
+end
+</code></pre>
+</div>
+
+<p>Representers are provided by the Representable and Roar gems. They look and feel a lot like contracts, but only define the structure of the documents, no semantics or validations.</p>
+
+<p>When parsing, the representer simply traverses the document and writes every known attribute to the <strong>represented object</strong>. The latter can be any kind of object, it only has to expose property setters.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Song = Struct.new(:title, :band)
+</code></pre>
+</div>
+
+<p>While you will usually use models (e.g. <code class="highlighter-rouge">ActiveRecord</code>) or contracts with representers, a simple struct is sufficient for explaining.</p>
+
+<p>Parsing the document onto a <code class="highlighter-rouge">Song</code> instance is very straight-forward.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>input = { "title" =&gt; "Let Them Eat War", "band" =&gt; "Bad Religion" }
+
+song  = Song.new # this doesn't have to be an empty object.
+
+SongRepresenter.new(song).from_hash(input)
+</code></pre>
+</div>
+
+<p>In pseudo-code, the representer literally only walks through the hash and assigns values to the model.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># SongRepresenter#from_hash
+  song.title = input["title"]
+  song.band  = input["band"]
+</code></pre>
+</div>
+
+<p>After the parsing, your represented model is populated with the values.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>song.title #=&gt; "Let Them Eat War"
+song.band  #=&gt; "Bad Religion"
+</code></pre>
+</div>
+
+<h2 id="parsing-nesting" data-magellan-target="parsing-nesting">Parsing: Nesting</h2>
+
+<p>This document () now should be validated and persisted by the following contract.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongContract &lt; Reform::Form
+  property :title
+  property :band
+
+  validates :title, presence: true
+  validates :band, presence: true
+end
+</code></pre>
+</div>
+
+<p>Sometimes the documents format and structure doesn’t match 1-to-1 with the contract’s</p>
 
 <!-- Basically, this happens. -->
 
@@ -163,7 +249,7 @@
 
 <h2 id="parsing-explicit" data-magellan-target="parsing-explicit">Parsing: Explicit</h2>
 
-<p>In the <code class="highlighter-rouge">Contract::Validate</code> macro, you can specify a representer used to deserialize the incoming document onto the contract.</p>
+<p>Instead of using Reform’s automatic representer to deserialize the incoming document, the <code class="highlighter-rouge">Contract::Validate</code> macro allows you to specify a different representer.</p>
 
 <p>This requires a representer class.</p>
 
@@ -182,12 +268,12 @@ end
   
   self.| Model[ Song, :new ]
   self.| Contract::Build[ constant: MyContract ]
-  self.| Contract::Validate[ representer: MyRepresenter ]
+  self.| Contract::Validate[ representer: MyRepresenter ] # :representer
   self.| Persist[ method: :sync ]
 end
 </code></pre>
 
-<p>Note that the contract can also be an inline contract.</p>
+<p>In the <code class="highlighter-rouge">Validate</code> macro, the <code class="highlighter-rouge">representer:</code> option will set the specified representer for deserialization. Note that the contract can also be an inline contract.</p>
 
 <p>You may now pass a JSON document instead of a hash into the operation’s call.</p>
 
@@ -346,6 +432,8 @@ end
 end
 </code></pre>
 
+<p>Note that you don’t even have to hook those representers into the operation class - this is a convention for structuring.</p>
+
 <p>An exemplary controller method to handle both outcomes could look like the following snippet.</p>
 
 <pre><code>def create
@@ -370,7 +458,8 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#parsing">Parsing</a></li>
+          <li><a href="#parsing-introduction">Parsing: Introduction</a></li>
+<li><a href="#parsing-nesting">Parsing: Nesting</a></li>
 <li><a href="#parsing-explicit">Parsing: Explicit</a></li>
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
 <li><a href="#parsing-infer">Parsing: Infer</a></li>
