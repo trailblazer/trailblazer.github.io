@@ -120,7 +120,7 @@
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
+      <a href="https://github.com/trailblazer/trailblazer">trailblazer</a>
 
       <a href="/gems/operation/2.0/representer.html">
       <span class="version">v2.0</span>
@@ -150,6 +150,12 @@
 <p>You can use representers from the <a href="/gems/representable">Representable</a> gem with your operations.</p>
 
 <p>Check the <a href="#full-example">→ full example</a> for a quick overview.</p>
+
+<div class="callout secondary">
+  <p>
+    Parsing needs Representable &gt;= 3.0.2.
+  </p>
+</div>
 
 <h2 id="parsing-introduction" data-magellan-target="parsing-introduction">Parsing: Introduction</h2>
 
@@ -289,9 +295,11 @@ song.band.name #=&gt; "Bad Religion"
 
 <p>As you can see, all the representer does when parsing is following its specified schema, assign property values to the model or creating/finding nested models, which it recurses then onto.</p>
 
-<h2 id="parsing-contract" data-magellan-target="parsing-contract">Parsing: Contract</h2>
+<p>TODO: link to populator docs.</p>
 
-<p>This document () now should be validated and persisted by the following contract.</p>
+<h2 id="parsing-with-contract" data-magellan-target="parsing-with-contract">Parsing with Contract</h2>
+
+<p>The aforementioned parsing also works against a Reform contract instead of a pure model. Consider the following contract.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class SongContract &lt; Reform::Form
@@ -304,13 +312,36 @@ end
 </code></pre>
 </div>
 
-<p>Sometimes the documents format and structure doesn’t match 1-to-1 with the contract’s</p>
+<p>To validate this contract, you actually pass it a <em>document</em>.</p>
 
-<!-- Basically, this happens. -->
+<div class="highlighter-rouge">
+<pre class="highlight"><code>input = { "title" =&gt; "Let Them Eat War", "band" =&gt; "Bad Religion" }
 
-<p>TODO: more explanations about generic parsing.</p>
+SongContract.new(song).validate(input)
+</code></pre>
+</div>
 
-<p>NOTE: parsing needs Representable &gt;= 3.0.2.</p>
+<p>The only real difference to the above examples is that Reform will validate itself after the deserialization. In other words: In <code class="highlighter-rouge">validate</code>, Reform uses a representer to deserialize the document to itself, then runs its validation logic.</p>
+
+<div class="row colums text-center">
+<p>
+  <img src="/images/diagrams/reform-architecture.png">
+</p>
+</div>
+
+<p><a href="/gems/reform">→ Reform’s architecture docs</a> talk about this in detail.</p>
+
+<p>Reform infers this representer (or <em>deserializer</em>) automatially in <code class="highlighter-rouge">validate</code> and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn’t match 1-to-1 with the contract’s schema. For example, when validating input in a JSON API system.</p>
+
+<p>This is where you can specify your own representer to be used against the contract.</p>
+
+<div class="callout secondary">
+  <p>
+    The idea is to decouple the validation (contract) from the document structure (representer). A contract shouldn't be aware of the environment it is being used in, and the representer mustn't have any knowledge about validations and the underlying persistence layer.
+  </p>
+</div>
+
+<p>How that is done is discussed in the following sections.</p>
 
 <h2 id="parsing-explicit" data-magellan-target="parsing-explicit">Parsing: Explicit</h2>
 
@@ -440,7 +471,50 @@ representer :errors, ErrorsRepresenter
 </code></pre>
 </div>
 
-<h2 id="rendering" data-magellan-target="rendering">Rendering</h2>
+<h2 id="rendering-introduction" data-magellan-target="rendering-introduction">Rendering: Introduction</h2>
+
+<p>In a document API system, after processing the operation, you usually want to render a response document. While you could use something like <code class="highlighter-rouge">ActiveModel::Serializer</code> for this, it makes sense to reuse a representer.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::JSON # the document format.
+
+  property :title
+  property :band
+end
+</code></pre>
+</div>
+
+<p>Given the following model.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>song  #=&gt; #&lt;struct Song title="Let Them Eat War" band="Bad Religion"&gt;
+</code></pre>
+</div>
+
+<p>The mechanics when rendering are very similar to what happens when parsing.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>SongRepresenter.new(song).to_json #=&gt; '{"title":"Let Them Eat War","band": "Bad Religion"}'
+</code></pre>
+</div>
+
+<p>In pseudo-code, the representer literally only walks through its schema, asks the model for the property values and serializes them into a document.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># SongRepresenter#to_json
+  json = {}
+  json[:title] = song.title
+  json[:band]  = song.band
+  json.to_json
+</code></pre>
+</div>
+
+<p>Representers are very helpful when introducing media formats such as HAL or JSON API, or when having to render complex XML documents from a nested object graph. The only requirement they have are the model’s readers.</p>
+
+<p>Go and read a bit about <a href="/gems/representable">Representable</a> to learn more about mapping, aliases, media formats, and more.</p>
+
+<h2 id="rendering-example" data-magellan-target="rendering-example">Rendering: Example</h2>
 
 <p>Rendering a document after the operation finished is part of the presentation layer, which should <em>not</em> happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.</p>
 
@@ -525,13 +599,14 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#parsing-introduction">Parsing: Introduction</a></li>
 <li><a href="#parsing-nesting">Parsing: Nesting</a></li>
-<li><a href="#parsing-contract">Parsing: Contract</a></li>
+<li><a href="#parsing-with-contract">Parsing with Contract</a></li>
 <li><a href="#parsing-explicit">Parsing: Explicit</a></li>
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
 <li><a href="#parsing-infer">Parsing: Infer</a></li>
 <li><a href="#parsing-dependency-injection">Parsing: Dependency Injection</a></li>
 <li><a href="#naming">Naming</a></li>
-<li><a href="#rendering">Rendering</a></li>
+<li><a href="#rendering-introduction">Rendering: Introduction</a></li>
+<li><a href="#rendering-example">Rendering: Example</a></li>
 <li><a href="#full-example">Full Example</a></li>
         </ul>
       
