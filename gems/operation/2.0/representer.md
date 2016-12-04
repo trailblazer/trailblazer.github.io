@@ -11,11 +11,127 @@ After defining a representer, it can either parse an incoming document into an o
 
 You can use representers from the [Representable](/gems/representable) gem with your operations.
 
-## Parsing
+Check the [→ full example](#full-example) for a quick overview.
 
-In Trailblazer, incoming is usually deserialized (parsed) into an object graph, then validated, then persisted. Transforming the data into one or many objects is done by a representer.
+## Parsing: Introduction
+
+In Trailblazer, the normal workflow is to deserialize (parse) incoming data into an object graph, then validate this data structure, then persist parts of it. Transforming the incoming data into one or many objects is done by a representer.
 
 Normally, this happens internally in the Reform object, which receives the data in `validate` and then uses an automatically infered representer to parse the data onto itself.
+
+However, let's discuss representers first and ignore the validation layer.
+
+What the representer does and how it interacts with the contract (or any Ruby object) can be explained in a simple example.
+
+Imagine the following incoming **document** from a form submission.
+
+    {
+      "title" => "Let Them Eat War",
+      "band"  => "Bad Religion"
+    }
+
+In this case the document is a hash, but Representable allows parsing JSON, XML and YAML, too.
+
+To process this document a **representer** must be defined.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::Hash # the document format.
+
+      property :title
+      property :band
+    end
+
+Representers are provided by the Representable and Roar gems. They look a lot like contracts, but define the structure of the documents, only, no semantics or validations.
+
+When parsing, the representer simply traverses the document and writes every known attribute to the **represented object**. The latter can be any kind of object, it only has to expose property setters.
+
+    Song = Struct.new(:title, :band)
+
+While you will usually use models (e.g. `ActiveRecord`) or contracts with representers, a simple struct is sufficient for explaining.
+
+Parsing the document onto a `Song` instance is very straight-forward.
+
+    input = { "title" => "Let Them Eat War", "band" => "Bad Religion" }
+
+    song  = Song.new # this doesn't have to be an empty object.
+
+    SongRepresenter.new(song).from_hash(input)
+
+In pseudo-code, the representer literally only walks through the hash and assigns values to the model.
+
+    # SongRepresenter#from_hash
+      song.title = input["title"]
+      song.band  = input["band"]
+
+After the parsing, your represented model is populated with the values.
+
+    song.title #=> "Let Them Eat War"
+    song.band  #=> "Bad Religion"
+
+Representers increasingly make sense with documents differing from your models, for complex media formats such as JSON API, and also for nested documents.
+
+## Parsing: Nesting
+
+While one-level parsing might appear trivial and easily solveable using mechanisms such as `update_attributes` and Rails' automatic parsed `params` hash, the deserialization process gets more complicated with nested fragments and models.
+
+Let's assume the `band:` property should now be a dedicated object. Here's the new **document**.
+
+    {
+      "title" => "Let Them Eat War",
+      "band"  => {
+        "name" => "Bad Religion"
+      }
+    }
+
+When parsing this document, a new `Band` object should be created, attached to the song, and assigned a name.
+
+Again, the `Band` **model** could be provided by any ORM, or simply be a struct.
+
+    Band = Struct.new(:name)
+
+The **representer** to implement parsing and creating looks as follows.
+
+    class SongRepresenter < Representable::Decorator
+      include Representable::Hash # the document format.
+
+      property :title
+      property :band, class: Band do
+        property :name
+      end
+    end
+
+The `class:` option is the easiest way to tell a representer to create an object for a nested fragment. This is called *population* and deserves [its own documentation section](/gems/representable/populator.html) as it exposes a few ways, such as find-or-create, instantiate, and so on.
+
+Parsing the nested document will now result in a nested object graph.
+
+    input = { "title" => "Let Them Eat War", "band" => { "name" => "Bad Religion" } }
+
+    song  = Song.new # this doesn't have to be an empty object.
+
+    SongRepresenter.new(song).from_hash(input)
+
+The representer will deserialize the nested fragment into its own model, the way you specified (or override) it.
+
+    song.title #=> "Let Them Eat War"
+    song.band  #=> #<struct Band name="Bad Religion">
+    song.band.name #=> "Bad Religion"
+
+As you can see, all the representer does when parsing is following its specified schema, assign property values to the model or creating/finding nested models, which it recurses then onto.
+
+## Parsing: Contract
+
+This document () now should be validated and persisted by the following contract.
+
+    class SongContract < Reform::Form
+      property :title
+      property :band
+
+      validates :title, presence: true
+      validates :band, presence: true
+    end
+
+
+Sometimes the documents format and structure doesn't match 1-to-1 with the contract's
 
 <!-- Basically, this happens. -->
 
@@ -25,7 +141,7 @@ NOTE: parsing needs Representable >= 3.0.2.
 
 ## Parsing: Explicit
 
-In the `Contract::Validate` macro, you can specify a representer used to deserialize the incoming document onto the contract.
+Instead of using Reform's automatic representer to deserialize the incoming document, the `Contract::Validate` macro allows you to specify a different representer.
 
 This requires a representer class.
 
@@ -35,7 +151,7 @@ While this representer could be used stand-alone, the operation helps you to lev
 
 {{  "representer_test.rb:explicit-op" | tsnippet }}
 
-Note that the contract can also be an inline contract.
+In the `Validate` macro, the `representer:` option will set the specified representer for deserialization. Note that the contract can also be an inline contract.
 
 You may now pass a JSON document instead of a hash into the operation's call.
 
@@ -111,6 +227,8 @@ You could have a generic errors representer.
 Using naming, the operation may then contain several representers.
 
 {{  "representer_test.rb:full" | tsnippet }}
+
+Note that you don't even have to hook those representers into the operation class - this is a convention for structuring.
 
 An exemplary controller method to handle both outcomes could look like the following snippet.
 
