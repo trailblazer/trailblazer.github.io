@@ -2,7 +2,7 @@
 layout: operation2
 title: Operation Representer
 gems:
-  - ["operation", "trailblazer/trailblazer-operation", "2.0", "1.1"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 Representers help to parse and render documents for JSON or XML APIs.
@@ -12,6 +12,12 @@ After defining a representer, it can either parse an incoming document into an o
 You can use representers from the [Representable](/gems/representable) gem with your operations.
 
 Check the [→ full example](#full-example) for a quick overview.
+
+<div class="callout secondary">
+  <p>
+    Parsing needs Representable >= 3.0.2.
+  </p>
+</div>
 
 ## Parsing: Introduction
 
@@ -118,9 +124,11 @@ The representer will deserialize the nested fragment into its own model, the way
 
 As you can see, all the representer does when parsing is following its specified schema, assign property values to the model or creating/finding nested models, which it recurses then onto.
 
-## Parsing: Contract
+TODO: link to populator docs.
 
-This document () now should be validated and persisted by the following contract.
+## Parsing with Contract
+
+The aforementioned parsing also works against a Reform contract instead of a pure model. Consider the following contract.
 
     class SongContract < Reform::Form
       property :title
@@ -130,14 +138,33 @@ This document () now should be validated and persisted by the following contract
       validates :band, presence: true
     end
 
+To validate this contract, you actually pass it a *document*.
 
-Sometimes the documents format and structure doesn't match 1-to-1 with the contract's
+    input = { "title" => "Let Them Eat War", "band" => "Bad Religion" }
 
-<!-- Basically, this happens. -->
+    SongContract.new(song).validate(input)
 
-TODO: more explanations about generic parsing.
+The only real difference to the above examples is that Reform will validate itself after the deserialization. In other words: In `validate`, Reform uses a representer to deserialize the document to itself, then runs its validation logic.
 
-NOTE: parsing needs Representable >= 3.0.2.
+<div class="row colums text-center">
+<p>
+  <img src="/images/diagrams/reform-architecture.png">
+</p>
+</div>
+
+[→ Reform's architecture docs](/gems/reform) talk about this in detail.
+
+Reform infers this representer (or *deserializer*) automatially in `validate` and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn't match 1-to-1 with the contract's schema. For example, when validating input in a JSON API system.
+
+This is where you can specify your own representer to be used against the contract.
+
+<div class="callout secondary">
+  <p>
+    The idea is to decouple the validation (contract) from the document structure (representer). A contract shouldn't be aware of the environment it is being used in, and the representer mustn't have any knowledge about validations and the underlying persistence layer.
+  </p>
+</div>
+
+How that is done is discussed in the following sections.
 
 ## Parsing: Explicit
 
