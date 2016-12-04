@@ -185,7 +185,7 @@ end
 </code></pre>
 </div>
 
-<p>Representers are provided by the Representable and Roar gems. They look and feel a lot like contracts, but only define the structure of the documents, no semantics or validations.</p>
+<p>Representers are provided by the Representable and Roar gems. They look a lot like contracts, but define the structure of the documents, only, no semantics or validations.</p>
 
 <p>When parsing, the representer simply traverses the document and writes every known attribute to the <strong>represented object</strong>. The latter can be any kind of object, it only has to expose property setters.</p>
 
@@ -224,7 +224,72 @@ song.band  #=&gt; "Bad Religion"
 </code></pre>
 </div>
 
+<p>Representers increasingly make sense with documents differing from your models, for complex media formats such as JSON API, and also for nested documents.</p>
+
 <h2 id="parsing-nesting" data-magellan-target="parsing-nesting">Parsing: Nesting</h2>
+
+<p>While one-level parsing might appear trivial and easily solveable using mechanisms such as <code class="highlighter-rouge">update_attributes</code> and Rails’ automatic parsed <code class="highlighter-rouge">params</code> hash, the deserialization process gets more complicated with nested fragments and models.</p>
+
+<p>Let’s assume the <code class="highlighter-rouge">band:</code> property should now be a dedicated object. Here’s the new <strong>document</strong>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"title"</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="nt">"Let Them Eat War"</span><span class="err">,</span><span class="w">
+  </span><span class="nt">"band"</span><span class="w">  </span><span class="err">=&gt;</span><span class="w"> </span><span class="err">{</span><span class="w">
+    </span><span class="nt">"name"</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="nt">"Bad Religion"</span><span class="w">
+  </span><span class="err">}</span><span class="w">
+</span><span class="err">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>When parsing this document, a new <code class="highlighter-rouge">Band</code> object should be created, attached to the song, and assigned a name.</p>
+
+<p>Again, the <code class="highlighter-rouge">Band</code> <strong>model</strong> could be provided by any ORM, or simply be a struct.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Band = Struct.new(:name)
+</code></pre>
+</div>
+
+<p>The <strong>representer</strong> to implement parsing and creating looks as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
+  include Representable::Hash # the document format.
+
+  property :title
+  property :band, class: Band do
+    property :name
+  end
+end
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">class:</code> option is the easiest way to tell a representer to create an object for a nested fragment. This is called <em>population</em> and deserves <a href="/gems/representable/populator.html">its own documentation section</a> as it exposes a few ways, such as find-or-create, instantiate, and so on.</p>
+
+<p>Parsing the nested document will now result in a nested object graph.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>input = { "title" =&gt; "Let Them Eat War", "band" =&gt; { "name" =&gt; "Bad Religion" } }
+
+song  = Song.new # this doesn't have to be an empty object.
+
+SongRepresenter.new(song).from_hash(input)
+</code></pre>
+</div>
+
+<p>The representer will deserialize the nested fragment into its own model, the way you specified (or override) it.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>song.title #=&gt; "Let Them Eat War"
+song.band  #=&gt; #&lt;struct Band name="Bad Religion"&gt;
+song.band.name #=&gt; "Bad Religion"
+</code></pre>
+</div>
+
+<p>As you can see, all the representer does when parsing is following its specified schema, assign property values to the model or creating/finding nested models, which it recurses then onto.</p>
+
+<h2 id="parsing-contract" data-magellan-target="parsing-contract">Parsing: Contract</h2>
 
 <p>This document () now should be validated and persisted by the following contract.</p>
 
@@ -460,6 +525,7 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#parsing-introduction">Parsing: Introduction</a></li>
 <li><a href="#parsing-nesting">Parsing: Nesting</a></li>
+<li><a href="#parsing-contract">Parsing: Contract</a></li>
 <li><a href="#parsing-explicit">Parsing: Explicit</a></li>
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
 <li><a href="#parsing-infer">Parsing: Infer</a></li>
