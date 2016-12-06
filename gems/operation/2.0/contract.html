@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Contract</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 02 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -165,10 +165,10 @@ class Create &lt; Trailblazer::Operation
     validates :length, numericality: true
   end
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  step Contract::Validate()
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -216,10 +216,10 @@ class Create &lt; Trailblazer::Operation
   
   contract MyContract
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  step Contract::Validate()
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -232,10 +232,10 @@ end
 <pre><code># app/concepts/comment/create.rb
 class Create &lt; Trailblazer::Operation
   # ...
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  step Contract::Validate()
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -359,9 +359,9 @@ end
 <pre><code># app/concepts/comment/update.rb
 class Update &lt; Trailblazer::Operation
   # ...
-  self.| Model[Song, :new]
-  self.| Contract::Build[name: "params"]
-  self.| Contract::Validate[name: "params"]
+  step Model( Song, :new )
+  step Contract::Build( name: "params" )
+  step Contract::Validate( name: "params" )
 end
 </code></pre>
 
@@ -379,7 +379,7 @@ class Create &lt; Trailblazer::Operation
   end)
   # ...
   
-  self.| Contract::Validate[name: "params"]
+  step Contract::Validate( name: "params" )
   # ...
 end
 </code></pre>
@@ -398,7 +398,7 @@ class Delete &lt; Trailblazer::Operation
     required(:id).filled
   end)
   
-  self.| Contract::Validate[name: "params"], before: "operation.new"
+  step Contract::Validate( name: "params" ), before: "operation.new"
   # ...
 end
 </code></pre>
@@ -423,7 +423,7 @@ class Delete &lt; Trailblazer::Operation
   extend Contract::DSL
   contract "params", MySchema
   
-  self.| Contract::Validate[name: "params"], before: "operation.new"
+  step Contract::Validate( name: "params" ), before: "operation.new"
 end
 </code></pre>
 
@@ -438,10 +438,10 @@ end
     property :title
   end
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.| Contract::Validate[key: "song"]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  step Contract::Validate( key: "song" )
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -462,11 +462,11 @@ end
     "evergreen" # this is how you could do polymorphic lookups.
   end
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.&amp; :extract_params!
-  self.| Contract::Validate[skip_extract: true]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  consider :extract_params!
+  step Contract::Validate( skip_extract: true )
+  step Persist( method: :sync )
   
   def extract_params!(options)
     options["params.validate"] = options["params"][type]
@@ -490,10 +490,10 @@ end
   
   
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[constant: MyContract]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build( constant: MyContract )
+  step Contract::Validate()
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -511,10 +511,10 @@ end
     validates :title, length: 2..33
   end
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[constant: MyContract, name: "form"]
-  self.| Contract::Validate[name: "form"]
-  self.| Persist[method: :sync, name: "contract.form"]
+  step Model( Song, :new )
+  step Contract::Build( constant: MyContract, name: "form" )
+  step Contract::Validate( name: "form" )
+  step Persist( method: :sync, name: "contract.form" )
 end
 </code></pre>
 
@@ -525,10 +525,10 @@ end
 <p>In fact, the operation doesn’t need any reference to a contract class at all.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Model[Song, :new]
-  self.| Contract::Build[]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build()
+  step Contract::Validate()
+  step Persist( method: :sync )
 end
 </code></pre>
 
@@ -565,10 +565,10 @@ end
     validates :current_user, presence: true
   end
   
-  self.| Model[Song, :new]
-  self.| Contract::Build[builder: :default_contract!]
-  self.| Contract::Validate[]
-  self.| Persist[method: :sync]
+  step Model( Song, :new )
+  step Contract::Build( builder: :default_contract! )
+  step Contract::Validate()
+  step Persist( method: :sync )
   
   def default_contract!(constant:, model:)
     constant.new(model, current_user: self["current_user"])
@@ -580,9 +580,9 @@ end
 
 <p>As always, you may also use a proc.</p>
 
-<pre><code>  self.| Contract::Build[builder: -&gt;(operation, constant:, model:) {
+<pre><code>  step Contract::Build( builder: -&gt;(operation, constant:, model:) {
     constant.new(model, current_user: operation["current_user"])
-  }]
+  })
 </code></pre>
 
 <h2 id="result-object" data-magellan-target="result-object">Result Object</h2>

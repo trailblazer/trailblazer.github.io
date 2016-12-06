@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Policy</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 02 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -166,8 +166,8 @@ end   end
 <p>You can plug this policy into your pipe at any point. However, this must be inserted after the <code class="highlighter-rouge">"model"</code> skill is available.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Model[ Song, :create ]
-  self.| Policy::Pundit[ MyPolicy, :create? ]
+  step Model( Song, :new )
+  step Policy::Pundit( MyPolicy, :create? )
   # ...
 end
 </code></pre>
@@ -188,8 +188,8 @@ end
 <p>Add your polices using the <code class="highlighter-rouge">Policy::Pundit</code> macro. It accepts the policy class name, and the rule method to call.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Model[ Song, :create ]
-  self.| Policy::Pundit[ MyPolicy, :create? ]
+  step Model( Song, :new )
+  step Policy::Pundit( MyPolicy, :create? )
   # ...
 end
 </code></pre>
@@ -212,8 +212,8 @@ result["result.policy.default"]["policy"] #=&gt; #&lt;MyPolicy ...&gt;
 <p>You can add any number of Pundit policies to your pipe. Make sure to use <code class="highlighter-rouge">name:</code> to name them, though.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Model[ Song, :create ]
-  self.| Policy::Pundit[ MyPolicy, :create?, name: "after_model" ]
+  step Model( Song, :new )
+  step Policy::Pundit( MyPolicy, :create?, name: "after_model" )
   # ...
 end
 </code></pre>
@@ -241,8 +241,8 @@ result["result.policy.after_model"].success? #=&gt; true
 <p>A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as <code class="highlighter-rouge">falsey</code>, the pipe won’t be further processed and a policy breach is reported in <code class="highlighter-rouge">Result["result.policy.default"]</code>.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Policy::Guard[ -&gt;(options) { options["params"][:pass] } ]
-  self.| :process
+  step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
+  step :process
   
   def process(*)
     self["x"] = true
@@ -274,8 +274,8 @@ result["result.policy.default"].success? #=&gt; false
 <p>The <code class="highlighter-rouge">Policy::Guard</code> macro helps you inserting your guard logic. If not defined, it will be evaluated where you insert it. → <a href="#guard-class-level">Class-level guards</a></p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Policy::Guard[ -&gt;(options) { options["params"][:pass] } ]
-  self.| :process
+  step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
+  step :process
   # ...
 end
 </code></pre>
@@ -298,8 +298,8 @@ end
 <p>Insert the object instance via the <code class="highlighter-rouge">Policy::Guard</code> macro.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Policy::Guard[ MyGuard.new ]
-  self.| :process
+  step Policy::Guard( MyGuard.new )
+  step :process
   # ...
 end
 </code></pre>
@@ -309,7 +309,7 @@ end
 <p>You can also place any kind of guard before the operation instantiation using <code class="highlighter-rouge">before:</code>.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Policy::Guard[ -&gt;(options) { options["current_user"] == Module } ],
+  step Policy::Guard( -&gt;(options) { options["current_user"] == Module } ),
     before: "operation.new"
   # ...
 end
@@ -322,7 +322,7 @@ end
 <p>The guard name defaults to <code class="highlighter-rouge">default</code> and can be set via <code class="highlighter-rouge">name:</code>. This allows having multiple guards.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  self.| Policy::Guard[ -&gt;(options) { options["current_user"] }, name: :user ]
+  step Policy::Guard( -&gt;(options) { options["current_user"] }, name: :user )
   # ...
 end
 </code></pre>
