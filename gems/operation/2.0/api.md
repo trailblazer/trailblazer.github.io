@@ -87,3 +87,31 @@ After running the nested `Edit` operation its runtime data (e.g. `"model"`) is a
 {{  "nested_test.rb:update-call" | tsnippet }}
 
 Should the nested operation fail, for instance because its model couldn't be found, then the outer pipe will also jump to the left track.
+
+## Wrap
+
+Steps can be wrapped by an embracing step. This is necessary when defining a set of steps to be contained in a database transaction or a database lock.
+
+{{  "wrap_test.rb:sequel-transaction" | tsnippet }}
+
+The `Wrap` macro helps you to define the wrapping code (such as a `Sequel.transaction` call) and allows you defining the wrapped steps.
+
+{{  "wrap_test.rb:sequel-transaction" | tsnippet : "wrap-only" }}
+
+As always, you can have steps before and after `Wrap` in the pipe. The block passed to `Wrap` allows defining the nested steps (you need to use `{...}` instead of `do...end`).
+
+The proc passed to `Wrap` will be called when the pipe is executed, and receives `block`. `block.call` will execute the nested pipe.
+
+All nested steps will simply be executed as if they were on the "top-level" pipe, but within the wrapper code. Steps may deviate to the left track, and so on.
+
+The return value of the wrap block is crucial: If it returns falsey, the pipe will deviate to left after `Wrap`.
+
+You may have any number of `Wrap` nesting.
+
+For reusable wrappers, you can also use a `Callable` object.
+
+{{  "wrap_test.rb:callable-t" | tsnippet  }}
+
+This can then be passed to `Wrap`, making the pipe extremely readable.
+
+{{  "wrap_test.rb:sequel-transaction-callable" | tsnippet : "wrap-onlyy" }}
