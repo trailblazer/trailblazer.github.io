@@ -60,4 +60,30 @@ The result object represents the interface between the operation's inner happeni
 
 It's up to you how you interpret all this available data. The binary state will help you, but arbitrary state can be transported. For a generic handling in HTTP context (Rails controllers or Rack routes), see [→ `Endpoint`](endpoint.html).
 
+inspect("attr")
+
 ## Dependencies
+
+## Nested
+
+It is possible to nest operations, as in running an operation in another. This is the common practice for "presenting" operations and "altering" operations, such as `Edit` and `Update`.
+
+{{  "nested_test.rb:edit" | tsnippet }}
+
+Note how `Edit` only defines the model builder (via `:find`) and builds the contract.
+
+Running `Edit` will allow you to grab the model and contract, for presentation and rendering the form.
+
+{{  "nested_test.rb:edit-call" | tsnippet }}
+
+This operation could now be leveraged in `Update`.
+
+{{  "nested_test.rb:update" | tsnippet }}
+
+The `Nested` macro helps you invoking an operation at any point in the pipe.
+
+After running the nested `Edit` operation its runtime data (e.g. `"model"`) is available in the `Update` operation.
+
+{{  "nested_test.rb:update-call" | tsnippet }}
+
+Should the nested operation fail, for instance because its model couldn't be found, then the outer pipe will also jump to the left track.
