@@ -120,7 +120,7 @@
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
+      <a href="https://github.com/trailblazer/trailblazer">trailblazer</a>
 
       <a href="/gems/operation/2.0/api.html">
       <span class="version">v2.0</span>
@@ -308,6 +308,8 @@ end
 
 <p>You may have any number of <code class="highlighter-rouge">Wrap</code> nesting.</p>
 
+<h3 id="wrap-callable">Wrap: Callable</h3>
+
 <p>For reusable wrappers, you can also use a <code class="highlighter-rouge">Callable</code> object.</p>
 
 <pre><code>class MyTransaction
@@ -332,6 +334,74 @@ end
 end
 </code></pre>
 
+<h2 id="rescue" data-magellan-target="rescue">Rescue</h2>
+
+<p>While you can write your own <code class="highlighter-rouge">begin/rescue/end</code> mechanics using <a href="#wrap"><code class="highlighter-rouge">Wrap</code></a>, Trailblazer offers you the <code class="highlighter-rouge">Rescue</code> macro to catch and handle exceptions that might occur while running the pipe.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :title
+  end
+  
+  step Rescue {
+    step Model(Song, :find)
+    step Contract::Build( constant: MyContract )
+  }
+  step Contract::Validate()
+  step Persist( method: :sync )
+end
+</code></pre>
+
+<p>Any exception raised during a step in the <code class="highlighter-rouge">Rescue</code> block will stop the nested pipe from being executed, and continue after the block on the left track.</p>
+
+<p>You can specify what exceptions to catch and an optional handler that is called when an exception is encountered.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Rescue( RecordNotFound, KeyError, handler: :rollback! ) {
+    step Model( Song, :find )
+    step Contract::Build( constant: MyContract )
+  }
+  step Contract::Validate()
+  step Persist( method: :sync )
+  
+  def rollback!(exception, options)
+    options["x"] = exception.class
+  end
+end
+</code></pre>
+
+<p>Alternatively, you can use a  <code class="highlighter-rouge">Callable</code> object for <code class="highlighter-rouge">:handler</code>.</p>
+
+<h2 id="full-example" data-magellan-target="full-example">Full Example</h2>
+
+<p>The  <code class="highlighter-rouge">Nested</code>, <code class="highlighter-rouge">Wrap</code> and <code class="highlighter-rouge">Rescue</code> macros can also be nested, allowing an easily extendable business workflow with error handling along the way.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  class MyContract &lt; Reform::Form
+    property :title
+  end
+  
+  step Rescue( RecordNotFound, handler: :rollback! ) {
+    step Wrap -&gt;(*, &amp;block) { Sequel.transaction do block.call end } {
+      step Model( Song, :find )
+      step -&gt;(options) { options["model"].lock! } # lock the model.
+      step Contract::Build( constant: MyContract )
+      step Contract::Validate( )
+      step Persist( method: :sync )
+    }
+  }
+  failure :error! # handle all kinds of errors.
+  
+  def rollback!(exception, options)
+    # ...
+  end
+  
+  def error!(options)
+    # ...
+  end
+end
+</code></pre>
+
 
             </div>
 
@@ -346,6 +416,8 @@ end
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
+<li><a href="#rescue">Rescue</a></li>
+<li><a href="#full-example">Full Example</a></li>
         </ul>
       
 </nav>
