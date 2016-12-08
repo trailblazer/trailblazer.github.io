@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Our Newsletter</title>
-<meta name="description" content="Our Newsletter - Trailblazer">
+<title>Trailblazer: Trailblazer::Rails</title>
+<meta name="description" content="Trailblazer::Rails - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,15 +36,15 @@
 </script>
 
 
-<meta property="og:title" content="Our Newsletter">
+<meta property="og:title" content="Trailblazer::Rails">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/newsletter/">
-<meta property="og:description" content="Trailblazer is a high-level architecture for Ruby. The newsletter broadcasts hottest changes about its gems: Cells, Reform, Representable, Roar, Disposable, and more.">
+<meta property="og:url" content="http://trailblazer.to/gems/trailblazer/2.0/rails.html">
+<meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Our Newsletter">
-<meta name="twitter:description" content="Trailblazer is a high-level architecture for Ruby. The newsletter broadcasts hottest changes about its gems: Cells, Reform, Representable, Roar, Disposable, and more.">
+<meta name="twitter:title" content="Trailblazer::Rails">
+<meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
@@ -95,12 +95,12 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero guide-hero">
+<div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
         <h1 id="project_title">
-          
+          Operation
         </h1>
       </div>
     </div>
@@ -110,79 +110,163 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="guide-body">
+        <article class="operation2-body">
+
+          
+            <header id="doc-header">
+  <h1 class="doc-page-title">Trailblazer::Rails</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 December 2016</span>
+
+  
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/trailblazer/trailblazer-rails">trailblazer-rails</a>
+
+      <a href="/gems/trailblazer/1.0/rails.html">
+      <span class="version">v1.0</span>
+      </a>
+
+    
+
+    </span>
+  
+
+  <hr>
+
+</header>
 
           
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <section class="marketing-book book">
-  <div class="row">
-    <div class="columns">
-      <div class="row">
-        <div class="columns medium-9 medium-centered">
-          <!-- Begin MailChimp Signup Form -->
-          <div id="mc_embed_signup">
-            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="">
-              <div id="mc_embed_signup_scroll">
-                <h2 data-magellan-target="">Subscribe to our newsletter!</h2>
-                <div class="mc-field-group">
-                  <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Your email">
-                </div>
-                <div id="mce-responses" class="clear">
-                  <div class="response" id="mce-error-response" style="display:none"></div>
-                  <div class="response" id="mce-success-response" style="display:none"></div>
-                </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
-                <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-              </div>
-            </form>
-          </div>
-          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
-          <!--End mc_embed_signup-->
+              <p>Trailblazer in your Rails controllers. The <code class="highlighter-rouge">trailblazer-rails</code> gem adds <code class="highlighter-rouge">#run</code> and <code class="highlighter-rouge">render cell: Constant</code> to your controllers.</p>
 
-        </div>
-      </div>
+<p>This documents the version compatible with Trailblazer 2.0.</p>
 
-      <div class="row">
-        <div class="columns medium-9 medium-centered">
-          <h1>TRB Newsletter</h1>
-          <h2 class="subheader" data-magellan-target="">Everything you need to know!</h2>
+<h2 id="installation" data-magellan-target="installation">Installation</h2>
 
-          <p>
-            The TRB Newsletter is a 6-weekly email full of release notes, comments, recipes and cool tricks about all gems Trailblazer: <strong>Cells, Reform, Disposable, Representable and Roar, Trailblazer, and more</strong>.
-          </p>
+<p>Add the gem to your <code class="highlighter-rouge">Gemfile</code>.</p>
 
-          <p>
-            Please subscribe to the newsletter and never miss any new feature!
-          </p>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>gem "trailblazer-rails"
+</code></pre>
+</div>
 
+<p>This will automatically pull <code class="highlighter-rouge">trailblazer</code> and <code class="highlighter-rouge">trailblazer-loader</code>.</p>
 
-          <h2 data-magellan-target="">Archive</h2>
-          <ul>
-            <li>
-              <strong><a href="2016-july.html">July 2016</a></strong> newsletter discusses Reform 2.2, the new exciting hash field feature, Rails 5 and our website and documentation update.
-            </li>
+<h2 id="railtie" data-magellan-target="railtie">Railtie</h2>
 
-            <li>
-              <strong><a href="2016-may.html">May 2016</a></strong> newsletter discusses Cells 4.1, how it simplifies layouts and makes ActionView redundant, TRB and Hanami's increasing gravity and what's been happening in the Ruby community this month.
-            </li>
+<p>The <code class="highlighter-rouge">Trailblazer::Rails::Railtie</code> will activate all necessary convenience methods for you. You don’t have to do anything manually here. Sit back and relax.</p>
 
-            <li>
-<strong><a href="2016-march.html">March 2016</a></strong> Talks about coercion in Reform using Dry-Types, the nilify feature, compositional aspects in operations and presentations in Europe in Feburary.</li>
+<h2 id="run" data-magellan-target="run">Run</h2>
 
-            <li>
-<strong><a href="2016-january.html">January 2016</a></strong> January 2016 newsletter talks about Formular (new form builder for Ruby), dry-validation in Reform, Sinatra/TRB, cool but unknown features in Reform and upcoming talks in Europe and Australia.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<p>In a controller, you could simply invoke an operation manually.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsController &lt; ApplicationController
+  def create
+    result = Song::Create.(params)
+
+    @form = result["contract.default"]
+    render :new
+  end
+end
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Trailblazer-Rails</code> gives you <code class="highlighter-rouge">run</code> for this to simplify the task.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsController &lt; ApplicationController
+  def create
+    run Song::Create
+
+    render :new
+  end
+end
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">run</code> passes the controller’s <code class="highlighter-rouge">params</code> hash into the operation call. It automatically assigns <code class="highlighter-rouge">@model</code> and, if available, <code class="highlighter-rouge">@form</code> for you.</p>
+
+<p>To handle success and failure cases, <code class="highlighter-rouge">run</code> accepts an optional block.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsController &lt; ApplicationController
+  def create
+    run Song::Create do |result|
+      return redirect_to song_path(result["model"].id)
+    end
+
+    render :new
+  end
+end
+</code></pre>
+</div>
+
+<p>The block is only run for <code class="highlighter-rouge">success?</code>. The block argument is the operation’s result.</p>
+
+<h2 id="render" data-magellan-target="render">Render</h2>
+
+<p>The gem overrides <code class="highlighter-rouge">ActionController#render</code> and now allows to render a <code class="highlighter-rouge">Trailblazer::Cell</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class SongsController &lt; ApplicationController
+  def create
+    run Song::Create do |result|
+      return redirect_to song_path(result["model"].id)
+    end
+
+    render cell: Song::Cell::New, model: @model
+  end
+end
+</code></pre>
+</div>
+
+<h2 id="integration-test" data-magellan-target="integration-test">Integration Test</h2>
+
+<p>If you’re using <code class="highlighter-rouge">Minitest::Spec</code> and want to run smoke tests using Capybara, use <code class="highlighter-rouge">Trailblazer::Test::Integration</code>.</p>
+
+<p>You need to add <code class="highlighter-rouge">minitest-rails-capybara</code> to your <code class="highlighter-rouge">Gemfile</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>group :test do
+  gem "minitest-rails-capybara"
+end
+</code></pre>
+</div>
+
+<p>Your tests can now use Capybara matchers.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>require "test_helper"
+
+class SongsControllerTest &lt; Trailblazer::Test::Integration
+  it do
+    visit "/songs/new"
+    page.must_have_css "form.new_song[action='/songs']"
+  end
+end
+</code></pre>
+</div>
 
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large" data-margin-top="5">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#installation">Installation</a></li>
+<li><a href="#railtie">Railtie</a></li>
+<li><a href="#run">Run</a></li>
+<li><a href="#render">Render</a></li>
+<li><a href="#integration-test">Integration Test</a></li>
+        </ul>
+      
+</nav>
 
               
 
@@ -216,7 +300,7 @@
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> TRAILBLAZER
         </a>
     </li>
-    <li><a href="/gems/trailblazer/2.0/rails.html">Rails</a></li>
+    <li><a href="/gems/trailblazer/2.0/rails.html" class="active">Rails</a></li>
     <li><a href="/gems/trailblazer/loader.html">Loader</a></li>
     <li class="divider">
 
