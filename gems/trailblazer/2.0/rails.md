@@ -74,6 +74,8 @@ The gem overrides `ActionController#render` and now allows to render a `Trailbla
       end
     end
 
+Per default, `render` will add `layout: true` to render the ActionView layout. It can be turned off using `layout: false`.
+
 ## Integration Test
 
 If you're using `Minitest::Spec` and want to run smoke tests using Capybara, use `Trailblazer::Test::Integration`.
@@ -91,6 +93,6 @@ Your tests can now use Capybara matchers.
     class SongsControllerTest < Trailblazer::Test::Integration
       it do
         visit "/songs/new"
-        page.must_have_css "form.new_song[action='/songs']"
+        page.must_have_css "form[action='/songs']"
       end
     end

@@ -5,14 +5,76 @@ gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0", "1.1"]
 ---
 
-The operation's goal is simple: Remove all business logic from the controller and model and instead provide a separate object for it. While doing so, this logic is streamlined into the following steps.
+<img src="/images/diagrams/operation-2017-small.png" class="diagram left">
+
+An operation is a service object.
+
+Its goal is simple: Remove all business logic from the controller and model and instead provide a separate, streamlined object for it.
+
+
+Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
+
+
+Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
+
+Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.
+
+## What It Looks Like
+
+Operations are usually invoked straight from the controller action, they contain all domain logic necessary to perform the app's function.
+
+There is only one way to run an operation: using `Operation.call`. This can also be written as `Operation.()`.
+
+    result = Song::Create.({ title: "Nothin'" })
+
+You have to pass all runtime data to the operation in this call. `params`, current user, you name it.
+
+The implementation is a class.
+
+{{  "operation_test.rb:op" | tsnippet }}
+
+The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with `if`s and `rescue`s. You can add your own, custom steps to that workflow and use Trailblazer's built-in macros.
+
+## Macros
+
+Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.
+
+<section class="macros">
+  <div class="row">
+    <div class="column medium-4">
+      <i class="fa fa-cogs"></i>
+
+      <p><code class="name">Nested</code>, <code class="name">Wrap</code> and <code class="name">Rescue</code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+    </div>
+
+    <div class="column medium-4">
+      <i class="fa fa-search"></i>
+
+      <p>
+        <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> are macros to build and validate Dry schemas or Reform contracts, and to push sane data to models.
+      </p>
+    </div>
+
+    <div class="column medium-4">
+      <i class="fa fa-shield"></i>
+
+      <p>
+        <code class="name">Guard</code> and <code class="name">Policy::Pundit</code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+Macros are easily extendable and it's you can write your own application-wide macros.
+
+## Flow Control
 
 
 
 The generic logic can be found in the trailblazer-operation gem. Higher-level abstractions, such as form object or policy integration is implemented in the trailblazer gem.
 
 * Overview
-* Flow Control
 * Papi::Operation extend Contract::DSL
 
 
