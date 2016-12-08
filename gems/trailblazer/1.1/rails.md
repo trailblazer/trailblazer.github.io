@@ -1,9 +1,12 @@
 ---
 layout: operation
-title: "Operation::Controller"
-redirect_from:
-  - /gems/operation/controller.html
+title: Trailblazer::Rails
+gems:
+  - ["trailblazer-rails", "trailblazer/trailblazer-rails", "0.4.0"]
+redirect_from: "/gems/operation/controller.html"
 ---
+
+This documents the version compatible with Trailblazer 1.1.
 
 # Operation::Controller
 

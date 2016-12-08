@@ -2,7 +2,7 @@
 layout: operation2
 title: Operation API
 gems:
-  - ["operation", "trailblazer/trailblazer-operation", "2.0"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0"]
 ---
 
 #call
@@ -108,6 +108,8 @@ The return value of the wrap block is crucial: If it returns falsey, the pipe wi
 
 You may have any number of `Wrap` nesting.
 
+### Wrap: Callable
+
 For reusable wrappers, you can also use a `Callable` object.
 
 {{  "wrap_test.rb:callable-t" | tsnippet  }}
@@ -115,3 +117,23 @@ For reusable wrappers, you can also use a `Callable` object.
 This can then be passed to `Wrap`, making the pipe extremely readable.
 
 {{  "wrap_test.rb:sequel-transaction-callable" | tsnippet : "wrap-onlyy" }}
+
+## Rescue
+
+While you can write your own `begin/rescue/end` mechanics using [`Wrap`](#wrap), Trailblazer offers you the `Rescue` macro to catch and handle exceptions that might occur while running the pipe.
+
+{{  "rescue_test.rb:simple" | tsnippet  }}
+
+Any exception raised during a step in the `Rescue` block will stop the nested pipe from being executed, and continue after the block on the left track.
+
+You can specify what exceptions to catch and an optional handler that is called when an exception is encountered.
+
+{{  "rescue_test.rb:name" | tsnippet  }}
+
+Alternatively, you can use a  `Callable` object for `:handler`.
+
+## Full Example
+
+The  `Nested`, `Wrap` and `Rescue` macros can also be nested, allowing an easily extendable business workflow with error handling along the way.
+
+{{  "rescue_test.rb:example" | tsnippet : "ex" }}

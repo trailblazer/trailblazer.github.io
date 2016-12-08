@@ -3,9 +3,11 @@ module Torture
     def tsnippet(input, hide=nil)
       file, section = input.split(":")
 
+      file = "../trailblazer/test/docs/#{file}" unless file.match("/")
+
       code = nil
       ignore = false
-      File.open("../trailblazer/test/docs/#{file}").each do |ln|
+      File.open(file).each do |ln|
         break if ln =~ /\#:#{section} end/
 
         if ln =~ /#~#{hide}$/
