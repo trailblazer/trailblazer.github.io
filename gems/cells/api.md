@@ -489,7 +489,7 @@ Of course, this works in views, too.
 
 ## Context Object
 
-Per default, every cell maintains a context object. When [nesting cells](#nesting), this object is passed on automatically. To add objects to the context, use the `:context` option.
+Per default, every cell maintains a context object. When [nesting cells](#nesting), this object passed on automatically. To add objects to the context, use the `:context` option.
 
 ```ruby
 cell("comment", comment, context: { user: current_user })
@@ -505,6 +505,8 @@ end
 ```
 
 The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.
+
+Note that the context object gets `dup`ed when adding to it in nested cells. This is to prevent leaking nested state back into parent objects.
 
 
 ## Nesting
