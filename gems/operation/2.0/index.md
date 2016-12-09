@@ -21,17 +21,58 @@ Note that operation is not a monolithic god object, but a composition of many st
 
 ## What It Looks Like
 
-Operations are usually invoked straight from the controller action, they contain all domain logic necessary to perform the app's function.
+<section class="macros">
+  <div class="row">
+    <div class="column medium-6">
+    <p>
+      Operations are usually invoked straight from the controller action, they contain all domain logic necessary to perform the app's function.
+    </p>
+<pre>
+<code>
+result = Song::Create.({ title: "SVT" })
+</code>
+</pre>
 
-There is only one way to run an operation: using `Operation.call`. This can also be written as `Operation.()`.
+    <p>
+      There is only one way to run an operation: using <code>Operation.call</code>. This can also be written as <code>Operation.()</code>.
+    </p>
 
-    result = Song::Create.({ title: "Nothin'" })
+    <p>
+    The absence of a method name here is per design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
+    </p>
 
-You have to pass all runtime data to the operation in this call. `params`, current user, you name it.
+<pre>
+<code>
+result = Song::Create.(
+  params,
+  "current_user" => Warden.get_user
+)
+</code>
+</pre>
 
-The implementation is a class.
+    <p>
+    You have to pass all runtime data to the operation in this call. <code>params</code>, current user, you name it.
+    </p>
+
+    </div>
+
+    <div class="column medium-6">
+    <p>
+    The implementation is a class.
+    </p>
 
 {{  "operation_test.rb:op" | tsnippet }}
+    </div>
+  </div>
+
+</section>
+
+
+
+
+
+
+
 
 The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with `if`s and `rescue`s. You can add your own, custom steps to that workflow and use Trailblazer's built-in macros.
 
