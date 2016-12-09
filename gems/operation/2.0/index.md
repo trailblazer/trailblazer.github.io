@@ -35,6 +35,44 @@ The implementation is a class.
 
 The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with `if`s and `rescue`s. You can add your own, custom steps to that workflow and use Trailblazer's built-in macros.
 
+## Flow Control
+
+<section class="macros">
+  <div class="row">
+    <div class="column medium-3">
+      <img src="/images/diagrams/overview-flow-animated.gif">
+    </div>
+
+    <div class="column medium-4">
+      <p>
+        An operation has a two-tracked flow called a <em>pipe</em>. On the right track you add <em>steps</em> for the happy path, assuming no errors happen using <code>step</code>. They will executed in the order you add them.
+      </p>
+
+      <p>
+        On the left track, you add error handler steps using <code>failure</code>. They work exactly like the right track, but won't be executed until you deviate from the right track.
+      </p>
+    </div>
+
+    <div class="column medium-5">
+<pre>
+<code>
+  step     Model( Song, :new )
+  consider :assign_current_user!
+  step     Contract::Build()
+  step     Contract::Validate( )
+  failure  :log_error!
+  step     Contract::Persist(  )
+</code>
+</pre>
+      <p>
+        Steps added with <code>consider</code> will deviate to the left track, if their return value is falsey.
+
+      </p>
+    </div>
+
+  </div>
+</section>
+
 ## Macros
 
 Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.
@@ -44,7 +82,7 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
     <div class="column medium-4">
       <i class="fa fa-cogs"></i>
 
-      <p><code class="name">Nested</code>, <code class="name">Wrap</code> and <code class="name">Rescue</code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+      <p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
     </div>
 
     <div class="column medium-4">
@@ -59,7 +97,7 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
       <i class="fa fa-shield"></i>
 
       <p>
-        <code class="name">Guard</code> and <code class="name">Policy::Pundit</code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
+        <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
       </p>
     </div>
 
@@ -68,7 +106,6 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
 
 Macros are easily extendable and it's you can write your own application-wide macros.
 
-## Flow Control
 
 
 
