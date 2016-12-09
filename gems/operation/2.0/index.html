@@ -143,184 +143,185 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>The operation’s goal is simple: Remove all business logic from the controller and model and instead provide a separate object for it. While doing so, this logic is streamlined into the following steps.</p>
+              <p><img src="/images/diagrams/operation-2017-small.png" class="diagram left"></p>
 
-<p>The generic logic can be found in the trailblazer-operation gem. Higher-level abstractions, such as form object or policy integration is implemented in the trailblazer gem.</p>
+<p>An operation is a service object.</p>
 
-<ul>
-  <li>Overview</li>
-  <li>Flow Control</li>
-  <li>Papi::Operation extend Contract::DSL</li>
-</ul>
+<p>Its goal is simple: Remove all business logic from the controller and model and instead provide a separate, streamlined object for it.</p>
 
-<hr>
+<p>Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called <em>command</em>.</p>
 
-<p>An operation is a Ruby object that embraces all logic needed to implement one function, or <em>use case</em>, of your application. It does so by orchestrating various objects like form objects for validations, models for persistence or callbacks to implement post-processing logic.</p>
+<p>Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.</p>
 
-<p>While you could do all that in a nested, procedural way, the Trailblazer operation uses a pipetree to structure the control flow and error handling.</p>
+<p>Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-end
-</code></pre>
-</div>
+<h2 id="what-it-looks-like" data-magellan-target="what-it-looks-like">What It Looks Like</h2>
 
-<h2 id="invocation" data-magellan-target="invocation">Invocation</h2>
+<section class="macros">
+  <div class="row">
+    <div class="column medium-6">
+    <p>
+      Operations are usually invoked straight from the controller action, they contain all domain logic necessary to perform the app's function.
+    </p>
+<pre>
+<code>
+result = Song::Create.({ title: "SVT" })
+</code>
+</pre>
 
-<p>An operation is designed like a function and it can only be invoked in one way: via <code class="highlighter-rouge">Operation::call</code>.</p>
+    <p>
+      There is only one way to run an operation: using <code>Operation.call</code>. This can also be written as <code>Operation.()</code>.
+    </p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create.call( name: "Roxanne" )
-</code></pre>
-</div>
+    <p>
+    The absence of a method name here is per design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
+    </p>
 
-<p>Ruby allows a shorthand for this which is commonly used throughout Trailblazer.</p>
+<pre>
+<code>
+result = Song::Create.(
+  params,
+  "current_user" =&gt; Warden.get_user
+)
+</code>
+</pre>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create.( name: "Roxanne" )
-</code></pre>
-</div>
+    <p>
+    You have to pass all runtime data to the operation in this call. <code>params</code>, current user, you name it.
+    </p>
 
-<p>The absence of a method name here is per design: this object does only one thing, has only one public method, and hence <strong>what is does is reflected in the class name</strong>. Likewise, you never instantiate operations manually - this contradicts its functional concept and prevents you from randomly running methods on it in the wrong order.</p>
+    </div>
 
-<p>Running an operation will always return a result object. It is up to you to interpret the content of it or push data onto the result object during the operation’s cycle.</p>
+    <div class="column medium-6">
+    <p>
+    The implementation is a class.
+    </p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.call( name: "Roxanne" )
-</code></pre>
-</div>
 
-<p><a href="#result-object">→ Result object</a></p>
-
-<h2 id="flow-control-procedural" data-magellan-target="flow-control-procedural">Flow Control: Procedural</h2>
-
-<p>There’s nothing wrong with implementing your operation’s logic in a procedural, nested stack of method calls, the way Trailblazer 1.x worked. The behavior here was orchestrated from within the <code class="highlighter-rouge">process</code> method.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  self.&gt; Process
-
-  def process(params)
-    model = Song.new
-
-    if validate(params)
-      unless contract.save
-        handle_persistence_errors!
-      end
-      after_save!
-    else
-      handle_errors!
-    end
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  extend Contract::DSL
+  
+  contract do
+    property :title
+    validates :title, presence: true
+  end
+  
+  step     Model( Song, :new )
+  consider :assign_current_user!
+  step     Contract::Build()
+  step     Contract::Validate( )
+  failure  :log_error!
+  step     Persist(  )
+  
+  def log_error!(options)
+    # ..
+  end
+  
+  def assign_current_user(options)
+    options["model"].author =
+      options["current_user"]
   end
 end
 </code></pre>
-</div>
 
-<p>Even though this might seem to be more “readable” at first glance, it is impossible to extend without breaking the code up into smaller methods that are getting called in a predefined order - sacrificing its aforementioned readability.</p>
+    </div>
+  </div>
 
-<p>Also, error handling needs to be done manually at every step. This is the price you pay for procedural, statically nested code.</p>
+</section>
 
-<h2 id="flow-control-pipetree" data-magellan-target="flow-control-pipetree">Flow Control: Pipetree</h2>
+<p>The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">rescue</code>s. You can add your own, custom steps to that workflow and use Trailblazer’s built-in macros.</p>
 
-<p>You can also use TRB2’s new <em>pipetree</em>. Instead of nesting code statically, the code gets added sequentially to a pipeline in a functional style. This pipeline is processed top-to-bottom when the operation is run.</p>
+<h2 id="flow-control" data-magellan-target="flow-control">Flow Control</h2>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  self.&gt; :model!
-  self.&gt; :validate!
-  self.&gt; :persist!
+<section class="macros">
+  <div class="row">
+    <div class="column medium-3">
+      <img src="/images/diagrams/overview-flow-animated.gif">
+    </div>
 
-  def model!(options)
-    Song.new
-  end
-  # ...
-end
-</code></pre>
-</div>
+    <div class="column medium-4">
+      <p>
+        An operation has a two-tracked flow called a <em>pipe</em>. On the right track you add <em>steps</em> for the happy path, assuming no errors happen using <code>step</code>. They will executed in the order you add them.
+      </p>
 
-<p>Logic can be added using the <code class="highlighter-rouge">Operation::&gt;</code> operator. The logic you add is called <em>step</em> and can be <a href="api.html">an instance method, a callable object or a proc</a>.</p>
+      <p>
+        On the left track, you add error handler steps using <code>failure</code>. They work exactly like the right track, but won't be executed until you deviate from the right track.
+      </p>
+    </div>
 
-<p>Under normal conditions, those steps are simply processed in the specified order. Imagine that as a track of tasks. The track we just created, with steps being applied when things go right, is called the <em>right track</em>.</p>
+    <div class="column medium-5">
+<pre>
+<code>
+  step     Model( Song, :new )
+  consider :assign_current_user!
+  step     Contract::Build()
+  step     Contract::Validate( )
+  failure  :log_error!
+  step     Contract::Persist(  )
+</code>
+</pre>
+      <p>
+        Steps added with <code>consider</code> will deviate to the left track, if their return value is falsey.
 
-<p>The operation also has a <em>left track</em> for error handling. Steps on the right side can deviate to the left track and remaining code on the right track will be skipped.</p>
+      </p>
+    </div>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  self.&gt; :model!
-  self.&gt; :validate!
-  self.&lt; :validate_error!
-  self.&gt; :persist!
-  self.&lt; :persist_error!
-  # ...
-end
-</code></pre>
-</div>
+  </div>
+</section>
 
-<p>Adding steps to the left track happens via the <code class="highlighter-rouge">Operation::&lt;</code> operator.</p>
+<h2 id="macros" data-magellan-target="macros">Macros</h2>
 
-<h2 id="pipetree-visualization" data-magellan-target="pipetree-visualization">Pipetree Visualization</h2>
+<p>Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.</p>
 
-<p>Visualizing the pipetree you just created makes is very obvious what is going to happen when you run this operation. Note that you can render any operation’s pipetree anywhere in your code for a better understanding.</p>
+<section class="macros">
+  <div class="row">
+    <div class="column medium-4">
+      <i class="fa fa-cogs"></i>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create["pipetree"].inspect
+      <p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+    </div>
 
- 0 =======================&gt;&gt;operation.new
- 1 ===============================&gt;:model
- 2 ============================&gt;:validate
- 3 &lt;:validate_error!=====================
- 4 ============================&gt;:persist!
- 5 &lt;:persist_error!======================
-</code></pre>
-</div>
 
-<p>Once deviated to the left track, the pipetree processing will skip any steps remaining on the right track. For example, should <code class="highlighter-rouge">validate!</code> deviate, the <code class="highlighter-rouge">persist!</code> step is never executed (unless you want that).</p>
 
-<p>Now, how does a step make the pipetree change tracks, e.g. when there’s a validation error?</p>
 
-<h2 id="track-deviation" data-magellan-target="track-deviation">Track Deviation</h2>
 
-<p>The easiest way for changing tracks is letting the pipetree interpret the return value of a step. This is accomplished with the <code class="highlighter-rouge">Operation::&amp;</code> operator.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  self.&gt; :model!
-  self.&amp; :validate!
-  self.&lt; :validate_error!
-  # ...
-end
-</code></pre>
-</div>
 
-<p>Should the <code class="highlighter-rouge">validate!</code> step return a falsey value, the pipetree will change tracks to the left.</p>
+NEVER LEAVE ME UNLOCKED AND ALONE IN BULGARIA!!!!
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  # ...
-  def validate!(*)
-    self["params"].has_key?(:title) # returns true of false.
-  end
-end
-</code></pre>
-</div>
+TOO LATE!!!!!
 
-<p>Check the <a href="pipetree.html">API docs for pipetree</a> to learn more about tracks.</p>
 
-<h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
 
-<p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
 
-<ul>
-  <li>
-<a href="contract.html">Contract</a> implements contracts, validation and persisting verified data using the model layer.</li>
-</ul>
 
-<h2 id="orchestration" data-magellan-target="orchestration">Orchestration</h2>
 
-<h2 id="result-object" data-magellan-target="result-object">Result Object</h2>
 
-<p>result.contract [.errors, .success?, failure?]
-result.policy [, .success?, failure?]</p>
+
+
+
+    <div class="column medium-4">
+      <i class="fa fa-search"></i>
+
+      <p>
+        <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> are macros to build and validate Dry schemas or Reform contracts, and to push sane data to models.
+      </p>
+    </div>
+
+    <div class="column medium-4">
+      <i class="fa fa-shield"></i>
+
+      <p>
+        <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<p>Macros are easily extendable and it’s you can write your own application-wide macros.</p>
+
+<h2 id="result" data-magellan-target="result">Result</h2>
 
             </div>
 
@@ -331,14 +332,10 @@ result.policy [, .success?, failure?]</p>
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#invocation">Invocation</a></li>
-<li><a href="#flow-control-procedural">Flow Control: Procedural</a></li>
-<li><a href="#flow-control-pipetree">Flow Control: Pipetree</a></li>
-<li><a href="#pipetree-visualization">Pipetree Visualization</a></li>
-<li><a href="#track-deviation">Track Deviation</a></li>
-<li><a href="#step-macros">Step Macros</a></li>
-<li><a href="#orchestration">Orchestration</a></li>
-<li><a href="#result-object">Result Object</a></li>
+          <li><a href="#what-it-looks-like">What It Looks Like</a></li>
+<li><a href="#flow-control">Flow Control</a></li>
+<li><a href="#macros">Macros</a></li>
+<li><a href="#result">Result</a></li>
         </ul>
       
 </nav>

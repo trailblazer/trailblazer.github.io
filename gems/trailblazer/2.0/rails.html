@@ -223,6 +223,8 @@ end
 </code></pre>
 </div>
 
+<p>Per default, <code class="highlighter-rouge">render</code> will add <code class="highlighter-rouge">layout: true</code> to render the ActionView layout. It can be turned off using <code class="highlighter-rouge">layout: false</code>.</p>
+
 <h2 id="integration-test" data-magellan-target="integration-test">Integration Test</h2>
 
 <p>If you’re using <code class="highlighter-rouge">Minitest::Spec</code> and want to run smoke tests using Capybara, use <code class="highlighter-rouge">Trailblazer::Test::Integration</code>.</p>
@@ -244,7 +246,7 @@ end
 class SongsControllerTest &lt; Trailblazer::Test::Integration
   it do
     visit "/songs/new"
-    page.must_have_css "form.new_song[action='/songs']"
+    page.must_have_css "form[action='/songs']"
   end
 end
 </code></pre>
