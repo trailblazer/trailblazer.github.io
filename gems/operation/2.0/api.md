@@ -196,6 +196,66 @@ It's up to you how you interpret all this available data. The binary state will 
 
 ## Dependencies
 
+In an operation, there is only one way to manage dependencies and state: the `options` object (sometimes also called *skills* hash or context object) is what gives access to class, runtime and injected runtime data.
+
+State can be added on the class layer.
+
+{{  "operation_test.rb:dep-op" | tsnippet : "dep-pipe"}}
+
+Unsurprisingly, this is also readable on the class layer.
+
+{{  "operation_test.rb:dep-op-class" | tsnippet }}
+
+This mechanism is used by all DSL methods such as `contract` and by almost all step macros (e.g. `Contract::Build`) to save and access class-wide data.
+
+Class data is also readable at runtime in steps.
+
+{{  "operation_test.rb:dep-op" | tsnippet }}
+
+In steps, you can set runtime data (e.g. `my.model`).
+
+After running the operation, this `options` object turns into the [result object](#result-object).
+
+{{  "operation_test.rb:dep-op-res" | tsnippet }}
+
+## Dependency Injection
+
+Both class data as well as runtime data [described above](#dependencies) can be overridden using dependency injection.
+
+{{  "operation_test.rb:dep-di" | tsnippet }}
+
+Note that injected dependencies need to be in the second argument to `Operation::call`.
+
+<div class="callout">
+Since all step macros, i.e. <code>Policy::Pundit</code> or <code>Contract::Validate</code> use the same mechanism, you can override hard-coded dependencies such as policies or contracts from the outside at runtime.
+</div>
+
+Be careful, though, with DI: It couples your operation to the caller and should be properly unit-tested or further encapsulated in e.g. [`Endpoint`](endpoint.html).
+
+### Dependency Injection: Auto_inject
+
+The operation supports Dry.RB's [auto_inject](http://dry-rb.org/gems/dry-auto_inject/).
+
+    # this happens somewhere in your Dry system.
+    my_container = Dry::Container.new
+    my_container.register("repository.song", User::Repository)
+
+    require "trailblazer/operation/auto_inject"
+    AutoInject = Trailblazer::Operation::AutoInject(my_container)
+
+    class Song::Create < Trailblazer::Operation
+      include AutoInject["repository.song"]
+
+      step :model!
+
+      def model!(options, params:, **)
+        options["model"] =
+          options["repository.song"].find_or_create( params[:id] )
+      end
+    end
+
+Including the `AutoInject` module will make sure that the specified dependencies are injected (using [dependency injection](#dependency-injection)) into the [operation's context](#dependencies) at instantiation time.
+
 ## Nested
 
 It is possible to nest operations, as in running an operation in another. This is the common practice for "presenting" operations and "altering" operations, such as `Edit` and `Update`.
