@@ -158,6 +158,10 @@
 
 <pre><code>def create?
   @user == Module &amp;&amp; @model.id.nil?
+end
+  
+def new?
+  @user == Class
 end   end
 </code></pre>
 
@@ -393,7 +397,8 @@ result["result.policy.user"].success? #=&gt; true
     <li><a href="/gems/operation/representer.html">Representer</a></li>
     <li><a href="/gems/operation/model.html">Model</a></li>
     <li><a href="/gems/operation/policy.html">Policy</a></li>
-    <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
+<!--     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
+ -->
     <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
     <li class="divider">
 

@@ -365,7 +365,7 @@ end
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: MyRepresenter ) # :representer
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -398,7 +398,7 @@ end
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: self["representer.default.class"] )
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -416,7 +416,7 @@ end
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: Representer.infer(MyContract, format: Representable::JSON) )
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -567,7 +567,7 @@ end
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate( representer: self["representer.parse.class"] )
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -635,7 +635,8 @@ end
     <li><a href="/gems/operation/representer.html">Representer</a></li>
     <li><a href="/gems/operation/model.html">Model</a></li>
     <li><a href="/gems/operation/policy.html">Policy</a></li>
-    <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
+<!--     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
+ -->
     <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
     <li class="divider">
 
