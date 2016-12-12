@@ -389,6 +389,92 @@ result.failure? #=&gt; falsee
 
 <h2 id="dependencies" data-magellan-target="dependencies">Dependencies</h2>
 
+<p>In an operation, there is only one way to manage dependencies and state: the <code class="highlighter-rouge">options</code> object (sometimes also called <em>skills</em> hash or context object) is what gives access to class, runtime and injected runtime data.</p>
+
+<p>State can be added on the class layer.</p>
+
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  self["my.model.class"] = Song
+  
+  # ...
+end
+</code></pre>
+
+<p>Unsurprisingly, this is also readable on the class layer.</p>
+
+<pre><code>  Song::Create["my.model.class"] #=&gt; Song
+</code></pre>
+
+<p>This mechanism is used by all DSL methods such as <code class="highlighter-rouge">contract</code> and by almost all step macros (e.g. <code class="highlighter-rouge">Contract::Build</code>) to save and access class-wide data.</p>
+
+<p>Class data is also readable at runtime in steps.</p>
+
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  self["my.model.class"] = Song
+  
+  step :model!
+  
+  def model!(options, **)
+    options["my.model"] =           # setting runtime data.
+      options["my.model.class"].new # reading class data at runtime.
+  end
+end
+</code></pre>
+
+<p>In steps, you can set runtime data (e.g. <code class="highlighter-rouge">my.model</code>).</p>
+
+<p>After running the operation, this <code class="highlighter-rouge">options</code> object turns into the <a href="#result-object">result object</a>.</p>
+
+<pre><code>  result = Song::Create.({})
+  
+  result["my.model.class"] #=&gt; Song
+  result["my.model"] #=&gt; #&lt;Song title=nil&gt;
+</code></pre>
+
+<h2 id="dependency-injection" data-magellan-target="dependency-injection">Dependency Injection</h2>
+
+<p>Both class data as well as runtime data <a href="#dependencies">described above</a> can be overridden using dependency injection.</p>
+
+<pre><code>  result = Song::Create.({}, "my.model.class" =&gt; Hit)
+  
+  result["my.model"] #=&gt; #&lt;Hit id=nil&gt;
+</code></pre>
+
+<p>Note that injected dependencies need to be in the second argument to <code class="highlighter-rouge">Operation::call</code>.</p>
+
+<div class="callout">
+Since all step macros, i.e. <code>Policy::Pundit</code> or <code>Contract::Validate</code> use the same mechanism, you can override hard-coded dependencies such as policies or contracts from the outside at runtime.
+</div>
+
+<p>Be careful, though, with DI: It couples your operation to the caller and should be properly unit-tested or further encapsulated in e.g. <a href="endpoint.html"><code class="highlighter-rouge">Endpoint</code></a>.</p>
+
+<h3 id="dependency-injection-autoinject">Dependency Injection: Auto_inject</h3>
+
+<p>The operation supports Dry.RB’s <a href="http://dry-rb.org/gems/dry-auto_inject/">auto_inject</a>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># this happens somewhere in your Dry system.
+my_container = Dry::Container.new
+my_container.register("repository.song", User::Repository)
+
+require "trailblazer/operation/auto_inject"
+AutoInject = Trailblazer::Operation::AutoInject(my_container)
+
+class Song::Create &lt; Trailblazer::Operation
+  include AutoInject["repository.song"]
+
+  step :model!
+
+  def model!(options, params:, **)
+    options["model"] =
+      options["repository.song"].find_or_create( params[:id] )
+  end
+end
+</code></pre>
+</div>
+
+<p>Including the <code class="highlighter-rouge">AutoInject</code> module will make sure that the specified dependencies are injected (using <a href="#dependency-injection">dependency injection</a>) into the <a href="#dependencies">operation’s context</a> at instantiation time.</p>
+
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
 
 <p>It is possible to nest operations, as in running an operation in another. This is the common practice for “presenting” operations and “altering” operations, such as <code class="highlighter-rouge">Edit</code> and <code class="highlighter-rouge">Update</code>.</p>
@@ -600,6 +686,7 @@ end
 <li><a href="#orchestration">Orchestration</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
 <li><a href="#rescue">Rescue</a></li>
