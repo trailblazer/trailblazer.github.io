@@ -163,23 +163,25 @@ end
 <p>An operation is designed like a function and it can only be invoked in one way: via <code class="highlighter-rouge">Operation::call</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>Create.call( name: "Roxanne" )
+<pre class="highlight"><code>Song::Create.call( name: "Roxanne" )
 </code></pre>
 </div>
 
 <p>Ruby allows a shorthand for this which is commonly used throughout Trailblazer.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>Create.( name: "Roxanne" )
+<pre class="highlight"><code>Song::Create.( name: "Roxanne" )
 </code></pre>
 </div>
 
-<p>The absence of a method name here is per design: this object does only one thing, has only one public method, and hence <strong>what is does is reflected in the class name</strong>. Likewise, you never instantiate operations manually - this contradicts its functional concept and prevents you from randomly running methods on it in the wrong order.</p>
+<p>The absence of a method name here is per design: this object does only one thing, and hence <em>what it does is reflected in the class name</em>.</p>
 
-<p>Running an operation will always return a result object. It is up to you to interpret the content of it or push data onto the result object during the operation’s cycle.</p>
+<p>Running an operation will always return its result object. It is up to you to interpret the content of it or push data onto the result object during the operation’s cycle.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>result = Create.call( name: "Roxanne" )
+
+result["model"] #=&gt; #&lt;Song name: "Roxanne"&gt;
 </code></pre>
 </div>
 
@@ -312,77 +314,78 @@ end
 
 <h2 id="result-object" data-magellan-target="result-object">Result Object</h2>
 
-<p>result.contract [.errors, .success?, failure?]
-result.policy [, .success?, failure?]</p>
+<p>Calling an operation returns a <code class="highlighter-rouge">Result</code> object. Sometimes we also called it a <em>context object</em> as it’s available throughout the call. It is passed from step to step, and the steps can read and write to it.</p>
 
-<p>#call</p>
+<p>Consider the following operation.</p>
 
-<p>Override call to return an arbitrary result. Per default, the result object (the operation) is returned.</p>
-
-<h2 id="result-object-1" data-magellan-target="result-object-1">Result Object</h2>
-
-<p>In Trailblazer 2.0, calling an operation returns a <code class="highlighter-rouge">Result</code> object. Sometimes we also called it a <em>context object</em> as it’s available throughout the call. This is basically only a hash with some helpful added behavior. It is created before the operation and then passed through the entire flow to the very end.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.(..)
-result.success? #=&gt; true
-result.failure? #=&gt; false
-</code></pre>
-</div>
-
-<p>You can ask about its <em>binary state</em> via <code class="highlighter-rouge">success?</code> and <code class="highlighter-rouge">failure?</code>.</p>
-
-<h3 id="result-adding-state">Result: Adding State</h3>
-
-<p>Besides the result’s binarity, you can add any state or data to it to inform the outer world about the happenings on the inside.</p>
-
-<p>Adding data works by simply using <code class="highlighter-rouge">Operation#[]=</code> at any point in the flow.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  def process(params)
-    self["my.message"] = "Process was run!" # write to result object.
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step     :model!
+  step     :assign!
+  consider :validate!
+  
+  def model!(options, current_user:, **)
+    options["model"] = Song.new
+    options["model"].created_by = current_user
   end
+  
+  def assign!(*, params:, model:, **)
+    model.title= params[:title]
+  end
+  
+  #:step-val
+  def validate!(options, model:, **)
+    options["result.validate"] = ( model.created_by &amp;&amp; model.title )
+  end
+  #:step-val end
 end
 </code></pre>
-</div>
 
-<p>You can then read via <code class="highlighter-rouge">Operation#[]</code> in other steps of your flow.</p>
+<p>All three steps add data to the <code class="highlighter-rouge">options</code> object. That data can be used in the following steps.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  # ..
-  self.&gt; :after_process
-
-  def after_process
-    puts self["my.message"] # read from result object.
+<pre><code>  def validate!(options, model:, **)
+    options["result.validate"] = ( model.created_by &amp;&amp; model.title )
   end
 </code></pre>
+
+<p>It is a convention to use a <code class="highlighter-rouge">"namespaced.key"</code> on the result object. This will help you structuring and managing the data. It’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
+
+<div class="callout">
+  In future versions of Trailblazer, the <em>Hash Explore API™</em> will allow to search for fragments or namespace paths on the result object. That's why it's a good idea to follow our namespacing convention.
 </div>
-
-<p>Of course, this message is also available after running the operation.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.(..)
-result["my.message"] #=&gt; "Process was run!"
-</code></pre>
-</div>
-
-<h3 id="result-naming">Result: Naming</h3>
-
-<p>Every piece in the operation adds its own data to the result object, so it’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
 
 <p>Some steps, such as <a href="contract.html"><code class="highlighter-rouge">Contract</code></a> or <a href="policy.html"><code class="highlighter-rouge">Policy</code></a> will add nested result objects under their own keys, like <code class="highlighter-rouge">["result.policy"]</code>. It’s a convention to add binary <code class="highlighter-rouge">Result</code> objects to the “global” result under the <code class="highlighter-rouge">["result.XXX"]</code> key.</p>
 
+<h3 id="result-api">Result: API</h3>
+
+<p>After running the operation, the result object can be used for reading state.</p>
+
+<pre><code>result = Song::Create.({ title: "Roxanne" }, "current_user" =&gt; current_user)
+  
+result["model"] #=&gt; #&lt;Song title="Roxanne", "created_by"=&lt;User ...&gt;
+result["result.validate"] #=&gt; true
+</code></pre>
+
+<p>You can ask about the outcome of the operation via <code class="highlighter-rouge">success?</code> and <code class="highlighter-rouge">failure?</code>.</p>
+
+<pre><code>result.success? #=&gt; true
+result.failure? #=&gt; falsee
+</code></pre>
+
 <p>Please note that the result object is also used to transport externally <a href="#dependencies">injected dependencies and class dependencies.</a>.</p>
+
+<pre><code>result["current_user"] #=&gt; &lt;User ...&gt;
+</code></pre>
+
+<p>Use <code class="highlighter-rouge">Result#inspect</code> to test a number of dependencies.</p>
+
+<pre><code>result.inspect("current_user", "model") #=&gt; "&lt;Result:true [#&lt;User email=\"nick@tra... "
+</code></pre>
 
 <h3 id="result-interpretation">Result: Interpretation</h3>
 
-<p>The result object represents the interface between the operation’s inner happenings and the outer world, or, in other worlds, between implementation and user.</p>
+<p>The result object represents the interface between the operation’s inner happenings and the outer world, or, in other words, between implementation and user.</p>
 
 <p>It’s up to you how you interpret all this available data. The binary state will help you, but arbitrary state can be transported. For a generic handling in HTTP context (Rails controllers or Rack routes), see <a href="endpoint.html">→ <code class="highlighter-rouge">Endpoint</code></a>.</p>
-
-<p>inspect(“attr”)</p>
 
 <h2 id="dependencies" data-magellan-target="dependencies">Dependencies</h2>
 
@@ -417,7 +420,7 @@ result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
 <pre><code>class Update &lt; Trailblazer::Operation
   step Nested( Edit )
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -446,7 +449,7 @@ result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
     step Model( Song, :new )
     step Contract::Build( constant: MyContract )
     step Contract::Validate( )
-    step Persist( method: :sync )
+    step Contract::Persist( method: :sync )
   }
   failure :error! # handle all kinds of errors.
   step :notify!
@@ -524,7 +527,7 @@ end
     step Contract::Build( constant: MyContract )
   }
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -538,7 +541,7 @@ end
     step Contract::Build( constant: MyContract )
   }
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
   
   def rollback!(exception, options)
     options["x"] = exception.class
@@ -563,7 +566,7 @@ end
       step -&gt;(options) { options["model"].lock! } # lock the model.
       step Contract::Build( constant: MyContract )
       step Contract::Validate( )
-      step Persist( method: :sync )
+      step Contract::Persist( method: :sync )
     }
   }
   failure :error! # handle all kinds of errors.
@@ -596,7 +599,6 @@ end
 <li><a href="#step-macros">Step Macros</a></li>
 <li><a href="#orchestration">Orchestration</a></li>
 <li><a href="#result-object">Result Object</a></li>
-<li><a href="#result-object-1">Result Object</a></li>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>

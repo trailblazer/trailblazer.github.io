@@ -672,7 +672,7 @@ end
 
 <h2 id="context-object" data-magellan-target="context-object">Context Object</h2>
 
-<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object is passed on automatically. To add objects to the context, use the <code class="highlighter-rouge">:context</code> option.</p>
+<p>Per default, every cell maintains a context object. When <a href="#nesting">nesting cells</a>, this object passed on automatically. To add objects to the context, use the <code class="highlighter-rouge">:context</code> option.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">cell</span><span class="p">(</span><span class="s2">"comment"</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="ss">context: </span><span class="p">{</span> <span class="ss">user: </span><span class="n">current_user</span> <span class="p">})</span>
@@ -690,6 +690,8 @@ end
 </div>
 
 <p>The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.</p>
+
+<p>Note that the context object gets <code class="highlighter-rouge">dup</code>ed when adding to it in nested cells. This is to prevent leaking nested state back into parent objects.</p>
 
 <h2 id="nesting" data-magellan-target="nesting">Nesting</h2>
 

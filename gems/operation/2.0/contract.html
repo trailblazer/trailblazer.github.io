@@ -168,7 +168,7 @@ class Create &lt; Trailblazer::Operation
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -219,7 +219,7 @@ class Create &lt; Trailblazer::Operation
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -235,7 +235,7 @@ class Create &lt; Trailblazer::Operation
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -441,7 +441,7 @@ end
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate( key: "song" )
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -466,7 +466,7 @@ end
   step Contract::Build()
   consider :extract_params!
   step Contract::Validate( skip_extract: true )
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
   
   def extract_params!(options)
     options["params.validate"] = options["params"][type]
@@ -493,7 +493,7 @@ end
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -514,7 +514,7 @@ end
   step Model( Song, :new )
   step Contract::Build( constant: MyContract, name: "form" )
   step Contract::Validate( name: "form" )
-  step Persist( method: :sync, name: "contract.form" )
+  step Contract::Persist( method: :sync, name: "contract.form" )
 end
 </code></pre>
 
@@ -528,7 +528,7 @@ end
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
 end
 </code></pre>
 
@@ -568,7 +568,7 @@ end
   step Model( Song, :new )
   step Contract::Build( builder: :default_contract! )
   step Contract::Validate()
-  step Persist( method: :sync )
+  step Contract::Persist( method: :sync )
   
   def default_contract!(constant:, model:)
     constant.new(model, current_user: self["current_user"])
