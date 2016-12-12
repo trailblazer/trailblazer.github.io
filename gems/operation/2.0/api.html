@@ -331,6 +331,70 @@ end
 </code></pre>
 </div>
 
+<h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
+
+<p>A step can be added via <code class="highlighter-rouge">step</code>, <code class="highlighter-rouge">consider</code> and <code class="highlighter-rouge">failure</code>. It can be implemented as an instance method.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  step :model!
+
+  def model!(options, **)
+    options["model"] = Song.new
+  end
+end
+</code></pre>
+</div>
+
+<p>Note that you can use modules to share steps across operations.</p>
+
+<p>Or as a proc.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  step -&gt;(options, **) { options["model"] = Song.new }
+end
+</code></pre>
+</div>
+
+<p>Or, for more reusability, as a <code class="highlighter-rouge">Callable</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class MyModel
+  extend Uber::Callable
+  def self.call(options, **)
+    options["model"] = Song.new
+  end
+end
+</code></pre>
+</div>
+
+<p>Simply pass the class (or stateless instance) to the step operator.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  step MyModel
+end
+</code></pre>
+</div>
+
+<h2 id="step-arguments" data-magellan-target="step-arguments">Step Arguments</h2>
+
+<p>Each step receives the <a href="#dependencies">context object</a> as a positional argument. All <em>runtime</em> data is also passed as keyword arguments to the step.</p>
+
+<p>Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  step -&gt;(options, params:, current_user:, **) {  }
+end
+</code></pre>
+</div>
+
+<p>The first <code class="highlighter-rouge">options</code> is the positional argument and ideal to write new data onto the context.</p>
+
+<p>After that, only extract the parameters you need (such as <code class="highlighter-rouge">params:</code>). Any unspecified keyword arguments can be ignoreed using <code class="highlighter-rouge">**</code>.</p>
+
 <h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
 
 <p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
@@ -707,6 +771,8 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#invocation">Invocation</a></li>
 <li><a href="#flow-control">Flow Control</a></li>
+<li><a href="#step-implementation">Step Implementation</a></li>
+<li><a href="#step-arguments">Step Arguments</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#dependencies">Dependencies</a></li>
