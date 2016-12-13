@@ -201,7 +201,7 @@ Also, error handling needs to be done manually at every step. This is the price 
 
 <h2 id="flow-control" data-magellan-target="flow-control">Flow Control</h2>
 
-<p>The operation’s sole purpose is to define the pipe with its steps that will be executed when the operation <a href="#invocation">is run</a>. While traversing the pipe, it orchestrates all necessary stakeholders like policies, contracts, models and callbacks.</p>
+<p>The operation’s sole purpose is to define the pipe with its steps that are executed when the operation <a href="#invocation">is run</a>. While traversing the pipe, each step orchestrates all necessary stakeholders like policies, contracts, models and callbacks.</p>
 
 <p>The flow of an operation is defined by a two-tracked pipeline.</p>
 
@@ -213,12 +213,12 @@ Also, error handling needs to be done manually at every step. This is the price 
 
     <div class="column medium-8">
       <pre><code>class Song::Create &lt; Trailblazer::Operation
-  step     Model( Song, :new )
-  consider :assign_current_user!
-  step     Contract::Build()
-  step     Contract::Validate( constant: MyContract )
-  failure  :log_error!
-  step     Contract::Persist()
+  step    Model( Song, :new )
+  step    :assign_current_user!
+  step    Contract::Build( constant: MyContract )
+  step    Contract::Validate()
+  failure :log_error!
+  step    Contract::Persist()
   
   def log_error!(options)
     # ..
@@ -237,6 +237,19 @@ end
 </section>
 
 <p>Per default, the right track will be run from top to bottom. If an error occurs, it will deviate to the left track and continue executing error handler steps on this track.</p>
+
+<p>The flow pipetree is a mix of the <a href="http://dry-rb.org/gems/dry-monads/"><code class="highlighter-rouge">Either</code> monad</a> and <a href="http://zohaib.me/railway-programming-pattern-in-elixir/">“Railway-oriented programming”</a>, but not entirely the same.</p>
+
+<p>The following high-level API is available.</p>
+
+<ul>
+  <li>
+<code class="highlighter-rouge">step</code> adds a step to right track. If its return value is <code class="highlighter-rouge">falsey</code>, the pipe is deviated to left track. Can be called with macros, which will run their own insertion logic.</li>
+  <li>
+<code class="highlighter-rouge">success</code> always add step to the right. The return value is ignored.</li>
+  <li>
+<code class="highlighter-rouge">failure</code> always add step to the left for error handling. The return value is ignored.</li>
+</ul>
 
 <h3 id="flow-control-outcome">Flow Control: Outcome</h3>
 
@@ -257,24 +270,43 @@ result.failure? #=&gt; true
 </code></pre>
 </div>
 
+<p>Incredible, we know.</p>
+
 <h3 id="flow-control-step">Flow Control: Step</h3>
 
-<p>The <code class="highlighter-rouge">step</code> method normally adds your step to the <strong>right</strong> track.</p>
+<p>The <code class="highlighter-rouge">step</code> method adds your step to the <strong>right</strong> track. The return value decides about track deviation.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Create &lt; Trailblazer::Operation
   step :model!
 
   def model!(options, **)
-    options["model"] = Song.new
+    options["model"] = Song.new # return value evals to true.
   end
 end
 </code></pre>
 </div>
 
-<p>Here, the return value of <code class="highlighter-rouge">model!</code> is ignored.</p>
+<p>The <strong>return value of <code class="highlighter-rouge">model!</code> is evaluated</strong>.</p>
 
-<p>Nevertheless, when adding <a href="step-macros">step macros</a> with <code class="highlighter-rouge">step</code>, this changes. Macros can command <code class="highlighter-rouge">step</code> to internally use other operators to attach their step(s).</p>
+<p>Since the above example will always return something “truesy”, the pipe will stay on the right track after <code class="highlighter-rouge">model!</code>.</p>
+
+<p>However, if the step returns <code class="highlighter-rouge">falsey</code>, the pipe will change to the left track.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Update &lt; Trailblazer::Operation
+  step :model!
+
+  def model!(options, params:, **)
+    options["model"] = Song.find_by(params[:id]) # might return false!
+  end
+end
+</code></pre>
+</div>
+
+<p>In the above example, it deviates to left should the respective model <strong>not</strong> be found.</p>
+
+<p>When adding <a href="step-macros">step macros</a> with <code class="highlighter-rouge">step</code>, the behavior changes a bit. Macros can command <code class="highlighter-rouge">step</code> to internally use other operators to attach their step(s).</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Create &lt; Trailblazer::Operation
@@ -283,35 +315,24 @@ end
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">Model</code> macro, for example, will internally do the following.</p>
+<p>However, most macro will internally use <code class="highlighter-rouge">step</code>, too. Note that some macros, such as <code class="highlighter-rouge">Contract::Validate</code> might add several steps in a row.</p>
+
+<h3 id="flow-control-success">Flow Control: Success</h3>
+
+<p>If you don’t care about the result, and want to stay on the right track, use <code class="highlighter-rouge">success</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  consider -&gt;(*, params:, **) { Song.find_by(params[:id]) }
-end
-</code></pre>
-</div>
-
-<p>In other words: your own steps will always be on <strong>right</strong>, macros will add their step(s) where meaningful.</p>
-
-<h3 id="flow-control-consider">Flow Control: Consider</h3>
-
-<p>If you possibly want to deviate to the left track, use <code class="highlighter-rouge">consider</code>.</p>
-
-<p>This method works like <code class="highlighter-rouge">step</code> and adds to the right track. However, it will evaluate the return value of the step. If <code class="highlighter-rouge">falsey</code>, it deviates to the <strong>left</strong> track.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
-  consider :model!
+<pre class="highlight"><code>class Update &lt; Trailblazer::Operation
+  success :model!
 
   def model!(options, params:, **)
-    options["model"] = Song.find_by(params[:id]) # return value matters!
+    options["model"] = Song.find_by(params[:id]) # return value ignored!
   end
 end
 </code></pre>
 </div>
 
-<p>Here, if <code class="highlighter-rouge">model!</code> returns <code class="highlighter-rouge">false</code> or <code class="highlighter-rouge">nil</code>, the pipe deviates to the left track after this step.</p>
+<p>Here, if <code class="highlighter-rouge">model!</code> returns <code class="highlighter-rouge">false</code> or <code class="highlighter-rouge">nil</code>, the pipe stays on right track.</p>
 
 <h3 id="flow-control-failure">Flow Control: Failure</h3>
 
@@ -329,6 +350,12 @@ end
   end
 end
 </code></pre>
+</div>
+
+<p>Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.</p>
+
+<div class="callout">
+  We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.
 </div>
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
@@ -413,7 +440,7 @@ end
 <pre><code>class Song::Create &lt; Trailblazer::Operation
   step     :model!
   step     :assign!
-  consider :validate!
+  step     :validate!
   
   def model!(options, current_user:, **)
     options["model"] = Song.new
@@ -637,7 +664,7 @@ result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
   end
   
   def notify!(options)
-    # send emails, because success...
+    MyNotifier.mail
   end
 end
 </code></pre>
