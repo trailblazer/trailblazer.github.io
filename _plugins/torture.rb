@@ -38,3 +38,20 @@ end
 Liquid::Template.register_filter(Torture::SnippetFilter)
 
 # TODO: TEST :bla and :blabla (two different sections)
+
+
+module Torture
+  class CalloutTag < Liquid::Block
+    include Liquid::StandardFilters
+
+    def render(context)
+      markup = super
+
+%{<div class="callout">
+  #{Kramdown::Document.new(markup).to_html}
+</div>}
+    end
+  end
+end
+
+Liquid::Template.register_tag('callout', Torture::CalloutTag)

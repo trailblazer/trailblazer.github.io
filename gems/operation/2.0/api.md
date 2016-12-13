@@ -2,15 +2,18 @@
 layout: operation2
 title: Operation API
 gems:
-  - ["trailblazer", "trailblazer/trailblazer", "2.0"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 
 This document describes Trailblazer's operation API.
 
-The generic implmenentation can be found in the [trailblazer-operation gem](https://github.com/trailblazer/trailblazer-operation). This gem only provides the pipe and dependency handling.
+{% callout %}
+  The generic implementation can be found in the [trailblazer-operation gem](https://github.com/trailblazer/trailblazer-operation). This gem only provides the pipe and dependency handling.
 
-Higher-level abstractions, such as form object or policy integration is implemented in the [trailblazer gem](https://github.com/trailblazer/trailblazer).
+  Higher-level abstractions, such as form object or policy integration is implemented in the [trailblazer gem](https://github.com/trailblazer/trailblazer).
+{% endcallout %}
+
 
 ## Invocation
 
@@ -83,7 +86,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 
 The following high-level API is available.
 
-* `step` adds a step to right track. If its return value is `falsey`, the pipe is deviated to left track. Can be called with macros, which will run their own insertion logic.
+* `step` adds a step to right track. If its return value is `falsey`, the pipe deviates to left track. Can be called with macros, which will run their own insertion logic.
 * `success` always add step to the right. The return value is ignored.
 * `failure` always add step to the left for error handling. The return value is ignored.
 
@@ -176,7 +179,7 @@ Note that you can add as many error handlers as you want, at any position in the
 
 ## Step Implementation
 
-A step can be added via `step`, `consider` and `failure`. It can be implemented as an instance method.
+A step can be added via `step`, `success` and `failure`. It can be implemented as an instance method.
 
     class Create < Trailblazer::Operation
       step :model!
@@ -219,9 +222,10 @@ Whether method, proc or callable object, use the positional options to write, an
       step ->(options, params:, current_user:, **) {  }
     end
 
-The first `options` is the positional argument and ideal to write new data onto the context.
+The first `options` is the positional argument and ideal to write new data onto the context. This is the **mutable** part which transports mutable state from one step to the next.
 
 After that, only extract the parameters you need (such as `params:`). Any unspecified keyword arguments can be ignoreed using `**`.
+
 
 
 ## Step Macros
