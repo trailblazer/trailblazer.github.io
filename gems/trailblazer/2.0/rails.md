@@ -46,6 +46,8 @@ In a controller, you could simply invoke an operation manually.
 
 `run` passes the controller's `params` hash into the operation call. It automatically assigns `@model` and, if available, `@form` for you.
 
+### Run: With Block
+
 To handle success and failure cases, `run` accepts an optional block.
 
     class SongsController < ApplicationController

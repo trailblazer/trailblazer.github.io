@@ -6,24 +6,11 @@ gems:
 ---
 
 
+This document describes Trailblazer's operation API.
 
+The generic implmenentation can be found in the [trailblazer-operation gem](https://github.com/trailblazer/trailblazer-operation). This gem only provides the pipe and dependency handling.
 
-
-The generic logic can be found in the trailblazer-operation gem. Higher-level abstractions, such as form object or policy integration is implemented in the trailblazer gem.
-
-* Overview
-* Papi::Operation extend Contract::DSL
-
-
-<hr>
-
-
-An operation is a Ruby object that embraces all logic needed to implement one function, or *use case*, of your application. It does so by orchestrating various objects like form objects for validations, models for persistence or callbacks to implement post-processing logic.
-
-While you could do all that in a nested, procedural way, the Trailblazer operation uses a pipetree to structure the control flow and error handling.
-
-    class Create < Trailblazer::Operation
-    end
+Higher-level abstractions, such as form object or policy integration is implemented in the [trailblazer gem](https://github.com/trailblazer/trailblazer).
 
 ## Invocation
 
@@ -46,7 +33,7 @@ Running an operation will always return its result object. It is up to you to in
 [→ Result object](#result-object)
 
 
-## Flow Control: Procedural
+<!-- ## Flow Control: Procedural
 
 There's nothing wrong with implementing your operation's logic in a procedural, nested stack of method calls, the way Trailblazer 1.x worked. The behavior here was orchestrated from within the `process` method.
 
@@ -69,86 +56,179 @@ There's nothing wrong with implementing your operation's logic in a procedural, 
 
 Even though this might seem to be more "readable" at first glance, it is impossible to extend without breaking the code up into smaller methods that are getting called in a predefined order - sacrificing its aforementioned readability.
 
-Also, error handling needs to be done manually at every step. This is the price you pay for procedural, statically nested code.
+Also, error handling needs to be done manually at every step. This is the price you pay for procedural, statically nested code. -->
 
-## Flow Control: Pipetree
+## Flow Control
 
-You can also use TRB2's new *pipetree*. Instead of nesting code statically, the code gets added sequentially to a pipeline in a functional style. This pipeline is processed top-to-bottom when the operation is run.
+The operation's sole purpose is to define the pipe with its steps that are executed when the operation [is run](#invocation). While traversing the pipe, each step orchestrates all necessary stakeholders like policies, contracts, models and callbacks.
 
-    class Create < Trailblazer::Operation
-      self.> :model!
-      self.> :validate!
-      self.> :persist!
+The flow of an operation is defined by a two-tracked pipeline.
 
-      def model!(options)
-        Song.new
-      end
-      # ...
-    end
+<section>
+  <div class="row">
+    <div class="column medium-4">
+      <img src="/images/diagrams/overview-flow-animated.gif">
+    </div>
 
-Logic can be added using the `Operation::>` operator. The logic you add is called *step* and can be [an instance method, a callable object or a proc](api.html).
+    <div class="column medium-8">
+      {{  "operation_test.rb:op-api" | tsnippet }}
+    </div>
+  </div>
 
-Under normal conditions, those steps are simply processed in the specified order. Imagine that as a track of tasks. The track we just created, with steps being applied when things go right, is called the *right track*.
+</section>
 
-The operation also has a *left track* for error handling. Steps on the right side can deviate to the left track and remaining code on the right track will be skipped.
+Per default, the right track will be run from top to bottom. If an error occurs, it will deviate to the left track and continue executing error handler steps on this track.
 
-    class Create < Trailblazer::Operation
-      self.> :model!
-      self.> :validate!
-      self.< :validate_error!
-      self.> :persist!
-      self.< :persist_error!
-      # ...
-    end
+The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-monads/) and ["Railway-oriented programming"](http://zohaib.me/railway-programming-pattern-in-elixir/), but not entirely the same.
 
-Adding steps to the left track happens via the `Operation::<` operator.
+The following high-level API is available.
 
-## Pipetree Visualization
+* `step` adds a step to right track. If its return value is `falsey`, the pipe is deviated to left track. Can be called with macros, which will run their own insertion logic.
+* `success` always add step to the right. The return value is ignored.
+* `failure` always add step to the left for error handling. The return value is ignored.
 
-Visualizing the pipetree you just created makes is very obvious what is going to happen when you run this operation. Note that you can render any operation's pipetree anywhere in your code for a better understanding.
+### Flow Control: Outcome
 
-    Create["pipetree"].inspect
+If the operation ends on the right track, the [result object](#result-object) will return true on `success?`.
 
-     0 =======================>>operation.new
-     1 ===============================>:model
-     2 ============================>:validate
-     3 <:validate_error!=====================
-     4 ============================>:persist!
-     5 <:persist_error!======================
+    result = Song::Create({ title: "The Feeling Is Alright" }, "current_user": current_user)
+    result.success? #=> true
 
-Once deviated to the left track, the pipetree processing will skip any steps remaining on the right track. For example, should `validate!` deviate, the `persist!` step is never executed (unless you want that).
+Otherwise, when the run ends on the left track, `failure?` will return true.
 
-Now, how does a step make the pipetree change tracks, e.g. when there's a validation error?
+    result = Song::Create({ })
+    result.success? #=> false
+    result.failure? #=> true
 
-## Track Deviation
+Incredible, we know.
 
-The easiest way for changing tracks is letting the pipetree interpret the return value of a step. This is accomplished with the `Operation::&` operator.
+### Flow Control: Step
+
+The `step` method adds your step to the **right** track. The return value decides about track deviation.
 
     class Create < Trailblazer::Operation
-      self.> :model!
-      self.& :validate!
-      self.< :validate_error!
-      # ...
-    end
+      step :model!
 
-Should the `validate!` step return a falsey value, the pipetree will change tracks to the left.
-
-    class Create < Trailblazer::Operation
-      # ...
-      def validate!(*)
-        self["params"].has_key?(:title) # returns true of false.
+      def model!(options, **)
+        options["model"] = Song.new # return value evals to true.
       end
     end
 
-Check the [API docs for pipetree](pipetree.html) to learn more about tracks.
+The **return value of `model!` is evaluated**.
+
+Since the above example will always return something "truesy", the pipe will stay on the right track after `model!`.
+
+
+However, if the step returns `falsey`, the pipe will change to the left track.
+
+    class Update < Trailblazer::Operation
+      step :model!
+
+      def model!(options, params:, **)
+        options["model"] = Song.find_by(params[:id]) # might return false!
+      end
+    end
+
+In the above example, it deviates to left should the respective model **not** be found.
+
+When adding [step macros](step-macros) with `step`, the behavior changes a bit. Macros can command `step` to internally use other operators to attach their step(s).
+
+    class Create < Trailblazer::Operation
+      step Model( Song, :find_by )
+    end
+
+However, most macro will internally use `step`, too. Note that some macros, such as `Contract::Validate` might add several steps in a row.
+
+### Flow Control: Success
+
+If you don't care about the result, and want to stay on the right track, use `success`.
+
+    class Update < Trailblazer::Operation
+      success :model!
+
+      def model!(options, params:, **)
+        options["model"] = Song.find_by(params[:id]) # return value ignored!
+      end
+    end
+
+Here, if `model!` returns `false` or `nil`, the pipe stays on right track.
+
+### Flow Control: Failure
+
+Error handlers on the left track can be added with `failure`.
+
+    class Create < Trailblazer::Operation
+      consider :model!
+      failure  :error!
+
+      # ...
+
+      def error!(options, params:, **)
+        options["result.model"] = "Something went wrong with ID #{params[:id]}!"
+      end
+    end
+
+Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.
+
+<div class="callout">
+  We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.
+</div>
+
+## Step Implementation
+
+A step can be added via `step`, `consider` and `failure`. It can be implemented as an instance method.
+
+    class Create < Trailblazer::Operation
+      step :model!
+
+      def model!(options, **)
+        options["model"] = Song.new
+      end
+    end
+
+Note that you can use modules to share steps across operations.
+
+Or as a proc.
+
+    class Create < Trailblazer::Operation
+      step ->(options, **) { options["model"] = Song.new }
+    end
+
+Or, for more reusability, as a `Callable`.
+
+    class MyModel
+      extend Uber::Callable
+      def self.call(options, **)
+        options["model"] = Song.new
+      end
+    end
+
+Simply pass the class (or stateless instance) to the step operator.
+
+    class Create < Trailblazer::Operation
+      step MyModel
+    end
+
+## Step Arguments
+
+Each step receives the [context object](#dependencies) as a positional argument. All *runtime* data is also passed as keyword arguments to the step.
+
+Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.
+
+    class Create < Trailblazer::Operation
+      step ->(options, params:, current_user:, **) {  }
+    end
+
+The first `options` is the positional argument and ideal to write new data onto the context.
+
+After that, only extract the parameters you need (such as `params:`). Any unspecified keyword arguments can be ignoreed using `**`.
+
 
 ## Step Macros
 
 Trailblazer provides predefined steps to for all kinds of business logic.
 
 * [Contract](contract.html) implements contracts, validation and persisting verified data using the model layer.
-
-## Orchestration
 
 ## Result Object
 
