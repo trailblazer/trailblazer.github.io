@@ -127,6 +127,10 @@
       </a>
 
     
+      <a href="/gems/operation/1.1/api.html">
+        <span class="version other">v1.1</span>
+      </a>
+    
 
     </span>
   
@@ -244,7 +248,7 @@ end
 
 <ul>
   <li>
-<code class="highlighter-rouge">step</code> adds a step to right track. If its return value is <code class="highlighter-rouge">falsey</code>, the pipe is deviated to left track. Can be called with macros, which will run their own insertion logic.</li>
+<code class="highlighter-rouge">step</code> adds a step to right track. If its return value is <code class="highlighter-rouge">falsey</code>, the pipe deviates to left track. Can be called with macros, which will run their own insertion logic.</li>
   <li>
 <code class="highlighter-rouge">success</code> always add step to the right. The return value is ignored.</li>
   <li>
@@ -360,7 +364,7 @@ end
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
 
-<p>A step can be added via <code class="highlighter-rouge">step</code>, <code class="highlighter-rouge">consider</code> and <code class="highlighter-rouge">failure</code>. It can be implemented as an instance method.</p>
+<p>A step can be added via <code class="highlighter-rouge">step</code>, <code class="highlighter-rouge">success</code> and <code class="highlighter-rouge">failure</code>. It can be implemented as an instance method.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Create &lt; Trailblazer::Operation
@@ -418,7 +422,7 @@ end
 </code></pre>
 </div>
 
-<p>The first <code class="highlighter-rouge">options</code> is the positional argument and ideal to write new data onto the context.</p>
+<p>The first <code class="highlighter-rouge">options</code> is the positional argument and ideal to write new data onto the context. This is the <strong>mutable</strong> part which transports mutable state from one step to the next.</p>
 
 <p>After that, only extract the parameters you need (such as <code class="highlighter-rouge">params:</code>). Any unspecified keyword arguments can be ignoreed using <code class="highlighter-rouge">**</code>.</p>
 
