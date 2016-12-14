@@ -297,7 +297,7 @@ end
 
 <p>The <strong>return value of <code class="highlighter-rouge">model!</code> is evaluated</strong>.</p>
 
-<p>Since the above example will always return something “truesy”, the pipe will stay on the right track after <code class="highlighter-rouge">model!</code>.</p>
+<p>Since the above example will always return something “truthy”, the pipe will stay on the right track after <code class="highlighter-rouge">model!</code>.</p>
 
 <p>However, if the step returns <code class="highlighter-rouge">falsey</code>, the pipe will change to the left track.</p>
 
@@ -428,7 +428,14 @@ end
 
 <p>The first <code class="highlighter-rouge">options</code> is the positional argument and ideal to write new data onto the context. This is the <strong>mutable</strong> part which transports mutable state from one step to the next.</p>
 
-<p>After that, only extract the parameters you need (such as <code class="highlighter-rouge">params:</code>). Any unspecified keyword arguments can be ignoreed using <code class="highlighter-rouge">**</code>.</p>
+<p>After that, only extract the parameters you need (such as <code class="highlighter-rouge">params:</code>). Any unspecified keyword arguments can be ignored using <code class="highlighter-rouge">**</code>.</p>
+
+<div class="callout">
+  
+<p>Keywords arguments work fine in Ruby 2.1 and &gt;=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.</p>
+
+
+</div>
 
 <h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
 
