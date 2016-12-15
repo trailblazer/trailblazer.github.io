@@ -46,6 +46,17 @@ In a controller, you could simply invoke an operation manually.
 
 `run` passes the controller's `params` hash into the operation call. It automatically assigns `@model` and, if available, `@form` for you.
 
+The result object is returned.
+
+    def create
+      result = run Song::Create
+      result["model"] #=> #<Song title=...>
+
+      render :new
+    end
+
+The result object is also assigned to `@_result`.
+
 ### Run: With Block
 
 To handle success and failure cases, `run` accepts an optional block.
@@ -72,11 +83,19 @@ The gem overrides `ActionController#render` and now allows to render a `Trailbla
           return redirect_to song_path(result["model"].id)
         end
 
-        render cell: Song::Cell::New, model: @model
+        render cell(Song::Cell::New, @model)
       end
     end
 
 Per default, `render` will add `layout: true` to render the ActionView layout. It can be turned off using `layout: false`.
+
+As always, the `cell` method also accepts options.
+
+    render cell(Song::Cell::New, @model, theme: User.theme)
+
+All arguments after `cell` are simply passed through to Rails' `render`.
+
+    render cell(Song::Cell::New, @model, theme: User.theme), layout: false
 
 ## Integration Test
 

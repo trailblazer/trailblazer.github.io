@@ -6,7 +6,7 @@ gems:
 ---
 
 
-This document describes Trailblazer's operation API.
+This document describes Trailblazer's `Operation` API.
 
 {% callout %}
   The generic implementation can be found in the [trailblazer-operation gem](https://github.com/trailblazer/trailblazer-operation). This gem only provides the pipe and dependency handling.
@@ -119,7 +119,7 @@ The `step` method adds your step to the **right** track. The return value decide
 
 The **return value of `model!` is evaluated**.
 
-Since the above example will always return something "truesy", the pipe will stay on the right track after `model!`.
+Since the above example will always return something "truthy", the pipe will stay on the right track after `model!`.
 
 
 However, if the step returns `falsey`, the pipe will change to the left track.
@@ -161,8 +161,8 @@ Here, if `model!` returns `false` or `nil`, the pipe stays on right track.
 Error handlers on the left track can be added with `failure`.
 
     class Create < Trailblazer::Operation
-      consider :model!
-      failure  :error!
+      step    :model!
+      failure :error!
 
       # ...
 
@@ -224,8 +224,13 @@ Whether method, proc or callable object, use the positional options to write, an
 
 The first `options` is the positional argument and ideal to write new data onto the context. This is the **mutable** part which transports mutable state from one step to the next.
 
-After that, only extract the parameters you need (such as `params:`). Any unspecified keyword arguments can be ignoreed using `**`.
+After that, only extract the parameters you need (such as `params:`). Any unspecified keyword arguments can be ignored using `**`.
 
+{% callout %}
+
+Keywords arguments work fine in Ruby 2.1 and >=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.
+
+{% endcallout %}
 
 
 ## Step Macros

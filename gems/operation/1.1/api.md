@@ -3,6 +3,8 @@ layout: operation
 title: "Operation API"
 redirect_from:
   - /gems/operation/api.html
+gems:
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 
