@@ -73,6 +73,22 @@ To handle success and failure cases, `run` accepts an optional block.
 
 The block is only run for `success?`. The block argument is the operation's result.
 
+## Runtime Options
+
+It's clever to inject runtime dependencies such as `current_user` into the operation call.
+
+    Song::Create.( params, "current_user" => current_user )
+
+
+Override `#_run_options` to do that automatically for all `run` calls.
+
+    class ApplicationController < ActionController::Base
+    private
+      def _run_options(options)
+        options.merge( "current_user" => current_user )
+      end
+    end
+
 ## Render
 
 The gem overrides `ActionController#render` and now allows to render a `Trailblazer::Cell`.
@@ -96,6 +112,41 @@ As always, the `cell` method also accepts options.
 All arguments after `cell` are simply passed through to Rails' `render`.
 
     render cell(Song::Cell::New, @model, theme: User.theme), layout: false
+
+Use `result` to pass the result object to the cell.
+
+    render cell(Song::Cell::New, result)
+
+{% callout %}
+If the first argument to `render` is not a cell instance, the original Rails `render` version will be run.
+{% endcallout %}
+
+
+
+<!--
+## Expose
+
+Use `expose` to pass specified properties from the `result` object directly to the cell.
+
+    render cell( Song::Cell::New, expose(["model", "contract.default"]) )
+
+The `expose` method will create an intermediate object with readers for you.
+
+    value = expose(["model", "contract.default"])
+    value["model"] #=> #<Song title=... >
+    value.model    #=> #<Song title=... >
+
+This object is now passed to the cell as the `model`.
+
+A common way to call this is using `%w{}`.
+
+    render cell( Song::Cell::New, expose(%w{model contract.default}) )
+
+Additional options to present can be passed as a hash.
+
+    render cell( Song::Cell::New, expose(%w{model contract.default}, artist: Artist.last) )
+ -->
+
 
 ## Integration Test
 
