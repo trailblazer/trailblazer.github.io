@@ -189,6 +189,20 @@ end
 
 <p><code class="highlighter-rouge">run</code> passes the controller’s <code class="highlighter-rouge">params</code> hash into the operation call. It automatically assigns <code class="highlighter-rouge">@model</code> and, if available, <code class="highlighter-rouge">@form</code> for you.</p>
 
+<p>The result object is returned.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def create
+  result = run Song::Create
+  result["model"] #=&gt; #&lt;Song title=...&gt;
+
+  render :new
+end
+</code></pre>
+</div>
+
+<p>The result object is also assigned to <code class="highlighter-rouge">@_result</code>.</p>
+
 <h3 id="run-with-block">Run: With Block</h3>
 
 <p>To handle success and failure cases, <code class="highlighter-rouge">run</code> accepts an optional block.</p>
