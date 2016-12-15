@@ -255,6 +255,35 @@ end
 </code></pre>
 </div>
 
+<div class="callout">
+  
+<p>If the first argument to <code>render</code> is not a cell instance, the original Rails <code>render</code> version will be run.</p>
+
+</div>
+<!--
+## Expose
+
+Use `expose` to pass specified properties from the `result` object directly to the cell.
+
+    render cell( Song::Cell::New, expose(["model", "contract.default"]) )
+
+The `expose` method will create an intermediate object with readers for you.
+
+    value = expose(["model", "contract.default"])
+    value["model"] #=> #<Song title=... >
+    value.model    #=> #<Song title=... >
+
+This object is now passed to the cell as the `model`.
+
+A common way to call this is using `%w{}`.
+
+    render cell( Song::Cell::New, expose(%w{model contract.default}) )
+
+Additional options to present can be passed as a hash.
+
+    render cell( Song::Cell::New, expose(%w{model contract.default}, artist: Artist.last) )
+ -->
+
 <h2 id="integration-test" data-magellan-target="integration-test">Integration Test</h2>
 
 <p>If you’re using <code class="highlighter-rouge">Minitest::Spec</code> and want to run smoke tests using Capybara, use <code class="highlighter-rouge">Trailblazer::Test::Integration</code>.</p>
