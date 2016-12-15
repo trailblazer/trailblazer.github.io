@@ -222,6 +222,27 @@ end
 
 <p>The block is only run for <code class="highlighter-rouge">success?</code>. The block argument is the operation’s result.</p>
 
+<h2 id="runtime-options" data-magellan-target="runtime-options">Runtime Options</h2>
+
+<p>It’s clever to inject runtime dependencies such as <code class="highlighter-rouge">current_user</code> into the operation call.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Song::Create.( params, "current_user" =&gt; current_user )
+</code></pre>
+</div>
+
+<p>Override <code class="highlighter-rouge">#_run_options</code> to do that automatically for all <code class="highlighter-rouge">run</code> calls.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class ApplicationController &lt; ActionController::Base
+private
+  def _run_options(options)
+    options.merge( "current_user" =&gt; current_user )
+  end
+end
+</code></pre>
+</div>
+
 <h2 id="render" data-magellan-target="render">Render</h2>
 
 <p>The gem overrides <code class="highlighter-rouge">ActionController#render</code> and now allows to render a <code class="highlighter-rouge">Trailblazer::Cell</code>.</p>
@@ -331,6 +352,7 @@ end
           <li><a href="#installation">Installation</a></li>
 <li><a href="#railtie">Railtie</a></li>
 <li><a href="#run">Run</a></li>
+<li><a href="#runtime-options">Runtime Options</a></li>
 <li><a href="#render">Render</a></li>
 <li><a href="#integration-test">Integration Test</a></li>
         </ul>
