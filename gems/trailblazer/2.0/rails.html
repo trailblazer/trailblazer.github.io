@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer::Rails</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 December 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -219,13 +219,27 @@ end
       return redirect_to song_path(result["model"].id)
     end
 
-    render cell: Song::Cell::New, model: @model
+    render cell(Song::Cell::New, @model)
   end
 end
 </code></pre>
 </div>
 
 <p>Per default, <code class="highlighter-rouge">render</code> will add <code class="highlighter-rouge">layout: true</code> to render the ActionView layout. It can be turned off using <code class="highlighter-rouge">layout: false</code>.</p>
+
+<p>As always, the <code class="highlighter-rouge">cell</code> method also accepts options.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>render cell(Song::Cell::New, @model, theme: User.theme)
+</code></pre>
+</div>
+
+<p>All arguments after <code class="highlighter-rouge">cell</code> are simply passed through to Rails’ <code class="highlighter-rouge">render</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>render cell(Song::Cell::New, @model, theme: User.theme), layout: false
+</code></pre>
+</div>
 
 <h2 id="integration-test" data-magellan-target="integration-test">Integration Test</h2>
 
