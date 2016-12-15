@@ -255,11 +255,19 @@ end
 </code></pre>
 </div>
 
+<p>Use <code class="highlighter-rouge">result</code> to pass the result object to the cell.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>render cell(Song::Cell::New, result)
+</code></pre>
+</div>
+
 <div class="callout">
   
 <p>If the first argument to <code>render</code> is not a cell instance, the original Rails <code>render</code> version will be run.</p>
 
 </div>
+
 <!--
 ## Expose
 
