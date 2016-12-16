@@ -3,11 +3,20 @@ layout: cells
 title: "Trailblazer::Cell"
 ---
 
-This documents the Trailblazer-style cells semantics, brought to you by the [trailblazer-cells](https://github.com/trailblazer/trailblazer-cells) gem. This gem is not dependent on Trailblazer and can be used without it.
+This documents the Trailblazer-style cells semantics, brought to you by the [trailblazer-cells](https://github.com/trailblazer/trailblazer-cells) gem.
+
+{% callout %}
+This gem can be used **stand-alone** without Trailblazer, its only dependency is the `cells` gem.
+{% endcallout %}
+
+## Installation
 
 ```ruby
 gem "trailblazer-cells"
+gem "cells-slim"
 ```
+
+Make sure you also add the view engine. We recommend [`cells-slim`](https://github.com/trailblazer/cells-slim).
 
 ## File Structure
 
@@ -16,23 +25,23 @@ In Trailblazer, cell classes sit in their concept's `cell` directory, the corres
 ```
 ├── app
 │   ├── concepts
-│   │   └── comment
-│   │       ├── cell
-│   │       │   ├── index.rb
-│   │       │   ├── new.rb
-│   │       │   └── show.rb
+│   │   └── comment            # namespace/class
+│   │       ├── cell           # namespace/module
+│   │       │   ├── index.rb   # class
+│   │       │   ├── new.rb     # class
+│   │       │   └── show.rb    # class
 │   │       └── view
-│   │           ├── index.haml
-│   │           ├── item.haml
-│   │           ├── new.haml
-│   │           ├── show.haml
+│   │           ├── index.slim
+│   │           ├── item.slim
+│   │           ├── new.slim
+│   │           ├── show.slim
 │   │           └── user.scss
 
 ```
 
 Note that one cell class can have multiple views, as well as other assets like `.scss` stylesheets.
 
-Also, the view names with `Trailblazer::Cell` are *not* called `show.haml`, but named after its corresponding cell class.
+Also, the view names with `Trailblazer::Cell` are *not* called `show.slim`, but named after its corresponding cell class. For instance, `Comment::Cell::Index` will render `comment/view/index.slim`.
 
 ## Naming
 
@@ -46,27 +55,29 @@ This results in classes such as follows.
 
 
 ```ruby
-module Comment # or: Comment < ActiveRecord::Base or alike.
-  module Cell
-    class New < Trailblazer::Cell
-      def show
-        render # renders app/concepts/comment/view/new.haml.
-      end
+module Comment::Cell            # namespace
+  class New < Trailblazer::Cell # class
+    def show
+      render # renders app/concepts/comment/view/new.slim.
     end
   end
 end
 ```
 
-This is different to old suffix-cells. While the `show` method still is the public method, calling `render` will use the `new.haml` view, as inferred from the cell's last class constant segment (`New`).
+This is different to old suffix-cells. While the `show` method still is the public method, calling `render` will use the `new.slim` view, as inferred from the cell's last class constant segment (`New`).
 
 ## Default Show
 
 Note that you don't have to provide a `show` method, it is created automatically.
 
 ```ruby
-class New < Trailblazer::Cell
+module Comment::Cell
+  class New < Trailblazer::Cell
+  end
 end
 ```
+
+This is the **recommended way** since no setup code should be necessary.
 
 You're free to override `show`, though.
 
@@ -75,8 +86,8 @@ You're free to override `show`, though.
 Per default, the view name is computed from the cell's class name.
 
 ```ruby
-Comment::Cell::New #=> "new.haml"
-Comment::Cell::Themed::New #=> "themed/new.haml"
+Comment::Cell::New         #=> "comment/view/new.slim"
+Comment::Cell::Themed::New #=> "comment/view/themed/new.slim"
 ```
 
 Note that the entire path after `Cell::` is considered, resulting in a hierarchical view name.
@@ -84,7 +95,7 @@ Note that the entire path after `Cell::` is considered, resulting in a hierarchi
 Use `ViewName::Flat` if you prefer a flat view name.
 
 ```ruby
-module Comment # or: Comment < ActiveRecord::Base or alike.
+module Comment
   module Cell
     module Themed
       class New < Trailblazer::Cell
@@ -94,30 +105,16 @@ module Comment # or: Comment < ActiveRecord::Base or alike.
   end
 end
 
-Comment::Cell::Themed::New #=> "new.haml"
+Comment::Cell::Themed::New #=> "comment/view/new.slim"
 ```
 
 This will always result in a flat name where the view name is inferred from the last segment of the cell constant.
 
 ## Invocation
 
-Manual invocation is always possible as discussed here.
+To render a cell in controllers, views, or other cells, use `cell`. You need to provide the constant directly. Ruby's constant lookup rules apply.
 
-As per Cells 4.1, you can use the `concept` helper to invoke a Trailblazer cell from a controller, view, or test.
-
-```ruby
-concept("comment/cell/new", op.model).()
-```
-
-You have to provide the fully-qualified constant path.
-
-Within a Trailblazer cell, you can use `concept` to invoke nested cells.
-
-Alternatively, you can use `cell` and provide the constant directly. This applies to both controllers/views and within cells.
-
-```ruby
-cell(Comment::Cell::New, op.model).()
-```
+    html = cell(Comment::Cell::New, result["model"]).()
 
 ## Layouts
 
@@ -130,17 +127,19 @@ It's a common pattern to maintain a cell representing the application's layout(s
 │   │       ├── cell
 │   │       │   ├── layout.rb
 │   │       └── view
-│   │           ├── layout.haml
+│   │           ├── layout.slim
 ```
 
 Most times, the layout cell can be an empty subclass.
 
 ```ruby
-class Gemgem::Cell::Layout < Trailblazer::Cell
+module Gemgem::Cell
+  class Layout < Trailblazer::Cell
+  end
 end
 ```
 
-The view `gemgem/view/layout.haml` contains a `yield` where the actual content goes.
+The view `gemgem/view/layout.slim` contains a `yield` where the actual content goes.
 
 ```
 !!!
@@ -156,7 +155,7 @@ The view `gemgem/view/layout.haml` contains a `yield` where the actual content g
 Wrapping the content cell (`Comment::Cell::New`) with the layout cell (`Gemgem::Cell::Layout`) happens via the public `:layout` option.
 
 ```ruby
-concept("comment/cell/new", op.model, layout: Gemgem::Cell::Layout)
+concept("comment/cell/new", result["model"], layout: Gemgem::Cell::Layout)
 ```
 
 This will render the `Comment::Cell::New`, instantiate `Gemgem::Cell::Layout` and pass through the context object, then render the layout around it.
