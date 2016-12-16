@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 December 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -415,13 +415,26 @@ end
 
 <h2 id="step-arguments" data-magellan-target="step-arguments">Step Arguments</h2>
 
-<p>Each step receives the <a href="#dependencies">context object</a> as a positional argument. All <em>runtime</em> data is also passed as keyword arguments to the step.</p>
+<p>Each step receives the <a href="#dependencies">context object</a> as a positional argument. All <em>runtime</em> data is also passed as keyword arguments to the step. Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.</p>
 
-<p>Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.</p>
+<p>For example, you can use kw args with a proc.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Create &lt; Trailblazer::Operation
   step -&gt;(options, params:, current_user:, **) {  }
+end
+</code></pre>
+</div>
+
+<p>Or with an instance method.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class Create &lt; Trailblazer::Operation
+  step :setup!
+
+  def setup!(options, params:, current_user:, **)
+    # ...
+  end
 end
 </code></pre>
 </div>
