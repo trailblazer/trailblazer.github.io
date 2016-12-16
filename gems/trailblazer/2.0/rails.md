@@ -91,7 +91,7 @@ Override `#_run_options` to do that automatically for all `run` calls.
 
 ## Render
 
-The gem overrides `ActionController#render` and now allows to render a `Trailblazer::Cell`.
+The gem extends `ActionController#render` and now allows to render a `Trailblazer::Cell`.
 
     class SongsController < ApplicationController
       def create
@@ -103,15 +103,15 @@ The gem overrides `ActionController#render` and now allows to render a `Trailbla
       end
     end
 
-Per default, `render` will add `layout: true` to render the ActionView layout. It can be turned off using `layout: false`.
+You simply invoke `cell` the way [you did it before](/gems/cells/trailblazer.html#invocation), and pass it to `render`. Per default, `render` will add `layout: true` to render the ActionView layout. It can be turned off using `layout: false`.
 
 As always, the `cell` method also accepts options.
 
-    render cell(Song::Cell::New, @model, theme: User.theme)
+    render cell(Song::Cell::New, @model, action_name: params[:action])
 
 All arguments after `cell` are simply passed through to Rails' `render`.
 
-    render cell(Song::Cell::New, @model, theme: User.theme), layout: false
+    render cell(Song::Cell::New, @model, action_name: params[:action]), layout: false
 
 Use `result` to pass the result object to the cell.
 
