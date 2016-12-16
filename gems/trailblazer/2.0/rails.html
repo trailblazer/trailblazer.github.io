@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer::Rails</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 December 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -245,7 +245,7 @@ end
 
 <h2 id="render" data-magellan-target="render">Render</h2>
 
-<p>The gem overrides <code class="highlighter-rouge">ActionController#render</code> and now allows to render a <code class="highlighter-rouge">Trailblazer::Cell</code>.</p>
+<p>The gem extends <code class="highlighter-rouge">ActionController#render</code> and now allows to render a <code class="highlighter-rouge">Trailblazer::Cell</code>.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class SongsController &lt; ApplicationController
@@ -260,19 +260,19 @@ end
 </code></pre>
 </div>
 
-<p>Per default, <code class="highlighter-rouge">render</code> will add <code class="highlighter-rouge">layout: true</code> to render the ActionView layout. It can be turned off using <code class="highlighter-rouge">layout: false</code>.</p>
+<p>You simply invoke <code class="highlighter-rouge">cell</code> the way <a href="/gems/cells/trailblazer.html#invocation">you did it before</a>, and pass it to <code class="highlighter-rouge">render</code>. Per default, <code class="highlighter-rouge">render</code> will add <code class="highlighter-rouge">layout: true</code> to render the ActionView layout. It can be turned off using <code class="highlighter-rouge">layout: false</code>.</p>
 
 <p>As always, the <code class="highlighter-rouge">cell</code> method also accepts options.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>render cell(Song::Cell::New, @model, theme: User.theme)
+<pre class="highlight"><code>render cell(Song::Cell::New, @model, action_name: params[:action])
 </code></pre>
 </div>
 
 <p>All arguments after <code class="highlighter-rouge">cell</code> are simply passed through to Rails’ <code class="highlighter-rouge">render</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>render cell(Song::Cell::New, @model, theme: User.theme), layout: false
+<pre class="highlight"><code>render cell(Song::Cell::New, @model, action_name: params[:action]), layout: false
 </code></pre>
 </div>
 
