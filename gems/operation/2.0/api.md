@@ -214,12 +214,22 @@ Simply pass the class (or stateless instance) to the step operator.
 
 ## Step Arguments
 
-Each step receives the [context object](#dependencies) as a positional argument. All *runtime* data is also passed as keyword arguments to the step.
+Each step receives the [context object](#dependencies) as a positional argument. All *runtime* data is also passed as keyword arguments to the step. Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.
 
-Whether method, proc or callable object, use the positional options to write, and make use of kw args wherever possible.
+For example, you can use kw args with a proc.
 
     class Create < Trailblazer::Operation
       step ->(options, params:, current_user:, **) {  }
+    end
+
+Or with an instance method.
+
+    class Create < Trailblazer::Operation
+      step :setup!
+
+      def setup!(options, params:, current_user:, **)
+        # ...
+      end
     end
 
 The first `options` is the positional argument and ideal to write new data onto the context. This is the **mutable** part which transports mutable state from one step to the next.

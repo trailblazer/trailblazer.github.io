@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Trailblazer::Cell"
+gems:
+  - ["trailblazer-cells", "trailblazer/trailblazer-cells", "2.0"]
 ---
 
 This documents the Trailblazer-style cells semantics, brought to you by the [trailblazer-cells](https://github.com/trailblazer/trailblazer-cells) gem.
@@ -8,6 +10,8 @@ This documents the Trailblazer-style cells semantics, brought to you by the [tra
 {% callout %}
 This gem can be used **stand-alone** without Trailblazer, its only dependency is the `cells` gem.
 {% endcallout %}
+
+A `Trailblazer::Cell` is a normal cell with Trailblazer semantics added. Naming, file structure, and the way views are resolved follow the TRB style. Note that this will be the standard for Cells 5, which will drop all old "dialects".
 
 ## Installation
 
