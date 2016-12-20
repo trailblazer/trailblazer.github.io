@@ -628,7 +628,86 @@ end
   <li>The <a href="#model"><code class="highlighter-rouge">Model</code></a> macro can create and find models based on input.</li>
 </ul>
 
-<h2 id="model" data-magellan-target="model">Model</h2>
+<h2 id="builder" data-magellan-target="builder">Builder</h2>
+
+<p>Different application contexts like “anonymous user” vs. “signed in user” can be handled in the same code asset along with countless <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">else</code>s. Or, you can use polymorphism as it is encouraged by Trailblazer.</p>
+
+<p>Here, different contexts are handled by different classes. Those classes may inherit from each other, but don’t have to.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Builder( MyBuilder )
+#:op-head end
+  
+  # ...
+  class Anonymous &lt; Create
+    # ...
+  end
+  
+  class SignedIn &lt; Create
+    # ...
+  end
+end
+</code></pre>
+
+<p>The idea is to never instantiate internal classes (<code class="highlighter-rouge">Anonymous</code> and <code class="highlighter-rouge">SignedIn</code>) directly, but let the top-level <code class="highlighter-rouge">Create</code> operation do the polymorphic dispatch. <strong>The logic “what to build when” is called <em>builder</em></strong>.</p>
+
+<h3 id="builder-proc">Builder: Proc</h3>
+
+<p>Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.</p>
+
+<pre><code>MyBuilder = -&gt;(klass, current_user:nil, **) do
+  if current_user
+    Create::SignedIn
+  else
+    Create::Anonymous
+  end
+end
+</code></pre>
+
+<p>Note that you have access to all runtime data via the <code class="highlighter-rouge">options</code> object and/or keyword arguments. The return value of the builder is the class to be instantiated.</p>
+
+<p>You then hook the builder into the pipe using the <code class="highlighter-rouge">Builder</code> macro.</p>
+
+<pre><code>#:op
+class Create &lt; Trailblazer::Operation
+  step Builder( MyBuilder )
+</code></pre>
+
+<p>The builder puts itself <em>before</em> <code class="highlighter-rouge">operation.new</code> into the pipetree and hence can control the operation class to be instantiated.</p>
+
+<h3 id="builder-invocation">Builder: Invocation</h3>
+
+<p>When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>result = Create.({})                               #=&gt; runs Create::Anonymous
+result = Create.({}, "current_user": current_user) #=&gt; runs Create::SignedIn
+</code></pre>
+</div>
+
+<h3 id="builder-dsl">Builder: DSL</h3>
+
+<p>You can also use the <code class="highlighter-rouge">builds</code> method to create and plug in a builder in one step.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  include Builder
+  
+  builds -&gt;(klass, current_user:nil, **) do
+    if current_user
+      SignedIn
+    else
+      Anonymous
+    end
+  end
+  
+  # ...
+end
+</code></pre>
+
+<p>This couples your builder to the class, though.</p>
+
+<!-- self::A -->
+<p>## Model</p>
 
 <p>An operation can automatically find or create a model for you depending on the input, with the <code class="highlighter-rouge">Model</code> macro.</p>
 
@@ -888,7 +967,7 @@ end
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
-<li><a href="#model">Model</a></li>
+<li><a href="#builder">Builder</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
 <li><a href="#rescue">Rescue</a></li>
@@ -913,7 +992,7 @@ end
     </li>
     <li><a href="/gems/operation/api.html">API</a></li>
     <li><a href="/gems/operation/contract.html">Contract</a></li>
-    <li><a href="/gems/operation/builder.html">Builder</a></li>
+    <li><a href="/gems/operation/builder.html"><strike>Builder</strike></a></li>
     <li><a href="/gems/operation/collection.html"><strike>Collection</strike></a></li>
     <li><a href="/gems/operation/callback.html">Callback</a></li>
     <li><a href="/gems/operation/controller.html"><strike>Controller</strike><span class="sidebar-info">v1.1</span></a></li>
