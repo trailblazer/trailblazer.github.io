@@ -9,7 +9,7 @@ gems:
 
 An operation is a service object.
 
-Its goal is simple: Remove all business logic from the controller and model and instead provide a separate, streamlined object for it.
+Its goal is simple: **Remove all business logic from the controller and model and provide a separate, streamlined object for it.**
 
 
 Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
@@ -98,7 +98,7 @@ The operations control flow is handled by a two-tracked pipe. It helps you deali
 <pre>
 <code>
   step     Model( Song, :new )
-  consider :assign_current_user!
+  step     :assign_current_user!
   step     Contract::Build()
   step     Contract::Validate( )
   failure  :log_error!
@@ -106,7 +106,7 @@ The operations control flow is handled by a two-tracked pipe. It helps you deali
 </code>
 </pre>
       <p>
-        Steps added with <code>consider</code> will deviate to the left track, if their return value is falsey.
+        Steps will deviate to the left track if their return value is falsey.
 
       </p>
     </div>
@@ -118,34 +118,102 @@ The operations control flow is handled by a two-tracked pipe. It helps you deali
 
 Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.
 
-<section class="macros">
-  <div class="row">
-    <div class="column medium-4">
-      <i class="fa fa-cogs"></i>
+{% cols %}
+~~~4
+  <i class="fa fa-cogs"></i>
 
-      <p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
-    </div>
+  <code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.
 
-    <div class="column medium-4">
-      <i class="fa fa-search"></i>
+~~~4
+  <i class="fa fa-search"></i>
 
-      <p>
-        <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.
-      </p>
-    </div>
+  <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.
+~~~4
+  <i class="fa fa-shield"></i>
 
-    <div class="column medium-4">
-      <i class="fa fa-shield"></i>
-
-      <p>
-        <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
-      </p>
-    </div>
-
-  </div>
-</section>
+  <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
+{% endcols %}
 
 Macros are easily extendable and it's you can write your own application-wide macros.
 
 
-## Result
+## State and Result
+
+{% cols %}
+~~~8
+  Each step in the operation can write to the *options* object that is passed from step to step, and in the end will be the result of the operation call.
+
+    class Song::Update < Trailblazer::Operation
+      step :find_model!
+      step :assign_current_user!
+
+      def find_model!(options, params:, **)
+        options["model"] = Song.find_by(id: params[:id])
+      end
+
+      def assign_current_user!(options, current_user:, **)
+        options["model"].created_by = current_user
+      end
+    end
+
+~~~4
+
+  Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.
+
+    class Song::Update < Trailblazer::Operation
+      step MyCallable
+      step ->(options, params:, **) { ... }
+
+  After running, this object is the result.
+
+    result = Song::Update.(id: 1, ..)
+
+    result.success? #=> true
+    result["model"] #=> #<Song ..>
+
+{% endcols %}
+
+## Testing
+
+{% cols %}
+~~~6
+  Since operations embrace the entire workflow for an application's function, you can write simple and fast unit-tests to assert the correct behavior.
+
+    describe Song::Create do
+      it "prohibits empty params" do
+        result = Song::Create.({})
+
+        expect(result).to be_failure
+        expect(result["model"]).to be_new
+      end
+    end
+
+  All edge-cases and bugs can be tested via unit tests. Slow, inefficient integration tests are reduced to a minimum.
+~~~6
+  Operations can also replace factories.
+
+    describe Song::Create do
+      let(:song) { Song::Create.(params) }
+
+  This will make sure your application test state is always inline with what happens in production. You won't have an always diverging *factory vs. production state* ever again.
+
+  Check out [our Rspec gem](https://github.com/trailblazer/rspec-trailblazer) for TRB matcher integration. Matchers for Minitest are coming, too!
+{% endcols %}
+
+## Learn More
+
+A mix of documentation and guides will help you to understand the operation quickly and how to use it to clean up existing codebases or start a new app.
+
+{% cols %}
+~~~4
+  <i class="fa fa-map"></i>
+
+  Read the [**→API DOCS**](api.html) to learn about the pipe and step implementations and what macros Trailblazer provides for you.
+~~~4
+  <i class="fa fa-book"></i>
+
+  Make sure to spend some hours reading the [**→GETTING STARTED**](guides/getting_started_with_trailblazer_2.html) guide.
+
+  You will be ready to work with Trailblazer 2.
+~~~4
+{% endcols %}

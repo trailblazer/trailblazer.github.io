@@ -55,3 +55,35 @@ module Torture
 end
 
 Liquid::Template.register_tag('callout', Torture::CalloutTag)
+
+
+module Torture
+  class ColumnsTag < Liquid::Block
+    include Liquid::StandardFilters
+
+    def render(context, options={}, *args)
+      html = %{<section class="macros"><div class="row">}
+
+      markup = super(context)
+
+      cols = markup.split("~~~")
+
+      cols.each do |col|
+        width   = col[0]
+        content = col[1..-1]
+
+        html << %{
+
+    <div class="column medium-#{width}">
+    #{Kramdown::Document.new(content).to_html}
+    </div>}
+      end
+
+# raise cols.inspect
+      html << %{</div></section>}
+      html
+    end
+  end
+end
+
+Liquid::Template.register_tag('cols', Torture::ColumnsTag)
