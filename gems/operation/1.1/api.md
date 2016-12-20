@@ -4,7 +4,7 @@ title: "Operation API"
 redirect_from:
   - /gems/operation/api.html
 gems:
-  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
+  - ["trailblazer", "trailblazer/trailblazer", "1.1", "2.0"]
 ---
 
 

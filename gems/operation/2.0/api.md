@@ -359,6 +359,47 @@ Trailblazer provides predefined steps to for all kinds of business logic.
 * All [`Policy`-related](policy.html) macros help with authentication and making sure users only execute what they're supposed to.
 * The [`Model`](#model) macro can create and find models based on input.
 
+## Builder
+
+Different application contexts like "anonymous user" vs. "signed in user" can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
+
+Here, different contexts are handled by different classes. Those classes may inherit from each other, but don't have to.
+
+{{  "builder_test.rb:op" | tsnippet : "opcon" }}
+
+The idea is to never instantiate internal classes (`Anonymous` and `SignedIn`) directly, but let the top-level `Create` operation do the polymorphic dispatch. **The logic "what to build when" is called *builder***.
+
+
+### Builder: Proc
+
+Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.
+
+{{  "builder_test.rb:proc" | tsnippet }}
+
+Note that you have access to all runtime data via the `options` object and/or keyword arguments. The return value of the builder is the class to be instantiated.
+
+You then hook the builder into the pipe using the `Builder` macro.
+
+{{  "builder_test.rb:op-head" | tsnippet  }}
+
+The builder puts itself *before* `operation.new` into the pipetree and hence can control the operation class to be instantiated.
+
+### Builder: Invocation
+
+When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.
+
+    result = Create.({})                               #=> runs Create::Anonymous
+    result = Create.({}, "current_user": current_user) #=> runs Create::SignedIn
+
+### Builder: DSL
+
+You can also use the `builds` method to create and plug in a builder in one step.
+
+{{  "builder_test.rb:builds" | tsnippet : "bla" }}
+
+This couples your builder to the class, though.
+
+<!-- self::A -->
 ## Model
 
 An operation can automatically find or create a model for you depending on the input, with the `Model` macro.
