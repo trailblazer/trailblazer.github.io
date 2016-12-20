@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 December 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -450,15 +450,6 @@ end
 
 </div>
 
-<h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
-
-<p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
-
-<ul>
-  <li>
-<a href="contract.html">Contract</a> implements contracts, validation and persisting verified data using the model layer.</li>
-</ul>
-
 <h2 id="result-object" data-magellan-target="result-object">Result Object</h2>
 
 <p>Calling an operation returns a <code class="highlighter-rouge">Result</code> object. Sometimes we also called it a <em>context object</em> as it’s available throughout the call. It is passed from step to step, and the steps can read and write to it.</p>
@@ -621,6 +612,71 @@ end
 </div>
 
 <p>Including the <code class="highlighter-rouge">AutoInject</code> module will make sure that the specified dependencies are injected (using <a href="#dependency-injection">dependency injection</a>) into the <a href="#dependencies">operation’s context</a> at instantiation time.</p>
+
+<h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
+
+<p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
+
+<ul>
+  <li>
+<a href="#builder">Builder</a> allows writing and using polymorphic factories to create different operations based on different input.</li>
+  <li>
+<a href="contract.html">Contract</a> implements contracts, validation and persisting verified data using the model layer.</li>
+  <li>
+<a href="#nested"><code class="highlighter-rouge">Nested</code></a>, <a href="#wrap"><code class="highlighter-rouge">Wrap</code></a> and <a href="#rescue"><code class="highlighter-rouge">Rescue</code></a> are step containers that help with transactional features for a group of steps per operation.</li>
+  <li>All <a href="policy.html"><code class="highlighter-rouge">Policy</code>-related</a> macros help with authentication and making sure users only execute what they’re supposed to.</li>
+  <li>The <a href="#model"><code class="highlighter-rouge">Model</code></a> macro can create and find models based on input.</li>
+</ul>
+
+<h2 id="model" data-magellan-target="model">Model</h2>
+
+<p>An operation can automatically find or create a model for you depending on the input, with the <code class="highlighter-rouge">Model</code> macro.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  # ..
+end
+</code></pre>
+
+<p>After this step, there is a fresh model instance under <code class="highlighter-rouge">options["model"]</code> that can be used in all following steps.</p>
+
+<pre><code>  result = Create.({})
+  result["model"] #=&gt; #&lt;struct Song id=nil, title=nil&gt;
+</code></pre>
+
+<p>Internally, <code class="highlighter-rouge">Model</code> macro will simply invoke <code class="highlighter-rouge">Song.new</code> to populate <code class="highlighter-rouge">"model"</code>.</p>
+
+<h3 id="model-findby">Model: Find_by</h3>
+
+<p>You can also find models using <code class="highlighter-rouge">:find_by</code>. This is helpful for <code class="highlighter-rouge">Update</code> or <code class="highlighter-rouge">Delete</code> operations.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step Model( Song, :find_by )
+  # ..
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">Model</code> macro will invoke the following code for you.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>options["model"] = Song.find_by( params[:id] )
+</code></pre>
+</div>
+
+<p>This will assign <code class="highlighter-rouge">["model"]</code> for you by invoking <code class="highlighter-rouge">find_by</code>.</p>
+
+<pre><code>  result = Update.({ id: 1 })
+  result["model"] #=&gt; #&lt;struct Song id=1, title="Roxanne"&gt;
+</code></pre>
+
+<p>If <code class="highlighter-rouge">Song.find_by</code> returns <code class="highlighter-rouge">nil</code>, this will deviate to the left track, skipping the rest of the operation.</p>
+
+<pre><code>  result = Update.({})
+  result["model"] #=&gt; nil
+  result.success? #=&gt; false
+</code></pre>
+
+<p>Note that you may also use <code class="highlighter-rouge">:find</code>. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.</p>
 
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
 
@@ -828,10 +884,11 @@ end
 <li><a href="#flow-control">Flow Control</a></li>
 <li><a href="#step-implementation">Step Implementation</a></li>
 <li><a href="#step-arguments">Step Arguments</a></li>
-<li><a href="#step-macros">Step Macros</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
+<li><a href="#step-macros">Step Macros</a></li>
+<li><a href="#model">Model</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
 <li><a href="#rescue">Rescue</a></li>
