@@ -3,6 +3,8 @@ layout: operation2
 title: Operation Overview
 gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0", "1.1"]
+description: "An overview about the Operation in Trailblazer: an object that embraces and orchestrates all business logic for one function."
+imageurl: http://trailblazer.to/images/diagrams/operation-2017-small.png
 ---
 
 <img src="/images/diagrams/operation-2017-small.png" class="diagram left">

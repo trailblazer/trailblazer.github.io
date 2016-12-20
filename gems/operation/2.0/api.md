@@ -243,12 +243,6 @@ Keywords arguments work fine in Ruby 2.1 and >=2.2.3. They are broken in Ruby 2.
 {% endcallout %}
 
 
-## Step Macros
-
-Trailblazer provides predefined steps to for all kinds of business logic.
-
-* [Contract](contract.html) implements contracts, validation and persisting verified data using the model layer.
-
 ## Result Object
 
 Calling an operation returns a `Result` object. Sometimes we also called it a *context object* as it's available throughout the call. It is passed from step to step, and the steps can read and write to it.
@@ -354,6 +348,48 @@ The operation supports Dry.RB's [auto_inject](http://dry-rb.org/gems/dry-auto_in
     end
 
 Including the `AutoInject` module will make sure that the specified dependencies are injected (using [dependency injection](#dependency-injection)) into the [operation's context](#dependencies) at instantiation time.
+
+## Step Macros
+
+Trailblazer provides predefined steps to for all kinds of business logic.
+
+* [Builder](#builder) allows writing and using polymorphic factories to create different operations based on different input.
+* [Contract](contract.html) implements contracts, validation and persisting verified data using the model layer.
+* [`Nested`](#nested), [`Wrap`](#wrap) and [`Rescue`](#rescue) are step containers that help with transactional features for a group of steps per operation.
+* All [`Policy`-related](policy.html) macros help with authentication and making sure users only execute what they're supposed to.
+* The [`Model`](#model) macro can create and find models based on input.
+
+## Model
+
+An operation can automatically find or create a model for you depending on the input, with the `Model` macro.
+
+{{  "model_test.rb:op" | tsnippet }}
+
+After this step, there is a fresh model instance under `options["model"]` that can be used in all following steps.
+
+{{  "model_test.rb:create" | tsnippet }}
+
+Internally, `Model` macro will simply invoke `Song.new` to populate `"model"`.
+
+### Model: Find_by
+
+You can also find models using `:find_by`. This is helpful for `Update` or `Delete` operations.
+
+{{  "model_test.rb:update" | tsnippet }}
+
+The `Model` macro will invoke the following code for you.
+
+    options["model"] = Song.find_by( params[:id] )
+
+This will assign `["model"]` for you by invoking `find_by`.
+
+{{  "model_test.rb:update-ok" | tsnippet }}
+
+If `Song.find_by` returns `nil`, this will deviate to the left track, skipping the rest of the operation.
+
+{{  "model_test.rb:update-fail" | tsnippet }}
+
+Note that you may also use `:find`. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.
 
 ## Nested
 
