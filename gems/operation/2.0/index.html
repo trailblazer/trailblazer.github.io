@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Overview</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 December 2016</span>
 
   
     <span class="doc-last-updated">
@@ -147,7 +147,7 @@
 
 <p>An operation is a service object.</p>
 
-<p>Its goal is simple: Remove all business logic from the controller and model and instead provide a separate, streamlined object for it.</p>
+<p>Its goal is simple: <strong>Remove all business logic from the controller and model and provide a separate, streamlined object for it.</strong></p>
 
 <p>Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called <em>command</em>.</p>
 
@@ -206,7 +206,7 @@ result = Song::Create.(
   end
   
   step     Model( Song, :new )
-  consider :assign_current_user!
+  step     :assign_current_user!
   step     Contract::Build()
   step     Contract::Validate( )
   failure  :log_error!
@@ -252,7 +252,7 @@ end
 <pre>
 <code>
   step     Model( Song, :new )
-  consider :assign_current_user!
+  step     :assign_current_user!
   step     Contract::Build()
   step     Contract::Validate( )
   failure  :log_error!
@@ -260,7 +260,7 @@ end
 </code>
 </pre>
       <p>
-        Steps added with <code>consider</code> will deviate to the left track, if their return value is falsey.
+        Steps will deviate to the left track if their return value is falsey.
 
       </p>
     </div>
@@ -272,36 +272,172 @@ end
 
 <p>Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.</p>
 
-<section class="macros">
-  <div class="row">
-    <div class="column medium-4">
-      <i class="fa fa-cogs"></i>
+<section class="macros"><div class="row">
 
-      <p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+    <div class="column medium-
+">
+    
+
     </div>
 
     <div class="column medium-4">
-      <i class="fa fa-search"></i>
+    
+<p><i class="fa fa-cogs"></i></p>
 
-      <p>
-        <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.
-      </p>
+<p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+
+
     </div>
 
     <div class="column medium-4">
-      <i class="fa fa-shield"></i>
+    
+<p><i class="fa fa-search"></i></p>
 
-      <p>
-        <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
-      </p>
+<p><code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.</p>
+
     </div>
 
-  </div>
-</section>
+    <div class="column medium-4">
+    
+<p><i class="fa fa-shield"></i></p>
+
+<p><code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.</p>
+
+    </div>
+</div></section>
 
 <p>Macros are easily extendable and it’s you can write your own application-wide macros.</p>
 
-<h2 id="result" data-magellan-target="result">Result</h2>
+<h2 id="state-and-result" data-magellan-target="state-and-result">State and Result</h2>
+
+<section class="macros"><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-8">
+    
+<p>Each step in the operation can write to the <em>options</em> object that is passed from step to step, and in the end will be the result of the operation call.</p>
+
+<pre><code>class Song::Update &lt; Trailblazer::Operation
+  step :find_model!
+  step :assign_current_user!
+
+  def find_model!(options, params:, **)
+    options["model"] = Song.find_by(id: params[:id])
+  end
+
+  def assign_current_user!(options, current_user:, **)
+    options["model"].created_by = current_user
+  end
+end
+</code></pre>
+
+
+    </div>
+
+    <div class="column medium-4">
+    
+<p>Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.</p>
+
+<pre><code>class Song::Update &lt; Trailblazer::Operation
+  step MyCallable
+  step -&gt;(options, params:, **) { ... }
+</code></pre>
+
+<p>After running, this object is the result.</p>
+
+<pre><code>result = Song::Update.(id: 1, ..)
+
+result.success? #=&gt; true
+result["model"] #=&gt; #&lt;Song ..&gt;
+</code></pre>
+
+
+    </div>
+</div></section>
+
+<h2 id="testing" data-magellan-target="testing">Testing</h2>
+
+<section class="macros"><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-6">
+    
+<p>Since operations embrace the entire workflow for an application’s function, you can write simple and fast unit-tests to assert the correct behavior.</p>
+
+<pre><code>describe Song::Create do
+  it "prohibits empty params" do
+    result = Song::Create.({})
+
+    expect(result).to be_failure
+    expect(result["model"]).to be_new
+  end
+end
+</code></pre>
+
+<p>All edge-cases and bugs can be tested via unit tests. Slow, inefficient integration tests are reduced to a minimum.</p>
+
+    </div>
+
+    <div class="column medium-6">
+    
+<p>Operations can also replace factories.</p>
+
+<pre><code>describe Song::Create do
+  let(:song) { Song::Create.(params) }
+</code></pre>
+
+<p>This will make sure your application test state is always inline with what happens in production. You won’t have an always diverging <em>factory vs. production state</em> ever again.</p>
+
+<p>Check out <a href="https://github.com/trailblazer/rspec-trailblazer">our Rspec gem</a> for TRB matcher integration. Matchers for Minitest are coming, too!</p>
+
+    </div>
+</div></section>
+
+<h2 id="learn-more" data-magellan-target="learn-more">Learn More</h2>
+
+<p>A mix of documentation and guides will help you to understand the operation quickly and how to use it to clean up existing codebases or start a new app.</p>
+
+<section class="macros"><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-4">
+    
+<p><i class="fa fa-map"></i></p>
+
+<p>Read the <a href="api.html"><strong>→API DOCS</strong></a> to learn about the pipe and step implementations and what macros Trailblazer provides for you.</p>
+
+    </div>
+
+    <div class="column medium-4">
+    
+<p><i class="fa fa-book"></i></p>
+
+<p>Make sure to spend some hours reading the <a href="guides/getting_started_with_trailblazer_2.html"><strong>→GETTING STARTED</strong></a> guide.</p>
+
+<p>You will be ready to work with Trailblazer 2.</p>
+
+    </div>
+
+    <div class="column medium-4">
+    
+
+    </div>
+</div></section>
 
             </div>
 
@@ -315,7 +451,9 @@ end
           <li><a href="#what-it-looks-like">What It Looks Like</a></li>
 <li><a href="#flow-control">Flow Control</a></li>
 <li><a href="#macros">Macros</a></li>
-<li><a href="#result">Result</a></li>
+<li><a href="#state-and-result">State and Result</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#learn-more">Learn More</a></li>
         </ul>
       
 </nav>
