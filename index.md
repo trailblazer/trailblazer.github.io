@@ -67,69 +67,116 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
 
     {% endmd %}
+
     </div>
   </div>
+</section>
 
+<section class="four">
+  <div class="row">
+    <div class="medium-offset-2 medium-4 columns">
+
+    <div class="mascot">
+      <img src="/images/sticker/sticker2017.png">
+      <h3>We walk the walk.</h3>
+    </div>
+
+
+    {% md %}
+Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.
+
+Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.
+
+    {% endmd %}
+
+    </div>
+
+    <div class="end medium-4 columns">
+      <div class="mascot">
+        <img src="/images/sticker/consulting.jpg">
+        <h3>We love your legacy apps.</h3>
+      </div>
+
+    {% md %}
+By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer's patterns cover 75% of daily business code's structure - you will feel the power of strong conventions within the first hours.
+
+If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
+    {% endmd %}
+
+    </div>
+  </div>
 </section>
 
 <!-- We support Reform and DRY-Validation. -->
 
-<!-- <section>
+<section>
   <div class="row">
-    <div class="medium-offset-2 medium-4 columns">
-      snippet
-    </div>
+    <div class="medium-9 medium-centered text-center">
+      <h2>Legacy app, refactoring or green-field?</h2>
 
-    <div class="end medium-4 columns">
-      <img src="/images/diagrams/operation-2017-grey.png" widsdth="200">
+      Trailblazer helps improving your software in all kinds of systems and applications.
     </div>
   </div>
-
 </section>
- -->
-<!-- About -->
-<section class="about">
-  <div class="row">
-    <div class="columns">
-      <h2>About Trailblazer</h2>
 
-      <div class="row">
-        <div class="columns medium-6">
-          <p>Trailblazer gives you a high-level architecture for web applications.</p>
-          <p>
-            Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
-          </p>
-          <p>
-            By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
-          </p>
-          <p>
-            A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
-          </p>
+<section class="four">
+  {% cols %}
+~~~4
+<h4>
+  <i class="fa fa-gamepad"></i>
+  Framework-agnostic
+</h4>
 
-          <p>Check out who's using <a href="#users">Trailblazer in production →</a></p>
+The Trailblazer gems work with any Ruby framework. We provide glue code for Rails and Hanami, but there are TRB-powered apps in Roda, Grape, Sinatra and many more out there.
 
-           <a href="/guides/trailblazer-in-20-minutes.html" class="button radius">Get Started:<br>
-            Trailblazer in 12 Minutes</a>
-        </div>
-        <div class="columns medium-6">
-          <!-- <img src="images/Trb-Stack.png"> -->
-          <img src="/images/diagrams/operation-2017-grey.png">
-        </div>
-      </div>
-    </div>
-  </div>
+~~~4
+<h4>
+  <i class="fa fa-university"></i>
+  Legacy-ready
+</h4>
+
+You can start using Trailblazer in existing, massive applications today. Refactorings can be applied step-wise, legacy code can be minimized as you go. Remember: Rome wasn't build in one day, either.
+
+~~~4
+<h4>
+  <i class="fa fa-leaf"></i>
+  Future-compatible
+</h4>
+
+Our promise to the community: Trailblazer 2 will be supported until end of 2020 or longer. Our object design makes it easy to provide automatic upgrading and backward-compatibility so you won't have to change code when we ship updates.
+
+  {% endcols %}
+</section>
 
 
+<section class="four">
+  {% cols %}
+~~~4
+<h4>
+  <i class="fa fa-recycle"></i>
+  Build to Refactor
+</h4>
 
-<!--
-<div class="row">
-  <div class="columns">
-    <p class="text-center">
-      Check out who's using <a href="/users.html">Trailblazer in production →</a>
-    </p>
-  </div>
-</div>
--->
+Our patterns are designed to be used in highly complex, existing, messy legacy applications. Trailblazer is made to refactor old code - you do not have to rewrite the entire system to get a better architecture.
+~~~4
+<h4>
+  <i class="fa fa-dashboard"></i>
+  Test first
+</h4>
+
+By restructuring business code, application behavior can be tested more efficient with more unit and less integration tests. Trailblazer engineers enjoy the simplicity of testing and the speedup of the test suites.
+~~~4
+<h4>
+  <i class="fa fa-ship"></i>
+  It's real!
+</h4>
+
+Trailblazer is in use in thousands of production applications.
+
+Our patterns have evolved over a decade of engineering, our gems are mature and battle-tested. And: we will never stop innovating.
+
+  {% endcols %}
+</section>
 
 <div id="code-slider" class="carousel">
 <div class="section-separator">

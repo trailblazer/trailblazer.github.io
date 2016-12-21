@@ -2,4 +2,19 @@ section.four {
   .columns {
     padding: 1em;
   }
+
+  .mascot {
+    width: 100%;
+    text-align: center;
+    img {
+      height: 210px;
+    }
+  }
+
+  h4 {
+   font-size: 20px;
+   font-weight: bold;
+    .fa { display: inline-block; width: auto; font-size: 45px; }
+  }
+  line-height: 1.1em;
 }
