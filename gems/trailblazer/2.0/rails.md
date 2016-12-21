@@ -5,7 +5,7 @@ gems:
   - ["trailblazer-rails", "trailblazer/trailblazer-rails", "1.0"]
 ---
 
-Trailblazer in your Rails controllers. The `trailblazer-rails` gem adds `#run` and `render cell: Constant` to your controllers.
+Trailblazer in your Rails controllers. The `trailblazer-rails` gem adds `#run` and `render cell(Constant)` to your controllers.
 
 This documents the version compatible with Trailblazer 2.0.
 
