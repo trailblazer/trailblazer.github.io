@@ -61,8 +61,13 @@ module Torture
   class ColumnsTag < Liquid::Block
     include Liquid::StandardFilters
 
+    def initialize(tag, klass=nil, *)
+      super
+      @class = klass || "macro"
+    end
+
     def render(context, options={}, *args)
-      html = %{<section class="macros"><div class="row">}
+      html = %{<section class=" #{@class}"><div class="row">}
 
       markup = super(context)
 

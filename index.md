@@ -32,11 +32,11 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
 </section>
 
-<section class="four">
-  <div class="row">
-    <div class="medium-3 columns">
-    {% md %}
 
+{% cols %}
+  ~~~3
+  &nbsp;
+  ~~~3
   The new abstractions in Trailblazer are optional. Only use what you need.
 
   * **CONTRACT** Form objects to validate incoming data.
@@ -45,19 +45,18 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   * **VIEW MODEL** Components for your view code.
   * **REPRESENTER** for serializing and parsing API documents.
   * **DESERIALIZER** Transformers to parse incoming data into structures you can work with.
-    {% endmd %}
-    </div>
+  ~~~3
+  <img src="/images/diagrams/operation-2017-grey.png">
+  ~~~3
+{% endcols %}
 
-    <div class="medium-3 columns">
-      <img src="/images/diagrams/operation-2017-grey.png">
-    </div>
 
-    <div class="medium-3 columns">
-      <img src="/images/diagrams/files-2017.png">
-    </div>
-
-    <div class="medium-3 columns">
-    {% md %}
+{% cols %}
+  ~~~3
+  &nbsp;
+  ~~~3
+  <img src="/images/diagrams/files-2017.png">
+  ~~~3
   Trailblazer's file structure organizes by **CONCEPT**, and then by technology.
 
   * **THOUSANDS** of users find this more intuitive and easier to navigate.
@@ -65,12 +64,8 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   * Huge teams working on complex projects have it easier not to get into each others way.
   * Once a concept's **CODE IS TESTED** it won't break anywhere else.
   * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
-
-    {% endmd %}
-
-    </div>
-  </div>
-</section>
+  ~~~3
+{% endcols %}
 
 <section class="four">
   <div class="row">
@@ -208,7 +203,7 @@ Oh, and did we say there won't be controller tests anymore? That's right. Only u
 ~~~1
 {% endcols %}
 
-{% cols %}
+{% cols grey %}
 ~~~1
 &nbsp;
 ~~~4
