@@ -37,7 +37,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
     <div class="medium-3 columns">
     {% md %}
 
-The new abstractions in Trailblazer are optional. Only use what you need.
+  The new abstractions in Trailblazer are optional. Only use what you need.
 
   * **CONTRACT** Form objects to validate incoming data.
   * **POLICY** to authorize code execution per user.
@@ -45,19 +45,28 @@ The new abstractions in Trailblazer are optional. Only use what you need.
   * **VIEW MODEL** Components for your view code.
   * **REPRESENTER** for serializing and parsing API documents.
   * **DESERIALIZER** Transformers to parse incoming data into structures you can work with.
-
-
     {% endmd %}
-
-
     </div>
 
     <div class="medium-3 columns">
-      <img src="/images/diagrams/operation-2017-grey.png" widsdth="200">
+      <img src="/images/diagrams/operation-2017-grey.png">
     </div>
 
-    <div class="medium-3 columns end">
-      snippet
+    <div class="medium-3 columns">
+      <img src="/images/diagrams/files-2017.png">
+    </div>
+
+    <div class="medium-3 columns">
+    {% md %}
+  Trailblazer's file structure organizes by **CONCEPT**, and then by technology.
+
+  * **THOUSANDS** of users find this more intuitive and easier to navigate.
+  * It embraces the **COMPONENT STRUCTURE** of your code.
+  * Huge teams working on complex projects have it easier not to get into each others way.
+  * Once a concept's **CODE IS TESTED** it won't break anywhere else.
+  * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
+
+    {% endmd %}
     </div>
   </div>
 
