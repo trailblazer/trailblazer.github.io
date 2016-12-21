@@ -1,10 +1,14 @@
 ---
 layout: operation2
-title: Operation Overview
+title:  Operation Overview
+url:    /gems/operation/2.0/index.html
 gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0", "1.1"]
 description: "An overview about the Operation in Trailblazer: an object that embraces and orchestrates all business logic for one function."
 imageurl: http://trailblazer.to/images/diagrams/operation-2017-small.png
+redirect_from:
+  - /gems/operation/
+  - /gems/operation/index.html
 ---
 
 <img src="/images/diagrams/operation-2017-small.png" class="diagram left">
