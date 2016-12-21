@@ -164,7 +164,7 @@ Our patterns are designed to be used in highly complex, existing, messy legacy a
   Test first
 </h4>
 
-By restructuring business code, application behavior can be tested more efficient with more unit and less integration tests. Trailblazer engineers enjoy the simplicity of testing and the speedup of the test suites.
+By restructuring business code, application behavior can be tested more efficiently with more unit and less integration tests. Trailblazer engineers enjoy the simplicity of testing and the speedup of the test suites.
 ~~~4
 <h4>
   <i class="fa fa-ship"></i>
@@ -178,106 +178,70 @@ Our patterns have evolved over a decade of engineering, our gems are mature and 
   {% endcols %}
 </section>
 
-<div id="code-slider" class="carousel">
-<div class="section-separator">
+
+
+<section>
   <div class="row">
-    <div class="columns">
-      <h2>Controller</h2>
+    <div class="medium-9 medium-centered text-center">
+      <h2>Want some code?</h2>
+
+      <!-- Trailblazer helps improving your software in all kinds of systems and applications. -->
     </div>
   </div>
+</section>
 
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class CommentsController < ApplicationController
-    def new
-      form Comment::Update
-    end
-
-    def create
-      run Comment::Update do |op|
-        return redirect_to comments_path(op.model)
+{% cols %}
+~~~1
+&nbsp;
+~~~5
+    class SongsController < ApplicationController
+      def create
+        run Comment::Update do |result|
+          redirect_to songs_path(result["model"])
+        end
       end
-
-      render :new
     end
-      </code></pre>
-    </div>
-     <div class="columns medium-6">
-      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
+~~~5
+**CONTROLLER** They end up as lean HTTP endpoints. No business logic is to be found in the controller, they instantly delegate to their respective operation.
 
-      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
+Oh, and did we say there won't be controller tests anymore? That's right. Only unit and integration tests.
+~~~1
+{% endcols %}
 
-      <p>More <a id="trb-more">about Trailblazer →</a></p>
+{% cols %}
+~~~1
+&nbsp;
+~~~4
+**MODEL** Models contain associations, scopes and finders. Only persistence logic, no callbacks, no validations, no business logic here.
 
-      <script type="text/javascript">
-        $("#trb-more").click( function(e) { e.preventDefault(); $("button.slick-next").click() } );
-      </script>
-    </div>
-  </div>
-</div>
-
-
-<!-- Model -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>Model</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment < ActiveRecord::Base
-    has_many   :users
-    belongs_to :thing
-
-    scope :recent, -> { limit(10) }
-  end
-      </code></pre>
-
-    </div>
-    <div class="columns medium-6">
-      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
-      <p>That's right: No callbacks, no validations, no business logic in models. </p>
-    </div>
-  </div>
-</div>
-
-<!-- Operation -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2>Operation</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Create < Trailblazer::Operation
-    contract do
-      property :body
-      validates :body, length: {maximum: 160}
+    class Song < ActiveRecord::Base
+      has_many   :albums
+      belongs_to :composer
     end
 
-    def process(params)
-      if validate(params[:comment])
-        # ..
+~~~6
+The **OPERATION** is the heart of the Trailblazer architecture. It orchestrates validations, policies, models, callback and business logic by leveraging a functional pipeline.
+
+    class Song::Create < Trailblazer::Operation
+      step Model( Song, :new )
+      step Policy::Pundit( Application::Policy, :create? )
+      step Contract::Build( constant: Song::Contract::Create )
+      step Contract::Validate()
+      step Contract::Persist()
+      fail Notifier::DBError
+      step :update_song_count!
+
+      def update_song_count!(options, current_user:, **)
+        current_user.increment_song_counter
+      end
     end
-  end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Per public action, there's one operation orchestrating the business logic.</p>
-      <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
-      <p>Operations are the only place to write to persistence via models.</p>
-      <a class="button radius" href="/gems/operation">Learn more</a>
-    </div>
-  </div>
-</div>
+
+Designed to be a stateless object, the operation passes around one mutable options hash and makes heavy use of Ruby keyword arguments - if you want it.
+~~~1
+{% endcols %}
+
+
+
 
 <!-- Form -->
 
