@@ -94,7 +94,7 @@ Our high-level architecture and enterprise-ready™ gems will prevent you from r
     <div class="end medium-4 columns">
       <div class="mascot">
         <img src="/images/sticker/consulting.jpg">
-        <h3>We love your legacy apps.</h3>
+        <h3>We love legacy apps.</h3>
       </div>
 
     {% md %}
@@ -219,8 +219,18 @@ Oh, and did we say there won't be controller tests anymore? That's right. Only u
       belongs_to :composer
     end
 
+Any number of **POLICY**s can be used in an operation to grant or deny access to functionality.
+
+    class Application::Policy < Pundit::Policy
+      def create?
+        user.can_create?(model)
+      end
+    end
+
+Also, use your choice of authorization framework.
+
 ~~~6
-The **OPERATION** is the heart of the Trailblazer architecture. It orchestrates validations, policies, models, callback and business logic by leveraging a functional pipeline.
+The **OPERATION** is the heart of the Trailblazer architecture. It orchestrates validations, policies, models, callback and business logic by leveraging a functional pipeline with built-in error handling.
 
     class Song::Create < Trailblazer::Operation
       step Model( Song, :new )
@@ -240,294 +250,23 @@ Designed to be a stateless object, the operation passes around one mutable optio
 ~~~1
 {% endcols %}
 
+{% cols %}
+~~~1
+&nbsp;
+~~~5
+    class Song::Contract::Create < Reform::Form
+      property :title
+      property :length
 
-
-
-<!-- Form -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>Form</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  contract do
-    property :body
-    validates :body, length: {maximum: 160}
-
-    property :author do
-      property :email
-      validates :email, email: true
+      validates :title, presence: true
     end
-  end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Every operation contains a form object. </p>
-        <p>This is the place for validations.</p>
-      <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
-      <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
-    </div>
-  </div>
-</div>
+~~~5
+Validations are implemented with **CONTRACT**.
 
-<!-- Callback -->
+Trailblazer supports Reform and `Dry::Schema` validations in any number.
+~~~1
+{% endcols %}
 
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2>Callback</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
-      <p>They can be configured in a separate Callback class.</p>
-      <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
-    </div>
-    <div class="columns medium-6">
-     <pre><code class="ruby">
-  callback do
-    on_create :notify_owner!
-
-    property :author do
-      on_add :reset_authorship!
-    end
-  end
-      </code></pre>
-    </div>
-  </div>
-</div>
-
-<!-- Policy -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>Policy</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-    policy do
-      user.admin? or not post.published?
-    end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Policies allow authorization on a global or fine-granular level.</p>
-      <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- View Model -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2>View Model</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Cell::Show < Trailblazer::Cell
-    property :author
-
-  private
-    def author_link
-      link_to "#{author.email}", author
-    end
-  end
-      </code></pre>
-  </div>
-  <div class="columns medium-6">
-      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
-      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
-      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
-    </div>
-</div>
-</div>
-
-<!-- Representer -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2>Representer</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
-      <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
-      <p>You can use media formats, hypermedia and all other Roar features.</p>
-    </div>
-    <div class="columns medium-6">
-    <pre><code class="ruby">
-  representer do
-    include Roar::JSON::HAL
-
-    property :body
-    property :user, embedded: true
-
-    link(:self) { comment_path(model) }
-  end
-    </code></pre>
-
-    </div>
-  </div>
-</div>
-
-<!-- Inheritance -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>Inheritance</h2>
-    </div>
-  </div>
-
-
-  <div class="row">
-    <div class="columns medium-6">
-    <pre><code class="ruby">
-  class Comment::Update < Create
-    policy do
-      is_owner?(model)
-    end
-  end
-    </code></pre>
-
-    </div>
-    <div class="columns medium-6">
-      <p>Trailblazer reintroduces object-orientation.</p>
-      <p>For each public action, there's one operation class.</p>
-      <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
-    </div>
-  </div>
-</div>
-
-<!-- Polymorphism -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2>Polymorphism</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
-      <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
-    </div>
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Create < Trailblazer::Operation
-    build do |params|
-      Admin if params[:current_user].admin?
-    end
-
-    class Admin < Create
-      contract do
-        remove_validations! :body
-      end
-    end
-      </code></pre>
-
-    </div>
-  </div>
-</div>
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2>File Layout</h2>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code>
-    app
-    ├── concepts
-    │   ├── comment
-    │   │   ├── cell
-    │   │   │   └── show.rb
-    │   │   ├── operation
-    │   │   │   ├── create.rb
-    │   │   │   └── update.rb
-    │   │   ├── view
-    │   │   │   ├── show.haml
-    │   │   │   └── list.haml
-        </code>
-
-      </pre>
-    </div>
-    <div class="columns medium-6">
-      <p>
-        In Trailblazer, files are no longer organized by technology. Classes, views, assets, policies, and more, are all grouped by <em>concept</em> and sit in one directory.
-      </p>
-      <p>
-        A concept may embrace a simple CRUD concern, or an invoice PDF generator, and can be virtually anything.
-      </p>
-      <p>
-        Concepts in turn can be nested again, and provide you a  more intuitive and easier to navigate file structure.
-      </p>
-    </div>
-
-  </div>
-</div>
-</div>
-
-</section>
-
-
-
-
-
-
-
-<!-- Book -->
-<section class="sub-section book">
-  <div class="row">
-    <div class="columns">
-      <a name="book" />
-      <h2>The Book</h2>
-      <div class="row the-book">
-        <div class="columns medium-3">
-          <a href="https://leanpub.com/trailblazer">
-          <img src="/images/3dbuch-freigestellt.png" />
-          </a>
-        </div>
-
-        <div class="columns medium-9">
-        <h3>Yes, there's a book!</h3>
-          <p>Written by the creator of Trailblazer, this book gives you <b>300 pages full of wisdom about Trailblazer</b> and its gems, such as Reform, Cells and Roar.</p>
-
-          <p>The book comes with a <a href="https://github.com/apotonick/gemgem-trbrb">sample app repository</a> to conveniently browse through changes per chapter.</p>
-
-          <p>In the book, <b>we build a realistic Rails application with Trailblazer</b> that discusses convoluted requirements such as dynamic forms, polymorphic rendering and processing for signed-in users, file uploads, pagination, a JSON document API sitting on top of that, and many more problems you run into when building web applications.</p>
-
-          <p>Check out the <a href="https://leanpub.com/trailblazer">full book description</a> for a few more details about the content.</p>
-
-          <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
-          <a href="https://leanpub.com/trailblazer" class="button radius">Buy Book</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- Testimonials -->
 <section class="sub-section testimonials">
