@@ -108,429 +108,413 @@
   </div>
 </div>
 
-<!-- About -->
-<section class="about">
+<section>
   <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">About Trailblazer</h2>
+    <div class="medium-9 medium-centered">
+      
+<h2 class="text-center" data-magellan-target="">Finally know where to put your code!</h2>
 
-      <div class="row">
-        <div class="columns medium-6">
-          <p>Trailblazer gives you a high-level architecture for web applications.</p>
-          <p>
-            Logic that used to get violently pressed into MVC is restructured and decoupled from the Rails framework. New abstraction layers like operations, form objects, authorization policies, data twins and view models guide you towards a better architecture.
-          </p>
-          <p>
-            By applying encapsulation and good OOP, Trailblazer maximizes reusability of components, gives you a more intuitive structure for growing applications and adds conventions and best practices on top of Rails' primitive MVC stack.
-          </p>
-          <p>
-            A polymorphic architecture sitting between controller and persistence is designed to handle many different contexts and helps to minimize code to handle various user roles and edge cases.
-          </p>
+<p>Trailblazer gives you a high-level architecture for web applications. It extends the basic MVC pattern with new abstractions. Rock-solid conventions that go far beyond table naming or route names let you focus on your application code, minimize bugs and improve the maintainability.</p>
 
-          <p>Check out who's using <a href="#users">Trailblazer in production →</a></p>
-
-           <a href="/guides/trailblazer-in-20-minutes.html" class="button radius">Get Started:<br>
-            Trailblazer in 12 Minutes</a>
-        </div>
-        <div class="columns medium-6">
-          <img src="images/Trb-Stack.png">
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-<!--
-<div class="row">
-  <div class="columns">
-    <p class="text-center">
-      Check out who's using <a href="/users.html">Trailblazer in production →</a>
-    </p>
-  </div>
-</div>
--->
-
-<div id="code-slider" class="carousel">
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Controller</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class CommentsController &lt; ApplicationController
-    def new
-      form Comment::Update
-    end
-
-    def create
-      run Comment::Update do |op|
-        return redirect_to comments_path(op.model)
-      end
-
-      render :new
-    end
-      </code></pre>
-    </div>
-     <div class="columns medium-6">
-      <p>Controllers in Trailblazer end up as lean HTTP endpoints: they instantly dispatch to an operation.</p>
-
-      <p>No business logic is allowed in controllers, only HTTP-related tasks like redirects.</p>
-
-      <p>More <a id="trb-more">about Trailblazer →</a></p>
-
-      <script type="text/javascript">
-        $("#trb-more").click( function(e) { e.preventDefault(); $("button.slick-next").click() } );
-      </script>
-    </div>
-  </div>
-</div>
-
-
-<!-- Model -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Model</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment &lt; ActiveRecord::Base
-    has_many   :users
-    belongs_to :thing
-
-    scope :recent, -&gt; { limit(10) }
-  end
-      </code></pre>
-
-    </div>
-    <div class="columns medium-6">
-      <p>Models only contain associations, scopes and finders. Solely persistence logic is allowed.</p>
-      <p>That's right: No callbacks, no validations, no business logic in models. </p>
-    </div>
-  </div>
-</div>
-
-<!-- Operation -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Operation</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Create &lt; Trailblazer::Operation
-    contract do
-      property :body
-      validates :body, length: {maximum: 160}
-    end
-
-    def process(params)
-      if validate(params[:comment])
-        # ..
-    end
-  end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Per public action, there's one operation orchestrating the business logic.</p>
-      <p>This is where your domain code sits: Validation, callbacks, authorization and application code go here.</p>
-      <p>Operations are the only place to write to persistence via models.</p>
-      <a class="button radius" href="/gems/operation">Learn more</a>
-    </div>
-  </div>
-</div>
-
-<!-- Form -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Form</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  contract do
-    property :body
-    validates :body, length: {maximum: 160}
-
-    property :author do
-      property :email
-      validates :email, email: true
-    end
-  end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Every operation contains a form object. </p>
-        <p>This is the place for validations.</p>
-      <p>Forms are plain Reform classes and allow all features you know from the popular form gem.</p>
-      <p>Forms can also be rendered using form builders like Formtastic or Simpleform.</p>
-    </div>
-  </div>
-</div>
-
-<!-- Callback -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Callback</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Callbacks are invoked from the operation, where you want them to be triggered.</p>
-      <p>They can be configured in a separate Callback class.</p>
-      <p>Callbacks are completely decoupled and have to be invoked manually, they won't run magically.</p>
-    </div>
-    <div class="columns medium-6">
-     <pre><code class="ruby">
-  callback do
-    on_create :notify_owner!
-
-    property :author do
-      on_add :reset_authorship!
-    end
-  end
-      </code></pre>
-    </div>
-  </div>
-</div>
-
-<!-- Policy -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Policy</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-    policy do
-      user.admin? or not post.published?
-    end
-      </code></pre>
-    </div>
-    <div class="columns medium-6">
-      <p>Policies allow authorization on a global or fine-granular level.</p>
-      <p>Again, this is a completely self-contained class without any coupling to the remaining tiers.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- View Model -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">View Model</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Cell::Show &lt; Trailblazer::Cell
-    property :author
-
-  private
-    def author_link
-      link_to "#{author.email}", author
-    end
-  end
-      </code></pre>
-  </div>
-  <div class="columns medium-6">
-      <p>Cells encapsulate parts of your UI in separate view model classes and introduce a widget architecture.</p>
-      <p>Views are logic-less. There can be deciders and loops. Any method called in the view is directly called on the cell instance.</p>
-      <p>Rails helpers can still be used but are limited to the cell's scope.</p>
-    </div>
-</div>
-</div>
-
-<!-- Representer -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Representer</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Document APIs like JSON or XML are implemented with Representers which parse and render documents.</p>
-      <p>Representers are plain Roar classes. They can be automatically infered from the contract schema.</p>
-      <p>You can use media formats, hypermedia and all other Roar features.</p>
-    </div>
-    <div class="columns medium-6">
-    <pre><code class="ruby">
-  representer do
-    include Roar::JSON::HAL
-
-    property :body
-    property :user, embedded: true
-
-    link(:self) { comment_path(model) }
-  end
-    </code></pre>
 
     </div>
   </div>
-</div>
-
-<!-- Inheritance -->
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Inheritance</h2>
-    </div>
-  </div>
-
-
-  <div class="row">
-    <div class="columns medium-6">
-    <pre><code class="ruby">
-  class Comment::Update &lt; Create
-    policy do
-      is_owner?(model)
-    end
-  end
-    </code></pre>
-
-    </div>
-    <div class="columns medium-6">
-      <p>Trailblazer reintroduces object-orientation.</p>
-      <p>For each public action, there's one operation class.</p>
-      <p>Operations inherit contract, policies, representers, etc. and can be fine-tuned for their use case.</p>
-    </div>
-  </div>
-</div>
-
-<!-- Polymorphism -->
-
-<div class="section-separator">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">Polymorphism</h2>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <p>Operations, forms, policies, callbacks are all designed for a polymorphic environment.</p>
-      <p>Different roles, contexts or rules are handled with subclasses instead of messy <code>if</code>s.</p>
-    </div>
-    <div class="columns medium-6">
-      <pre><code class="ruby">
-  class Comment::Create &lt; Trailblazer::Operation
-    build do |params|
-      Admin if params[:current_user].admin?
-    end
-
-    class Admin &lt; Create
-      contract do
-        remove_validations! :body
-      end
-    end
-      </code></pre>
-
-    </div>
-  </div>
-</div>
-
-<div class="sub-section">
-  <div class="row">
-    <div class="columns">
-      <h2 data-magellan-target="">File Layout</h2>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="columns medium-6">
-      <pre><code>
-    app
-    ├── concepts
-    │   ├── comment
-    │   │   ├── cell
-    │   │   │   └── show.rb
-    │   │   ├── operation
-    │   │   │   ├── create.rb
-    │   │   │   └── update.rb
-    │   │   ├── view
-    │   │   │   ├── show.haml
-    │   │   │   └── list.haml
-        </code>
-
-      </pre>
-    </div>
-    <div class="columns medium-6">
-      <p>
-        In Trailblazer, files are no longer organized by technology. Classes, views, assets, policies, and more, are all grouped by <em>concept</em> and sit in one directory.
-      </p>
-      <p>
-        A concept may embrace a simple CRUD concern, or an invoice PDF generator, and can be virtually anything.
-      </p>
-      <p>
-        Concepts in turn can be nested again, and provide you a  more intuitive and easier to navigate file structure.
-      </p>
-    </div>
-
-  </div>
-</div>
-</div>
 
 </section>
 
-<!-- Book -->
-<section class="sub-section book">
+<section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p> </p>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p>The new abstractions in Trailblazer are optional. Only use what you need.</p>
+
+<ul>
+  <li>
+<strong>CONTRACT</strong> Form objects to validate incoming data.</li>
+  <li>
+<strong>POLICY</strong> to authorize code execution per user.</li>
+  <li>
+<strong>OPERATION</strong> A service object implementation with functional flow control.</li>
+  <li>
+<strong>VIEW MODEL</strong> Components for your view code.</li>
+  <li>
+<strong>REPRESENTER</strong> for serializing and parsing API documents.</li>
+  <li>
+<strong>DESERIALIZER</strong> Transformers to parse incoming data into structures you can work with.</li>
+</ul>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p><img src="/images/diagrams/operation-2017-grey.png"></p>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+
+    </div>
+</div></section>
+
+<section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p> </p>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p><img src="/images/diagrams/files-2017.png"></p>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+<p>Trailblazer’s file structure organizes by <strong>CONCEPT</strong>, and then by technology.</p>
+
+<ul>
+  <li>
+<strong>THOUSANDS</strong> of users find this more intuitive and easier to navigate.</li>
+  <li>It embraces the <strong>COMPONENT STRUCTURE</strong> of your code.</li>
+  <li>Huge teams working on complex projects have it easier not to get into each others way.</li>
+  <li>Once a concept’s <strong>CODE IS TESTED</strong> it won’t break anywhere else.</li>
+  <li>The modular structure <strong>SIMPLIFIES REFACTORING</strong> in hundreds of legacy production apps.</li>
+</ul>
+
+
+    </div>
+
+    <div class="column medium-3">
+    
+
+    </div>
+</div></section>
+
+<section class="four">
   <div class="row">
-    <div class="columns">
-      <a name="book"></a>
-      <h2 data-magellan-target="">The Book</h2>
-      <div class="row the-book">
-        <div class="columns medium-3">
-          <a href="https://leanpub.com/trailblazer">
-          <img src="/images/3dbuch-freigestellt.png">
-          </a>
-        </div>
+    <div class="medium-offset-2 medium-4 columns">
 
-        <div class="columns medium-9">
-        <h3>Yes, there's a book!</h3>
-          <p>Written by the creator of Trailblazer, this book gives you <b>300 pages full of wisdom about Trailblazer</b> and its gems, such as Reform, Cells and Roar.</p>
+    <div class="mascot">
+      <img src="/images/sticker/sticker2017.png">
+      <h3>We walk the walk.</h3>
+    </div>
 
-          <p>The book comes with a <a href="https://github.com/apotonick/gemgem-trbrb">sample app repository</a> to conveniently browse through changes per chapter.</p>
 
-          <p>In the book, <b>we build a realistic Rails application with Trailblazer</b> that discusses convoluted requirements such as dynamic forms, polymorphic rendering and processing for signed-in users, file uploads, pagination, a JSON document API sitting on top of that, and many more problems you run into when building web applications.</p>
+    
+<p>Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.</p>
 
-          <p>Check out the <a href="https://leanpub.com/trailblazer">full book description</a> for a few more details about the content.</p>
+<p>Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.</p>
 
-          <p>If you want to learn about this project and if you feel like supporting Open-Source, please <a href="https://leanpub.com/trailblazer">buy and read it</a> and let us know what you think.</p>
-          <a href="https://leanpub.com/trailblazer" class="button radius">Buy Book</a>
-        </div>
+
+
+    </div>
+
+    <div class="end medium-4 columns">
+      <div class="mascot">
+        <img src="/images/sticker/consulting.jpg">
+        <h3>We love legacy apps.</h3>
       </div>
+
+    
+<p>By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer’s patterns cover 75% of daily business code’s structure - you will feel the power of strong conventions within the first hours.</p>
+
+<p>If that’s not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.</p>
+
+
+
     </div>
   </div>
 </section>
+
+<!-- We support Reform and DRY-Validation. -->
+
+<section>
+  <div class="row">
+    <div class="medium-9 medium-centered text-center">
+      <h2 data-magellan-target="">Legacy app, refactoring or green-field?</h2>
+
+      Trailblazer helps improving your software in all kinds of systems and applications.
+    </div>
+  </div>
+</section>
+
+<section class="four">
+  <section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-gamepad"></i>
+  Framework-agnostic
+</h4>
+
+<p>The Trailblazer gems work with any Ruby framework. We provide glue code for Rails and Hanami, but there are TRB-powered apps in Roda, Grape, Sinatra and many more out there.</p>
+
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-university"></i>
+  Legacy-ready
+</h4>
+
+<p>You can start using Trailblazer in existing, massive applications today. Refactorings can be applied step-wise, legacy code can be minimized as you go. Remember: Rome wasn’t build in one day, either.</p>
+
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-leaf"></i>
+  Future-compatible
+</h4>
+
+<p>Our promise to the community: Trailblazer 2 will be supported until end of 2020 or longer. Our object design makes it easy to provide automatic upgrading and backward-compatibility so you won’t have to change code when we ship updates.</p>
+
+
+    </div>
+</div></section>
+</section>
+
+<section class="four">
+  <section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-recycle"></i>
+  Build to Refactor
+</h4>
+
+<p>Our patterns are designed to be used in highly complex, existing, messy legacy applications. Trailblazer is made to refactor old code - you do not have to rewrite the entire system to get a better architecture.</p>
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-dashboard"></i>
+  Test first
+</h4>
+
+<p>By restructuring business code, application behavior can be tested more efficiently with more unit and less integration tests. Trailblazer engineers enjoy the simplicity of testing and the speedup of the test suites.</p>
+
+    </div>
+
+    <div class="column medium-4">
+    
+<h4>
+  <i class="fa fa-ship"></i>
+  It's real!
+</h4>
+
+<p>Trailblazer is in use in thousands of production applications.</p>
+
+<p>Our patterns have evolved over a decade of engineering, our gems are mature and battle-tested. And: we will never stop innovating.</p>
+
+
+    </div>
+</div></section>
+</section>
+
+<section>
+  <div class="row">
+    <div class="medium-9 medium-centered text-center">
+      <h2 data-magellan-target="">Want some code?</h2>
+
+      <!-- Trailblazer helps improving your software in all kinds of systems and applications. -->
+    </div>
+  </div>
+</section>
+
+<section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-1">
+    
+<p> </p>
+
+    </div>
+
+    <div class="column medium-5">
+    
+<pre><code>class SongsController &lt; ApplicationController
+  def create
+    run Comment::Update do |result|
+      redirect_to songs_path(result["model"])
+    end
+  end
+end
+</code></pre>
+
+    </div>
+
+    <div class="column medium-5">
+    
+<p><strong>CONTROLLER</strong> They end up as lean HTTP endpoints. No business logic is to be found in the controller, they instantly delegate to their respective operation.</p>
+
+<p>Oh, and did we say there won’t be controller tests anymore? That’s right. Only unit and integration tests.</p>
+
+    </div>
+
+    <div class="column medium-1">
+    
+
+    </div>
+</div></section>
+
+<section class=" grey "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-1">
+    
+<p> </p>
+
+    </div>
+
+    <div class="column medium-4">
+    
+<p><strong>MODEL</strong> Models contain associations, scopes and finders. Only persistence logic, no callbacks, no validations, no business logic here.</p>
+
+<pre><code>class Song &lt; ActiveRecord::Base
+  has_many   :albums
+  belongs_to :composer
+end
+</code></pre>
+
+<p>Any number of <strong>POLICY</strong>s can be used in an operation to grant or deny access to functionality.</p>
+
+<pre><code>class Application::Policy &lt; Pundit::Policy
+  def create?
+    user.can_create?(model)
+  end
+end
+</code></pre>
+
+<p>Also, use your choice of authorization framework.</p>
+
+
+    </div>
+
+    <div class="column medium-6">
+    
+<p>The <strong>OPERATION</strong> is the heart of the Trailblazer architecture. It orchestrates validations, policies, models, callback and business logic by leveraging a functional pipeline with built-in error handling.</p>
+
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Policy::Pundit( Application::Policy, :create? )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate()
+  step Contract::Persist()
+  fail Notifier::DBError
+  step :update_song_count!
+
+  def update_song_count!(options, current_user:, **)
+    current_user.increment_song_counter
+  end
+end
+</code></pre>
+
+<p>Designed to be a stateless object, the operation passes around one mutable options hash and makes heavy use of Ruby keyword arguments - if you want it.</p>
+
+    </div>
+
+    <div class="column medium-1">
+    
+
+    </div>
+</div></section>
+
+<section class=" "><div class="row">
+
+    <div class="column medium-
+">
+    
+
+    </div>
+
+    <div class="column medium-1">
+    
+<p> </p>
+
+    </div>
+
+    <div class="column medium-5">
+    
+<pre><code>class Song::Contract::Create &lt; Reform::Form
+  property :title
+  property :length
+
+  validates :title, presence: true
+end
+</code></pre>
+
+    </div>
+
+    <div class="column medium-5">
+    
+<p>Validations are implemented with <strong>CONTRACT</strong>.</p>
+
+<p>Trailblazer supports Reform and <code>Dry::Schema</code> validations in any number.</p>
+
+    </div>
+
+    <div class="column medium-1">
+    
+
+    </div>
+</div></section>
 
 <!-- Testimonials -->
 <section class="sub-section testimonials">
