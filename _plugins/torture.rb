@@ -87,3 +87,18 @@ module Torture
 end
 
 Liquid::Template.register_tag('cols', Torture::ColumnsTag)
+
+
+module Torture
+  class KramdownTag < Liquid::Block
+    include Liquid::StandardFilters
+
+    def render(context)
+      markup = super
+
+      Kramdown::Document.new(markup).to_html
+    end
+  end
+end
+
+Liquid::Template.register_tag('md', Torture::KramdownTag)

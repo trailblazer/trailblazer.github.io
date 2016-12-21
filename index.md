@@ -19,7 +19,65 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   </div>
 </div>
 
+<section>
+  <div class="row">
+    <div class="medium-9 medium-centered">
+      {% md %}
+  <h2 class="text-center">Finally know where to put your code!</h2>
 
+  Trailblazer gives you a high-level architecture for web applications. It extends the basic MVC pattern with new abstractions. Rock-solid conventions that go far beyond table naming or route names let you focus on your application code, minimize bugs and improve the maintainability.
+      {% endmd %}
+    </div>
+  </div>
+
+</section>
+
+<section class="four">
+  <div class="row">
+    <div class="medium-3 columns">
+    {% md %}
+
+The new abstractions in Trailblazer are optional. Only use what you need.
+
+  * **CONTRACT** Form objects to validate incoming data.
+  * **POLICY** to authorize code execution per user.
+  * **OPERATION** A service object implementation with functional flow control.
+  * **VIEW MODEL** Components for your view code.
+  * **REPRESENTER** for serializing and parsing API documents.
+  * **DESERIALIZER** Transformers to parse incoming data into structures you can work with.
+
+
+    {% endmd %}
+
+
+    </div>
+
+    <div class="medium-3 columns">
+      <img src="/images/diagrams/operation-2017-grey.png" widsdth="200">
+    </div>
+
+    <div class="medium-3 columns end">
+      snippet
+    </div>
+  </div>
+
+</section>
+
+<!-- We support Reform and DRY-Validation. -->
+
+<!-- <section>
+  <div class="row">
+    <div class="medium-offset-2 medium-4 columns">
+      snippet
+    </div>
+
+    <div class="end medium-4 columns">
+      <img src="/images/diagrams/operation-2017-grey.png" widsdth="200">
+    </div>
+  </div>
+
+</section>
+ -->
 <!-- About -->
 <section class="about">
   <div class="row">
@@ -45,7 +103,8 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
             Trailblazer in 12 Minutes</a>
         </div>
         <div class="columns medium-6">
-          <img src="images/Trb-Stack.png">
+          <!-- <img src="images/Trb-Stack.png"> -->
+          <img src="/images/diagrams/operation-2017-grey.png">
         </div>
       </div>
     </div>
