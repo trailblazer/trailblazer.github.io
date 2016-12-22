@@ -57,8 +57,9 @@ end
 Liquid::Template.register_tag('callout', Torture::CalloutTag)
 
 
+require "torture/foundation6"
 module Torture
-  class ColumnsTag < Liquid::Block
+  class RowTag < Liquid::Block
     include Liquid::StandardFilters
 
     def initialize(tag, klass=nil, *)
@@ -66,32 +67,13 @@ module Torture
       @class = klass || "macro"
     end
 
-    def render(context, options={}, *args)
-      html = %{<section class=" #{@class}"><div class="row">}
-
-      markup = super(context)
-
-      cols = markup.split("~~~")
-
-      cols.each do |col|
-        width   = col[0]
-        content = col[1..-1]
-
-        html << %{
-
-    <div class="column medium-#{width}">
-    #{Kramdown::Document.new(content).to_html}
-    </div>}
-      end
-
-# raise cols.inspect
-      html << %{</div></section>}
-      html
+    def render(*)
+      Foundation6::Row.new.(super, section_class: @class)
     end
   end
 end
 
-Liquid::Template.register_tag('cols', Torture::ColumnsTag)
+Liquid::Template.register_tag('row', Torture::RowTag)
 
 
 module Torture

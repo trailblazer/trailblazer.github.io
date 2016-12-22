@@ -1,3 +1,9 @@
+PATH
+  remote: ../torture
+  specs:
+    torture (0.1.0)
+      kramdown
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -132,6 +138,7 @@ DEPENDENCIES
   github-pages
   jekyll-last-modified-at
   therubyracer
+  torture!
 
 BUNDLED WITH
    1.12.5

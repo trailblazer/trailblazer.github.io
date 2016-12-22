@@ -19,24 +19,31 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   </div>
 </div>
 
-<section>
-  <div class="row">
-    <div class="medium-9 medium-centered">
-      {% md %}
+{% row %}
+  ~~~9,medium-centered
   <h2 class="text-center">Finally know where to put your code!</h2>
 
-  Trailblazer gives you a high-level architecture for web applications. It extends the basic MVC pattern with new abstractions. Rock-solid conventions that go far beyond table naming or route names let you focus on your application code, minimize bugs and improve the maintainability.
-      {% endmd %}
-    </div>
-  </div>
+  Trailblazer gives you a high-level architecture for web applications. It extends the basic MVC pattern with new abstractions. Rock-solid conventions that go far beyond database table naming or route paths let you focus on your application code, minimize bugs and improve the maintainability.
+{% endrow %}
 
-</section>
+{% row %}
+   ~~~3,medium-offset-3
+  <img src="/images/diagrams/files-2017.png">
+  ~~~3,end
+  <img src="/images/diagrams/operation-2017-grey.png">
+{% endrow %}
 
 
-{% cols %}
-  ~~~3
-  &nbsp;
-  ~~~3
+{% row %}
+  ~~~3,medium-offset-3
+  Trailblazer's file structure organizes by **CONCEPT**, and then by technology.
+
+  * **THOUSANDS** of users find this more intuitive and easier to navigate.
+  * It embraces the **COMPONENT STRUCTURE** of your code.
+  * Huge teams working on complex projects have it easier not to get into each others way.
+  * Once a concept's **CODE IS TESTED** it won't break anywhere else.
+  * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
+  ~~~3,end
   The new abstractions in Trailblazer are optional. Only use what you need.
 
   * **CONTRACT** Form objects to validate incoming data.
@@ -45,77 +52,44 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   * **VIEW MODEL** Components for your view code.
   * **REPRESENTER** for serializing and parsing API documents.
   * **DESERIALIZER** Transformers to parse incoming data into structures you can work with.
-  ~~~3
-  <img src="/images/diagrams/operation-2017-grey.png">
-  ~~~3
-{% endcols %}
+{% endrow %}
 
 
-{% cols %}
-  ~~~3
-  &nbsp;
-  ~~~3
-  <img src="/images/diagrams/files-2017.png">
-  ~~~3
-  Trailblazer's file structure organizes by **CONCEPT**, and then by technology.
-
-  * **THOUSANDS** of users find this more intuitive and easier to navigate.
-  * It embraces the **COMPONENT STRUCTURE** of your code.
-  * Huge teams working on complex projects have it easier not to get into each others way.
-  * Once a concept's **CODE IS TESTED** it won't break anywhere else.
-  * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
-  ~~~3
-{% endcols %}
-
-<section class="four">
-  <div class="row">
-    <div class="medium-offset-2 medium-4 columns">
-
-    <div class="mascot">
-      <img src="/images/sticker/sticker2017.png">
-      <h3>We walk the walk.</h3>
-    </div>
-
-
-    {% md %}
-Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.
-
-Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.
-
-    {% endmd %}
-
-    </div>
-
-    <div class="end medium-4 columns">
-      <div class="mascot">
-        <img src="/images/sticker/consulting.jpg">
-        <h3>We love legacy apps.</h3>
-      </div>
-
-    {% md %}
-By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer's patterns cover 75% of daily business code's structure - you will feel the power of strong conventions within the first hours.
-
-If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
-    {% endmd %}
-
-    </div>
+{% row mascots %}
+  ~~~4,medium-offset-2
+  <div class="mascot">
+    <img src="/images/sticker/sticker2017.png">
+    <h3>We walk the walk.</h3>
   </div>
-</section>
 
-<!-- We support Reform and DRY-Validation. -->
 
-<section>
-  <div class="row">
-    <div class="medium-9 medium-centered text-center">
-      <h2>Legacy app, refactoring or green-field?</h2>
+  Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.
 
-      Trailblazer helps improving your software in all kinds of systems and applications.
-    </div>
+  Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.
+
+  ~~~4,end
+  <div class="mascot">
+    <img src="/images/sticker/consulting.jpg">
+    <h3>We love legacy apps.</h3>
   </div>
-</section>
 
-<section class="four">
-  {% cols %}
+  By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer's patterns cover 75% of daily business code's structure - you will feel the power of strong conventions within the first hours.
+
+  If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
+{% endrow %}
+
+
+
+{% row %}
+  ~~~9,medium-centered text-center
+  <h2>Legacy app, refactoring or green-field?</h2>
+
+  Trailblazer helps improving your software in all kinds of systems and applications.
+{% endrow %}
+
+
+
+{% row quarters %}
 ~~~4
 <h4>
   <i class="fa fa-gamepad"></i>
@@ -138,21 +112,19 @@ You can start using Trailblazer in existing, massive applications today. Refacto
   Future-compatible
 </h4>
 
-Our promise to the community: Trailblazer 2 will be supported until end of 2020 or longer. Our object design makes it easy to provide automatic upgrading and backward-compatibility so you won't have to change code when we ship updates.
+Our promise to the community: Trailblazer 2 will be supported until end of 2020 or longer. Our API design makes it easy to provide automatic upgrading and backward-compatibility so you won't have to change code when we ship updates.
 
-  {% endcols %}
-</section>
+{% endrow %}
 
 
-<section class="four">
-  {% cols %}
+  {% row quarters %}
 ~~~4
 <h4>
   <i class="fa fa-recycle"></i>
   Build to Refactor
 </h4>
 
-Our patterns are designed to be used in highly complex, existing, messy legacy applications. Trailblazer is made to refactor old code - you do not have to rewrite the entire system to get a better architecture.
+Our patterns are developed to be used in highly complex, existing, messy legacy applications. Trailblazer is designed to refactor old code - you do not have to rewrite the entire system to get a better architecture.
 ~~~4
 <h4>
   <i class="fa fa-dashboard"></i>
@@ -170,22 +142,15 @@ Trailblazer is in use in thousands of production applications.
 
 Our patterns have evolved over a decade of engineering, our gems are mature and battle-tested. And: we will never stop innovating.
 
-  {% endcols %}
-</section>
+  {% endrow %}
 
 
+{% row %}
+  ~~~9,medium-centered text-center
+  <h2>Want some code?</h2>
+{% endrow %}
 
-<section>
-  <div class="row">
-    <div class="medium-9 medium-centered text-center">
-      <h2>Want some code?</h2>
-
-      <!-- Trailblazer helps improving your software in all kinds of systems and applications. -->
-    </div>
-  </div>
-</section>
-
-{% cols %}
+{% row %}
 ~~~1
 &nbsp;
 ~~~5
@@ -201,12 +166,10 @@ Our patterns have evolved over a decade of engineering, our gems are mature and 
 
 Oh, and did we say there won't be controller tests anymore? That's right. Only unit and integration tests.
 ~~~1
-{% endcols %}
+{% endrow %}
 
-{% cols grey %}
-~~~1
-&nbsp;
-~~~4
+{% row grey %}
+~~~4,medium-offset-1
 **MODEL** Models contain associations, scopes and finders. Only persistence logic, no callbacks, no validations, no business logic here.
 
     class Song < ActiveRecord::Base
@@ -224,7 +187,7 @@ Any number of **POLICY**s can be used in an operation to grant or deny access to
 
 Also, use your choice of authorization framework.
 
-~~~6
+~~~6,end
 The **OPERATION** is the heart of the Trailblazer architecture. It orchestrates validations, policies, models, callback and business logic by leveraging a functional pipeline with built-in error handling.
 
     class Song::Create < Trailblazer::Operation
@@ -242,37 +205,33 @@ The **OPERATION** is the heart of the Trailblazer architecture. It orchestrates 
     end
 
 Designed to be a stateless object, the operation passes around one mutable options hash and makes heavy use of Ruby keyword arguments - if you want it.
-~~~1
-{% endcols %}
+{% endrow %}
 
-{% cols %}
-~~~1
-&nbsp;
-~~~5
+{% row %}
+~~~5,medium-offset-1
     class Song::Contract::Create < Reform::Form
       property :title
       property :length
 
       validates :title, presence: true
     end
-~~~5
+~~~5,end
 Validations are implemented with **CONTRACT**.
 
 Trailblazer supports Reform and `Dry::Schema` validations in any number.
-~~~1
-{% endcols %}
+{% endrow %}
 
 
 <!-- Testimonials -->
 <section class="sub-section testimonials">
+  {% row %}
+    ~~~9,medium-centered text-center
+  <h2>Testimonials</h2>
+  {% endrow %}
+
   <div class="row">
     <div class="columns">
       <a name="testimonials"></a>
-
-      <h2>
-        Testimonials
-      </h2>
-
 
       <div class="carousel">
 
@@ -347,13 +306,14 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
 </section>
 
 <section id="trb-users">
+  {% row %}
+    ~~~9,medium-centered text-center
+  <h2>Users</h2>
+  {% endrow %}
+
 <div class="row">
     <div class="columns">
       <a name="users"></a>
-
-      <h2>
-        Companies using Trailblazer
-      </h2>
 
       <div class="row">
         <div class="column medium-2 text-center">
@@ -466,13 +426,13 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
 
 
 
-      <div class="row">
-        <div class="columns">
-          <p class="text-center">
-            Your logo here? <a href="https://gitter.im/trailblazer/chat">Send it to us →</a>
-          </p>
-        </div>
-      </div>
     </div>
   </div>
+
+
 </section>
+
+  {% row %}
+    ~~~9,medium-centered text-center
+  Your logo here? <a href="https://gitter.im/trailblazer/chat">Send it to us →</a>
+  {% endrow %}

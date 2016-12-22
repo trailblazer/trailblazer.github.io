@@ -6,3 +6,5 @@ if RUBY_PLATFORM == "i686-linux"
 end
 
 gem "jekyll-last-modified-at"
+
+gem "torture", path: "../torture"

@@ -1,4 +1,4 @@
-section.four {
+section.mascots {
   .columns {
     padding: 1em;
   }
@@ -11,16 +11,22 @@ section.four {
     }
   }
 
+}
+
+section.quarters {
   h4 {
    font-size: 20px;
-   font-weight: bold;
+   font-weight: 600;
     .fa { display: inline-block; width: auto; font-size: 45px; }
   }
-  line-height: 1.1em;
 }
 
 .grey {
   background-color: #eaeced;
   padding-top: 2em;
   padding-bottom: 2em;
+}
+
+section {
+  padding-bottom: 3em;
 }
