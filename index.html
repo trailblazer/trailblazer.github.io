@@ -198,6 +198,14 @@
 <section class=" ">
   <div class="row">
     <div class="column medium-9 medium-centered text-center">
+        <p><a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a></p>
+
+      </div>
+</div></section>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-9 medium-centered text-center">
         <h2 data-magellan-target="">Legacy app, refactoring or green-field?</h2>
 
 <p>Trailblazer helps improving your software in all kinds of systems and applications.</p>
@@ -373,6 +381,58 @@ end
         <p>Validations are implemented with <strong>CONTRACT</strong>.</p>
 
 <p>Trailblazer supports Reform and <code>Dry::Schema</code> validations in any number.</p>
+
+      </div>
+</div></section>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-4 medium-offset-1">
+        <p>Any dependency, such as the current user, must be <a href="/gems/operation/api.html#dependency-injection">injected from the outside</a>.</p>
+
+<p>The concept of global state does not exist in Trailblazer, which leads to simplified, mock-free testability and concurrent-ready code.</p>
+
+
+      </div>
+    <div class="column medium-6 end">
+        <p><strong>And the best:</strong> there’s only one way to run an operation.</p>
+
+<pre><code>Song::Create.(
+  { title: "Roxanne", length: 300 }, # params
+  "current_user": current_user       # dependencies
+)
+</code></pre>
+
+      </div>
+</div></section>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-5 medium-offset-1">
+        <pre><code>describe Song::Create do
+  it "prohibits empty params" do
+    result = Song::Create.({})
+
+    expect(result).to be_failure
+    expect(result["model"]).to be_new
+  end
+end
+</code></pre>
+
+
+      </div>
+    <div class="column medium-4 end">
+        <p>Clumsy, slow controller tests are history. Now that all your business logic is controlled by the operation, <strong>SIMPLE UNIT TESTS</strong> can test any edge-case scenario or avoid regressions.</p>
+
+<p>Trailblazer’s encapsulation makes a programmer’s life better.</p>
+
+      </div>
+</div></section>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-9 medium-centered text-center">
+        <p><a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a></p>
 
       </div>
 </div></section>
