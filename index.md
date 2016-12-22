@@ -78,6 +78,10 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
 {% endrow %}
 
+{% row %}
+  ~~~9,medium-centered text-center
+  <a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a>
+{% endrow %}
 
 
 {% row %}
@@ -86,7 +90,6 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
   Trailblazer helps improving your software in all kinds of systems and applications.
 {% endrow %}
-
 
 
 {% row quarters %}
@@ -249,7 +252,12 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
   ~~~4,end
   Clumsy, slow controller tests are history. Now that all your business logic is controlled by the operation, **SIMPLE UNIT TESTS** can test any edge-case scenario or avoid regressions.
 
-  Trailblazer's encapsulation will make a programmer's life better.
+  Trailblazer's encapsulation makes a programmer's life better.
+{% endrow %}
+
+{% row %}
+  ~~~9,medium-centered text-center
+  <a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a>
 {% endrow %}
 
 <!-- Testimonials -->
