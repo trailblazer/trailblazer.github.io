@@ -221,6 +221,36 @@ Validations are implemented with **CONTRACT**.
 Trailblazer supports Reform and `Dry::Schema` validations in any number.
 {% endrow %}
 
+{% row %}
+  ~~~4,medium-offset-1
+  Any dependency, such as the current user, must be [injected from the outside](/gems/operation/api.html#dependency-injection).
+
+  The concept of global state does not exist in Trailblazer, which leads to simplified, mock-free testability and concurrent-ready code.
+
+  ~~~6,end
+  **And the best:** there's only one way to run an operation.
+
+    Song::Create.(
+      { title: "Roxanne", length: 300 }, # params
+      "current_user": current_user       # dependencies
+    )
+{% endrow %}
+
+{% row %}
+  ~~~5,medium-offset-1
+    describe Song::Create do
+      it "prohibits empty params" do
+        result = Song::Create.({})
+
+        expect(result).to be_failure
+        expect(result["model"]).to be_new
+      end
+    end
+  ~~~4,end
+  Clumsy, slow controller tests are history. Now that all your business logic is controlled by the operation, **SIMPLE UNIT TESTS** can test any edge-case scenario or avoid regressions.
+
+  Trailblazer's encapsulation will make a programmer's life better.
+{% endrow %}
 
 <!-- Testimonials -->
 <section class="sub-section testimonials">
