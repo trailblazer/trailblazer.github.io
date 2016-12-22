@@ -617,9 +617,8 @@ end
 
 <p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
 
+<!-- * [Builder](#builder) allows writing and using polymorphic factories to create different operations based on different input. -->
 <ul>
-  <li>
-<a href="#builder">Builder</a> allows writing and using polymorphic factories to create different operations based on different input.</li>
   <li>
 <a href="contract.html">Contract</a> implements contracts, validation and persisting verified data using the model layer.</li>
   <li>
@@ -628,11 +627,11 @@ end
   <li>The <a href="#model"><code class="highlighter-rouge">Model</code></a> macro can create and find models based on input.</li>
 </ul>
 
-<h2 id="builder" data-magellan-target="builder">Builder</h2>
+<!-- ## Builder
 
-<p>Different application contexts like “anonymous user” vs. “signed in user” can be handled in the same code asset along with countless <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">else</code>s. Or, you can use polymorphism as it is encouraged by Trailblazer.</p>
+Different application contexts like "anonymous user" vs. "signed in user" can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
 
-<p>Here, different contexts are handled by different classes. Those classes may inherit from each other, but don’t have to.</p>
+Here, different contexts are handled by different classes. Those classes may inherit from each other, but don't have to.
 
 <pre><code>class Create &lt; Trailblazer::Operation
   step Builder( MyBuilder )
@@ -649,11 +648,13 @@ end
 end
 </code></pre>
 
-<p>The idea is to never instantiate internal classes (<code class="highlighter-rouge">Anonymous</code> and <code class="highlighter-rouge">SignedIn</code>) directly, but let the top-level <code class="highlighter-rouge">Create</code> operation do the polymorphic dispatch. <strong>The logic “what to build when” is called <em>builder</em></strong>.</p>
 
-<h3 id="builder-proc">Builder: Proc</h3>
+The idea is to never instantiate internal classes (`Anonymous` and `SignedIn`) directly, but let the top-level `Create` operation do the polymorphic dispatch. **The logic "what to build when" is called *builder***.
 
-<p>Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.</p>
+
+### Builder: Proc
+
+Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.
 
 <pre><code>MyBuilder = -&gt;(klass, current_user:nil, **) do
   if current_user
@@ -664,30 +665,29 @@ end
 end
 </code></pre>
 
-<p>Note that you have access to all runtime data via the <code class="highlighter-rouge">options</code> object and/or keyword arguments. The return value of the builder is the class to be instantiated.</p>
 
-<p>You then hook the builder into the pipe using the <code class="highlighter-rouge">Builder</code> macro.</p>
+Note that you have access to all runtime data via the `options` object and/or keyword arguments. The return value of the builder is the class to be instantiated.
+
+You then hook the builder into the pipe using the `Builder` macro.
 
 <pre><code>#:op
 class Create &lt; Trailblazer::Operation
   step Builder( MyBuilder )
 </code></pre>
 
-<p>The builder puts itself <em>before</em> <code class="highlighter-rouge">operation.new</code> into the pipetree and hence can control the operation class to be instantiated.</p>
 
-<h3 id="builder-invocation">Builder: Invocation</h3>
+The builder puts itself *before* `operation.new` into the pipetree and hence can control the operation class to be instantiated.
 
-<p>When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.</p>
+### Builder: Invocation
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.({})                               #=&gt; runs Create::Anonymous
-result = Create.({}, "current_user": current_user) #=&gt; runs Create::SignedIn
-</code></pre>
-</div>
+When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.
 
-<h3 id="builder-dsl">Builder: DSL</h3>
+    result = Create.({})                               #=> runs Create::Anonymous
+    result = Create.({}, "current_user": current_user) #=> runs Create::SignedIn
 
-<p>You can also use the <code class="highlighter-rouge">builds</code> method to create and plug in a builder in one step.</p>
+### Builder: DSL
+
+You can also use the `builds` method to create and plug in a builder in one step.
 
 <pre><code>class Create &lt; Trailblazer::Operation
   include Builder
@@ -704,8 +704,9 @@ result = Create.({}, "current_user": current_user) #=&gt; runs Create::SignedIn
 end
 </code></pre>
 
-<p>This couples your builder to the class, though.</p>
 
+This couples your builder to the class, though.
+ -->
 <!-- self::A -->
 <p>## Model</p>
 
@@ -967,7 +968,6 @@ end
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
-<li><a href="#builder">Builder</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
 <li><a href="#rescue">Rescue</a></li>
