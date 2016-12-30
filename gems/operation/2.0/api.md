@@ -331,7 +331,7 @@ The operation supports Dry.RB's [auto_inject](http://dry-rb.org/gems/dry-auto_in
 
     # this happens somewhere in your Dry system.
     my_container = Dry::Container.new
-    my_container.register("repository.song", User::Repository)
+    my_container.register("repository.song", Song::Repository)
 
     require "trailblazer/operation/auto_inject"
     AutoInject = Trailblazer::Operation::AutoInject(my_container)
