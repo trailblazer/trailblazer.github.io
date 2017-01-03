@@ -356,6 +356,52 @@ The operation supports Dry.RB's [auto_inject](http://dry-rb.org/gems/dry-auto_in
 
 Including the `AutoInject` module will make sure that the specified dependencies are injected (using [dependency injection](#dependency-injection)) into the [operation's context](#dependencies) at instantiation time.
 
+## Inheritance
+
+To share code and pipe, use class inheritance.
+
+{% callout %}
+Try to avoid inheritance and use [composition](#nested) instead.
+{% endcallout %}
+
+You can inherit from any kind of operation.
+
+{{  "operation_test.rb:inh-new" | tsnippet }}
+
+In this example, the `New` class will have a pipe as follows.
+
+{{  "operation_test.rb:inh-new-pipe" | tsnippet }}
+
+In addition to Ruby's normal class inheritance semantics, the operation will also copy the pipe. You may then add further steps to the subclass.
+
+{{  "operation_test.rb:inh-create" | tsnippet }}
+
+This results in the following pipe.
+
+{{  "operation_test.rb:inh-create-pipe" | tsnippet }}
+
+Inheritance is great to eliminate redundancy. Pipes and step code can easily be shared amongst groups of operations.
+
+Be weary, though, that you are tightly coupling flow and implementation to each other. Once again, try to use Trailblazer's [compositional](#nested) semantics over inheritance.
+
+### Inheritance: Override
+
+Per default, calling an existing macro will override the old one, in the same position. Overriding works by step name.
+
+Consider the following base operation.
+
+{{  "operation_test.rb:override-app" | tsnippet }}
+
+Subclasses can now override predefined steps.
+
+{{  "operation_test.rb:override-new" | tsnippet }}
+
+The pipe flow will remain the same.
+
+{{  "operation_test.rb:override-pipe" | tsnippet }}
+
+Use the `:name` option to assign a new name if you don't want to override an existing step.
+
 ## Step Macros
 
 Trailblazer provides predefined steps to for all kinds of business logic.
@@ -366,7 +412,6 @@ Trailblazer provides predefined steps to for all kinds of business logic.
 * All [`Policy`-related](policy.html) macros help with authentication and making sure users only execute what they're supposed to.
 * The [`Model`](#model) macro can create and find models based on input.
 
-<!-- self::A -->
 ## Model
 
 An operation can automatically find or create a model for you depending on the input, with the `Model` macro.
