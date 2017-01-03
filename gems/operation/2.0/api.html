@@ -604,7 +604,7 @@ Since all step macros, i.e. <code>Policy::Pundit</code> or <code>Contract::Valid
 <div class="highlighter-rouge">
 <pre class="highlight"><code># this happens somewhere in your Dry system.
 my_container = Dry::Container.new
-my_container.register("repository.song", User::Repository)
+my_container.register("repository.song", Song::Repository)
 
 require "trailblazer/operation/auto_inject"
 AutoInject = Trailblazer::Operation::AutoInject(my_container)
