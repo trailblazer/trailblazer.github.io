@@ -40,7 +40,7 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
 
   * **THOUSANDS** of users find this more intuitive and easier to navigate.
   * It embraces the **COMPONENT STRUCTURE** of your code.
-  * Huge teams working on complex projects have it easier not to get into each others way.
+  * Huge teams working on complex projects have it easier not to get into each others' way.
   * Once a concept's **CODE IS TESTED** it won't break anywhere else.
   * The modular structure **SIMPLIFIES REFACTORING** in hundreds of legacy production apps.
   ~~~3,end
@@ -52,35 +52,6 @@ description: "Trailblazer introduces additional abstraction layers into Ruby fra
   * **VIEW MODEL** Components for your view code.
   * **REPRESENTER** for serializing and parsing API documents.
   * **DESERIALIZER** Transformers to parse incoming data into structures you can work with.
-{% endrow %}
-
-
-{% row mascots %}
-  ~~~4,medium-offset-2
-  <div class="mascot">
-    <img src="/images/sticker/sticker2017.png">
-    <h3>We walk the walk.</h3>
-  </div>
-
-
-  Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.
-
-  Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.
-
-  ~~~4,end
-  <div class="mascot">
-    <img src="/images/sticker/consulting.jpg">
-    <h3>We love legacy apps.</h3>
-  </div>
-
-  By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer's patterns cover 75% of daily business code's structure - you will feel the power of strong conventions within the first hours.
-
-  If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
-{% endrow %}
-
-{% row %}
-  ~~~9,medium-centered text-center
-  <a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a>
 {% endrow %}
 
 
@@ -134,18 +105,45 @@ Our patterns are developed to be used in highly complex, existing, messy legacy 
   Test first
 </h4>
 
-By restructuring business code, application behavior can be tested more efficiently with more unit and less integration tests. Trailblazer engineers enjoy the simplicity of testing and the speedup of the test suites.
+By restructuring business code, application behavior can be tested more efficiently with more unit and less integration tests. Trailblazer engineers do enjoy the simplicity of testing and the speedup of the test suites.
 ~~~4
 <h4>
   <i class="fa fa-ship"></i>
   It's real!
 </h4>
 
-Trailblazer is in use in thousands of production applications.
-
-Our patterns have evolved over a decade of engineering, our gems are mature and battle-tested. And: we will never stop innovating.
+Trailblazer is in use in thousands of production applications. Our patterns have evolved over a decade of engineering, our gems are mature and battle-tested. And: we will never stop innovating.
 
   {% endrow %}
+
+
+{% row mascots %}
+  ~~~4,medium-offset-2
+  <div class="mascot">
+    <img src="/images/sticker/sticker2017.png">
+    <h3>We walk the walk.</h3>
+  </div>
+
+
+  Trailblazer defines patterns for a better architecture, and gives you implementations to use those patterns in your applications. Your software will be better structured, more consistent and with stronger, faster, and way simpler tests.
+
+  Our high-level architecture and enterprise-ready™ gems will prevent you from reinventing the wheel again and again - you and your team are free to think about the next awesome feature.
+
+  ~~~4,end
+  <div class="mascot">
+    <img src="/images/sticker/consulting.jpg">
+    <h3>We love legacy apps.</h3>
+  </div>
+
+  By standardizing the business logic, new developers can be onboarded faster with help of our free documentation. Trailblazer's patterns cover 75% of daily business code's structure - you will feel the power of strong conventions within the first hours.
+
+  If that's not enough, we provide on-site training, premium support and consulting. Dozens of companies worldwide trust us already.
+{% endrow %}
+
+{% row %}
+  ~~~9,medium-centered text-center
+  <a href="/gems/operation/2.0/index.html" class="button">LEARN MORE ABOUT TRAILBLAZER!</a>
+{% endrow %}
 
 
 {% row %}

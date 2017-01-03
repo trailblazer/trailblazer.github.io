@@ -171,11 +171,18 @@ Error handlers on the left track can be added with `failure`.
       end
     end
 
+Just as in right-tracked steps, you may add failure information to the [result object](#result-object) that you want to communicate to the caller.
+
+    def error!(options, params:, **)
+      options["result.model"] = "Something went wrong with ID #{params[:id]}!"
+    end
+
 Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.
 
-<div class="callout">
+
+{% callout %}
   We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.
-</div>
+{% endcallout %}
 
 ## Step Implementation
 
@@ -353,51 +360,11 @@ Including the `AutoInject` module will make sure that the specified dependencies
 
 Trailblazer provides predefined steps to for all kinds of business logic.
 
-* [Builder](#builder) allows writing and using polymorphic factories to create different operations based on different input.
+<!-- * [Builder](#builder) allows writing and using polymorphic factories to create different operations based on different input. -->
 * [Contract](contract.html) implements contracts, validation and persisting verified data using the model layer.
 * [`Nested`](#nested), [`Wrap`](#wrap) and [`Rescue`](#rescue) are step containers that help with transactional features for a group of steps per operation.
 * All [`Policy`-related](policy.html) macros help with authentication and making sure users only execute what they're supposed to.
 * The [`Model`](#model) macro can create and find models based on input.
-
-## Builder
-
-Different application contexts like "anonymous user" vs. "signed in user" can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
-
-Here, different contexts are handled by different classes. Those classes may inherit from each other, but don't have to.
-
-{{  "builder_test.rb:op" | tsnippet : "opcon" }}
-
-The idea is to never instantiate internal classes (`Anonymous` and `SignedIn`) directly, but let the top-level `Create` operation do the polymorphic dispatch. **The logic "what to build when" is called *builder***.
-
-
-### Builder: Proc
-
-Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.
-
-{{  "builder_test.rb:proc" | tsnippet }}
-
-Note that you have access to all runtime data via the `options` object and/or keyword arguments. The return value of the builder is the class to be instantiated.
-
-You then hook the builder into the pipe using the `Builder` macro.
-
-{{  "builder_test.rb:op-head" | tsnippet  }}
-
-The builder puts itself *before* `operation.new` into the pipetree and hence can control the operation class to be instantiated.
-
-### Builder: Invocation
-
-When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.
-
-    result = Create.({})                               #=> runs Create::Anonymous
-    result = Create.({}, "current_user": current_user) #=> runs Create::SignedIn
-
-### Builder: DSL
-
-You can also use the `builds` method to create and plug in a builder in one step.
-
-{{  "builder_test.rb:builds" | tsnippet : "bla" }}
-
-This couples your builder to the class, though.
 
 <!-- self::A -->
 ## Model
