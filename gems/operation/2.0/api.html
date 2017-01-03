@@ -360,10 +360,21 @@ end
 </code></pre>
 </div>
 
+<p>Just as in right-tracked steps, you may add failure information to the <a href="#result-object">result object</a> that you want to communicate to the caller.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>def error!(options, params:, **)
+  options["result.model"] = "Something went wrong with ID #{params[:id]}!"
+end
+</code></pre>
+</div>
+
 <p>Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.</p>
 
 <div class="callout">
-  We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.
+  
+<p>We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.</p>
+
 </div>
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
@@ -627,86 +638,6 @@ end
   <li>The <a href="#model"><code class="highlighter-rouge">Model</code></a> macro can create and find models based on input.</li>
 </ul>
 
-<!-- ## Builder
-
-Different application contexts like "anonymous user" vs. "signed in user" can be handled in the same code asset along with countless `if`s and `else`s. Or, you can use polymorphism as it is encouraged by Trailblazer.
-
-Here, different contexts are handled by different classes. Those classes may inherit from each other, but don't have to.
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  step Builder( MyBuilder )
-#:op-head end
-  
-  # ...
-  class Anonymous &lt; Create
-    # ...
-  end
-  
-  class SignedIn &lt; Create
-    # ...
-  end
-end
-</code></pre>
-
-
-The idea is to never instantiate internal classes (`Anonymous` and `SignedIn`) directly, but let the top-level `Create` operation do the polymorphic dispatch. **The logic "what to build when" is called *builder***.
-
-
-### Builder: Proc
-
-Builders can be lambdas or callable objects. They do not have to be defined inside the operation class and can be designed as reusable objects.
-
-<pre><code>MyBuilder = -&gt;(klass, current_user:nil, **) do
-  if current_user
-    Create::SignedIn
-  else
-    Create::Anonymous
-  end
-end
-</code></pre>
-
-
-Note that you have access to all runtime data via the `options` object and/or keyword arguments. The return value of the builder is the class to be instantiated.
-
-You then hook the builder into the pipe using the `Builder` macro.
-
-<pre><code>#:op
-class Create &lt; Trailblazer::Operation
-  step Builder( MyBuilder )
-</code></pre>
-
-
-The builder puts itself *before* `operation.new` into the pipetree and hence can control the operation class to be instantiated.
-
-### Builder: Invocation
-
-When calling the top-level operation, the builder will pick the correct concrete operation to instantiate and run.
-
-    result = Create.({})                               #=> runs Create::Anonymous
-    result = Create.({}, "current_user": current_user) #=> runs Create::SignedIn
-
-### Builder: DSL
-
-You can also use the `builds` method to create and plug in a builder in one step.
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  include Builder
-  
-  builds -&gt;(klass, current_user:nil, **) do
-    if current_user
-      SignedIn
-    else
-      Anonymous
-    end
-  end
-  
-  # ...
-end
-</code></pre>
-
-
-This couples your builder to the class, though.
- -->
 <!-- self::A -->
 <p>## Model</p>
 
