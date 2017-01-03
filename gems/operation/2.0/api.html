@@ -624,6 +624,90 @@ end
 
 <p>Including the <code class="highlighter-rouge">AutoInject</code> module will make sure that the specified dependencies are injected (using <a href="#dependency-injection">dependency injection</a>) into the <a href="#dependencies">operation’s context</a> at instantiation time.</p>
 
+<h2 id="inheritance" data-magellan-target="inheritance">Inheritance</h2>
+
+<p>To share code and pipe, use class inheritance.</p>
+
+<div class="callout">
+  
+<p>Try to avoid inheritance and use <a href="#nested">composition</a> instead.</p>
+
+</div>
+
+<p>You can inherit from any kind of operation.</p>
+
+<pre><code>class New &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: MyContract )
+end
+</code></pre>
+
+<p>In this example, the <code class="highlighter-rouge">New</code> class will have a pipe as follows.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 ==========================&amp;model.build
+ 2 =======================&gt;contract.build
+</code></pre>
+
+<p>In addition to Ruby’s normal class inheritance semantics, the operation will also copy the pipe. You may then add further steps to the subclass.</p>
+
+<pre><code>class Create &lt; New
+  step Contract::Validate()
+  step Contract::Persist()
+end
+</code></pre>
+
+<p>This results in the following pipe.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 ==========================&amp;model.build
+ 2 =======================&gt;contract.build
+ 3 ==============&amp;contract.default.params
+ 4 ============&amp;contract.default.validate
+ 5 =========================&amp;persist.save
+</code></pre>
+
+<p>Inheritance is great to eliminate redundancy. Pipes and step code can easily be shared amongst groups of operations.</p>
+
+<p>Be weary, though, that you are tightly coupling flow and implementation to each other. Once again, try to use Trailblazer’s <a href="#nested">compositional</a> semantics over inheritance.</p>
+
+<h3 id="inheritance-override">Inheritance: Override</h3>
+
+<p>Per default, calling an existing macro will override the old one, in the same position. Overriding works by step name.</p>
+
+<p>Consider the following base operation.</p>
+
+<pre><code>module MyApp::Operation
+  class New &lt; Trailblazer::Operation
+    extend Contract::DSL
+  
+    contract do
+      property :title
+    end
+  
+    step Model( nil, :new )
+    step Contract::Build()
+  end
+end
+</code></pre>
+
+<p>Subclasses can now override predefined steps.</p>
+
+<pre><code>class Song::New &lt; MyApp::Operation::New
+  step Model( Song, :new )
+end
+</code></pre>
+
+<p>The pipe flow will remain the same.</p>
+
+<pre><code>Song::New["pipetree"].inspect(style: :row)
+ 0 =======================&gt;&gt;operation.new
+ 1 ==========================&amp;model.build
+ 2 =======================&gt;contract.build
+</code></pre>
+
+<p>Use the <code class="highlighter-rouge">:name</code> option to assign a new name if you don’t want to override an existing step.</p>
+
 <h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
 
 <p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
@@ -897,6 +981,7 @@ end
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
+<li><a href="#inheritance">Inheritance</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
 <li><a href="#model">Model</a></li>
 <li><a href="#nested">Nested</a></li>
