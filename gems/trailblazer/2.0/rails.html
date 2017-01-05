@@ -340,6 +340,20 @@ end
 </code></pre>
 </div>
 
+<h2 id="configuration" data-magellan-target="configuration">Configuration</h2>
+
+<h3 id="configuration-applicationcontroller">Configuration: ApplicationController</h3>
+
+<p>Trailblazer-rails will extend <code class="highlighter-rouge">::ApplicationController</code> per default. Use <code class="highlighter-rouge">trailblazer.application_controller</code> to change this, should your code use a different base controller class.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># config/initializers/trailblazer.rb
+Rails.application.config.trailblazer.application_controller = "MyApp::BaseController"
+</code></pre>
+</div>
+
+<p>Note that the value is a string that gets <code class="highlighter-rouge">constantize</code>d at runtime.</p>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -355,6 +369,7 @@ end
 <li><a href="#runtime-options">Runtime Options</a></li>
 <li><a href="#render">Render</a></li>
 <li><a href="#integration-test">Integration Test</a></li>
+<li><a href="#configuration">Configuration</a></li>
         </ul>
       
 </nav>
