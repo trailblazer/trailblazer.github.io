@@ -272,55 +272,37 @@ end
 
 <p>Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.</p>
 
-<section class="macros"><div class="row">
-
-    <div class="column medium-
-">
-    
-
-    </div>
-
-    <div class="column medium-4">
-    
-<p><i class="fa fa-cogs"></i></p>
+<section class=" ">
+  <div class="row">
+    <div class="column medium-4 ">
+        <p><i class="fa fa-cogs"></i></p>
 
 <p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
 
 
-    </div>
-
-    <div class="column medium-4">
-    
-<p><i class="fa fa-search"></i></p>
+      </div>
+    <div class="column medium-4 ">
+        <p><i class="fa fa-search"></i></p>
 
 <p><code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.</p>
 
-    </div>
-
-    <div class="column medium-4">
-    
-<p><i class="fa fa-shield"></i></p>
+      </div>
+    <div class="column medium-4 ">
+        <p><i class="fa fa-shield"></i></p>
 
 <p><code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.</p>
 
-    </div>
+      </div>
 </div></section>
 
 <p>Macros are easily extendable and it’s you can write your own application-wide macros.</p>
 
 <h2 id="state-and-result" data-magellan-target="state-and-result">State and Result</h2>
 
-<section class="macros"><div class="row">
-
-    <div class="column medium-
-">
-    
-
-    </div>
-
-    <div class="column medium-8">
-    
-<p>Each step in the operation can write to the <em>options</em> object that is passed from step to step, and in the end will be the result of the operation call.</p>
+<section class=" ">
+  <div class="row">
+    <div class="column medium-8 ">
+        <p>Each step in the operation can write to the <em>options</em> object that is passed from step to step, and in the end will be the result of the operation call.</p>
 
 <pre><code>class Song::Update &lt; Trailblazer::Operation
   step :find_model!
@@ -337,10 +319,9 @@ end
 </code></pre>
 
 
-    </div>
-
-    <div class="column medium-4">
-    
+      </div>
+    <div class="column medium-4 ">
+        
 <p>Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.</p>
 
 <pre><code>class Song::Update &lt; Trailblazer::Operation
@@ -357,22 +338,15 @@ result["model"] #=&gt; #&lt;Song ..&gt;
 </code></pre>
 
 
-    </div>
+      </div>
 </div></section>
 
 <h2 id="testing" data-magellan-target="testing">Testing</h2>
 
-<section class="macros"><div class="row">
-
-    <div class="column medium-
-">
-    
-
-    </div>
-
-    <div class="column medium-6">
-    
-<p>Since operations embrace the entire workflow for an application’s function, you can write simple and fast unit-tests to assert the correct behavior.</p>
+<section class=" ">
+  <div class="row">
+    <div class="column medium-6 ">
+        <p>Since operations embrace the entire workflow for an application’s function, you can write simple and fast unit-tests to assert the correct behavior.</p>
 
 <pre><code>describe Song::Create do
   it "prohibits empty params" do
@@ -386,11 +360,9 @@ end
 
 <p>All edge-cases and bugs can be tested via unit tests. Slow, inefficient integration tests are reduced to a minimum.</p>
 
-    </div>
-
-    <div class="column medium-6">
-    
-<p>Operations can also replace factories.</p>
+      </div>
+    <div class="column medium-6 ">
+        <p>Operations can also replace factories.</p>
 
 <pre><code>describe Song::Create do
   let(:song) { Song::Create.(params) }
@@ -400,43 +372,33 @@ end
 
 <p>Check out <a href="https://github.com/trailblazer/rspec-trailblazer">our Rspec gem</a> for TRB matcher integration. Matchers for Minitest are coming, too!</p>
 
-    </div>
+      </div>
 </div></section>
 
 <h2 id="learn-more" data-magellan-target="learn-more">Learn More</h2>
 
 <p>A mix of documentation and guides will help you to understand the operation quickly and how to use it to clean up existing codebases or start a new app.</p>
 
-<section class="macros"><div class="row">
-
-    <div class="column medium-
-">
-    
-
-    </div>
-
-    <div class="column medium-4">
-    
-<p><i class="fa fa-map"></i></p>
+<section class=" ">
+  <div class="row">
+    <div class="column medium-4 ">
+        <p><i class="fa fa-map"></i></p>
 
 <p>Read the <a href="api.html"><strong>→API DOCS</strong></a> to learn about the pipe and step implementations and what macros Trailblazer provides for you.</p>
 
-    </div>
-
-    <div class="column medium-4">
-    
-<p><i class="fa fa-book"></i></p>
+      </div>
+    <div class="column medium-4 ">
+        <p><i class="fa fa-book"></i></p>
 
 <p>Make sure to spend some hours reading the <a href="guides/getting_started_with_trailblazer_2.html"><strong>→GETTING STARTED</strong></a> guide.</p>
 
 <p>You will be ready to work with Trailblazer 2.</p>
 
-    </div>
+      </div>
+    <div class="column medium-4 ">
+        
 
-    <div class="column medium-4">
-    
-
-    </div>
+      </div>
 </div></section>
 
             </div>
@@ -476,6 +438,7 @@ end
     <li><a href="/gems/operation/2.0/contract.html">Contract</a></li>
     <!-- <li><a href="/gems/operation/2.0/representer.html">Representer</a></li> -->
     <li><a href="/gems/operation/2.0/policy.html">Policy</a></li>
+    <li><a href="/gems/operation/2.0/representer.html">Representer</a></li>
 <!--     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
  -->
     <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
