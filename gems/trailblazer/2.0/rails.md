@@ -121,8 +121,6 @@ Use `result` to pass the result object to the cell.
 If the first argument to `render` is not a cell instance, the original Rails `render` version will be run.
 {% endcallout %}
 
-
-
 <!--
 ## Expose
 
@@ -168,3 +166,14 @@ Your tests can now use Capybara matchers.
         page.must_have_css "form[action='/songs']"
       end
     end
+
+## Configuration
+
+### Configuration: ApplicationController
+
+Trailblazer-rails will extend `::ApplicationController` per default. Use `trailblazer.application_controller` to change this, should your code use a different base controller class.
+
+    # config/initializers/trailblazer.rb
+    Rails.application.config.trailblazer.application_controller = "MyApp::BaseController"
+
+Note that the value is a string that gets `constantize`d at runtime.
