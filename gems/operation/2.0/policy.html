@@ -151,18 +151,19 @@
 
 <p>A Pundit policy has various rule methods and a special constructor that receives the current user and the current model.</p>
 
-<p>class MyPolicy
-    def initialize(user, model)
-      @user, @model = user, model
-    end</p>
-
-<pre><code>def create?
-  @user == Module &amp;&amp; @model.id.nil?
-end
+<pre><code>class MyPolicy
+  def initialize(user, model)
+    @user, @model = user, model
+  end
   
-def new?
-  @user == Class
-end   end
+  def create?
+    @user == Module &amp;&amp; @model.id.nil?
+  end
+  
+  def new?
+    @user == Class
+  end
+end
 </code></pre>
 
 <p>In pundit policies, it is a convention to have access to those objects at runtime and build rules on top of those.</p>
