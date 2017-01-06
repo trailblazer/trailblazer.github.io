@@ -82,7 +82,7 @@ The flow of an operation is defined by a two-tracked pipeline.
 
 Per default, the right track will be run from top to bottom. If an error occurs, it will deviate to the left track and continue executing error handler steps on this track.
 
-The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-monads/) and ["Railway-oriented programming"](http://zohaib.me/railway-programming-pattern-in-elixir/), but not entirely the same.
+The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-monads/) and ["Railway-oriented programming"](http://fsharpforfunandprofit.com/rop/), but not entirely the same.
 
 The following high-level API is available.
 

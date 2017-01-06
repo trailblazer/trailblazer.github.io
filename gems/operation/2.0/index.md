@@ -124,7 +124,7 @@ The operations control flow is handled by a two-tracked pipe. It helps you deali
 
 Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.
 
-{% cols %}
+{% row %}
 ~~~4
   <i class="fa fa-cogs"></i>
 
@@ -138,14 +138,14 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
   <i class="fa fa-shield"></i>
 
   <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
-{% endcols %}
+{% endrow %}
 
 Macros are easily extendable and it's you can write your own application-wide macros.
 
 
 ## State and Result
 
-{% cols %}
+{% row %}
 ~~~8
   Each step in the operation can write to the *options* object that is passed from step to step, and in the end will be the result of the operation call.
 
@@ -177,11 +177,11 @@ Macros are easily extendable and it's you can write your own application-wide ma
     result.success? #=> true
     result["model"] #=> #<Song ..>
 
-{% endcols %}
+{% endrow %}
 
 ## Testing
 
-{% cols %}
+{% row %}
 ~~~6
   Since operations embrace the entire workflow for an application's function, you can write simple and fast unit-tests to assert the correct behavior.
 
@@ -204,13 +204,13 @@ Macros are easily extendable and it's you can write your own application-wide ma
   This will make sure your application test state is always inline with what happens in production. You won't have an always diverging *factory vs. production state* ever again.
 
   Check out [our Rspec gem](https://github.com/trailblazer/rspec-trailblazer) for TRB matcher integration. Matchers for Minitest are coming, too!
-{% endcols %}
+{% endrow %}
 
 ## Learn More
 
 A mix of documentation and guides will help you to understand the operation quickly and how to use it to clean up existing codebases or start a new app.
 
-{% cols %}
+{% row %}
 ~~~4
   <i class="fa fa-map"></i>
 
@@ -222,4 +222,4 @@ A mix of documentation and guides will help you to understand the operation quic
 
   You will be ready to work with Trailblazer 2.
 ~~~4
-{% endcols %}
+{% endrow %}
