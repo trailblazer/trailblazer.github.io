@@ -405,19 +405,17 @@ end
   step :filter_params!         # emits fail_fast!
   step Model( Song, :find_by )
   failure :handle_fail!
-  # ..
   
   def filter_params!(options, params:, **)
     unless params[:id]
       options["result.params"] = "No ID in params!"
-      return Step.fail_fast!
+      return Flow.fail_fast!
     end
   end
   
   def handle_fail!(options, **)
     options["my.status"] = "Broken!"
   end
-  # ..
 end
 </code></pre>
 
@@ -429,6 +427,32 @@ end
 </code></pre>
 
 <p>Note that you have to <strong>return</strong> <code class="highlighter-rouge">Step.fail_fast!</code> from the track. You can use this signal from any step, e.g. <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">failure</code>.</p>
+
+<h3 id="flow-control-pass-fast">Flow Control: Pass Fast</h3>
+
+<p>Sometimes it might be necessary to skip the rest of the pipe and return a successful result. Use <code class="highlighter-rouge">pass_fast!</code> for this.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step :empty_model!                           # emits pass_fast!
+  step Contract::Build( constant: MyContract )
+  # ..
+  
+  def empty_model!(options, is_empty:, model:, **)
+    return unless is_empty
+    model.save
+    Flow.pass_fast!
+  end
+end
+</code></pre>
+
+<p>After <strong>returning</strong> the signal from a step, the remaining steps will be skipped.</p>
+
+<pre><code>  result = Create.({}, "is_empty" =&gt; true)
+  result["model"] #=&gt; #&lt;Song id=nil, title=nil&gt;
+</code></pre>
+
+<p>Note that this works on both right and left track.</p>
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
 
