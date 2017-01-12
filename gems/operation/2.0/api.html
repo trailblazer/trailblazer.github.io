@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 20 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -371,11 +371,64 @@ end
 
 <p>Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.</p>
 
-<div class="callout">
-  
-<p>We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.</p>
+<h3 id="flow-control-fail-fast-option">Flow Control: Fail Fast Option</h3>
 
-</div>
+<p>If you don’t want left track steps to be executed after a specific step, use the <code class="highlighter-rouge">:fail_fast</code> option.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step Model( Song, :find_by )
+  failure :abort!, fail_fast: true
+  step Contract::Build( constant: MyContract )
+  step Contract::Validate( )
+  failure :handle_invalid_contract!
+  
+  def abort!(options, params:, **)
+    options["result.model.song"] = "Something went wrong with ID #{params[:id]}!"
+  end
+  # ..
+end
+</code></pre>
+
+<p>This will <strong>not</strong> execute any <code class="highlighter-rouge">failure</code> steps after <code class="highlighter-rouge">abort!</code>.</p>
+
+<pre><code>  result = Update.(id: 1)
+  result["result.model.song"] #=&gt; "Something went wrong with ID 1!"
+</code></pre>
+
+<p>Note that this option will always fail fast once its reached, regardless of the step’s return value.</p>
+
+<h3 id="flow-control-fail-fast">Flow Control: Fail Fast</h3>
+
+<p>Instead of <a href="#flow-control-fail-fast-option">hardcoding the flow behavior</a> you can have a dynamic skipping of left track steps based on some condition. This works with the <code class="highlighter-rouge">fail_fast!</code> method.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step :filter_params!         # emits fail_fast!
+  step Model( Song, :find_by )
+  failure :handle_fail!
+  # ..
+  
+  def filter_params!(options, params:, **)
+    unless params[:id]
+      options["result.params"] = "No ID in params!"
+      return Step.fail_fast!
+    end
+  end
+  
+  def handle_fail!(options, **)
+    options["my.status"] = "Broken!"
+  end
+  # ..
+end
+</code></pre>
+
+<p>This will <strong>not</strong> execute any steps on either track, but will result in a failed operation.</p>
+
+<pre><code>  result = Update.(id: 1)
+  result["result.params"] #=&gt; "No ID in params!"
+  result["my.status"]     #=&gt; nil
+</code></pre>
+
+<p>Note that you have to <strong>return</strong> <code class="highlighter-rouge">Step.fail_fast!</code> from the track. You can use this signal from any step, e.g. <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">failure</code>.</p>
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
 
