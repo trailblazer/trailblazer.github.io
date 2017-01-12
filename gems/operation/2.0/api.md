@@ -179,10 +179,30 @@ Just as in right-tracked steps, you may add failure information to the [result o
 
 Note that you can add as many error handlers as you want, at any position in the pipe. They will be executed in that order, just as it works on the right track.
 
+### Flow Control: Fail Fast Option
 
-{% callout %}
-  We will introduce a <em>fail-early</em> option where the left track is stopped after a specific error handler marked with that option.
-{% endcallout %}
+If you don't want left track steps to be executed after a specific step, use the `:fail_fast` option.
+
+{{  "fast_test.rb:ffopt" | tsnippet }}
+
+This will **not** execute any `failure` steps after `abort!`.
+
+{{  "fast_test.rb:ffopt-res" | tsnippet }}
+
+Note that this option will always fail fast once its reached, regardless of the step's return value.
+
+### Flow Control: Fail Fast
+
+
+Instead of [hardcoding the flow behavior](#flow-control-fail-fast-option) you can have a dynamic skipping of left track steps based on some condition. This works with the `fail_fast!` method.
+
+{{  "fast_test.rb:ffmeth" | tsnippet }}
+
+This will **not** execute any steps on either track, but will result in a failed operation.
+
+{{  "fast_test.rb:ffmeth-res" | tsnippet }}
+
+Note that you have to **return** `Step.fail_fast!` from the track. You can use this signal from any step, e.g. `step` or `failure`.
 
 ## Step Implementation
 
