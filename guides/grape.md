@@ -22,12 +22,10 @@ end
 
 ## Routing
 
-Using Grape's popular routing DSL, routes point straigt to operations and pass in the request body as a hash.
+Using Grape's popular routing DSL, routes point straight to operations and pass in the request body as a hash.
 
 
 
 ## Validation
 
 Grape comes with built-in [parameter validation](https://github.com/ruby-grape/grape#parameter-validation-and-coercion) and deserialization mechanics. Both are, nevertheless, very limited and a subset of what Trailblazer's contract and representer provide. With Trailblazer, there's no need to use those parts of Grape - even though you could if you want.
-
-

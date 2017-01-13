@@ -313,7 +313,7 @@ Again, view models in Trailblazer are provided by the [Cells gem](/gems/cells) w
 
 Trailblazer makes authorization a first-class citizen. Operations define policy objects that can be accessed and queried throughout the stack for deciding about access control.
 
-The simplest form is a *guard* policy you can embedd straight into the operation.
+The simplest form is a *guard* policy you can embed straight into the operation.
 
 ```ruby
 class Create < Trailblazer::Operation
