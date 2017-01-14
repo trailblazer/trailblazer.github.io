@@ -10,7 +10,7 @@ Testing Trailblazer applications usually involves the following tests.
 2. Integration tests for controllers. These Smoke tests only test the wiring between controller, operation and presentation layer. Usually, a coded click path simulates you manually clicking through your app and testing if it works.
 
     The preferred way here is using Rack-test and Capybara.
-3. Unit tests for cells. By invoking your cells with aritrary data you functionally test the rendered markup using Capybara.
+3. Unit tests for cells. By invoking your cells with arbitrary data you functionally test the rendered markup using Capybara.
 
 
 ## Rspec

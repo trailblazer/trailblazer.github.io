@@ -135,7 +135,7 @@ The loading order is identical for all styles.
 1. The loader finds all concept directories.
 2. Concept directories are sorted by nesting level, deeper nestings are loaded later as they might reference concepts they're nested in. For example, `concepts/comment/admin` might reuse existing code from `concepts/comment`.
 3. Per concept, files are lexically sorted, e.g. `create.rb` will be loaded *before* `update.rb` as we mostly do `Update < Create`.
-4. Per concept, operation files will be loaded after all other layer files have been required. This is because abstraction files like representers or contracts should not reference their operation. The operation, howver, as an orchestrating asset needs to refer to various abstraction objects.
+4. Per concept, operation files will be loaded after all other layer files have been required. This is because abstraction files like representers or contracts should not reference their operation. The operation, however, as an orchestrating asset needs to refer to various abstraction objects.
 
 Here's a sample of a explicit-singular session.
 

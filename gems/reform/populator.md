@@ -42,7 +42,7 @@ Reform will now try to deserialize every nested `songs` item to a nested form. S
 
     form.songs[0].validate({name: "Midnight Rendezvous"})
 
-Intuitively, you will expect Reform to create an additional song with the name "Midnight Rendevouz".  However, this is not how it works and will crash, since `songs[0]` doesn't exist. There is no nested form to represent that fragment, yet, since the original `songs` collection in the model was empty!
+Intuitively, you will expect Reform to create an additional song with the name "Midnight Rendezvous".  However, this is not how it works and will crash, since `songs[0]` doesn't exist. There is no nested form to represent that fragment, yet, since the original `songs` collection in the model was empty!
 
 Reform per design makes no assumptions about how to create nested models. You have to tell it what to do in this *out-of-sync* case.
 
@@ -302,7 +302,7 @@ To skip from a `Uber::Callable`-marked object, return `Representable::Pipeline::
         # ...
       end
     end
-    
+
     collection :songs, populator: SongsPopulator.new
 
 This won't process items that have an `"id"` field in their corresponding fragment.
@@ -342,6 +342,3 @@ The solution is to initialize your object correctly. This is per design. It is y
 
 
 With ORMs, the setup happens automatically, this only appears when using `Struct` or other POROs as models.
-
-
-

@@ -14,7 +14,7 @@ This guide discusses how to get started with `Trailblazer::Cell`, the canonical 
 
 When refactoring legacy views into a solid cell architecture, it is often advisable to start with small fragments and extract markup and logic into an object-oriented cell. After that is done, you can move up and replace a bigger fragment of the view, and so on.
 
-Given you were running an arbitrary Ruby web application, let's assume you had a menu bar sitting in your global layout. The menu shows navigation links to pages and - dependent on the login status of the current user - either a miniatur avatar of the latter or a link to sign in.
+Given you were running an arbitrary Ruby web application, let's assume you had a menu bar sitting in your global layout. The menu shows navigation links to pages and - dependent on the login status of the current user - either a miniature avatar of the latter or a link to sign in.
 
 Since this is quite a bit of logic, it's a good idea to encapsulate that into an object.
 

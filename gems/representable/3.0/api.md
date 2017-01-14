@@ -712,7 +712,7 @@ You can provide options when representing an object using the `user_options:` op
 
     decorator.to_json(user_options: { is_admin: true })
 
-Note that the `:user_options` will be accessable on all levels in a nested representer. They act like a "global" configuration and are passed to all option functions.
+Note that the `:user_options` will be accessible on all levels in a nested representer. They act like a "global" configuration and are passed to all option functions.
 
 Here's an example where the `:if` option function evaluates a dynamic user option.
 

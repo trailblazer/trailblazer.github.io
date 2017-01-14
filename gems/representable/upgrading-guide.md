@@ -106,7 +106,7 @@ If you used a `:class` proc with `:parse_strategy`, the new API is `class: ->(op
 
 ### Class and Instance
 
-In older versions you could use `:class` and `:instance` in combination, which resulted in hard-to-follow behavior. These options work exlusively now.
+In older versions you could use `:class` and `:instance` in combination, which resulted in hard-to-follow behavior. These options work exclusively now.
 
 ### SkipRender
 

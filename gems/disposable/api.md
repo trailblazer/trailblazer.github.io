@@ -7,7 +7,7 @@ title: "Disposable API"
 
 **A twin is an intermediate object** that usually sits between persistence layer and your application code. It's a _domain object_ that helps you model your application domain. Sometimes this is called _decorator_.
 
-Often, a twin maps directly to one persistent _"model"_. However, twins are absolutely not limited to your database layout - the opposite is the case. One twin can be a composition of many underlying models, with renaming, delegating, and more mapping features, that allow you modelling objects for your application, and not objects dictated by your database layout.
+Often, a twin maps directly to one persistent _"model"_. However, twins are absolutely not limited to your database layout - the opposite is the case. One twin can be a composition of many underlying models, with renaming, delegating, and more mapping features, that allow you modeling objects for your application, and not objects dictated by your database layout.
 
 ## Declarative API
 
@@ -225,7 +225,7 @@ class AlbumTwin < Disposable::Twin
   property :id, type: Types::Form::Int
 ```
 
-The `:type` option defines the coercion type. You may incluce `Setup::SkipSetter`, too, as otherwise the coercion will happen at initialization time and in the setter.
+The `:type` option defines the coercion type. You may include `Setup::SkipSetter`, too, as otherwise the coercion will happen at initialization time and in the setter.
 
 ```ruby
 twin.id = "1"

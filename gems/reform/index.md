@@ -19,7 +19,7 @@ A *form* doesn't have to be a UI component, necessarily! It can be an intermedia
 * **DATA TYPES** Reform can map model attributes, compositions of objects, nested models, hash fields and more. [→ DATA TYPES](data-types.html)
 * **COERCION** When validating, the form can coerce input to arbitrary values using the dry-types gem. [→ COERCION](options.html#coercion)
 * **POPULATOR** Deserialization of the incoming data can be customized using populators. [→ POPULATOR](populator.html)
-* **VALIDATION GROUPS** Validations can be chained or run when certain criterias match, only. [→ VALIDATION GROUPS](validation.html#validation-groups)
+* **VALIDATION GROUPS** Validations can be chained or run when certain criteria match, only. [→ VALIDATION GROUPS](validation.html#validation-groups)
 
 For a technical architecture overview, read the [Architecture](#architecture) section.
 
@@ -267,5 +267,3 @@ The decoupled validation is why Reform provides multiple validation engines.
 **SYNC/SAVE**
 
 After the `validate` call, nothing has been written to the model(s), yet. This has to be explicitly invoked via `sync` or `save`. Now, Reform will use its basic twin functionality again and write the virtual data to the models using public setter methods. Again, Reform knows nothing about ORMs or model specifics.
-
-
