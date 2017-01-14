@@ -15,7 +15,7 @@ Operations implement functions of your application, like creating a comment, fol
 
 <img src="/images/diagrams/stack.png" style="width: 70%">
 
-Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
+Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistence layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
 Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to include features like policies, representers or callbacks.
 
@@ -226,5 +226,3 @@ This normally covers the logic for two controller actions, e.g. `new` and `creat
 ## More
 
 Operation has many optional features like authorization, callbacks, polymorphic builders, etc.
-
-

@@ -21,7 +21,7 @@ Its goal is simple: **Remove all business logic from the controller and model an
 Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called _command_.
 
 
-Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistance layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
+Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistence layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
 Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.
 

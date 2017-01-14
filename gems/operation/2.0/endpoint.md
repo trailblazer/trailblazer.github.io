@@ -62,7 +62,7 @@ Naturally, you may [add your own](#adding-outcomes) domain-specific outcomes.
 
 ## Handlers
 
-While `Matcher` is the authorative source for deciding the state of the operation, it is up to you how to react to those well-defined states. This happens using *handlers* that you can define manually, or use a built-in set. Currently, we have handlers for [Rails controllers](#rails) and [Hanami::Router](#Hanami).
+While `Matcher` is the authoritative source for deciding the state of the operation, it is up to you how to react to those well-defined states. This happens using *handlers* that you can define manually, or use a built-in set. Currently, we have handlers for [Rails controllers](#rails) and [Hanami::Router](#Hanami).
 
 You can pass a block to `Endpoint#call` with your own handlers and hand in the `Result` object.
 

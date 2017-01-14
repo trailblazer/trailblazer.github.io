@@ -7,7 +7,7 @@ gems:
 
 The "flow pipetree" structures and directs the control flow in an operation.
 
-All major steps like building the operation, deserializing incoming parameters, validating, triggering callbacks, etc. are orchestrated via the pipetree. It maximises reusability, helps rewiring or skipping steps and reduces `if`/`else` deciders troughout your code. And it's also pretty awesome to [debug](#debugging)!
+All major steps like building the operation, deserializing incoming parameters, validating, triggering callbacks, etc. are orchestrated via the pipetree. It maximises reusability, helps rewiring or skipping steps and reduces `if`/`else` deciders throughout your code. And it's also pretty awesome to [debug](#debugging)!
 
 The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-monads/) and ["Railway-oriented programming"](http://zohaib.me/railway-programming-pattern-in-elixir/), but not entirely the same.
 
@@ -51,7 +51,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
         The steps are executed from top to bottom. It starts with <code>Build</code>, then <code>New</code>, then <code>Validation</code> is invoked. Here, it depends on the result of the step. If <code>Validation</code> was successful, it stays on the <em>right</em> track and invoke <code>Persist</code>, and so on. Otherwise, it'll change to the <em>left</em> track and call <code>LogInvalid</code>, then <code>Rollback</code>.
       </p>
 
-      <p>As a last step, ignoring the result of the former step, a wildcart step <code>LogResult</code> is <em>always</em> run.</p>
+      <p>As a last step, ignoring the result of the former step, a wildcard step <code>LogResult</code> is <em>always</em> run.</p>
 
       <p>This is just one example of a flow pipetree your operation could implement. The possibilities are endless how to plug together flows for complex domain logic.</p>
 
@@ -105,7 +105,7 @@ Here, the `Builder` is run as the very first step since it decides the actual cl
 
 ## Adding Steps: Right Track
 
-You can add your own or existing steps to the right track using `Operation::>`. The right track is supposed to implement the correct, happy path of the opreation, the *right* thing, so to speak.
+You can add your own or existing steps to the right track using `Operation::>`. The right track is supposed to implement the correct, happy path of the operation, the *right* thing, so to speak.
 
     class Edit < Trailblazer::Operation
       include Policy

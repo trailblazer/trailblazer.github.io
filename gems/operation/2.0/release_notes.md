@@ -13,7 +13,7 @@ The estimated release date is November 25. 2016, that is. 😜
 
 The core logic has been extracted to the [`trailblazer-operation` gem](https://github.com/trailblazer/operation/) that can be used even if you dislike Trailblazer's semantics. But, why would you?
 
-Additional functionaliy like `Contract`, `Policy`, etc. comes in the [`trailblazer` gem](https://github.com/trailblazer/trailblazer/).
+Additional functionality like `Contract`, `Policy`, etc. comes in the [`trailblazer` gem](https://github.com/trailblazer/trailblazer/).
 
 You now have to include the respective modules to extend the operation for contract, callbacks, and so on.
 

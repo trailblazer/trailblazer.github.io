@@ -47,7 +47,7 @@ To conveniently handle the inverse case where the block should be run in case of
     end
 
 
-Regardless of the style, you always get the operation instance. This is only for presentation. Please treat it as immutuable.
+Regardless of the style, you always get the operation instance. This is only for presentation. Please treat it as immutable.
 
 ## Operations in Tests
 

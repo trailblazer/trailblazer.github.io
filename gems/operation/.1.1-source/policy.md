@@ -88,7 +88,7 @@ As a matter of course, you may call other rule queries on the internal policy ob
 
 Instead of using policies, you can also use a simple guard.
 
-A guard is like an inline policy that doesn't require you to define a policy class. It is run in `#setup!`, too, like a real policy, but isn't accessable in the operation after that.
+A guard is like an inline policy that doesn't require you to define a policy class. It is run in `#setup!`, too, like a real policy, but isn't accessible in the operation after that.
 
 
     class Thing::Create < Trailblazer::Operation

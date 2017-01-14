@@ -23,7 +23,7 @@ Check the [→ full example](#full-example) for a quick overview.
 
 In Trailblazer, the normal workflow is to deserialize (parse) incoming data into an object graph, then validate this data structure, then persist parts of it. Transforming the incoming data into one or many objects is done by a representer.
 
-Normally, this happens internally in the Reform object, which receives the data in `validate` and then uses an automatically infered representer to parse the data onto itself.
+Normally, this happens internally in the Reform object, which receives the data in `validate` and then uses an automatically inferred representer to parse the data onto itself.
 
 However, let's discuss representers first and ignore the validation layer.
 
@@ -78,7 +78,7 @@ Representers increasingly make sense with documents differing from your models, 
 
 ## Parsing: Nesting
 
-While one-level parsing might appear trivial and easily solveable using mechanisms such as `update_attributes` and Rails' automatic parsed `params` hash, the deserialization process gets more complicated with nested fragments and models.
+While one-level parsing might appear trivial and easily solvable using mechanisms such as `update_attributes` and Rails' automatic parsed `params` hash, the deserialization process gets more complicated with nested fragments and models.
 
 Let's assume the `band:` property should now be a dedicated object. Here's the new **document**.
 
@@ -154,7 +154,7 @@ The only real difference to the above examples is that Reform will validate itse
 
 [→ Reform's architecture docs](/gems/reform) talk about this in detail.
 
-Reform infers this representer (or *deserializer*) automatially in `validate` and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn't match 1-to-1 with the contract's schema. For example, when validating input in a JSON API system.
+Reform infers this representer (or *deserializer*) automatically in `validate` and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn't match 1-to-1 with the contract's schema. For example, when validating input in a JSON API system.
 
 This is where you can specify your own representer to be used against the contract.
 
@@ -198,7 +198,7 @@ The behavior is identical to referencing the representer class constant.
 
 ## Parsing: Infer
 
-A representer can also be infered from the contract's schema. All you need to do is define the format, e.g. `Representable::JSON`.
+A representer can also be inferred from the contract's schema. All you need to do is define the format, e.g. `Representable::JSON`.
 
 {{  "representer_test.rb:infer" | tsnippet }}
 
