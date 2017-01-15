@@ -26,7 +26,20 @@ A representer can either be a class (called _decorator_) or a module (called _re
 
 A representer simply defines the fields that will be mapped to the document using `property` or `collection`. You can then decorate an object and render or parse. Here's an example.
 
-    SongRepresenter.new(song).to_json #=> {"id": 1, title":"Fallout"}
+    # Given a Struct like this
+    Song = Struct.new(:id, :title) #=> Song
+
+    # You can instantiate it with the following
+    song = Song.new(1, "Fallout") #=> #<struct Song id=1, title="Fallout">
+
+    # This object doesn't know how to represent itself in JSON
+    song.to_json #=> NoMethodError: undefined method `to_json'
+
+    # But you can decorate it with the above defined representer
+    song_representer = SongRepresenter.new(song)
+
+    # Relax and let the representer do its job
+    song_representer.to_json #=> {"id":1,"title":"Fallout"}
 
 The details are being discussed in the [public API](#public-api) section.
 
