@@ -13,7 +13,6 @@ If you're enjoying the pleasure of working with XML, Representable can help you.
       include Representable::XML
 
       property :title
-      property :id
       collection :composers
     end
 
@@ -21,7 +20,8 @@ Note that you have to include the `Representable::XML` module.
 
 The public API then gives you `to_xml` and `from_xml`.
 
-    song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
+    Song = Struct.new(:title, :composers)
+    song = Song.new("Fallout", ["Stewart Copeland", "Sting"])
     SongRepresenter.new(song).to_xml #=>
 
     <song>
