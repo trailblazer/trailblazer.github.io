@@ -38,15 +38,23 @@ SongRepresenter.new(song).to_xml
 
 You can also map properties to tag attributes in Representable. This works only for the top-level node, though (seen from the representer's perspective).
 
-    class SongRepresenter < Representable::Decorator
-      include Representable::XML
+```ruby
+class SongRepresenter < Representable::Decorator
+  include Representable::XML
 
-      property :id, attribute: true
-      property :track, attribute: true
-    end
+  property :title, attribute: true
+  collection :composers
+end
 
-    song.to_xml
-    #=> <song title="American Idle" id="1" />
+SongRepresenter.new(song).to_xml
+```
+
+```xml
+<song title="Fallout">
+  <composers>Stewart Copeland</composers>
+  <composers>Sting</composers>
+</song>
+```
 
 Naturally, this works both ways.
 
