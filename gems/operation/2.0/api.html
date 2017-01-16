@@ -264,7 +264,7 @@ end
 <p>If the operation ends on the right track, the <a href="#result-object">result object</a> will return true on <code class="highlighter-rouge">success?</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>result = Song::Create({ title: "The Feeling Is Alright" }, "current_user": current_user)
+<pre class="highlight"><code>result = Song::Create.({ title: "The Feeling Is Alright" }, "current_user": current_user)
 result.success? #=&gt; true
 </code></pre>
 </div>
@@ -376,11 +376,11 @@ end
 <p>If you don’t want left track steps to be executed after a specific step, use the <code class="highlighter-rouge">:fail_fast</code> option.</p>
 
 <pre><code>class Update &lt; Trailblazer::Operation
-  step Model( Song, :find_by )
-  failure :abort!, fail_fast: true
-  step Contract::Build( constant: MyContract )
-  step Contract::Validate( )
-  failure :handle_invalid_contract!
+  step    Model( Song, :find_by )
+  failure :abort!,                                fail_fast: true
+  step    Contract::Build( constant: MyContract )
+  step    Contract::Validate( )
+  failure :handle_invalid_contract!  # won't be executed if #abort! is executed.
   
   def abort!(options, params:, **)
     options["result.model.song"] = "Something went wrong with ID #{params[:id]}!"
@@ -395,7 +395,34 @@ end
   result["result.model.song"] #=&gt; "Something went wrong with ID 1!"
 </code></pre>
 
-<p>Note that this option will always fail fast once its reached, regardless of the step’s return value.</p>
+<p>Note that this option in combination with <code class="highlighter-rouge">failure</code> will always fail fast once its reached, regardless of the step’s return value.</p>
+
+<p><code class="highlighter-rouge">:fail_fast</code> also works with <code class="highlighter-rouge">step</code>.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step :empty_id?,            fail_fast: true
+  step Model( Song, :find_by)
+  failure :handle_empty_db!   # won't be executed if #empty_id? returns falsey.
+  
+  def empty_id?(options, params:, **)
+    params[:id] # returns false if :id missing.
+  end
+end
+</code></pre>
+
+<p>Here, if <code class="highlighter-rouge">step</code> returns a falsey value, the rest of the pipe is skipped, returning a failed result. Again, this will <strong>not</strong> execute any <code class="highlighter-rouge">failure</code> steps after <code class="highlighter-rouge">:empty_id?</code>.</p>
+
+<pre><code>  result = Update.({ id: nil })
+  
+  result.failure? #=&gt; true
+  result["model"] #=&gt; nil
+</code></pre>
+
+<!-- ### Flow Control: Pass Fast Option
+
+
+
+The `:pass_fast` option also works with `success` and will always skip the remaining pipe returning a successful result, should the `success` step be reached. -->
 
 <h3 id="flow-control-fail-fast">Flow Control: Fail Fast</h3>
 
@@ -428,9 +455,9 @@ end
 
 <p>Note that you have to <strong>return</strong> <code class="highlighter-rouge">Step.fail_fast!</code> from the track. You can use this signal from any step, e.g. <code class="highlighter-rouge">step</code> or <code class="highlighter-rouge">failure</code>.</p>
 
-<h3 id="flow-control-pass-fast">Flow Control: Pass Fast</h3>
+<!-- ### Flow Control: Pass Fast
 
-<p>Sometimes it might be necessary to skip the rest of the pipe and return a successful result. Use <code class="highlighter-rouge">pass_fast!</code> for this.</p>
+Sometimes it might be necessary to skip the rest of the pipe and return a successful result. Use `pass_fast!` for this.
 
 <pre><code>class Create &lt; Trailblazer::Operation
   step Model( Song, :new )
@@ -446,13 +473,15 @@ end
 end
 </code></pre>
 
-<p>After <strong>returning</strong> the signal from a step, the remaining steps will be skipped.</p>
+
+After **returning** the signal from a step, the remaining steps will be skipped.
 
 <pre><code>  result = Create.({}, "is_empty" =&gt; true)
   result["model"] #=&gt; #&lt;Song id=nil, title=nil&gt;
 </code></pre>
 
-<p>Note that this works on both right and left track.</p>
+
+Note that this works on both right and left track. -->
 
 <h2 id="step-implementation" data-magellan-target="step-implementation">Step Implementation</h2>
 
