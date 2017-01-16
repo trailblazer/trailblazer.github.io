@@ -11,6 +11,9 @@ Representable also comes with a YAML representer. Like [XML](xml.html), the decl
 
 A nice feature is that `#collection` also accepts a `:style` option which helps having nicely formatted inline (or "flow") arrays in your YAML - if you want that!
 
+    require 'psych'
+    require 'representable/yaml'
+
     class SongRepresenter < Representable::Decorator
       include Representable::YAML
 
