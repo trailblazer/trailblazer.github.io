@@ -81,16 +81,23 @@ It is sometimes unavoidable to wrap tag lists in a container tag.
       collection :songs, as: :song, wrap: :songs
     end
 
+Album = Struct.new(:songs)
+album = Album.new(["Laundry Basket", "Two Kevins", "Wright and Rong"])
+
+album_representer = AlbumRepresenter.new(album)
+album_representer.to_xml
+
 Note that `:wrap` defines the container tag name.
 
-    song.to_xml #=>
-    <album>
-        <songs>
-            <song>Laundry Basket</song>
-            <song>Two Kevins</song>
-            <song>Wright and Rong</song>
-        </songs>
-    </album>
+```xml
+<album>
+  <songs>
+    <song>Laundry Basket</song>
+    <song>Two Kevins</song>
+    <song>Wright and Rong</song>
+  </songs>
+</album>
+```
 
 ## Namespaces
 
