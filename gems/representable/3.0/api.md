@@ -99,7 +99,7 @@ For example, a song could nest an artist object.
     Artist = Struct.new(:id, :name)
 
     artist = Artist.new(2, "The Police")
-    song = Song.new(1, "Fallout", artist)
+    song   = Song.new(1, "Fallout", artist)
 
 Here's a better view of that object graph.
 
