@@ -264,7 +264,7 @@ class AlbumRepresenter < Representable::Decorator
 end
 ```
 
-The `representation_wrap` from the nested representer now won't be rendered and parsed.
+The `representation_wrap` from the nested representer now won't be rendered nor parsed...
 
 ```ruby
 AlbumRepresenter.new(album).to_json
