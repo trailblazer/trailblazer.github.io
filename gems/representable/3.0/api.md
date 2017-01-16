@@ -246,7 +246,7 @@ Note that `representation_wrap` is a dynamic function option.
 
 This would allow to provide the wrap manually.
 
-    decorator.to_json(user_options: { my_wrap: "hit" })
+    song_representer.to_json(user_options: { my_wrap: "hit" })
 
 ### Suppressing Nested Wraps
 
@@ -729,7 +729,7 @@ For other format engines, the deserializing method is named analogue to the seri
 
 You can provide options when representing an object using the `user_options:` option.
 
-    decorator.to_json(user_options: { is_admin: true })
+    song_representer.to_json(user_options: { is_admin: true })
 
 Note that the `:user_options` will be accessible on all levels in a nested representer. They act like a "global" configuration and are passed to all option functions.
 
@@ -747,7 +747,7 @@ Using Ruby 2.1's keyword arguments is highly recommended - to make that look a b
 
 Representable also allows passing nested options to particular representers. You have to provide the property's name to do so.
 
-    decorator.to_json(artist: { user_options: { is_admin: true } })
+    song_representer.to_json(artist: { user_options: { is_admin: true } })
 
 This will pass the option to the nested `artist`, only. Note that this works with any level of nesting.
 
@@ -757,17 +757,18 @@ Representable supports two top-level options.
 
 `:include` allows defining a set of properties to represent. The remaining will be skipped.
 
-    decorator.to_json(include: [:id])  #=> {"id":1}
+    song_representer.to_json(include: [:id])  #=> {"id":1}
 
  The other, `:exclude`, will - you might have guessed it already - skip the provided properties and represent the remaining.
 
-    decorator.to_json(exclude: [:id, :artist])  #=> {"title":"Fallout"}
+    song_representer.to_json(exclude: [:id, :artist])
+    #=> {"title":"Fallout"}
 
 As always, these options work both ways, for rendering _and_ parsing.
 
 Note that you can also nest `:include` and `:exclude`.
 
-    decorator.to_json(artist: { include: [:name] })
+    song_representer.to_json(artist: { include: [:name] })
     #=> {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 
 ### to_hash and from_hash
