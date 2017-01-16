@@ -1,9 +1,9 @@
----
+<!-- ---
 layout: operation2
 title: Operation Pipetree
 gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0"]
----
+--- -->
 
 The "flow pipetree" structures and directs the control flow in an operation.
 

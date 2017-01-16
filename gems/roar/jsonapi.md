@@ -3,8 +3,6 @@ layout: roar
 title: "JSON API"
 ---
 
-# JSON API
-
 Roar JSON API supports rendering and parsing documents using the [JSON API 1.0](http://jsonapi.org/format/) specification.
 
 {% callout %}
