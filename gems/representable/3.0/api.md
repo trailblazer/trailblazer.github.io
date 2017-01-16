@@ -84,7 +84,8 @@ The new collection `composer_ids` has to be enumeratable object, like an array.
     Song = Struct.new(:id, :title, :composer_ids)
     song = Song.new(1, "Fallout", [2, 3])
 
-    song.to_json #=> {"id": 1, title":"Fallout", composer_ids:[2,3]}
+    song_representer = SongRepresenter.new(song)
+    song_representer.to_json #=> {"id":1,"title":"Fallout","composer_ids":[2,3]}
 
 Of course, this works also for parsing. The incoming `composer_ids` will override the old collection on the represented object.
 
@@ -158,7 +159,7 @@ Note that the `:extend` and `:decorator` options are identical. They can both re
 Regardless of the representer types you use, rendering will result in a nested document.
 
     SongRepresenter.new(song).to_json
-    #=> {"id": 1, title":"Fallout", artist:{"id":2, "name":"The Police"}}
+    #=> {"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}
 
 ### Nested Parsing
 
