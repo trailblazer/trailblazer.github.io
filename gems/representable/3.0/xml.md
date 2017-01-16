@@ -20,15 +20,19 @@ Note that you have to include the `Representable::XML` module.
 
 The public API then gives you `to_xml` and `from_xml`.
 
-    Song = Struct.new(:title, :composers)
-    song = Song.new("Fallout", ["Stewart Copeland", "Sting"])
-    SongRepresenter.new(song).to_xml #=>
+```ruby
+Song = Struct.new(:title, :composers)
+song = Song.new("Fallout", ["Stewart Copeland", "Sting"])
+SongRepresenter.new(song).to_xml
+```
 
-    <song>
-        <title>Fallout</title>
-        <composers>Stewart Copeland</composers>
-        <composers>Sting</composers>
-    </song>
+```xml
+<song>
+  <title>Fallout</title>
+  <composers>Stewart Copeland</composers>
+  <composers>Sting</composers>
+</song>
+```
 
 ## Tag Attributes
 
