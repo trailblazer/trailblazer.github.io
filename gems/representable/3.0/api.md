@@ -267,8 +267,22 @@ end
 The `representation_wrap` from the nested representer now won't be rendered nor parsed...
 
 ```ruby
+Album = Struct.new(:songs)
+album = Album.new
+album.songs = [song]
 AlbumRepresenter.new(album).to_json
-#=> {"songs":{"title":"Fallout","id":1}}
+```
+
+.. and will result:
+
+```json
+{"songs":[{"title":"Fallout","id":1}]}
+```
+
+Otherwise it would respect the `representation_wrap=` set in the nested decorator (SongRepresenter) and will render:
+
+```json
+{"songs":[{"song":{"title":"Fallout","id":1}}]}
 ```
 
 Note that this only works for JSON and Hash at the moment.
