@@ -309,6 +309,24 @@ What if you need a refined representer to also add the artist. Use inheritance.
 
 All configuration from `SongRepresenter` will be inherited, making the properties on `SongWithArtistRepresenter`: `id`, `title`, and `artist`. The original `SongRepresenter` will stay as it is.
 
+```ruby
+Artist         = Struct.new(:name)
+SongWithArtist = Struct.new(:id, :title, :artist)
+
+artist           = Artist.new("Ivan Lins")
+song_with_artist = SongWithArtist.new(1, "Novo Tempo", artist)
+
+# Using the same object with the two representers
+song_representer             = SongRepresenter.new(song_with_artist)
+song_with_artist_representer = SongWithArtistRepresenter.new(song_with_artist)
+
+song_representer.to_json
+#=> {"id":1,"title":"Novo Tempo"}
+
+song_with_artist_representer.to_json
+#=> {"id":1,"title":"Novo Tempo","artist":{"name":"Ivan Lins"}}
+```
+
 ### Composition
 
 You can also use modules and decorators together to compose representers.
