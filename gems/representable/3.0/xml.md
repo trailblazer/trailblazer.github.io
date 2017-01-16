@@ -68,8 +68,8 @@ The same concept can also be applied to content. If you need to map a property t
       property :title, content: true
     end
 
-    song.to_xml
-    #=> <song>American Idle</song>
+    SongRepresenter.new(song).to_xml
+    #=> <song>Fallout</song>
 
 ## Wrapping Collections
 
