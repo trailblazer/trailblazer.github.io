@@ -94,12 +94,12 @@ The following high-level API is available.
 
 If the operation ends on the right track, the [result object](#result-object) will return true on `success?`.
 
-    result = Song::Create({ title: "The Feeling Is Alright" }, "current_user": current_user)
+    result = Song::Create.({ title: "The Feeling Is Alright" }, "current_user": current_user)
     result.success? #=> true
 
 Otherwise, when the run ends on the left track, `failure?` will return true.
 
-    result = Song::Create({ })
+    result = Song::Create.({ })
     result.success? #=> false
     result.failure? #=> true
 
@@ -189,7 +189,21 @@ This will **not** execute any `failure` steps after `abort!`.
 
 {{  "fast_test.rb:ffopt-res" | tsnippet }}
 
-Note that this option will always fail fast once its reached, regardless of the step's return value.
+Note that this option in combination with `failure` will always fail fast once its reached, regardless of the step's return value.
+
+`:fail_fast` also works with `step`.
+
+{{  "fast_test.rb:ffopt-step" | tsnippet }}
+
+Here, if `step` returns a falsey value, the rest of the pipe is skipped, returning a failed result. Again, this will **not** execute any `failure` steps after `:empty_id?`.
+
+{{  "fast_test.rb:ffopt-step-res" | tsnippet }}
+
+<!-- ### Flow Control: Pass Fast Option
+
+
+
+The `:pass_fast` option also works with `success` and will always skip the remaining pipe returning a successful result, should the `success` step be reached. -->
 
 ### Flow Control: Fail Fast
 
@@ -203,6 +217,18 @@ This will **not** execute any steps on either track, but will result in a failed
 {{  "fast_test.rb:ffmeth-res" | tsnippet }}
 
 Note that you have to **return** `Step.fail_fast!` from the track. You can use this signal from any step, e.g. `step` or `failure`.
+
+<!-- ### Flow Control: Pass Fast
+
+Sometimes it might be necessary to skip the rest of the pipe and return a successful result. Use `pass_fast!` for this.
+
+{{  "fast_test.rb:pfmeth" | tsnippet }}
+
+After **returning** the signal from a step, the remaining steps will be skipped.
+
+{{  "fast_test.rb:pfmeth-res" | tsnippet }}
+
+Note that this works on both right and left track. -->
 
 ## Step Implementation
 
