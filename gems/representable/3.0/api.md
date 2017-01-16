@@ -188,17 +188,19 @@ The default behavior is - admittedly - very primitive. Representable's parsing a
 Not always does the structure of the desired document map to your objects. The `::nested` method allows structuring properties within a separate section while still mapping the properties to the outer object.
 
 Imagine the following document.
-
+    json_fragment = <<END
     {"title": "Roxanne",
      "details":
        {"track": 3,
         "length": "4:10"}
     }
+    END
 
 However, in the `Song` class, there's no such concept as `details`.
 
     Song = Struct.new(:title, :track, :length)
 
+    song = Song.new #=> #<struct Song title=nil, track=nil, length=nil>
 
 Both track and length are properties of the song object itself. Representable gives you ::nested to map the virtual `details` section to the song instance.
 
@@ -212,6 +214,9 @@ Both track and length are properties of the song object itself. Representable gi
         property :length
       end
     end
+
+    song_representer = SongRepresenter.new(song)
+    song_representer.from_json(json_fragment)
 
 Accessors for the nested properties will still be called on the song object. And as always, this works both ways - for rendering and parsing.
 
