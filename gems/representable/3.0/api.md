@@ -63,7 +63,7 @@ The API in a module representer is identical to decorators. However, the way you
 There's two drawbacks with this approach.
 
 1. You pollute the represented object with the imported representer methods (e.g. `to_json`).
-2. Extending an object at run-time is costly and with many `extend`s there will be a noteable performance decrease.
+2. Extending an object at run-time is costly and with many `extend`s there will be a notable performance decrease.
 
 Throughout this documentation, we will use decorator as examples to encourage this cleaner and faster approach.
 
