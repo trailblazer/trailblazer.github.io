@@ -260,7 +260,7 @@ class AlbumRepresenter < Representable::Decorator
 
   collection :songs,
     decorator: SongRepresenter, # SongRepresenter defines representation_wrap.
-     wrap:     false            # turn off :song wrap.
+    wrap:      false            # turn off :song wrap.
 end
 ```
 
