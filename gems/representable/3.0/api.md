@@ -58,7 +58,7 @@ A representer module is also a good way to share configuration and logic across 
 
 The API in a module representer is identical to decorators. However, the way you apply them is different.
 
-    song.extend(SongRepresenter).to_json #=> {"id": 1, title":"Fallout"}
+    song.extend(SongRepresenter).to_json #=> {"id":1,"title":"Fallout"}
 
 There's two drawbacks with this approach.
 
