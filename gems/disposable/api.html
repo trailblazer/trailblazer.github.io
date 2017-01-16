@@ -131,7 +131,7 @@
 
 <p><strong>A twin is an intermediate object</strong> that usually sits between persistence layer and your application code. It’s a <em>domain object</em> that helps you model your application domain. Sometimes this is called <em>decorator</em>.</p>
 
-<p>Often, a twin maps directly to one persistent <em>“model”</em>. However, twins are absolutely not limited to your database layout - the opposite is the case. One twin can be a composition of many underlying models, with renaming, delegating, and more mapping features, that allow you modelling objects for your application, and not objects dictated by your database layout.</p>
+<p>Often, a twin maps directly to one persistent <em>“model”</em>. However, twins are absolutely not limited to your database layout - the opposite is the case. One twin can be a composition of many underlying models, with renaming, delegating, and more mapping features, that allow you modeling objects for your application, and not objects dictated by your database layout.</p>
 
 <h2 id="declarative-api" data-magellan-target="declarative-api">Declarative API</h2>
 
@@ -384,7 +384,7 @@ end
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">:type</code> option defines the coercion type. You may incluce <code class="highlighter-rouge">Setup::SkipSetter</code>, too, as otherwise the coercion will happen at initialization time and in the setter.</p>
+<p>The <code class="highlighter-rouge">:type</code> option defines the coercion type. You may include <code class="highlighter-rouge">Setup::SkipSetter</code>, too, as otherwise the coercion will happen at initialization time and in the setter.</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="s2">"1"</span>

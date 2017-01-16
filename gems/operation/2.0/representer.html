@@ -161,7 +161,7 @@
 
 <p>In Trailblazer, the normal workflow is to deserialize (parse) incoming data into an object graph, then validate this data structure, then persist parts of it. Transforming the incoming data into one or many objects is done by a representer.</p>
 
-<p>Normally, this happens internally in the Reform object, which receives the data in <code class="highlighter-rouge">validate</code> and then uses an automatically infered representer to parse the data onto itself.</p>
+<p>Normally, this happens internally in the Reform object, which receives the data in <code class="highlighter-rouge">validate</code> and then uses an automatically inferred representer to parse the data onto itself.</p>
 
 <p>However, let’s discuss representers first and ignore the validation layer.</p>
 
@@ -234,7 +234,7 @@ song.band  #=&gt; "Bad Religion"
 
 <h2 id="parsing-nesting" data-magellan-target="parsing-nesting">Parsing: Nesting</h2>
 
-<p>While one-level parsing might appear trivial and easily solveable using mechanisms such as <code class="highlighter-rouge">update_attributes</code> and Rails’ automatic parsed <code class="highlighter-rouge">params</code> hash, the deserialization process gets more complicated with nested fragments and models.</p>
+<p>While one-level parsing might appear trivial and easily solvable using mechanisms such as <code class="highlighter-rouge">update_attributes</code> and Rails’ automatic parsed <code class="highlighter-rouge">params</code> hash, the deserialization process gets more complicated with nested fragments and models.</p>
 
 <p>Let’s assume the <code class="highlighter-rouge">band:</code> property should now be a dedicated object. Here’s the new <strong>document</strong>.</p>
 
@@ -331,7 +331,7 @@ SongContract.new(song).validate(input)
 
 <p><a href="/gems/reform">→ Reform’s architecture docs</a> talk about this in detail.</p>
 
-<p>Reform infers this representer (or <em>deserializer</em>) automatially in <code class="highlighter-rouge">validate</code> and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn’t match 1-to-1 with the contract’s schema. For example, when validating input in a JSON API system.</p>
+<p>Reform infers this representer (or <em>deserializer</em>) automatically in <code class="highlighter-rouge">validate</code> and that is fine for most HTML forms where the contract schema and form layout are identical. In document APIs, whatsoever, the documents format often doesn’t match 1-to-1 with the contract’s schema. For example, when validating input in a JSON API system.</p>
 
 <p>This is where you can specify your own representer to be used against the contract.</p>
 
@@ -406,187 +406,7 @@ end
 
 <h2 id="parsing-infer" data-magellan-target="parsing-infer">Parsing: Infer</h2>
 
-<p>A representer can also be infered from the contract’s schema. All you need to do is define the format, e.g. <code class="highlighter-rouge">Representable::JSON</code>.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  class MyContract &lt; Reform::Form
-    property :id
-  end
-  
-  step Model( Song, :new )
-  step Contract::Build( constant: MyContract )
-  step Contract::Validate( representer: Representer.infer(MyContract, format: Representable::JSON) )
-  step Contract::Persist( method: :sync )
-end
-</code></pre>
-
-<p>The <code class="highlighter-rouge">Operation::Representer.infer</code> method will return a representer class.</p>
-
-<h2 id="parsing-dependency-injection" data-magellan-target="parsing-dependency-injection">Parsing: Dependency Injection</h2>
-
-<p>You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.</p>
-
-<pre><code>require "representable/xml"
-  
-class MyXMLRepresenter &lt; Representable::Decorator
-  include Representable::XML
-  property :id
-end
-</code></pre>
-
-<p>The representer can be injected using Trailblazer’s well-defined injection interface.</p>
-
-<pre><code>result = Create.({},
-  "document" =&gt; '&lt;body&gt;&lt;id&gt;1&lt;/id&gt;&lt;/body&gt;',
-  "representer.default.class" =&gt; MyXMLRepresenter # injection
-)
-</code></pre>
-
-<p>Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn’t know anything about the swapped documents.</p>
-
-<h2 id="naming" data-magellan-target="naming">Naming</h2>
-
-<p>Without a name specified, the representer will be named <code class="highlighter-rouge">default</code>.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  extend Representer::DSL
-  representer MyRepresenter
-end
-  
-Create["representer.default.class"] #=&gt; MyRepresenter
-</code></pre>
-
-<p>To maintain multiple representers per operation, you may name them.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>representer :parse, MyRepresenter
-representer :errors, ErrorsRepresenter
-</code></pre>
-</div>
-
-<p>They are now accessable via their named path.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create["representer.parse.class"] #=&gt; MyRepresenter
-</code></pre>
-</div>
-
-<h2 id="rendering-introduction" data-magellan-target="rendering-introduction">Rendering: Introduction</h2>
-
-<p>In a document API system, after processing the operation, you usually want to render a response document. While you could use something like <code class="highlighter-rouge">ActiveModel::Serializer</code> for this, it makes sense to reuse a representer.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::JSON # the document format.
-
-  property :title
-  property :band
-end
-</code></pre>
-</div>
-
-<p>Given the following model.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>song  #=&gt; #&lt;struct Song title="Let Them Eat War" band="Bad Religion"&gt;
-</code></pre>
-</div>
-
-<p>The mechanics when rendering are very similar to what happens when parsing.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_json #=&gt; '{"title":"Let Them Eat War","band": "Bad Religion"}'
-</code></pre>
-</div>
-
-<p>In pseudo-code, the representer literally only walks through its schema, asks the model for the property values and serializes them into a document.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code># SongRepresenter#to_json
-  json = {}
-  json[:title] = song.title
-  json[:band]  = song.band
-  json.to_json
-</code></pre>
-</div>
-
-<p>Representers are very helpful when introducing media formats such as HAL or JSON API, or when having to render complex XML documents from a nested object graph. The only requirement they have are the model’s readers.</p>
-
-<p>Go and read a bit about <a href="/gems/representable">Representable</a> to learn more about mapping, aliases, media formats, and more.</p>
-
-<h2 id="rendering-example" data-magellan-target="rendering-example">Rendering: Example</h2>
-
-<p>Rendering a document after the operation finished is part of the presentation layer, which should <em>not</em> happen inside the operation itself. Serializing a document is to happen where the operation was called, such as a controller.</p>
-
-<p>However, you may use the result object to grab representers and models.</p>
-
-<pre><code>result = Create.({}, "document" =&gt; '{"id": 1}')
-json   = result["representer.default.class"].new(result["model"]).to_json
-json #=&gt; '{"id":1}'
-</code></pre>
-
-<p>Luckily, <a href="endpoint.html"><code class="highlighter-rouge">Endpoint</code></a> and <code class="highlighter-rouge">respond</code> in Rails controllers help you with this.</p>
-
-<h2 id="full-example" data-magellan-target="full-example">Full Example</h2>
-
-<p>Often, an operation will maintain multiple representers, e.g. for parsing, to render into a specific media format, and to handle error cases.</p>
-
-<p>You could have a generic errors representer.</p>
-
-<pre><code>class ErrorsRepresenter &lt; Representable::Decorator
-  include Representable::JSON
-  collection :errors
-end
-</code></pre>
-
-<p>Using naming, the operation may then contain several representers.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  extend Contract::DSL
-  extend Representer::DSL
-  
-  contract do
-    property :title
-    validates :title, presence: true
-  end
-  
-  representer :parse do
-    property :title
-  end
-  
-  representer :render do
-    include Roar::JSON::HAL
-  
-    property :id
-    property :title
-    link(:self) { "/songs/#{represented.id}" }
-  end
-  
-  representer :errors, ErrorsRepresenter # explicit reference.
-  
-  step Model( Song, :new )
-  step Contract::Build()
-  step Contract::Validate( representer: self["representer.parse.class"] )
-  step Contract::Persist( method: :sync )
-end
-</code></pre>
-
-<p>Note that you don’t even have to hook those representers into the operation class - this is a convention for structuring.</p>
-
-<p>An exemplary controller method to handle both outcomes could look like the following snippet.</p>
-
-<pre><code>def create
-  result = Create.(params, "document" =&gt; request.body.read)
-  
-  if result.success?
-    result["representer.render.class"].new(result["model"]).to_json
-  else
-    result["representer.errors.class"].new(result["result.contract.default"]).to_json
-  end
-end
-</code></pre>
-
-<p>Make sure to check out <a href="endpoint.html">Endpoint</a> which bundles the most common outcomes for you and is easily extendable.</p>
+<p>A representer can also be inferred from the contract’s schema. All you need to do is define the format, e.g. `Represen</p>
 
             </div>
 
@@ -603,11 +423,6 @@ end
 <li><a href="#parsing-explicit">Parsing: Explicit</a></li>
 <li><a href="#parsing-inline-representer">Parsing: Inline Representer</a></li>
 <li><a href="#parsing-infer">Parsing: Infer</a></li>
-<li><a href="#parsing-dependency-injection">Parsing: Dependency Injection</a></li>
-<li><a href="#naming">Naming</a></li>
-<li><a href="#rendering-introduction">Rendering: Introduction</a></li>
-<li><a href="#rendering-example">Rendering: Example</a></li>
-<li><a href="#full-example">Full Example</a></li>
         </ul>
       
 </nav>

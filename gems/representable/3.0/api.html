@@ -154,7 +154,20 @@ end
 <p>A representer simply defines the fields that will be mapped to the document using <code class="highlighter-rouge">property</code> or <code class="highlighter-rouge">collection</code>. You can then decorate an object and render or parse. Here’s an example.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_json #=&gt; {"id": 1, title":"Fallout"}
+<pre class="highlight"><code># Given a Struct like this
+Song = Struct.new(:id, :title) #=&gt; Song
+
+# You can instantiate it with the following
+song = Song.new(1, "Fallout") #=&gt; #&lt;struct Song id=1, title="Fallout"&gt;
+
+# This object doesn't know how to represent itself in JSON
+song.to_json #=&gt; NoMethodError: undefined method `to_json'
+
+# But you can decorate it with the above defined representer
+song_representer = SongRepresenter.new(song)
+
+# Relax and let the representer do its job
+song_representer.to_json #=&gt; {"id":1,"title":"Fallout"}
 </code></pre>
 </div>
 
@@ -179,7 +192,7 @@ end
 <p>The API in a module representer is identical to decorators. However, the way you apply them is different.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>song.extend(SongRepresenter).to_json #=&gt; {"id": 1, title":"Fallout"}
+<pre class="highlight"><code>song.extend(SongRepresenter).to_json #=&gt; {"id":1,"title":"Fallout"}
 </code></pre>
 </div>
 
@@ -187,7 +200,7 @@ end
 
 <ol>
   <li>You pollute the represented object with the imported representer methods (e.g. <code class="highlighter-rouge">to_json</code>).</li>
-  <li>Extending an object at run-time is costly and with many <code class="highlighter-rouge">extend</code>s there will be a noteable performance decrease.</li>
+  <li>Extending an object at run-time is costly and with many <code class="highlighter-rouge">extend</code>s there will be a notable performance decrease.</li>
 </ol>
 
 <p>Throughout this documentation, we will use decorator as examples to encourage this cleaner and faster approach.</p>
@@ -213,7 +226,8 @@ end
 <pre class="highlight"><code>Song = Struct.new(:id, :title, :composer_ids)
 song = Song.new(1, "Fallout", [2, 3])
 
-song.to_json #=&gt; {"id": 1, title":"Fallout", composer_ids:[2,3]}
+song_representer = SongRepresenter.new(song)
+song_representer.to_json #=&gt; {"id":1,"title":"Fallout","composer_ids":[2,3]}
 </code></pre>
 </div>
 
@@ -230,7 +244,7 @@ song.to_json #=&gt; {"id": 1, title":"Fallout", composer_ids:[2,3]}
 Artist = Struct.new(:id, :name)
 
 artist = Artist.new(2, "The Police")
-song = Song.new(1, "Fallout", artist)
+song   = Song.new(1, "Fallout", artist)
 </code></pre>
 </div>
 
@@ -305,7 +319,7 @@ end
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>SongRepresenter.new(song).to_json
-#=&gt; {"id": 1, title":"Fallout", artist:{"id":2, "name":"The Police"}}
+#=&gt; {"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}
 </code></pre>
 </div>
 
@@ -329,7 +343,7 @@ end
 <pre class="highlight"><code>song = Song.new # nothing set.
 
 SongRepresenter.new(song).
-    from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
+  from_json('{"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}')
 
 song.artist.name #=&gt; "The Police"
 </code></pre>
@@ -341,21 +355,21 @@ song.artist.name #=&gt; "The Police"
 
 <p>Not always does the structure of the desired document map to your objects. The <code class="highlighter-rouge">::nested</code> method allows structuring properties within a separate section while still mapping the properties to the outer object.</p>
 
-<p>Imagine the following document.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code><span class="p">{</span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Roxanne"</span><span class="p">,</span><span class="w">
- </span><span class="nt">"details"</span><span class="p">:</span><span class="w">
-   </span><span class="p">{</span><span class="nt">"track"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"length"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4:10"</span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-</div>
+<p>Imagine the following document.
+    json_fragment = «END
+    {“title”: “Roxanne”,
+     “details”:
+       {“track”: 3,
+        “length”: “4:10”}
+    }
+    END</p>
 
 <p>However, in the <code class="highlighter-rouge">Song</code> class, there’s no such concept as <code class="highlighter-rouge">details</code>.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>Song = Struct.new(:title, :track, :length)
+
+song = Song.new #=&gt; #&lt;struct Song title=nil, track=nil, length=nil&gt;
 </code></pre>
 </div>
 
@@ -372,6 +386,9 @@ song.artist.name #=&gt; "The Police"
     property :length
   end
 end
+
+song_representer = SongRepresenter.new(song)
+song_representer.from_json(json_fragment)
 </code></pre>
 </div>
 
@@ -413,7 +430,7 @@ end
 <p>This would allow to provide the wrap manually.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(user_options: { my_wrap: "hit" })
+<pre class="highlight"><code>song_representer.to_json(user_options: { my_wrap: "hit" })
 </code></pre>
 </div>
 
@@ -429,17 +446,33 @@ end
 
   <span class="n">collection</span> <span class="ss">:songs</span><span class="p">,</span>
     <span class="ss">decorator: </span><span class="no">SongRepresenter</span><span class="p">,</span> <span class="c1"># SongRepresenter defines representation_wrap.</span>
-     <span class="ss">wrap:     </span><span class="kp">false</span>            <span class="c1"># turn off :song wrap.</span>
+    <span class="ss">wrap:      </span><span class="kp">false</span>            <span class="c1"># turn off :song wrap.</span>
 <span class="k">end</span>
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">representation_wrap</code> from the nested representer now won’t be rendered and parsed.</p>
+<p>The <code class="highlighter-rouge">representation_wrap</code> from the nested representer now won’t be rendered nor parsed…</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="no">AlbumRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">).</span><span class="nf">to_json</span>
-<span class="c1">#=&gt; "{\"songs\": [{\"name\": \"Roxanne\"}]}"</span>
+<pre class="highlight"><code><span class="no">Album</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:songs</span><span class="p">)</span>
+<span class="n">album</span> <span class="o">=</span> <span class="no">Album</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">album</span><span class="p">.</span><span class="nf">songs</span> <span class="o">=</span> <span class="p">[</span><span class="n">song</span><span class="p">]</span>
+<span class="no">AlbumRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">).</span><span class="nf">to_json</span>
 </code></pre>
+</div>
+
+<p>.. and will result:</p>
+
+<div class="language-json highlighter-rouge">
+<pre class="highlight"><code><span class="p">{</span><span class="nt">"songs"</span><span class="p">:[{</span><span class="nt">"title"</span><span class="p">:</span><span class="s2">"Fallout"</span><span class="p">,</span><span class="nt">"id"</span><span class="p">:</span><span class="mi">1</span><span class="p">}]}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>Otherwise it would respect the <code class="highlighter-rouge">representation_wrap=</code> set in the nested decorator (SongRepresenter) and will render:</p>
+
+<div class="language-json highlighter-rouge">
+<pre class="highlight"><code><span class="p">{</span><span class="nt">"songs"</span><span class="p">:[{</span><span class="nt">"song"</span><span class="p">:{</span><span class="nt">"title"</span><span class="p">:</span><span class="s2">"Fallout"</span><span class="p">,</span><span class="nt">"id"</span><span class="p">:</span><span class="mi">1</span><span class="p">}}]}</span><span class="w">
+</span></code></pre>
 </div>
 
 <p>Note that this only works for JSON and Hash at the moment.</p>
@@ -470,6 +503,25 @@ end
 </div>
 
 <p>All configuration from <code class="highlighter-rouge">SongRepresenter</code> will be inherited, making the properties on <code class="highlighter-rouge">SongWithArtistRepresenter</code>: <code class="highlighter-rouge">id</code>, <code class="highlighter-rouge">title</code>, and <code class="highlighter-rouge">artist</code>. The original <code class="highlighter-rouge">SongRepresenter</code> will stay as it is.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Artist</span>         <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:name</span><span class="p">)</span>
+<span class="no">SongWithArtist</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:id</span><span class="p">,</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:artist</span><span class="p">)</span>
+
+<span class="n">artist</span>           <span class="o">=</span> <span class="no">Artist</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Ivan Lins"</span><span class="p">)</span>
+<span class="n">song_with_artist</span> <span class="o">=</span> <span class="no">SongWithArtist</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"Novo Tempo"</span><span class="p">,</span> <span class="n">artist</span><span class="p">)</span>
+
+<span class="c1"># Using the same object with the two representers</span>
+<span class="n">song_representer</span>             <span class="o">=</span> <span class="no">SongRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song_with_artist</span><span class="p">)</span>
+<span class="n">song_with_artist_representer</span> <span class="o">=</span> <span class="no">SongWithArtistRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song_with_artist</span><span class="p">)</span>
+
+<span class="n">song_representer</span><span class="p">.</span><span class="nf">to_json</span>
+<span class="c1">#=&gt; {"id":1,"title":"Novo Tempo"}</span>
+
+<span class="n">song_with_artist_representer</span><span class="p">.</span><span class="nf">to_json</span>
+<span class="c1">#=&gt; {"id":1,"title":"Novo Tempo","artist":{"name":"Ivan Lins"}}</span>
+</code></pre>
+</div>
 
 <h3 id="composition">Composition</h3>
 
@@ -997,11 +1049,11 @@ song.title #=&gt; "Fallout"
 <p>You can provide options when representing an object using the <code class="highlighter-rouge">user_options:</code> option.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(user_options: { is_admin: true })
+<pre class="highlight"><code>song_representer.to_json(user_options: { is_admin: true })
 </code></pre>
 </div>
 
-<p>Note that the <code class="highlighter-rouge">:user_options</code> will be accessable on all levels in a nested representer. They act like a “global” configuration and are passed to all option functions.</p>
+<p>Note that the <code class="highlighter-rouge">:user_options</code> will be accessible on all levels in a nested representer. They act like a “global” configuration and are passed to all option functions.</p>
 
 <p>Here’s an example where the <code class="highlighter-rouge">:if</code> option function evaluates a dynamic user option.</p>
 
@@ -1024,7 +1076,7 @@ song.title #=&gt; "Fallout"
 <p>Representable also allows passing nested options to particular representers. You have to provide the property’s name to do so.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(artist: { user_options: { is_admin: true } })
+<pre class="highlight"><code>song_representer.to_json(artist: { user_options: { is_admin: true } })
 </code></pre>
 </div>
 
@@ -1037,14 +1089,15 @@ song.title #=&gt; "Fallout"
 <p><code class="highlighter-rouge">:include</code> allows defining a set of properties to represent. The remaining will be skipped.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(include: [:id])  #=&gt; {"id":1}
+<pre class="highlight"><code>song_representer.to_json(include: [:id])  #=&gt; {"id":1}
 </code></pre>
 </div>
 
 <p>The other, <code class="highlighter-rouge">:exclude</code>, will - you might have guessed it already - skip the provided properties and represent the remaining.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(exclude: [:id, :artist])  #=&gt; {"title":"Fallout"}
+<pre class="highlight"><code>song_representer.to_json(exclude: [:id, :artist])
+#=&gt; {"title":"Fallout"}
 </code></pre>
 </div>
 
@@ -1053,7 +1106,7 @@ song.title #=&gt; "Fallout"
 <p>Note that you can also nest <code class="highlighter-rouge">:include</code> and <code class="highlighter-rouge">:exclude</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>decorator.to_json(artist: { include: [:name] })
+<pre class="highlight"><code>song_representer.to_json(artist: { include: [:name] })
 #=&gt; {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 </code></pre>
 </div>
