@@ -268,7 +268,7 @@ The `representation_wrap` from the nested representer now won't be rendered and 
 
 ```ruby
 AlbumRepresenter.new(album).to_json
-#=> "{\"songs\": [{\"name\": \"Roxanne\"}]}"
+#=> {"songs":{"title":"Fallout","id":1}}
 ```
 
 Note that this only works for JSON and Hash at the moment.
