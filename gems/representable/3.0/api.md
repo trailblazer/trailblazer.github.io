@@ -177,7 +177,7 @@ This happens via the `:class` option. Now, the document can be parsed and a nest
     song = Song.new # nothing set.
 
     SongRepresenter.new(song).
-        from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
+      from_json('{"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}')
 
     song.artist.name #=> "The Police"
 
