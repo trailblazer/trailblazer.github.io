@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">JSON API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 January 2017</span>
 
   
 
@@ -127,59 +127,253 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="json-api">JSON API</h1>
+              <p>Roar JSON API supports rendering and parsing documents using the <a href="http://jsonapi.org/format/">JSON API 1.0</a> specification.</p>
 
-<p>Roar supports rendering and parsing documents using the <a href="http://jsonapi.org/format/">JSON API 1.0</a> specification.</p>
+<div class="callout">
+  
+<p>N.B. Roar’s JSON API support is now provided <a href="https://github.com/trailblazer/roar-jsonapi">as a separate gem</a>.</p>
 
-<p>By including <code class="highlighter-rouge">Roar::JSON::JSONAPI</code> into your representer a handful of additional DSL methods get imported.</p>
+</div>
 
 <h2 id="overview" data-magellan-target="overview">Overview</h2>
 
-<p>Here’s a full example of a JSON API representer.</p>
+<p>Here’s a basic example of a JSON API representer.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class ArticleDecorator &lt; Roar::Decorator
-  include Roar::JSON::JSONAPI
-  type :articles
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">ArticleDecorator</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:articles</span>
 
-  # top-level link.
-  link :self, toplevel: true do
-    "//articles"
-  end
+  <span class="c1"># top-level link.</span>
+  <span class="n">link</span> <span class="ss">:self</span><span class="p">,</span> <span class="ss">toplevel: </span><span class="kp">true</span> <span class="k">do</span>
+    <span class="s2">"//articles"</span>
+  <span class="k">end</span>
 
-  # attributes: {}
-  property :id
-  property :title
+  <span class="n">attributes</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:title</span>
+  <span class="k">end</span>
 
+  <span class="c1"># resource object links</span>
+  <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"http://</span><span class="si">#{</span><span class="n">represented</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
 
-  # resource object links
-  link(:self) { "http://#{represented.class}/#{represented.id}" }
+  <span class="c1"># relationships</span>
+  <span class="n">has_one</span> <span class="ss">:author</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Author</span><span class="p">,</span> <span class="ss">populator: </span><span class="o">::</span><span class="no">Representable</span><span class="o">::</span><span class="no">FindOrInstantiate</span> <span class="k">do</span> <span class="c1"># populator is for parsing, only.</span>
+    <span class="n">type</span> <span class="ss">:authors</span>
 
-  # relationships
-  has_one :author, class: Author, populator: ::Representable::FindOrInstantiate do # populator is for parsing, only.
-    type :authors
+    <span class="n">attributes</span> <span class="k">do</span>
+      <span class="n">property</span> <span class="ss">:email</span>
+    <span class="k">end</span>
 
-    property :id
-    property :email
-    link(:self) { "http://authors/#{represented.id}" }
-  end
+    <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"http://authors/</span><span class="si">#{</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span> <span class="p">}</span>
+  <span class="k">end</span>
 
-  has_many :comments, class: Comment, populator: ::Representable::FindOrInstantiate do
-    type :comments
+  <span class="n">has_many</span> <span class="ss">:comments</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Comment</span><span class="p">,</span> <span class="ss">decorator: </span><span class="no">CommentDecorator</span>
+<span class="k">end</span>
+</code></pre>
+</div>
 
-    property :id
-    property :body
-    link(:self) { "http://comments/#{represented.id}" }
-  end
-end
+<h2 id="basic-usage" data-magellan-target="basic-usage">Basic Usage</h2>
+
+<p>By including <code class="highlighter-rouge">Roar::JSON::JSONAPI.resource</code> into your representer a handful of additional DSL methods get imported.</p>
+
+<p>As JSON API per definition can represent singular models and collections you have two entry points.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">SongsRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Song</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)).</span><span class="nf">to_json</span>
+<span class="no">SongsRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">).</span><span class="nf">from_json</span><span class="p">(</span><span class="s2">".."</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">SongsRepresenter</span><span class="p">.</span><span class="nf">for_collection</span><span class="p">.</span><span class="nf">new</span><span class="p">([</span><span class="no">Song</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="no">Song</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">2</span><span class="p">)]).</span><span class="nf">to_json</span>
+<span class="no">SongsRepresenter</span><span class="p">.</span><span class="nf">for_collection</span><span class="p">.</span><span class="nf">new</span><span class="p">([</span><span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">,</span> <span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">]).</span><span class="nf">from_json</span><span class="p">(</span><span class="s2">".."</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="resource-objects" data-magellan-target="resource-objects">Resource Objects</h2>
+
+<p>http://jsonapi.org/format/#document-resource-objects</p>
+
+<p>JSON API Resource Objects must contain an <code class="highlighter-rouge">id</code> and <code class="highlighter-rouge">type</code> member. You specify
+the <code class="highlighter-rouge">type</code> when you include <code class="highlighter-rouge">Roar::JSON::JSONAPI.resource(type)</code>:</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You do not need to specify an <code class="highlighter-rouge">id</code>. An <code class="highlighter-rouge">id</code> property will be created for you
+automatically. However, if your represented object uses a method other than <code class="highlighter-rouge">id</code>
+to represent its <code class="highlighter-rouge">id</code>, you must specify this with the <code class="highlighter-rouge">id_key:</code> option on
+inclusion:</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Song</span>
+  <span class="kp">attr_accessor</span> <span class="ss">:song_id</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span><span class="p">,</span> <span class="ss">id_key: :song_id</span>
+
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="attributes" data-magellan-target="attributes">Attributes</h2>
+
+<p>http://jsonapi.org/format/#document-resource-object-attributes</p>
+
+<p>Attributes should be defined with <code class="highlighter-rouge">::property</code> in an <code class="highlighter-rouge">::attributes</code> block.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">attributes</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:title</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
 </div>
 
 <h2 id="relationships" data-magellan-target="relationships">Relationships</h2>
 
-<h2 id="top-level-links" data-magellan-target="top-level-links">Top-Level Links</h2>
+<p>http://jsonapi.org/format/#document-resource-object-relationships</p>
 
-<h2 id="parsing-collections" data-magellan-target="parsing-collections">Parsing Collections</h2>
+<p>To define relationships, use <code class="highlighter-rouge">::has_one</code> or <code class="highlighter-rouge">::has_many</code> with either an <a href="http://trailblazer.to/gems/representable/3.0/api.html#inline-representer">inline representer</a> or an <a href="http://trailblazer.to/gems/representable/3.0/api.html#explicit-representer">explicit, standalone representer</a> (specified with the <code class="highlighter-rouge">decorates:</code> or <code class="highlighter-rouge">extend:</code> option).</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">has_one</span> <span class="ss">:album</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Album</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:title</span>
+  <span class="k">end</span>
+
+  <span class="n">has_many</span> <span class="ss">:musicians</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Musician</span><span class="p">,</span> <span class="ss">decorator: </span><span class="no">MusiciansRepresenter</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You are able to define links and meta information for a given relationship in a
+<code class="highlighter-rouge">::relationship</code> block:</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">has_many</span> <span class="ss">:musicians</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Musician</span><span class="p">,</span> <span class="ss">decorator: </span><span class="no">MusiciansRepresenter</span> <span class="k">do</span>
+    <span class="n">relationship</span> <span class="k">do</span>
+      <span class="n">link</span><span class="p">(</span><span class="ss">:self</span><span class="p">)</span>     <span class="p">{</span> <span class="s2">"/songs/</span><span class="si">#{</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">/relationships/musicians"</span> <span class="p">}</span>
+      <span class="n">link</span><span class="p">(</span><span class="ss">:related</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">"/songs/</span><span class="si">#{</span><span class="n">represented</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">/musicians"</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="member-names" data-magellan-target="member-names">Member Names</h2>
+
+<p>http://jsonapi.org/format/#document-member-names</p>
+
+<p>By default, member names will be rendered according to JSON API <strong>recommendations</strong>:
+only non-reserved, URL safe characters specified in RFC 3986 will be used.
+Following JSON API conventions, underscores will also be replaced by hyphens.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">attributes</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:song_title</span>        <span class="c1"># rendered as song-title</span>
+    <span class="n">property</span> <span class="ss">:lyric_writer</span><span class="p">,</span> <span class="ss">as: :lyricist</span>
+  <span class="k">end</span>
+
+  <span class="n">has_one</span> <span class="ss">:album</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Album</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:release_date</span>    <span class="c1"># rendered as release-date</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>If you want less-strict behaviour (such as allowing non-ASCII Unicode
+characters), you can override this default:</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">defaults</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">_</span><span class="o">|</span>
+    <span class="p">{</span> <span class="ss">as: </span><span class="no">JSONAPI</span><span class="o">::</span><span class="no">MemberName</span><span class="o">.</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="ss">strict: </span><span class="kp">false</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="n">attributes</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:titel_des_Liedes</span>    <span class="c1"># rendered as titel_des_Liedes</span>
+    <span class="n">property</span> <span class="ss">:Klavierst</span><span class="err">ü</span><span class="n">ck</span>        <span class="c1"># rendered as Klavierstück</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="meta-information" data-magellan-target="meta-information">Meta information</h2>
+
+<p>http://jsonapi.org/format/#document-meta</p>
+
+<p>Meta information can be included into rendered singular and collection documents in two ways.</p>
+
+<p>You can define meta information on your collection object and then let Roar compile it.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">meta</span> <span class="ss">toplevel: </span><span class="kp">true</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:page</span>
+    <span class="n">property</span> <span class="ss">:total</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Your collection object must expose the respective methods.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">collection</span><span class="p">.</span><span class="nf">page</span>  <span class="c1">#=&gt; 1</span>
+<span class="n">collection</span><span class="p">.</span><span class="nf">total</span> <span class="c1">#=&gt; 12</span>
+</code></pre>
+</div>
+
+<p>This will render the <code class="highlighter-rouge"><span class="p">{</span><span class="nt">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"page"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">}}</span></code> hash into the JSON API document.</p>
+
+<p>Alternatively, you can provide meta information as a hash when rendering.  Any values also defined on your object will be overriden.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">collection</span><span class="p">.</span><span class="nf">to_json</span><span class="p">(</span><span class="ss">meta: </span><span class="p">{</span><span class="ss">page: </span><span class="n">params</span><span class="p">[</span><span class="s2">"page"</span><span class="p">],</span> <span class="ss">total: </span><span class="n">collection</span><span class="p">.</span><span class="nf">size</span><span class="p">})</span>
+</code></pre>
+</div>
+
+<p>Both methods work for singular documents too.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Roar</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Roar</span><span class="o">::</span><span class="no">JSON</span><span class="o">::</span><span class="no">JSONAPI</span><span class="p">.</span><span class="nf">resource</span> <span class="ss">:songs</span>
+
+  <span class="n">meta</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:label</span>
+    <span class="n">property</span> <span class="ss">:format</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">song</span><span class="p">.</span><span class="nf">to_json</span><span class="p">(</span><span class="ss">meta: </span><span class="p">{</span> <span class="ss">label: </span><span class="s1">'EMI'</span> <span class="p">})</span>
+</code></pre>
+</div>
 
 <h2 id="compound-document" data-magellan-target="compound-document">Compound Document</h2>
 
@@ -192,20 +386,20 @@ end
 
 <h2 id="sparse-fieldsets" data-magellan-target="sparse-fieldsets">Sparse Fieldsets</h2>
 
-<p>As per specification, JSON API allows to suppress rendering of arbitrary fields. This is called <a href="http://jsonapi.org/format/#fetching-sparse-fieldsets">sparse fieldsets</a>.</p>
+<p>As per specification, JSON API allows the rendering of arbitrary fields to be suppressed. This feature is called <a href="http://jsonapi.org/format/#fetching-sparse-fieldsets">sparse fieldsets</a>.</p>
 
 <p>With Roar, you can do that with all kinds of resource objects: Filtering attributes works for the top “primary data” and for the compound object.</p>
 
-<p>For the primary data, you simply provide what to include via the <code class="highlighter-rouge">:include</code> option.</p>
+<p>For the primary data, you simply provide what to include via the <code class="highlighter-rouge">:fields</code> option.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>decorator.to_hash(
-  include: [:title]
+  fields: { articles: [:title] }
 )
 </code></pre>
 </div>
 
-<p>This will only render the two obligatory fields <code class="highlighter-rouge">:id</code>, <code class="highlighter-rouge">:type</code> and the  <code class="highlighter-rouge">:title</code> attribute.</p>
+<p>This will only render the two mandatory <code class="highlighter-rouge">:id</code>, <code class="highlighter-rouge">:type</code> members and the  <code class="highlighter-rouge">:title</code> attribute.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>"data": {
@@ -216,12 +410,12 @@ end
 </code></pre>
 </div>
 
-<p>To include particular attributes, only, in the compound document, use <code class="highlighter-rouge">:fields</code>.</p>
+<p>To include particular fields, only, in the compound document, use <code class="highlighter-rouge">:fields</code>.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>decorator.to_hash(
-  include: [:title, :author],
-  fields:  {author: [:email]}
+  include: [:author],
+  fields: { articles: [:title], author: [:email] }
 )
 </code></pre>
 </div>
@@ -252,6 +446,17 @@ end
 
 <p>The <code class="highlighter-rouge">to_json</code> API is designed to be able to process <code class="highlighter-rouge">params</code> directly, where JSON API parameters like <code class="highlighter-rouge">fields</code> from the request URL are parsed into hashes and arrays.</p>
 
+<div class="highlighter-rouge">
+<pre class="highlight"><code>uri = Addressable::URI.parse('/articles?include=author&amp;fields%5Barticles%5D=title,body&amp;fields%5Bpeople%5D=name')
+=&gt; {"include"=&gt;"author", "fields[articles]"=&gt;"title,body", "fields[people]"=&gt;"name"}
+
+query = Rack::Utils.parse_nested_query(uri.query)
+=&gt; {"include"=&gt;"author", "fields"=&gt;{"articles"=&gt;"title,body", "people"=&gt;"name"}}
+
+representer.to_json(include: query['include], fields: query['fields'])
+</code></pre>
+</div>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -262,9 +467,12 @@ end
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#overview">Overview</a></li>
+<li><a href="#basic-usage">Basic Usage</a></li>
+<li><a href="#resource-objects">Resource Objects</a></li>
+<li><a href="#attributes">Attributes</a></li>
 <li><a href="#relationships">Relationships</a></li>
-<li><a href="#top-level-links">Top-Level Links</a></li>
-<li><a href="#parsing-collections">Parsing Collections</a></li>
+<li><a href="#member-names">Member Names</a></li>
+<li><a href="#meta-information">Meta information</a></li>
 <li><a href="#compound-document">Compound Document</a></li>
 <li><a href="#sparse-fieldsets">Sparse Fieldsets</a></li>
         </ul>
