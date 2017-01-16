@@ -13,7 +13,6 @@ If you're enjoying the pleasure of working with XML, Representable can help you.
       include Representable::XML
 
       property :title
-      property :id
       collection :composers
     end
 
@@ -21,28 +20,41 @@ Note that you have to include the `Representable::XML` module.
 
 The public API then gives you `to_xml` and `from_xml`.
 
-    song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
-    SongRepresenter.new(song).to_xml #=>
+```ruby
+Song = Struct.new(:title, :composers)
+song = Song.new("Fallout", ["Stewart Copeland", "Sting"])
+SongRepresenter.new(song).to_xml
+```
 
-    <song>
-        <title>Fallout</title>
-        <composers>Stewart Copeland</composers>
-        <composers>Sting</composers>
-    </song>
+```xml
+<song>
+  <title>Fallout</title>
+  <composers>Stewart Copeland</composers>
+  <composers>Sting</composers>
+</song>
+```
 
 ## Tag Attributes
 
 You can also map properties to tag attributes in Representable. This works only for the top-level node, though (seen from the representer's perspective).
 
-    class SongRepresenter < Representable::Decorator
-      include Representable::XML
+```ruby
+class SongRepresenter < Representable::Decorator
+  include Representable::XML
 
-      property :id, attribute: true
-      property :track, attribute: true
-    end
+  property :title, attribute: true
+  collection :composers
+end
 
-    song.to_xml
-    #=> <song title="American Idle" id="1" />
+SongRepresenter.new(song).to_xml
+```
+
+```xml
+<song title="Fallout">
+  <composers>Stewart Copeland</composers>
+  <composers>Sting</composers>
+</song>
+```
 
 Naturally, this works both ways.
 
@@ -56,8 +68,8 @@ The same concept can also be applied to content. If you need to map a property t
       property :title, content: true
     end
 
-    song.to_xml
-    #=> <song>American Idle</song>
+    SongRepresenter.new(song).to_xml
+    #=> <song>Fallout</song>
 
 ## Wrapping Collections
 
@@ -69,16 +81,23 @@ It is sometimes unavoidable to wrap tag lists in a container tag.
       collection :songs, as: :song, wrap: :songs
     end
 
+Album = Struct.new(:songs)
+album = Album.new(["Laundry Basket", "Two Kevins", "Wright and Rong"])
+
+album_representer = AlbumRepresenter.new(album)
+album_representer.to_xml
+
 Note that `:wrap` defines the container tag name.
 
-    song.to_xml #=>
-    <album>
-        <songs>
-            <song>Laundry Basket</song>
-            <song>Two Kevins</song>
-            <song>Wright and Rong</song>
-        </songs>
-    </album>
+```xml
+<album>
+  <songs>
+    <song>Laundry Basket</song>
+    <song>Two Kevins</song>
+    <song>Wright and Rong</song>
+  </songs>
+</album>
+```
 
 ## Namespaces
 

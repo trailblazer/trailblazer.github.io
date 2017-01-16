@@ -26,7 +26,20 @@ A representer can either be a class (called _decorator_) or a module (called _re
 
 A representer simply defines the fields that will be mapped to the document using `property` or `collection`. You can then decorate an object and render or parse. Here's an example.
 
-    SongRepresenter.new(song).to_json #=> {"id": 1, title":"Fallout"}
+    # Given a Struct like this
+    Song = Struct.new(:id, :title) #=> Song
+
+    # You can instantiate it with the following
+    song = Song.new(1, "Fallout") #=> #<struct Song id=1, title="Fallout">
+
+    # This object doesn't know how to represent itself in JSON
+    song.to_json #=> NoMethodError: undefined method `to_json'
+
+    # But you can decorate it with the above defined representer
+    song_representer = SongRepresenter.new(song)
+
+    # Relax and let the representer do its job
+    song_representer.to_json #=> {"id":1,"title":"Fallout"}
 
 The details are being discussed in the [public API](#public-api) section.
 
@@ -45,12 +58,12 @@ A representer module is also a good way to share configuration and logic across 
 
 The API in a module representer is identical to decorators. However, the way you apply them is different.
 
-    song.extend(SongRepresenter).to_json #=> {"id": 1, title":"Fallout"}
+    song.extend(SongRepresenter).to_json #=> {"id":1,"title":"Fallout"}
 
 There's two drawbacks with this approach.
 
 1. You pollute the represented object with the imported representer methods (e.g. `to_json`).
-2. Extending an object at run-time is costly and with many `extend`s there will be a noteable performance decrease.
+2. Extending an object at run-time is costly and with many `extend`s there will be a notable performance decrease.
 
 Throughout this documentation, we will use decorator as examples to encourage this cleaner and faster approach.
 
@@ -71,7 +84,8 @@ The new collection `composer_ids` has to be enumeratable object, like an array.
     Song = Struct.new(:id, :title, :composer_ids)
     song = Song.new(1, "Fallout", [2, 3])
 
-    song.to_json #=> {"id": 1, title":"Fallout", composer_ids:[2,3]}
+    song_representer = SongRepresenter.new(song)
+    song_representer.to_json #=> {"id":1,"title":"Fallout","composer_ids":[2,3]}
 
 Of course, this works also for parsing. The incoming `composer_ids` will override the old collection on the represented object.
 
@@ -85,7 +99,7 @@ For example, a song could nest an artist object.
     Artist = Struct.new(:id, :name)
 
     artist = Artist.new(2, "The Police")
-    song = Song.new(1, "Fallout", artist)
+    song   = Song.new(1, "Fallout", artist)
 
 Here's a better view of that object graph.
 
@@ -145,7 +159,7 @@ Note that the `:extend` and `:decorator` options are identical. They can both re
 Regardless of the representer types you use, rendering will result in a nested document.
 
     SongRepresenter.new(song).to_json
-    #=> {"id": 1, title":"Fallout", artist:{"id":2, "name":"The Police"}}
+    #=> {"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}
 
 ### Nested Parsing
 
@@ -163,7 +177,7 @@ This happens via the `:class` option. Now, the document can be parsed and a nest
     song = Song.new # nothing set.
 
     SongRepresenter.new(song).
-        from_json('{"id":1,title":"Fallout",artist:{"id":2,"name":"The Police"}}')
+      from_json('{"id":1,"title":"Fallout","artist":{"id":2,"name":"The Police"}}')
 
     song.artist.name #=> "The Police"
 
@@ -174,17 +188,19 @@ The default behavior is - admittedly - very primitive. Representable's parsing a
 Not always does the structure of the desired document map to your objects. The `::nested` method allows structuring properties within a separate section while still mapping the properties to the outer object.
 
 Imagine the following document.
-
+    json_fragment = <<END
     {"title": "Roxanne",
      "details":
        {"track": 3,
         "length": "4:10"}
     }
+    END
 
 However, in the `Song` class, there's no such concept as `details`.
 
     Song = Struct.new(:title, :track, :length)
 
+    song = Song.new #=> #<struct Song title=nil, track=nil, length=nil>
 
 Both track and length are properties of the song object itself. Representable gives you ::nested to map the virtual `details` section to the song instance.
 
@@ -198,6 +214,9 @@ Both track and length are properties of the song object itself. Representable gi
         property :length
       end
     end
+
+    song_representer = SongRepresenter.new(song)
+    song_representer.from_json(json_fragment)
 
 Accessors for the nested properties will still be called on the song object. And as always, this works both ways - for rendering and parsing.
 
@@ -227,7 +246,7 @@ Note that `representation_wrap` is a dynamic function option.
 
 This would allow to provide the wrap manually.
 
-    decorator.to_json(user_options: { my_wrap: "hit" })
+    song_representer.to_json(user_options: { my_wrap: "hit" })
 
 ### Suppressing Nested Wraps
 
@@ -241,15 +260,29 @@ class AlbumRepresenter < Representable::Decorator
 
   collection :songs,
     decorator: SongRepresenter, # SongRepresenter defines representation_wrap.
-     wrap:     false            # turn off :song wrap.
+    wrap:      false            # turn off :song wrap.
 end
 ```
 
-The `representation_wrap` from the nested representer now won't be rendered and parsed.
+The `representation_wrap` from the nested representer now won't be rendered nor parsed...
 
 ```ruby
+Album = Struct.new(:songs)
+album = Album.new
+album.songs = [song]
 AlbumRepresenter.new(album).to_json
-#=> "{\"songs\": [{\"name\": \"Roxanne\"}]}"
+```
+
+.. and will result:
+
+```json
+{"songs":[{"title":"Fallout","id":1}]}
+```
+
+Otherwise it would respect the `representation_wrap=` set in the nested decorator (SongRepresenter) and will render:
+
+```json
+{"songs":[{"song":{"title":"Fallout","id":1}}]}
 ```
 
 Note that this only works for JSON and Hash at the moment.
@@ -275,6 +308,24 @@ What if you need a refined representer to also add the artist. Use inheritance.
     end
 
 All configuration from `SongRepresenter` will be inherited, making the properties on `SongWithArtistRepresenter`: `id`, `title`, and `artist`. The original `SongRepresenter` will stay as it is.
+
+```ruby
+Artist         = Struct.new(:name)
+SongWithArtist = Struct.new(:id, :title, :artist)
+
+artist           = Artist.new("Ivan Lins")
+song_with_artist = SongWithArtist.new(1, "Novo Tempo", artist)
+
+# Using the same object with the two representers
+song_representer             = SongRepresenter.new(song_with_artist)
+song_with_artist_representer = SongWithArtistRepresenter.new(song_with_artist)
+
+song_representer.to_json
+#=> {"id":1,"title":"Novo Tempo"}
+
+song_with_artist_representer.to_json
+#=> {"id":1,"title":"Novo Tempo","artist":{"name":"Ivan Lins"}}
+```
 
 ### Composition
 
@@ -710,7 +761,7 @@ For other format engines, the deserializing method is named analogue to the seri
 
 You can provide options when representing an object using the `user_options:` option.
 
-    decorator.to_json(user_options: { is_admin: true })
+    song_representer.to_json(user_options: { is_admin: true })
 
 Note that the `:user_options` will be accessible on all levels in a nested representer. They act like a "global" configuration and are passed to all option functions.
 
@@ -728,7 +779,7 @@ Using Ruby 2.1's keyword arguments is highly recommended - to make that look a b
 
 Representable also allows passing nested options to particular representers. You have to provide the property's name to do so.
 
-    decorator.to_json(artist: { user_options: { is_admin: true } })
+    song_representer.to_json(artist: { user_options: { is_admin: true } })
 
 This will pass the option to the nested `artist`, only. Note that this works with any level of nesting.
 
@@ -738,17 +789,18 @@ Representable supports two top-level options.
 
 `:include` allows defining a set of properties to represent. The remaining will be skipped.
 
-    decorator.to_json(include: [:id])  #=> {"id":1}
+    song_representer.to_json(include: [:id])  #=> {"id":1}
 
  The other, `:exclude`, will - you might have guessed it already - skip the provided properties and represent the remaining.
 
-    decorator.to_json(exclude: [:id, :artist])  #=> {"title":"Fallout"}
+    song_representer.to_json(exclude: [:id, :artist])
+    #=> {"title":"Fallout"}
 
 As always, these options work both ways, for rendering _and_ parsing.
 
 Note that you can also nest `:include` and `:exclude`.
 
-    decorator.to_json(artist: { include: [:name] })
+    song_representer.to_json(artist: { include: [:name] })
     #=> {"id":1, "title":"Fallout", "artist":{"name":"Sting"}}
 
 ### to_hash and from_hash
