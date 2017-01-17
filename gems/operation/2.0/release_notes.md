@@ -20,33 +20,31 @@ You now have to include the respective modules to extend the operation for contr
 
 ## Call
 
-There's only one way to invoke an operation now: `Operation::call`. You can't instantiate using `::new` and `::run` was removed. All exceptions have been removed, `call` will never throw anything unless your code is seriously broken.
+There's only one way to invoke an operation now: `Operation::call`. You can't instantiate using `::new` and `::run` was removed. All exceptions have been removed; `call` will never throw anything unless your code is seriously broken. Instead, `call` will  return the [result object](#result-object).
 
-Instead, `call` will - per default - return the [result object](#result-object), but you're free to return whatever you feel like.
-
-Internally, the class method `::call` will invoke the instance method `#call`, which you're allowed to override.
+In Trailblazer 1.x we defined an operation's behavior by overriding `#process`. This has been removed; operations are now defined by a new DSL using the `step` and `failure` methods:
 
 ```ruby
-class Create < Trailblazer::Operation
-  def call(params)
-    "Great!"
+class Song::Create < Trailblazer::Operation
+  step    Model( Song, :new )
+  step    :assign_current_user!
+  step    Contract::Build( constant: MyContract )
+  step    Contract::Validate()
+  failure :log_error!
+  step    Contract::Persist()
+
+  def log_error!(options)
+    # ..
+  end
+
+  def assign_current_user!(options)
+    options["model"].created_by =
+    options["current_user"]
   end
 end
-
-Create.({}) #=> "Great!"
 ```
 
-Unless you really want to change things, you should override `process`, though, the way we did it in 1.x. Trailblazer will return the result object for you.
-
-```ruby
-class Create < Trailblazer::Operation
-  def process(params)
-    "Great!"
-  end
-end
-
-Create.({}) #=> <Result ..>
-```
+For more information, see the [guide to the new Operation API](/gems/operation/2.0/api.html).
 
 ## Params and Dependencies
 
