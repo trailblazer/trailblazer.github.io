@@ -264,7 +264,7 @@ class AlbumRepresenter < Representable::Decorator
 end
 ```
 
-The `representation_wrap` from the nested representer now won't be rendered nor parsed...
+The `representation_wrap` from the nested representer now won't be rendered or parsed...
 
 ```ruby
 Album = Struct.new(:songs)
@@ -273,7 +273,7 @@ album.songs = [song]
 AlbumRepresenter.new(album).to_json
 ```
 
-.. and will result:
+.. and will result in:
 
 ```json
 {"songs":[{"title":"Fallout","id":1}]}
