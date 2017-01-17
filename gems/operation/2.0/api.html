@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 17 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -436,7 +436,7 @@ The `:pass_fast` option also works with `success` and will always skip the remai
   def filter_params!(options, params:, **)
     unless params[:id]
       options["result.params"] = "No ID in params!"
-      return Flow.fail_fast!
+      return Railway.fail_fast!
     end
   end
   
@@ -468,7 +468,7 @@ Sometimes it might be necessary to skip the rest of the pipe and return a succes
   def empty_model!(options, is_empty:, model:, **)
     return unless is_empty
     model.save
-    Flow.pass_fast!
+    Railway.pass_fast!
   end
 end
 </code></pre>
@@ -779,7 +779,7 @@ end
 
 <h3 id="inheritance-override">Inheritance: Override</h3>
 
-<p>Per default, calling an existing macro will override the old one, in the same position. Overriding works by step name.</p>
+<p>When using inheritance, use <code class="highlighter-rouge">:override</code> to replace existing steps in  subclasses.</p>
 
 <p>Consider the following base operation.</p>
 
@@ -800,7 +800,7 @@ end
 <p>Subclasses can now override predefined steps.</p>
 
 <pre><code>class Song::New &lt; MyApp::Operation::New
-  step Model( Song, :new )
+  step Model( Song, :new ), override: true
 end
 </code></pre>
 
@@ -812,7 +812,7 @@ end
  2 =======================&gt;contract.build
 </code></pre>
 
-<p>Use the <code class="highlighter-rouge">:name</code> option to assign a new name if you don’t want to override an existing step.</p>
+<p>Refrain from using the <code class="highlighter-rouge">:override</code> option if you want to add steps.</p>
 
 <h2 id="options" data-magellan-target="options">Options</h2>
 
