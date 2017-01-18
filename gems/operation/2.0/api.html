@@ -400,8 +400,8 @@ end
 <p><code class="highlighter-rouge">:fail_fast</code> also works with <code class="highlighter-rouge">step</code>.</p>
 
 <pre><code>class Update &lt; Trailblazer::Operation
-  step :empty_id?,            fail_fast: true
-  step Model( Song, :find_by)
+  step :empty_id?,             fail_fast: true
+  step Model( Song, :find_by )
   failure :handle_empty_db!   # won't be executed if #empty_id? returns falsey.
   
   def empty_id?(options, params:, **)
@@ -1075,11 +1075,20 @@ end
 
 <p>The proc passed to <code class="highlighter-rouge">Wrap</code> will be called when the pipe is executed, and receives <code class="highlighter-rouge">block</code>. <code class="highlighter-rouge">block.call</code> will execute the nested pipe.</p>
 
+<p>You may have any number of <code class="highlighter-rouge">Wrap</code> nesting.</p>
+
+<h3 id="wrap-return-value">Wrap: Return Value</h3>
+
 <p>All nested steps will simply be executed as if they were on the “top-level” pipe, but within the wrapper code. Steps may deviate to the left track, and so on.</p>
 
-<p>The return value of the wrap block is crucial: If it returns falsey, the pipe will deviate to left after <code class="highlighter-rouge">Wrap</code>.</p>
+<p>However, the last signal of the wrapped pipe is not simply passed on to the “outer” pipe. The return value of the actual <code class="highlighter-rouge">Wrap</code> block is crucial: If it returns falsey, the pipe will deviate to left after <code class="highlighter-rouge">Wrap</code>.</p>
 
-<p>You may have any number of <code class="highlighter-rouge">Wrap</code> nesting.</p>
+<div class="highlighter-rouge">
+<pre class="highlight"><code>step Wrap -&gt;(*, &amp;block) { Sequel.transaction do block.call end; false } {
+</code></pre>
+</div>
+
+<p>In the above example, regardless of <code class="highlighter-rouge">Sequel.transaction</code>’s return value, the outer pipe will deviate to the left track as the <code class="highlighter-rouge">Wrap</code>’s return value is always <code class="highlighter-rouge">false</code>.</p>
 
 <h3 id="wrap-callable">Wrap: Callable</h3>
 

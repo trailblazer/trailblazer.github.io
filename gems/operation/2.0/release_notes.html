@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer 2.0 - What's New?</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 30 October 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 18 January 2017</span>
 
   
 
@@ -143,35 +143,32 @@
 
 <h2 id="call" data-magellan-target="call">Call</h2>
 
-<p>There’s only one way to invoke an operation now: <code class="highlighter-rouge">Operation::call</code>. You can’t instantiate using <code class="highlighter-rouge">::new</code> and <code class="highlighter-rouge">::run</code> was removed. All exceptions have been removed, <code class="highlighter-rouge">call</code> will never throw anything unless your code is seriously broken.</p>
+<p>There’s only one way to invoke an operation now: <code class="highlighter-rouge">Operation::call</code>. You can’t instantiate using <code class="highlighter-rouge">::new</code> and <code class="highlighter-rouge">::run</code> was removed. All exceptions have been removed; <code class="highlighter-rouge">call</code> will never throw anything unless your code is seriously broken. Instead, <code class="highlighter-rouge">call</code> will  return the <a href="#result-object">result object</a>.</p>
 
-<p>Instead, <code class="highlighter-rouge">call</code> will - per default - return the <a href="#result-object">result object</a>, but you’re free to return whatever you feel like.</p>
-
-<p>Internally, the class method <code class="highlighter-rouge">::call</code> will invoke the instance method <code class="highlighter-rouge">#call</code>, which you’re allowed to override.</p>
+<p>In Trailblazer 1.x we defined an operation’s behavior by overriding <code class="highlighter-rouge">#process</code>. This has been removed; operations are now defined by a new DSL using the <code class="highlighter-rouge">step</code> and <code class="highlighter-rouge">failure</code> methods:</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
-  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="s2">"Great!"</span>
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">Song</span><span class="o">::</span><span class="no">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+  <span class="n">step</span>    <span class="no">Model</span><span class="p">(</span> <span class="no">Song</span><span class="p">,</span> <span class="ss">:new</span> <span class="p">)</span>
+  <span class="n">step</span>    <span class="ss">:assign_current_user!</span>
+  <span class="n">step</span>    <span class="no">Contract</span><span class="o">::</span><span class="no">Build</span><span class="p">(</span> <span class="ss">constant: </span><span class="no">MyContract</span> <span class="p">)</span>
+  <span class="n">step</span>    <span class="no">Contract</span><span class="o">::</span><span class="no">Validate</span><span class="p">()</span>
+  <span class="n">failure</span> <span class="ss">:log_error!</span>
+  <span class="n">step</span>    <span class="no">Contract</span><span class="o">::</span><span class="no">Persist</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">log_error!</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="c1"># ..</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">assign_current_user!</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">[</span><span class="s2">"model"</span><span class="p">].</span><span class="nf">created_by</span> <span class="o">=</span>
+    <span class="n">options</span><span class="p">[</span><span class="s2">"current_user"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
-
-<span class="no">Create</span><span class="o">.</span><span class="p">({})</span> <span class="c1">#=&gt; "Great!"</span>
 </code></pre>
 </div>
 
-<p>Unless you really want to change things, you should override <code class="highlighter-rouge">process</code>, though, the way we did it in 1.x. Trailblazer will return the result object for you.</p>
-
-<div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
-  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="s2">"Great!"</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="no">Create</span><span class="o">.</span><span class="p">({})</span> <span class="c1">#=&gt; &lt;Result ..&gt;</span>
-</code></pre>
-</div>
+<p>For more information, see the <a href="/gems/operation/2.0/api.html">guide to the new Operation API</a>.</p>
 
 <h2 id="params-and-dependencies" data-magellan-target="params-and-dependencies">Params and Dependencies</h2>
 
