@@ -432,7 +432,7 @@ Be weary, though, that you are tightly coupling flow and implementation to each 
 
 ### Inheritance: Override
 
-Per default, calling an existing macro will override the old one, in the same position. Overriding works by step name.
+When using inheritance, use `:override` to replace existing steps in  subclasses.
 
 Consider the following base operation.
 
@@ -446,7 +446,7 @@ The pipe flow will remain the same.
 
 {{  "operation_test.rb:override-pipe" | tsnippet }}
 
-Use the `:name` option to assign a new name if you don't want to override an existing step.
+Refrain from using the `:override` option if you want to add steps.
 
 ## Options
 
@@ -591,11 +591,17 @@ As always, you can have steps before and after `Wrap` in the pipe. The block pas
 
 The proc passed to `Wrap` will be called when the pipe is executed, and receives `block`. `block.call` will execute the nested pipe.
 
+You may have any number of `Wrap` nesting.
+
+### Wrap: Return Value
+
 All nested steps will simply be executed as if they were on the "top-level" pipe, but within the wrapper code. Steps may deviate to the left track, and so on.
 
-The return value of the wrap block is crucial: If it returns falsey, the pipe will deviate to left after `Wrap`.
+However, the last signal of the wrapped pipe is not simply passed on to the "outer" pipe. The return value of the actual `Wrap` block is crucial: If it returns falsey, the pipe will deviate to left after `Wrap`.
 
-You may have any number of `Wrap` nesting.
+    step Wrap ->(*, &block) { Sequel.transaction do block.call end; false } {
+
+In the above example, regardless of `Sequel.transaction`'s return value, the outer pipe will deviate to the left track as the `Wrap`'s return value is always `false`.
 
 ### Wrap: Callable
 
