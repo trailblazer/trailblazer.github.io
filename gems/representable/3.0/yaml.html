@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Representable: YAML</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 17 January 2017</span>
 
   
 
@@ -136,7 +136,10 @@
 <p>A nice feature is that <code class="highlighter-rouge">#collection</code> also accepts a <code class="highlighter-rouge">:style</code> option which helps having nicely formatted inline (or “flow”) arrays in your YAML - if you want that!</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
+<pre class="highlight"><code>require 'psych'
+require 'representable/yaml'
+
+class SongRepresenter &lt; Representable::Decorator
   include Representable::YAML
 
   property :title
@@ -150,12 +153,18 @@ end
 
 <p>To render and parse, you invoke <code class="highlighter-rouge">to_yaml</code> and <code class="highlighter-rouge">from_yaml</code>.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>SongRepresenter.new(song).to_yaml
-#=&gt;
----
-title: Fallout
-composers: [Stewart Copeland, Sting]
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Song</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:composers</span><span class="p">)</span>
+<span class="n">song</span> <span class="o">=</span> <span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Fallout"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Stewart Copeland"</span><span class="p">,</span> <span class="s2">"Sting"</span><span class="p">])</span>
+<span class="no">SongRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song</span><span class="p">).</span><span class="nf">to_yaml</span>
+</code></pre>
+</div>
+
+<div class="language-yaml highlighter-rouge">
+<pre class="highlight"><code><span class="nn">---</span>
+<span class="s">title</span><span class="pi">:</span> <span class="s">Fallout</span>
+<span class="s">id</span><span class="pi">:</span> <span class="s">1</span>
+<span class="s">composers</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">Stewart Copeland</span><span class="pi">,</span> <span class="nv">Sting</span><span class="pi">]</span>
 </code></pre>
 </div>
 

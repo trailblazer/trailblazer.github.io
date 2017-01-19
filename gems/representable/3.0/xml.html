@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Representable: XML</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 July 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 17 January 2017</span>
 
   
 
@@ -138,7 +138,6 @@ class SongRepresenter &lt; Representable::Decorator
   include Representable::XML
 
   property :title
-  property :id
   collection :composers
 end
 </code></pre>
@@ -148,15 +147,19 @@ end
 
 <p>The public API then gives you <code class="highlighter-rouge">to_xml</code> and <code class="highlighter-rouge">from_xml</code>.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>song = Song.new(title: "Fallout", composers: ["Stewart Copeland", "Sting"])
-SongRepresenter.new(song).to_xml #=&gt;
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Song</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:composers</span><span class="p">)</span>
+<span class="n">song</span> <span class="o">=</span> <span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Fallout"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Stewart Copeland"</span><span class="p">,</span> <span class="s2">"Sting"</span><span class="p">])</span>
+<span class="no">SongRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song</span><span class="p">).</span><span class="nf">to_xml</span>
+</code></pre>
+</div>
 
-&lt;song&gt;
-    &lt;title&gt;Fallout&lt;/title&gt;
-    &lt;composers&gt;Stewart Copeland&lt;/composers&gt;
-    &lt;composers&gt;Sting&lt;/composers&gt;
-&lt;/song&gt;
+<div class="language-xml highlighter-rouge">
+<pre class="highlight"><code><span class="nt">&lt;song&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Fallout<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;composers&gt;</span>Stewart Copeland<span class="nt">&lt;/composers&gt;</span>
+  <span class="nt">&lt;composers&gt;</span>Sting<span class="nt">&lt;/composers&gt;</span>
+<span class="nt">&lt;/song&gt;</span>
 </code></pre>
 </div>
 
@@ -164,16 +167,23 @@ SongRepresenter.new(song).to_xml #=&gt;
 
 <p>You can also map properties to tag attributes in Representable. This works only for the top-level node, though (seen from the representer’s perspective).</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::XML
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">XML</span>
 
-  property :id, attribute: true
-  property :track, attribute: true
-end
+  <span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">attribute: </span><span class="kp">true</span>
+  <span class="n">collection</span> <span class="ss">:composers</span>
+<span class="k">end</span>
 
-song.to_xml
-#=&gt; &lt;song title="American Idle" id="1" /&gt;
+<span class="no">SongRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song</span><span class="p">).</span><span class="nf">to_xml</span>
+</code></pre>
+</div>
+
+<div class="language-xml highlighter-rouge">
+<pre class="highlight"><code><span class="nt">&lt;song</span> <span class="na">title=</span><span class="s">"Fallout"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;composers&gt;</span>Stewart Copeland<span class="nt">&lt;/composers&gt;</span>
+  <span class="nt">&lt;composers&gt;</span>Sting<span class="nt">&lt;/composers&gt;</span>
+<span class="nt">&lt;/song&gt;</span>
 </code></pre>
 </div>
 
@@ -190,8 +200,8 @@ song.to_xml
   property :title, content: true
 end
 
-song.to_xml
-#=&gt; &lt;song&gt;American Idle&lt;/song&gt;
+SongRepresenter.new(song).to_xml
+#=&gt; &lt;song&gt;Fallout&lt;/song&gt;
 </code></pre>
 </div>
 
@@ -208,17 +218,22 @@ end
 </code></pre>
 </div>
 
+<p>Album = Struct.new(:songs)
+album = Album.new([“Laundry Basket”, “Two Kevins”, “Wright and Rong”])</p>
+
+<p>album_representer = AlbumRepresenter.new(album)
+album_representer.to_xml</p>
+
 <p>Note that <code class="highlighter-rouge">:wrap</code> defines the container tag name.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>song.to_xml #=&gt;
-&lt;album&gt;
-    &lt;songs&gt;
-        &lt;song&gt;Laundry Basket&lt;/song&gt;
-        &lt;song&gt;Two Kevins&lt;/song&gt;
-        &lt;song&gt;Wright and Rong&lt;/song&gt;
-    &lt;/songs&gt;
-&lt;/album&gt;
+<div class="language-xml highlighter-rouge">
+<pre class="highlight"><code><span class="nt">&lt;album&gt;</span>
+  <span class="nt">&lt;songs&gt;</span>
+    <span class="nt">&lt;song&gt;</span>Laundry Basket<span class="nt">&lt;/song&gt;</span>
+    <span class="nt">&lt;song&gt;</span>Two Kevins<span class="nt">&lt;/song&gt;</span>
+    <span class="nt">&lt;song&gt;</span>Wright and Rong<span class="nt">&lt;/song&gt;</span>
+  <span class="nt">&lt;/songs&gt;</span>
+<span class="nt">&lt;/album&gt;</span>
 </code></pre>
 </div>
 

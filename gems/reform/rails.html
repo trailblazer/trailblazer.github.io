@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Reform with Rails</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 September 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 January 2017</span>
 
   
 
@@ -317,7 +317,7 @@ end
 <h2 id="troubleshooting" data-magellan-target="troubleshooting">Troubleshooting</h2>
 
 <ol>
-  <li>In case you explicitely <em>don’t</em> want to have automatic support for <code class="highlighter-rouge">ActiveRecord</code> or <code class="highlighter-rouge">Mongoid</code> and form builder: <code class="highlighter-rouge">require reform/form</code>, only.</li>
+  <li>In case you explicitly <em>don’t</em> want to have automatic support for <code class="highlighter-rouge">ActiveRecord</code> or <code class="highlighter-rouge">Mongoid</code> and form builder: <code class="highlighter-rouge">require reform/form</code>, only.</li>
   <li>In some setups around Rails 4 the <code class="highlighter-rouge">Form::ActiveRecord</code> module is not loaded properly, usually triggering a <code class="highlighter-rouge">NoMethodError</code> saying <code class="highlighter-rouge">undefined method 'model'</code>. If that happened to you, <code class="highlighter-rouge">require 'reform/rails'</code> manually at the bottom of your <code class="highlighter-rouge">config/application.rb</code>.</li>
   <li>Mongoid form gets loaded with the gem if <code class="highlighter-rouge">Mongoid</code> constant is defined.</li>
 </ol>

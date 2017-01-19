@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer Loader</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 October 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 January 2017</span>
 
   
 
@@ -264,7 +264,7 @@
   <li>The loader finds all concept directories.</li>
   <li>Concept directories are sorted by nesting level, deeper nestings are loaded later as they might reference concepts they’re nested in. For example, <code class="highlighter-rouge">concepts/comment/admin</code> might reuse existing code from <code class="highlighter-rouge">concepts/comment</code>.</li>
   <li>Per concept, files are lexically sorted, e.g. <code class="highlighter-rouge">create.rb</code> will be loaded <em>before</em> <code class="highlighter-rouge">update.rb</code> as we mostly do <code class="highlighter-rouge">Update &lt; Create</code>.</li>
-  <li>Per concept, operation files will be loaded after all other layer files have been required. This is because abstraction files like representers or contracts should not reference their operation. The operation, howver, as an orchestrating asset needs to refer to various abstraction objects.</li>
+  <li>Per concept, operation files will be loaded after all other layer files have been required. This is because abstraction files like representers or contracts should not reference their operation. The operation, however, as an orchestrating asset needs to refer to various abstraction objects.</li>
 </ol>
 
 <p>Here’s a sample of a explicit-singular session.</p>

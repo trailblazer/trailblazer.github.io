@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Reform Populators</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 30 November 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 January 2017</span>
 
   
 
@@ -178,7 +178,7 @@ form.validate({songs: [{name: "Midnight Rendezvous"}]})
 </code></pre>
 </div>
 
-<p>Intuitively, you will expect Reform to create an additional song with the name “Midnight Rendevouz”.  However, this is not how it works and will crash, since <code class="highlighter-rouge">songs[0]</code> doesn’t exist. There is no nested form to represent that fragment, yet, since the original <code class="highlighter-rouge">songs</code> collection in the model was empty!</p>
+<p>Intuitively, you will expect Reform to create an additional song with the name “Midnight Rendezvous”.  However, this is not how it works and will crash, since <code class="highlighter-rouge">songs[0]</code> doesn’t exist. There is no nested form to represent that fragment, yet, since the original <code class="highlighter-rouge">songs</code> collection in the model was empty!</p>
 
 <p>Reform per design makes no assumptions about how to create nested models. You have to tell it what to do in this <em>out-of-sync</em> case.</p>
 
@@ -542,7 +542,6 @@ form  = AlbumForm.new(album)
 </div>
 
 <p>With ORMs, the setup happens automatically, this only appears when using <code class="highlighter-rouge">Struct</code> or other POROs as models.</p>
-
 
             </div>
 
