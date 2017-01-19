@@ -39,7 +39,7 @@ Dependencies other than the params input, such as a current user, are passed via
 
 {{  "operation_test.rb:invocation-dep-call" | tsnippet }}
 
-External dependencies will be accessable via `options` in every step.
+External dependencies will be accessible via `options` in every step.
 
 {{  "operation_test.rb:invocation-dep" | tsnippet }}
 

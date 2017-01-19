@@ -228,7 +228,7 @@ To maintain multiple representers per operation, you may name them.
     representer :parse, MyRepresenter
     representer :errors, ErrorsRepresenter
 
-They are now accessable via their named path.
+They are now accessible via their named path.
 
     Create["representer.parse.class"] #=> MyRepresenter
 
