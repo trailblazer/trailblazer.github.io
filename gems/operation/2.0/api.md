@@ -232,11 +232,15 @@ A step can be added via `step`, `success` and `failure`. It can be implemented a
 
 Note that you can use modules to share steps across operations.
 
+### Step Implementation: Lambda
+
 Or as a proc.
 
     class Create < Trailblazer::Operation
       step ->(options, **) { options["model"] = Song.new }
     end
+
+### Step Implementation: Callable
 
 Or, for more reusability, as a `Callable`.
 
