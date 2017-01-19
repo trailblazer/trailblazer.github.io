@@ -227,11 +227,11 @@ result["model"]        #=&gt; #&lt;Song id=nil, title=nil, created_by=#&lt;User 
   step    Contract::Validate()
   failure :log_error!
   step    Contract::Persist()
-  
+
   def log_error!(options)
     # ..
   end
-  
+
   def assign_current_user!(options)
     options["model"].created_by =
       options["current_user"]
@@ -381,7 +381,7 @@ end
   step    Contract::Build( constant: MyContract )
   step    Contract::Validate( )
   failure :handle_invalid_contract!  # won't be executed if #abort! is executed.
-  
+
   def abort!(options, params:, **)
     options["result.model.song"] = "Something went wrong with ID #{params[:id]}!"
   end
@@ -403,7 +403,7 @@ end
   step :empty_id?,             fail_fast: true
   step Model( Song, :find_by )
   failure :handle_empty_db!   # won't be executed if #empty_id? returns falsey.
-  
+
   def empty_id?(options, params:, **)
     params[:id] # returns false if :id missing.
   end
@@ -413,7 +413,7 @@ end
 <p>Here, if <code class="highlighter-rouge">step</code> returns a falsey value, the rest of the pipe is skipped, returning a failed result. Again, this will <strong>not</strong> execute any <code class="highlighter-rouge">failure</code> steps after <code class="highlighter-rouge">:empty_id?</code>.</p>
 
 <pre><code>  result = Update.({ id: nil })
-  
+
   result.failure? #=&gt; true
   result["model"] #=&gt; nil
 </code></pre>
@@ -432,14 +432,14 @@ The `:pass_fast` option also works with `success` and will always skip the remai
   step :filter_params!         # emits fail_fast!
   step Model( Song, :find_by )
   failure :handle_fail!
-  
+
   def filter_params!(options, params:, **)
     unless params[:id]
       options["result.params"] = "No ID in params!"
       return Railway.fail_fast!
     end
   end
-  
+
   def handle_fail!(options, **)
     options["my.status"] = "Broken!"
   end
@@ -464,7 +464,7 @@ Sometimes it might be necessary to skip the rest of the pipe and return a succes
   step :empty_model!                           # emits pass_fast!
   step Contract::Build( constant: MyContract )
   # ..
-  
+
   def empty_model!(options, is_empty:, model:, **)
     return unless is_empty
     model.save
@@ -577,16 +577,16 @@ end
   step     :model!
   step     :assign!
   step     :validate!
-  
+
   def model!(options, current_user:, **)
     options["model"] = Song.new
     options["model"].created_by = current_user
   end
-  
+
   def assign!(*, params:, model:, **)
     model.title= params[:title]
   end
-  
+
   #:step-val
   def validate!(options, model:, **)
     options["result.validate"] = ( model.created_by &amp;&amp; model.title )
@@ -597,9 +597,9 @@ end
 
 <p>All three steps add data to the <code class="highlighter-rouge">options</code> object. That data can be used in the following steps.</p>
 
-<pre><code>  def validate!(options, model:, **)
-    options["result.validate"] = ( model.created_by &amp;&amp; model.title )
-  end
+<pre><code>def validate!(options, model:, **)
+  options["result.validate"] = ( model.created_by &amp;&amp; model.title )
+end
 </code></pre>
 
 <p>It is a convention to use a <code class="highlighter-rouge">"namespaced.key"</code> on the result object. This will help you structuring and managing the data. It’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
@@ -615,7 +615,7 @@ end
 <p>After running the operation, the result object can be used for reading state.</p>
 
 <pre><code>result = Song::Create.({ title: "Roxanne" }, "current_user" =&gt; current_user)
-  
+
 result["model"] #=&gt; #&lt;Song title="Roxanne", "created_by"=&lt;User ...&gt;
 result["result.validate"] #=&gt; true
 </code></pre>
@@ -650,14 +650,14 @@ result.failure? #=&gt; falsee
 
 <pre><code>class Song::Create &lt; Trailblazer::Operation
   self["my.model.class"] = Song
-  
+
   # ...
 end
 </code></pre>
 
 <p>Unsurprisingly, this is also readable on the class layer.</p>
 
-<pre><code>  Song::Create["my.model.class"] #=&gt; Song
+<pre><code>Song::Create["my.model.class"] #=&gt; Song
 </code></pre>
 
 <p>This mechanism is used by all DSL methods such as <code class="highlighter-rouge">contract</code> and by almost all step macros (e.g. <code class="highlighter-rouge">Contract::Build</code>) to save and access class-wide data.</p>
@@ -666,9 +666,9 @@ end
 
 <pre><code>class Song::Create &lt; Trailblazer::Operation
   self["my.model.class"] = Song
-  
+
   step :model!
-  
+
   def model!(options, **)
     options["my.model"] =           # setting runtime data.
       options["my.model.class"].new # reading class data at runtime.
@@ -680,19 +680,19 @@ end
 
 <p>After running the operation, this <code class="highlighter-rouge">options</code> object turns into the <a href="#result-object">result object</a>.</p>
 
-<pre><code>  result = Song::Create.({})
-  
-  result["my.model.class"] #=&gt; Song
-  result["my.model"] #=&gt; #&lt;Song title=nil&gt;
+<pre><code>result = Song::Create.({})
+
+result["my.model.class"] #=&gt; Song
+result["my.model"] #=&gt; #&lt;Song title=nil&gt;
 </code></pre>
 
 <h2 id="dependency-injection" data-magellan-target="dependency-injection">Dependency Injection</h2>
 
 <p>Both class data as well as runtime data <a href="#dependencies">described above</a> can be overridden using dependency injection.</p>
 
-<pre><code>  result = Song::Create.({}, "my.model.class" =&gt; Hit)
-  
-  result["my.model"] #=&gt; #&lt;Hit id=nil&gt;
+<pre><code>result = Song::Create.({}, "my.model.class" =&gt; Hit)
+
+result["my.model"] #=&gt; #&lt;Hit id=nil&gt;
 </code></pre>
 
 <p>Note that injected dependencies need to be in the second argument to <code class="highlighter-rouge">Operation::call</code>.</p>
@@ -786,11 +786,11 @@ end
 <pre><code>module MyApp::Operation
   class New &lt; Trailblazer::Operation
     extend Contract::DSL
-  
+
     contract do
       property :title
     end
-  
+
     step Model( nil, :new )
     step Contract::Build()
   end
@@ -825,9 +825,9 @@ end
     <div class="column medium-6 ">
         <p>A step macro will name itself.</p>
 
-<pre><code>  class New &lt; Trailblazer::Operation
-    step Model( Song, :new )
-  end
+<pre><code>class New &lt; Trailblazer::Operation
+  step Model( Song, :new )
+end
 </code></pre>
 
 
@@ -845,11 +845,11 @@ end
 
 <p>For every kind of step, whether it’s a macro or a custom step, use <code class="highlighter-rouge">:name</code> to specify a name.</p>
 
-<pre><code>  class New &lt; Trailblazer::Operation
-    step Model( Song, :new ), name: "build.song.model"
-    step :validate_params!,   name: "my.params.validate"
-    # ..
-  end
+<pre><code>class New &lt; Trailblazer::Operation
+  step Model( Song, :new ), name: "build.song.model"
+  step :validate_params!,   name: "my.params.validate"
+  # ..
+end
 </code></pre>
 
 <p>When inspecting the pipe, you will see your names.</p>
@@ -865,11 +865,11 @@ end
 
 <p>Whenever inserting a step, you may provide the position in the pipe using <code class="highlighter-rouge">:before</code> or <code class="highlighter-rouge">:after</code>.</p>
 
-<pre><code>  class New &lt; Trailblazer::Operation
-    step Model( Song, :new )
-    step :validate_params!,   before: "model.build"
-    # ..
-  end
+<pre><code>class New &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step :validate_params!,   before: "model.build"
+  # ..
+end
 </code></pre>
 
 <p>This will insert the custom step before the model builder.</p>
@@ -889,9 +889,9 @@ end
 
 <p>The position options are extremely helpful with inheritance.</p>
 
-<pre><code>  class Create &lt; New
-    step :policy!, after: "operation.new"
-  end
+<pre><code>class Create &lt; New
+  step :policy!, after: "operation.new"
+end
 </code></pre>
 
 <p>It allows inserting new steps without repeating the existing pipe.</p>
@@ -906,9 +906,9 @@ end
 
 <p>Replace existing (or inherited) steps using <code class="highlighter-rouge">:replace</code>.</p>
 
-<pre><code>  class Update &lt; New
-    step Model(Song, :find_by), replace: "model.build"
-  end
+<pre><code>class Update &lt; New
+  step Model(Song, :find_by), replace: "model.build"
+end
 </code></pre>
 
 <p>The existing step will be discarded with the newly provided one.</p>
@@ -942,7 +942,7 @@ end
 <pre><code>module Macro
   def self.MyPolicy(allowed_role: "admin")
     step = -&gt;(input, options) { options["current_user"].type == allowed_role }
-  
+
     [ step, name: "my_policy.#{allowed_role}" ] # :before, :replace, etc. work, too.
   end
 end
@@ -989,8 +989,8 @@ end
 
 <p>After this step, there is a fresh model instance under <code class="highlighter-rouge">options["model"]</code> that can be used in all following steps.</p>
 
-<pre><code>  result = Create.({})
-  result["model"] #=&gt; #&lt;struct Song id=nil, title=nil&gt;
+<pre><code>result = Create.({})
+result["model"] #=&gt; #&lt;struct Song id=nil, title=nil&gt;
 </code></pre>
 
 <p>Internally, <code class="highlighter-rouge">Model</code> macro will simply invoke <code class="highlighter-rouge">Song.new</code> to populate <code class="highlighter-rouge">"model"</code>.</p>
@@ -1014,15 +1014,15 @@ end
 
 <p>This will assign <code class="highlighter-rouge">["model"]</code> for you by invoking <code class="highlighter-rouge">find_by</code>.</p>
 
-<pre><code>  result = Update.({ id: 1 })
-  result["model"] #=&gt; #&lt;struct Song id=1, title="Roxanne"&gt;
+<pre><code>result = Update.({ id: 1 })
+result["model"] #=&gt; #&lt;struct Song id=1, title="Roxanne"&gt;
 </code></pre>
 
 <p>If <code class="highlighter-rouge">Song.find_by</code> returns <code class="highlighter-rouge">nil</code>, this will deviate to the left track, skipping the rest of the operation.</p>
 
-<pre><code>  result = Update.({})
-  result["model"] #=&gt; nil
-  result.success? #=&gt; false
+<pre><code>result = Update.({})
+result["model"] #=&gt; nil
+result.success? #=&gt; false
 </code></pre>
 
 <p>Note that you may also use <code class="highlighter-rouge">:find</code>. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.</p>
@@ -1033,11 +1033,11 @@ end
 
 <pre><code>class Edit &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
   end
-  
+
   step Model( Song, :find )
   step Contract::Build()
 end
@@ -1048,7 +1048,7 @@ end
 <p>Running <code class="highlighter-rouge">Edit</code> will allow you to grab the model and contract, for presentation and rendering the form.</p>
 
 <pre><code>result = Edit.(id: 1)
-  
+
 result["model"]            #=&gt; #&lt;Song id=1, title=\"Bristol\"&gt;
 result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
 </code></pre>
@@ -1067,7 +1067,7 @@ end
 <p>After running the nested <code class="highlighter-rouge">Edit</code> operation its runtime data (e.g. <code class="highlighter-rouge">"model"</code>) is available in the <code class="highlighter-rouge">Update</code> operation.</p>
 
 <pre><code>result = Update.(id: 1, title: "Call It A Night")
-  
+
 result["model"]            #=&gt; #&lt;Song id=1 , title=\"Call It A Night\"&gt;
 result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
 </code></pre>
@@ -1088,7 +1088,7 @@ end
 
 <pre><code>class MyBuilder
   extend Uber::Callable
-  
+
   def self.call(options, current_user:nil, **)
     current_user.admin? ? Create::Admin : Create::NeedsModeration
   end
@@ -1099,7 +1099,7 @@ end
 
 <pre><code>class Update &lt; Trailblazer::Operation
   step Nested( :build! )
-  
+
   def build!(options, current_user:nil, **)
     current_user.admin? ? Create::Admin : Create::NeedsModeration
   end
@@ -1114,7 +1114,7 @@ end
   class MyContract &lt; Reform::Form
     property :title
   end
-  
+
   step Wrap -&gt;(*, &amp;block) { Sequel.transaction do block.call end } {
     step Model( Song, :new )
     step Contract::Build( constant: MyContract )
@@ -1123,11 +1123,11 @@ end
   }
   failure :error! # handle all kinds of errors.
   step :notify!
-  
+
   def error!(options)
     # handle errors after the wrap
   end
-  
+
   def notify!(options)
     MyNotifier.mail
   end
@@ -1172,7 +1172,7 @@ end
 
 <pre><code>class MyTransaction
   extend Uber::Callable
-  
+
   def self.call(options, *)
     Sequel.transaction { yield } # yield runs the nested pipe.
     # return value decides about left or right track!
@@ -1201,7 +1201,7 @@ end
   class MyContract &lt; Reform::Form
     property :title
   end
-  
+
   step Rescue {
     step Model(Song, :find)
     step Contract::Build( constant: MyContract )
@@ -1222,7 +1222,7 @@ end
   }
   step Contract::Validate()
   step Contract::Persist( method: :sync )
-  
+
   def rollback!(exception, options)
     options["x"] = exception.class
   end
@@ -1239,7 +1239,7 @@ end
   class MyContract &lt; Reform::Form
     property :title
   end
-  
+
   step Rescue( RecordNotFound, handler: :rollback! ) {
     step Wrap -&gt;(*, &amp;block) { Sequel.transaction do block.call end } {
       step Model( Song, :find )
@@ -1250,11 +1250,11 @@ end
     }
   }
   failure :error! # handle all kinds of errors.
-  
+
   def rollback!(exception, options)
     # ...
   end
-  
+
   def error!(options)
     # ...
   end
