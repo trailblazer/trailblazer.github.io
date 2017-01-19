@@ -27,39 +27,27 @@ Ruby allows a shorthand for this which is commonly used throughout Trailblazer.
 
 The absence of a method name here is per design: this object does only one thing, and hence *what it does is reflected in the class name*.
 
-Running an operation will always return its result object. It is up to you to interpret the content of it or push data onto the result object during the operation's cycle.
+Running an operation will always return its [→ result object](#result-object). It is up to you to interpret the content of it or push data onto the result object during the operation's cycle.
 
     result = Create.call( name: "Roxanne" )
 
     result["model"] #=> #<Song name: "Roxanne">
 
-[→ Result object](#result-object)
+### Invocation: Dependencies
 
+Dependencies other than the params input, such as a current user, are passed via the second argument.
 
-<!-- ## Flow Control: Procedural
+{{  "operation_test.rb:invocation-dep-call" | tsnippet }}
 
-There's nothing wrong with implementing your operation's logic in a procedural, nested stack of method calls, the way Trailblazer 1.x worked. The behavior here was orchestrated from within the `process` method.
+External dependencies will be accessable via `options` in every step.
 
-    class Create < Trailblazer::Operation
-      self.> Process
+{{  "operation_test.rb:invocation-dep" | tsnippet }}
 
-      def process(params)
-        model = Song.new
+They are also readable in the result.
 
-        if validate(params)
-          unless contract.save
-            handle_persistence_errors!
-          end
-          after_save!
-        else
-          handle_errors!
-        end
-      end
-    end
+{{  "operation_test.rb:invocation-dep-res" | tsnippet }}
 
-Even though this might seem to be more "readable" at first glance, it is impossible to extend without breaking the code up into smaller methods that are getting called in a predefined order - sacrificing its aforementioned readability.
-
-Also, error handling needs to be done manually at every step. This is the price you pay for procedural, statically nested code. -->
+Keep in mind that there is **no global state** in Trailblazer, anything you need in the operation has to be injected via the second `call` argument. This also applies to tests.
 
 ## Flow Control
 
@@ -543,6 +531,8 @@ When looking at the operation's pipe, you can see how, in our example, the defau
 
 {{  "macro_test.rb:simple-pipe" | tsnippet }}
 
+It is not advised to test macros in isolation. Note that it *is* possible by simply calling your macro in a test case. However, macros should be tested via an operation unit test.
+
 {% callout %}
 In future versions (TRB 2.0.2+) we will have public APIs for creating nested pipes, providing temporary arguments to steps and allowing injectable options.
 {% endcallout %}
@@ -602,6 +592,21 @@ After running the nested `Edit` operation its runtime data (e.g. `"model"`) is a
 {{  "nested_test.rb:update-call" | tsnippet }}
 
 Should the nested operation fail, for instance because its model couldn't be found, then the outer pipe will also jump to the left track.
+
+### Nested: Callable
+
+If you need to pick the nested operation dynamically at runtime, use a callable object instead.
+
+{{  "nested_test.rb:callable" | tsnippet }}
+
+The object's `call` method has the exact same interface as any other step.
+
+{{  "nested_test.rb:callable-builder" | tsnippet }}
+
+Note that `Nested` also works with `:instance_method` and lambdas.
+
+{{  "nested_test.rb:method" | tsnippet }}
+
 
 ## Wrap
 
