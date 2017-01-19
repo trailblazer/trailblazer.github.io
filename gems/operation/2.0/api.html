@@ -171,7 +171,7 @@
 
 <p>The absence of a method name here is per design: this object does only one thing, and hence <em>what it does is reflected in the class name</em>.</p>
 
-<p>Running an operation will always return its result object. It is up to you to interpret the content of it or push data onto the result object during the operation’s cycle.</p>
+<p>Running an operation will always return its <a href="#result-object">→ result object</a>. It is up to you to interpret the content of it or push data onto the result object during the operation’s cycle.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>result = Create.call( name: "Roxanne" )
@@ -180,32 +180,32 @@ result["model"] #=&gt; #&lt;Song name: "Roxanne"&gt;
 </code></pre>
 </div>
 
-<p><a href="#result-object">→ Result object</a></p>
+<h3 id="invocation-dependencies">Invocation: Dependencies</h3>
 
-<!-- ## Flow Control: Procedural
+<p>Dependencies other than the params input, such as a current user, are passed via the second argument.</p>
 
-There's nothing wrong with implementing your operation's logic in a procedural, nested stack of method calls, the way Trailblazer 1.x worked. The behavior here was orchestrated from within the `process` method.
+<pre><code>result = Create.( { title: "Roxanne" }, "current_user" =&gt; current_user )
+</code></pre>
 
-    class Create < Trailblazer::Operation
-      self.> Process
+<p>External dependencies will be accessable via <code class="highlighter-rouge">options</code> in every step.</p>
 
-      def process(params)
-        model = Song.new
+<pre><code>class Create &lt; Trailblazer::Operation
+  step     Model( Song, :new )
+  step     :assign_current_user!
+  # ..
+  def assign_current_user!(options)
+    options["model"].created_by = options["current_user"]
+  end
+end
+</code></pre>
 
-        if validate(params)
-          unless contract.save
-            handle_persistence_errors!
-          end
-          after_save!
-        else
-          handle_errors!
-        end
-      end
-    end
+<p>They are also readable in the result.</p>
 
-Even though this might seem to be more "readable" at first glance, it is impossible to extend without breaking the code up into smaller methods that are getting called in a predefined order - sacrificing its aforementioned readability.
+<pre><code>result["current_user"] #=&gt; #&lt;User name="Ema"&gt;
+result["model"]        #=&gt; #&lt;Song id=nil, title=nil, created_by=#&lt;User name="Ema"&gt;&gt;
+</code></pre>
 
-Also, error handling needs to be done manually at every step. This is the price you pay for procedural, statically nested code. -->
+<p>Keep in mind that there is <strong>no global state</strong> in Trailblazer, anything you need in the operation has to be injected via the second <code class="highlighter-rouge">call</code> argument. This also applies to tests.</p>
 
 <h2 id="flow-control" data-magellan-target="flow-control">Flow Control</h2>
 
