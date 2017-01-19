@@ -122,7 +122,7 @@ However, if the step returns `falsey`, the pipe will change to the left track.
 
 In the above example, it deviates to left should the respective model **not** be found.
 
-When adding [step macros](step-macros) with `step`, the behavior changes a bit. Macros can command `step` to internally use other operators to attach their step(s).
+When adding [step macros](#step-macros) with `step`, the behavior changes a bit. Macros can command `step` to internally use other operators to attach their step(s).
 
     class Create < Trailblazer::Operation
       step Model( Song, :find_by )
