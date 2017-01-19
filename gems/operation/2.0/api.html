@@ -1074,6 +1074,38 @@ result["contract.default"] #=&gt; #&lt;Reform::Form ..&gt;
 
 <p>Should the nested operation fail, for instance because its model couldn’t be found, then the outer pipe will also jump to the left track.</p>
 
+<h3 id="nested-callable">Nested: Callable</h3>
+
+<p>If you need to pick the nested operation dynamically at runtime, use a callable object instead.</p>
+
+<pre><code>class Delete &lt; Trailblazer::Operation
+  step Nested( MyBuilder )
+  # ..
+end
+</code></pre>
+
+<p>The object’s <code class="highlighter-rouge">call</code> method has the exact same interface as any other step.</p>
+
+<pre><code>class MyBuilder
+  extend Uber::Callable
+  
+  def self.call(options, current_user:nil, **)
+    current_user.admin? ? Create::Admin : Create::NeedsModeration
+  end
+end
+</code></pre>
+
+<p>Note that <code class="highlighter-rouge">Nested</code> also works with <code class="highlighter-rouge">:instance_method</code> and lambdas.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step Nested( :build! )
+  
+  def build!(options, current_user:nil, **)
+    current_user.admin? ? Create::Admin : Create::NeedsModeration
+  end
+end
+</code></pre>
+
 <h2 id="wrap" data-magellan-target="wrap">Wrap</h2>
 
 <p>Steps can be wrapped by an embracing step. This is necessary when defining a set of steps to be contained in a database transaction or a database lock.</p>
