@@ -933,6 +933,48 @@ end
   <li>The <a href="#model"><code class="highlighter-rouge">Model</code></a> macro can create and find models based on input.</li>
 </ul>
 
+<h2 id="macro-api" data-magellan-target="macro-api">Macro API</h2>
+
+<p>Implementing your own macros helps to create reusable code.</p>
+
+<p>It’s advised to put macro code into namespaces to not pollute the global namespace.</p>
+
+<pre><code>module Macro
+  def self.MyPolicy(allowed_role: "admin")
+    step = -&gt;(input, options) { options["current_user"].type == allowed_role }
+  
+    [ step, name: "my_policy.#{allowed_role}" ] # :before, :replace, etc. work, too.
+  end
+end
+</code></pre>
+
+<p>The macro itself is a function. Per convention, the name is capitalized. You can specify any set of arguments (e.g. using kw args), and it returns a 2-element array with the actual step to be inserted into the pipe and default options.</p>
+
+<p>Note that in the macro, the code design is up to you. You can delegate to other functions, objects, etc.</p>
+
+<p>The macro step receives <code class="highlighter-rouge">(input, options)</code> where <code class="highlighter-rouge">input</code> is usually the operation instance and <code class="highlighter-rouge">options</code> is the context object passed from step to step. It’s your macro’s job to read and write to <code class="highlighter-rouge">options</code>. It is not advisable to interact with the operation instance.</p>
+
+<p>Operations can then use your macro the way you’ve done it with our Trailblazer macros.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Macro::MyPolicy( allowed_role: "manager" )
+  # ..
+end
+</code></pre>
+
+<p>When looking at the operation’s pipe, you can see how, in our example, the default options provide a convenient step name.</p>
+
+<pre><code>  puts Create["pipetree"].inspect(style: :rows) #=&gt;
+   0 ========================&gt;operation.new
+   1 ====================&gt;my_policy.manager
+</code></pre>
+
+<div class="callout">
+  
+<p>In future versions (TRB 2.0.2+) we will have public APIs for creating nested pipes, providing temporary arguments to steps and allowing injectable options.</p>
+
+</div>
+
 <h2 id="model" data-magellan-target="model">Model</h2>
 
 <p>An operation can automatically find or create a model for you depending on the input, with the <code class="highlighter-rouge">Model</code> macro.</p>
@@ -1205,6 +1247,7 @@ end
 <li><a href="#inheritance">Inheritance</a></li>
 <li><a href="#options">Options</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
+<li><a href="#macro-api">Macro API</a></li>
 <li><a href="#model">Model</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#wrap">Wrap</a></li>
