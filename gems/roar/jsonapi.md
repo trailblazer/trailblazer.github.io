@@ -62,7 +62,7 @@ SongsRepresenter.for_collection.new([Song.new, Song.new]).from_json("..")
 
 ## Resource Objects
 
-http://jsonapi.org/format/#document-resource-objects
+[→ specification](http://jsonapi.org/format/#document-resource-objects)
 
 JSON API Resource Objects must contain an `id` and `type` member. You specify
 the `type` when you include `Roar::JSON::JSONAPI.resource(type)`:
@@ -94,7 +94,7 @@ end
 
 ## Attributes
 
-http://jsonapi.org/format/#document-resource-object-attributes
+[→ specification](http://jsonapi.org/format/#document-resource-object-attributes)
 
 Attributes should be defined with `::property` in an `::attributes` block.
 
@@ -110,7 +110,7 @@ end
 
 ## Relationships
 
-http://jsonapi.org/format/#document-resource-object-relationships
+[→ specification](http://jsonapi.org/format/#document-resource-object-relationships)
 
 To define relationships, use `::has_one` or `::has_many` with either an [inline representer](http://trailblazer.to/gems/representable/3.0/api.html#inline-representer) or an [explicit, standalone representer](http://trailblazer.to/gems/representable/3.0/api.html#explicit-representer) (specified with the `decorates:` or `extend:` option).
 
@@ -144,7 +144,7 @@ end
 
 ## Member Names
 
-http://jsonapi.org/format/#document-member-names
+[→ specification](http://jsonapi.org/format/#document-member-names)
 
 By default, member names will be rendered according to JSON API **recommendations**:
 only non-reserved, URL safe characters specified in RFC 3986 will be used.
@@ -185,7 +185,7 @@ end
 
 ## Meta information
 
-http://jsonapi.org/format/#document-meta
+[→ specification](http://jsonapi.org/format/#document-meta)
 
 Meta information can be included into rendered singular and collection documents in two ways.
 
