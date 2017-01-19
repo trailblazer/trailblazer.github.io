@@ -296,4 +296,4 @@ The `to_json` API is designed to be able to process `params` directly, where JSO
     query = Rack::Utils.parse_nested_query(uri.query)
     => {"include"=>"author", "fields"=>{"articles"=>"title,body", "people"=>"name"}}
 
-    representer.to_json(include: query['include], fields: query['fields'])
+    representer.to_json(include: query['include'], fields: query['fields'])
