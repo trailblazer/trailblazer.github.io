@@ -1,36 +1,12 @@
+require "torture/snippet"
 module Torture
   module SnippetFilter
     def tsnippet(input, hide=nil)
-      file, section = input.split(":")
+      file, section, root = input.split(":")
 
-      file = "../trailblazer/test/docs/#{file}" unless file.match("/")
+      root ||= "../trailblazer/test/docs"
 
-      code = nil
-      ignore = false
-      File.open(file).each do |ln|
-        break if ln =~ /\#:#{section} end/
-
-        if ln =~ /#~#{hide}$/
-          ignore = true
-          code << ln.sub("#~#{hide}", "# ...")
-        end
-
-        if ln =~ /#~#{hide} end/
-          ignore = false
-          next
-        end
-
-        next if ignore
-        next if ln =~ /#~/
-
-        code << ln and next unless code.nil?
-        code = "" if ln =~ /\#:#{section}$/ # beginning of our section.
-      end
-
-      indented = ""
-      code.each_line { |ln| indented << "  "+ln }
-
-      Kramdown::Document.new(indented).to_html
+      Torture::Snippet.(root: root, file: file, marker: section, hide: hide)
     end
   end
 end
