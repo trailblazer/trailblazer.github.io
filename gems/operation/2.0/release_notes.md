@@ -142,6 +142,10 @@ You can also use [pattern matching](https://github.com/dry-rb/dry-matcher) with 
 
 This will help us implement generic endpoints (TO BE DOCUMENTED).
 
+## Controller methods
+
+TRB 1 [provided](http://trailblazer.to/gems/operation/1.1/controller.html) the controller methods `run`, `present`, `form`, and `respond` for running and/or presenting an operation. In TRB 2 these have all been removed except `run`, and `run` has been moved to the [trailblazer-rails](https://github.com/trailblazer/trailblazer-rails) gem. For more information see the [guides for Trailblazer::Rails](http://trailblazer.to/gems/trailblazer/2.0/rails.html).
+
 ## Endpoint
 
 ## Dependency Injection
