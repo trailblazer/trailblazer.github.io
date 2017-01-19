@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer 2.0 - What's New?</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 18 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 20 January 2017</span>
 
   
 
@@ -129,7 +129,7 @@
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p>Please find the complete list of <a href="https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200">changes here</a>.</p>
 
-<p>The estimated release date is November 25. 2016, that is. 😜</p>
+<p>Trailblazer 2.0.0 was released in December 2016.</p>
 
 <h2 id="installation--structure" data-magellan-target="installation--structure">Installation / Structure</h2>
 
@@ -161,8 +161,7 @@
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">assign_current_user!</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-    <span class="n">options</span><span class="p">[</span><span class="s2">"model"</span><span class="p">].</span><span class="nf">created_by</span> <span class="o">=</span>
-    <span class="n">options</span><span class="p">[</span><span class="s2">"current_user"</span><span class="p">]</span>
+    <span class="n">options</span><span class="p">[</span><span class="s2">"model"</span><span class="p">].</span><span class="nf">created_by</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s2">"current_user"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre>
@@ -270,6 +269,10 @@
 <p>You can also use <a href="https://github.com/dry-rb/dry-matcher">pattern matching</a> with the result object.</p>
 
 <p>This will help us implement generic endpoints (TO BE DOCUMENTED).</p>
+
+<h2 id="controller-methods" data-magellan-target="controller-methods">Controller methods</h2>
+
+<p>TRB 1 <a href="http://trailblazer.to/gems/operation/1.1/controller.html">provided</a> the controller methods <code class="highlighter-rouge">run</code>, <code class="highlighter-rouge">present</code>, <code class="highlighter-rouge">form</code>, and <code class="highlighter-rouge">respond</code> for running and/or presenting an operation. In TRB 2 these have all been removed except <code class="highlighter-rouge">run</code>, and <code class="highlighter-rouge">run</code> has been moved to the <a href="https://github.com/trailblazer/trailblazer-rails">trailblazer-rails</a> gem. For more information see the <a href="http://trailblazer.to/gems/trailblazer/2.0/rails.html">guides for Trailblazer::Rails</a>.</p>
 
 <h2 id="endpoint" data-magellan-target="endpoint">Endpoint</h2>
 
@@ -381,6 +384,7 @@ end
 <li><a href="#skills">Skills</a></li>
 <li><a href="#result-object">Result Object</a></li>
 <li><a href="#pattern-matching">Pattern Matching</a></li>
+<li><a href="#controller-methods">Controller methods</a></li>
 <li><a href="#endpoint">Endpoint</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#dry-container">Dry-container</a></li>

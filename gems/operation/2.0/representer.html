@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Representer</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 20 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -361,7 +361,7 @@ end
   class MyContract &lt; Reform::Form
     property :id
   end
-  
+
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: MyRepresenter ) # :representer
@@ -388,13 +388,13 @@ end
   class MyContract &lt; Reform::Form
     property :id
   end
-  
+
   extend Representer::DSL
-  
+
   representer do
     property :id
   end
-  
+
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: self["representer.default.class"] )
@@ -412,7 +412,7 @@ end
   class MyContract &lt; Reform::Form
     property :id
   end
-  
+
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate( representer: Representer.infer(MyContract, format: Representable::JSON) )
@@ -427,7 +427,7 @@ end
 <p>You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.</p>
 
 <pre><code>require "representable/xml"
-  
+
 class MyXMLRepresenter &lt; Representable::Decorator
   include Representable::XML
   property :id
@@ -452,7 +452,7 @@ end
   extend Representer::DSL
   representer MyRepresenter
 end
-  
+
 Create["representer.default.class"] #=&gt; MyRepresenter
 </code></pre>
 
@@ -464,7 +464,7 @@ representer :errors, ErrorsRepresenter
 </code></pre>
 </div>
 
-<p>They are now accessable via their named path.</p>
+<p>They are now accessible via their named path.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>Create["representer.parse.class"] #=&gt; MyRepresenter
@@ -544,26 +544,26 @@ end
 <pre><code>class Create &lt; Trailblazer::Operation
   extend Contract::DSL
   extend Representer::DSL
-  
+
   contract do
     property :title
     validates :title, presence: true
   end
-  
+
   representer :parse do
     property :title
   end
-  
+
   representer :render do
     include Roar::JSON::HAL
-  
+
     property :id
     property :title
     link(:self) { "/songs/#{represented.id}" }
   end
-  
+
   representer :errors, ErrorsRepresenter # explicit reference.
-  
+
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate( representer: self["representer.parse.class"] )
@@ -577,7 +577,7 @@ end
 
 <pre><code>def create
   result = Create.(params, "document" =&gt; request.body.read)
-  
+
   if result.success?
     result["representer.render.class"].new(result["model"]).to_json
   else

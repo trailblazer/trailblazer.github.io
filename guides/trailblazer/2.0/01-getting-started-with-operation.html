@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation Policies</title>
-<meta name="description" content="Operation Policies - Trailblazer">
+<title>Trailblazer: 01- Getting Started With Operation</title>
+<meta name="description" content="01- Getting Started With Operation - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,14 +36,14 @@
 </script>
 
 
-<meta property="og:title" content="Operation Policies">
+<meta property="og:title" content="01- Getting Started With Operation">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/1.1/policy.html">
+<meta property="og:url" content="http://trailblazer.to/guides/trailblazer/2.0/01-getting-started-with-operation.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation Policies">
+<meta name="twitter:title" content="01- Getting Started With Operation">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -77,7 +77,7 @@
             <a href="#">GEMS</a>
             <ul class="menu vertical">
               <li class=""><a href="/gems/cells">CELLS</a></li>
-              <li class=""><a href="/gems/operation/index.html">OPERATION</a></li>
+              <li class=""><a href="/gems/operation/2.0/index.html">OPERATION</a></li>
               <li class=""><a href="/gems/reform">REFORM</a></li>
               <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
               <li class=""><a href="/gems/roar">ROAR</a></li>
@@ -95,7 +95,7 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero operation-hero">
+<div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
@@ -110,26 +110,22 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="operation-body">
+        <article class="operation2-body">
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation Policies</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 November 2016</span>
+  <h1 class="doc-page-title">01- Getting Started With Operation</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 January 2017</span>
 
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer">trailblazer</a>
+      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
 
-      <a href="/gems/operation/1.1/policy.html">
-      <span class="version">v1.1</span>
+      <a href="/guides/trailblazer/2.0/01-getting-started-with-operation.html">
+      <span class="version">v2.0</span>
       </a>
 
-    
-      <a href="/gems/operation/2.0/policy.html">
-        <span class="version other">v2.0</span>
-      </a>
     
 
     </span>
@@ -143,132 +139,135 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h1 id="policy">Policy</h1>
+              <p>The <em>Operation</em> is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.</p>
 
-<p>Trailblazer supports “pundit-style” policy classes. They can be hooked into operations and prevent the operation from running its <code class="highlighter-rouge">#process</code> method by raising an exception if the policy rule returned <code class="highlighter-rouge">false</code>.</p>
+<p>In order to do so, the operation provides you an API to structure your business code into <em>steps</em>. Its API is heavily inspired by the “Railsway-oriented programming” pattern that combines structuring linear code, and error handling - but more on that later.</p>
 
-<h2 id="policy-classes" data-magellan-target="policy-classes">Policy Classes</h2>
+<p>Don’t let yourself trick into the thinking the operation is a “god object”, as it’s been called by critics. The opposite is the case: the operation knows what to orchestrates and when, however, it has zero knowledge about the <em>how</em> since the implementation of the steps are hidden from it.</p>
 
-<p>The format of a policy class is heavily inspired by the excellent <a href="https://github.com/elabs/pundit">Pundit</a> gem. In fact, you can reuse your pundit policies without any code changes in Trailblazer.</p>
+<div class="callout">
+  
+<p>You can find the code for this page <a href="https://github.com/trailblazer/guides/tree/operation-01">here</a>.</p>
 
-<p>A policy file per concept is recommendable.</p>
+</div>
+
+<h2 id="gemfile" data-magellan-target="gemfile">Gemfile</h2>
+
+<p>In the <a href="https://github.com/trailblazer/guides/tree/operation-01">repository</a> for this page, you will find a very slim <code class="highlighter-rouge">Gemfile</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Policy
-  def initialize(user, thing)
-    @user, @thing = user, thing
-  end
-
-  def create?
-    admin?
-  end
-
-  def admin?
-    @user.admin == true
-  end
-  # ..
-end
+<pre class="highlight"><code>gem "trailblazer-operation"
+gem "rspec"
 </code></pre>
 </div>
 
-<p>This class would probably be best located at <code class="highlighter-rouge">app/concepts/thing/policy.rb</code>.</p>
+<p>The <code class="highlighter-rouge">trailblazer-operation</code> gem gives you the <code class="highlighter-rouge">Trailblazer::Operation</code> class and its Railway semantics. Nothing more. It does <em>not</em> have any other dependencies, which is why it is a great idea to start learning Trailblazer with a setup as simple as possible.</p>
 
-<h2 id="operation-policy" data-magellan-target="operation-policy">Operation Policy</h2>
+<p>We will explore the operation’s behavior using specs. This is my personal favorite way to play with new ideas or gems. If you prefer Minitest, you may do so, Trailblazer is not coupled to any specific test framework.</p>
 
-<p>Use <code class="highlighter-rouge">::policy</code> to hook the policy class along with a query action into your operation.</p>
+<h2 id="our-first-operation" data-magellan-target="our-first-operation">Our first Operation</h2>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
-  include Trailblazer::Operation::Policy
+<p>When implementing a blog website, it’s probably quite handy to empower a user to write and create a blog post.</p>
 
-  policy Thing::Policy, :create?
-</code></pre>
-</div>
-
-<p>The policy is evaluated in <code class="highlighter-rouge">#setup!</code>, raises an exception if <code class="highlighter-rouge">false</code> and thus suppresses running <code class="highlighter-rouge">#process</code>. It is a great way to protect your operations from unauthorized users.</p>
+<p>In most web frameworks like Rails, you’d start with a <code class="highlighter-rouge">PostsController</code> and an action <code class="highlighter-rouge">#create</code> that receives and processes a post form.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>Thing::Create.(current_user: User.find_normal_user, thing: {})
-</code></pre>
-</div>
-
-<p>This will raise a <code class="highlighter-rouge">Trailblazer::NotAuthorizedError</code>.</p>
-
-<h2 id="policy-creation" data-magellan-target="policy-creation">Policy Creation</h2>
-
-<p>To instantiate the <code class="highlighter-rouge">Thing::Policy</code> object internally, per default the <code class="highlighter-rouge">params[:current_user]</code> and the operation’s <code class="highlighter-rouge">model</code> is passed into the constructor. You can override that via <code class="highlighter-rouge">Operation#evaluate_policy</code>.</p>
-
-<h2 id="queries" data-magellan-target="queries">Queries</h2>
-
-<p>After <code class="highlighter-rouge">#setup!</code>, the policy instance is available at any point in your operation code.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>def process(params)
-  notify_admin! if policy.admin?
-</code></pre>
-</div>
-
-<p>This won’t raise an exception.</p>
-
-<h2 id="pundit" data-magellan-target="pundit">Pundit</h2>
-
-<p>Pundit policy classes can be used directly in operations.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
-  include Trailblazer::Operation::Policy
-
-  policy ThingPolicy, :create?
-</code></pre>
-</div>
-
-<p>As a matter of course, you may call other rule queries on the internal policy object later on.</p>
-
-<h2 id="guard" data-magellan-target="guard">Guard</h2>
-
-<p>Instead of using policies, you can also use a simple guard.</p>
-
-<p>A guard is like an inline policy that doesn’t require you to define a policy class. It is run in <code class="highlighter-rouge">#setup!</code>, too, like a real policy, but isn’t accessible in the operation after that.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
-  include Policy::Guard
-
-  policy do |params|
-    params[:current_user].present? # true when present.
-  end
-</code></pre>
-</div>
-
-<p>If you prefer a separate class as your guard, you can provide a <code class="highlighter-rouge">Callable</code> object.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Authorization
-  include Uber::Callable # marks instance as callable.
-
-  def call(operation, params)
-    params[:current_user].present?
+<pre class="highlight"><code>class PostsController &lt; RubyOnTrails::Controller
+  def create
+    post = Post.new
+    post.update_attributes(params[:post])
+    if post.save
+      notify_current_user!
+    else
+      render
+    end
   end
 end
 </code></pre>
 </div>
 
-<p>Pass the guard <em>instance</em> to <code class="highlighter-rouge">Operation::policy</code> to register it.</p>
+<p>In Trailblazer, this is identical, only that the entire <em>business code</em> to create a post is embraced by an operation. Leaving routing and rendering responses up to the controller, the operation solely focuses on domain logic. The nice thing here is that we can start coding without any web framework or routing, and even without thinking about HTTP - a deeply relaxing thought.</p>
+
+<p>An operation is simply a Ruby object that can be run anywhere.</p>
+
+<p>In <code class="highlighter-rouge">app/post/operation/create.rb</code> I add an empty class.</p>
+
+<pre><code>require "trailblazer/operation"
+
+module Post
+  class Create &lt; Trailblazer::Operation
+  end
+end
+</code></pre>
+
+<p><code class="highlighter-rouge">Create</code> is derived from <code class="highlighter-rouge">Trailblazer::Operation</code>. Do note that we’re inheriting <a href="https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb">a few dozens lines</a> of code here, only.</p>
+
+<h3 id="naming">Naming</h3>
+
+<p>The actual <code class="highlighter-rouge">Create</code> operation is put into the <code class="highlighter-rouge">Post</code> namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named <code class="highlighter-rouge">Post::Create</code>, a very expressive class name, don’t you think?</p>
+
+<p>Before adding any logic, let’s run this very operation via a spec in <code class="highlighter-rouge">spec/post/operation/create_spec.rb</code>.</p>
+
+<pre><code>require "spec_helper"
+require_relative "../../../app/post/operation/create"
+
+RSpec.describe "Create" do
+  it do
+    Post::Create.()
+  end
+end
+</code></pre>
+
+<p>In an empty test case, we invoke (or <em>call</em>) our yet unspoiled operation.</p>
+
+<h3 id="call">Call</h3>
+
+<p>That’s right, there’s only one way to run an operation, and that’s the “<code class="highlighter-rouge">call</code> style”. Confused? Here’s how to spell that alternatively.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>class Thing::Create &lt; Trailblazer::Operation
-  include Policy::Guard
-  policy Authorization.new
+<pre class="highlight"><code>Post::Create.call()
 </code></pre>
 </div>
 
-<p>The same works with <code class="highlighter-rouge">Proc</code>, which will receive <code class="highlighter-rouge">params</code> only but is executed in operation context (subject to change).</p>
+<p>This behavior is pure Ruby and was introduced in Ruby 1.9, if I remember correctly. While this might look bizarre to you at first glance, there’s a profound reasoning behind this decision.</p>
 
-<p>Note that you can’t mix <code class="highlighter-rouge">Policy</code> and guards in one class.</p>
+<p>An operation conceptually is a <em>function</em>, it does only one thing and doesn’t need more than one public method. Since the operation’s name reflect what it does, you don’t need a method name. This is why in Trailblazer you will have many <code class="highlighter-rouge">call</code>able objects instead of one object with many methods.</p>
 
-<h2 id="resolver" data-magellan-target="resolver">Resolver</h2>
+<div class="callout">
+  
+<p>You will soon learn how this greatly improves your architecture since the functional approach minimizes internal state and the <a href="https://apotonick.wordpress.com/2014/05/22/rails-misapprehensions-single-responsibility-principle/">associated mess it might create</a>.</p>
 
-<p>You can use policies in your builders, too. Please refer to the <a href="builder.html#resolver">builder docs</a> to learn about that.</p>
+</div>
+
+<p>While our spec works, or at least no exception is raised, this is not very impressive. Let’s see what it actually returns.</p>
+
+<pre><code>it do
+  result = Post::Create.()
+  puts result #=&gt; #&lt;Trailblazer::Operation::Result:0x9cd7dc4&gt;
+end
+</code></pre>
+
+<p>Calling an operation always gives you a <em>result object</em>. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. We will talk about it in a few minutes.</p>
+
+<h3 id="steps">Steps</h3>
+
+<p>It might be a good idea to actually add some logic to our operation. While we could simply add a big method with lots of code in a nested procedural style, Trailblazer encourages you to structure your code into a <em>pipeline</em>, where steps in the pipe implement parts of the domain code.</p>
+
+<pre><code>module Post
+  class Create &lt; Trailblazer::Operation
+    step :hello_world!
+
+    def hello_world!(options, *)
+      puts "Hello, Trailblazer!"
+    end
+  end
+end
+</code></pre>
+
+<p>Adding steps usually works with the <a href="http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step"><code class="highlighter-rouge">step</code> method</a>. It allows to implement steps using methods, <a href="">lambdas</a> and <a href="">callable objects</a>. For simplicity, let’s go with instance methods for now.</p>
+
+<p>We also call the pipe a <em>railway</em> because it has different tracks.</p>
+
 
             </div>
 
@@ -279,13 +278,8 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#policy-classes">Policy Classes</a></li>
-<li><a href="#operation-policy">Operation Policy</a></li>
-<li><a href="#policy-creation">Policy Creation</a></li>
-<li><a href="#queries">Queries</a></li>
-<li><a href="#pundit">Pundit</a></li>
-<li><a href="#guard">Guard</a></li>
-<li><a href="#resolver">Resolver</a></li>
+          <li><a href="#gemfile">Gemfile</a></li>
+<li><a href="#our-first-operation">Our first Operation</a></li>
         </ul>
       
 </nav>
@@ -300,22 +294,23 @@ end
       <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
         <ul class="vertical menu side-nav">
     <li class="heading">
-        <a href="/gems/operation/1.1/index.html">
-            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION <span class="sidebar-info" style="background-color:#17C2AA;">v1.1</span>
+        <a href="/gems/operation/2.0/index.html">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
         </a>
     </li>
-    <li><a href="/gems/operation/1.1/api.html">API</a></li>
-    <li><a href="/gems/operation/1.1/contract.html">Contract</a></li>
-    <li><a href="/gems/operation/1.1/builder.html">Builder</a></li>
-    <li><a href="/gems/operation/1.1/collection.html">Collection</a></li>
-    <li><a href="/gems/operation/1.1/callback.html">Callback</a></li>
-    <li><a href="/gems/operation/1.1/controller.html">Controller</a></li>
-    <li><a href="/gems/operation/1.1/representer.html">Representer</a></li>
-    <li><a href="/gems/operation/1.1/model.html">Model</a></li>
-    <li><a href="/gems/operation/1.1/policy.html" class="active">Policy</a></li>
+    <li><a href="/gems/operation/2.0/api.html">API</a></li>
+    <li><a href="/gems/operation/2.0/contract.html">Contract</a></li>
+    <!-- <li><a href="/gems/operation/2.0/representer.html">Representer</a></li> -->
+    <li><a href="/gems/operation/2.0/policy.html">Policy</a></li>
+    <li><a href="/gems/operation/2.0/representer.html">Representer</a></li>
 <!--     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
  -->
-    <!-- <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li> -->
+    <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
+    <li>
+<a href="/gems/operation/1.1/index.html">
+          <span class="sidebar-info">→ v1.1</span>
+        </a>
+    </li>
     <li class="divider">
 
     <li class="heading">

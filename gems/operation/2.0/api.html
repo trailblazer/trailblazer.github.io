@@ -187,7 +187,7 @@ result["model"] #=&gt; #&lt;Song name: "Roxanne"&gt;
 <pre><code>result = Create.( { title: "Roxanne" }, "current_user" =&gt; current_user )
 </code></pre>
 
-<p>External dependencies will be accessable via <code class="highlighter-rouge">options</code> in every step.</p>
+<p>External dependencies will be accessible via <code class="highlighter-rouge">options</code> in every step.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
   step     Model( Song, :new )
@@ -314,7 +314,7 @@ end
 
 <p>In the above example, it deviates to left should the respective model <strong>not</strong> be found.</p>
 
-<p>When adding <a href="step-macros">step macros</a> with <code class="highlighter-rouge">step</code>, the behavior changes a bit. Macros can command <code class="highlighter-rouge">step</code> to internally use other operators to attach their step(s).</p>
+<p>When adding <a href="#step-macros">step macros</a> with <code class="highlighter-rouge">step</code>, the behavior changes a bit. Macros can command <code class="highlighter-rouge">step</code> to internally use other operators to attach their step(s).</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class Create &lt; Trailblazer::Operation
@@ -500,6 +500,8 @@ end
 
 <p>Note that you can use modules to share steps across operations.</p>
 
+<h3 id="step-implementation-lambda">Step Implementation: Lambda</h3>
+
 <p>Or as a proc.</p>
 
 <div class="highlighter-rouge">
@@ -508,6 +510,8 @@ end
 end
 </code></pre>
 </div>
+
+<h3 id="step-implementation-callable">Step Implementation: Callable</h3>
 
 <p>Or, for more reusability, as a <code class="highlighter-rouge">Callable</code>.</p>
 
