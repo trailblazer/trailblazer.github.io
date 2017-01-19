@@ -5,7 +5,7 @@ title: "Trailblazer 2.0 - What's New?"
 
 Please find the complete list of [changes here](https://github.com/trailblazer/trailblazer/blob/master/CHANGES.md#200).
 
-The estimated release date is November 25. 2016, that is. 😜
+Trailblazer 2.0.0 was released in December 2016.
 
 ## Installation / Structure
 
