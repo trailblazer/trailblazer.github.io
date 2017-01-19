@@ -38,8 +38,7 @@ class Song::Create < Trailblazer::Operation
   end
 
   def assign_current_user!(options)
-    options["model"].created_by =
-    options["current_user"]
+    options["model"].created_by = options["current_user"]
   end
 end
 ```
