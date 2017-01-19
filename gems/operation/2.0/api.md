@@ -521,6 +521,32 @@ Trailblazer provides predefined steps to for all kinds of business logic.
 * All [`Policy`-related](policy.html) macros help with authentication and making sure users only execute what they're supposed to.
 * The [`Model`](#model) macro can create and find models based on input.
 
+## Macro API
+
+Implementing your own macros helps to create reusable code.
+
+It's advised to put macro code into namespaces to not pollute the global namespace.
+
+{{  "macro_test.rb:simple" | tsnippet }}
+
+The macro itself is a function. Per convention, the name is capitalized. You can specify any set of arguments (e.g. using kw args), and it returns a 2-element array with the actual step to be inserted into the pipe and default options.
+
+Note that in the macro, the code design is up to you. You can delegate to other functions, objects, etc.
+
+The macro step receives `(input, options)` where `input` is usually the operation instance and `options` is the context object passed from step to step. It's your macro's job to read and write to `options`. It is not advisable to interact with the operation instance.
+
+Operations can then use your macro the way you've done it with our Trailblazer macros.
+
+{{  "macro_test.rb:simple-op" | tsnippet }}
+
+When looking at the operation's pipe, you can see how, in our example, the default options provide a convenient step name.
+
+{{  "macro_test.rb:simple-pipe" | tsnippet }}
+
+{% callout %}
+In future versions (TRB 2.0.2+) we will have public APIs for creating nested pipes, providing temporary arguments to steps and allowing injectable options.
+{% endcallout %}
+
 ## Model
 
 An operation can automatically find or create a model for you depending on the input, with the `Model` macro.
