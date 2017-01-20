@@ -708,6 +708,111 @@ end
 
 <p>Use the <code class="highlighter-rouge">:name</code> option to assign a new name if you don’t want to override an existing step.</p>
 
+<h2 id="options" data-magellan-target="options">Options</h2>
+
+<p>When adding steps using <code class="highlighter-rouge">step</code>, <code class="highlighter-rouge">failure</code> and <code class="highlighter-rouge">success</code>, you may name steps explicitly or specify the position.</p>
+
+<h3 id="options-name">Options: Name</h3>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-6 ">
+        <p>A step macro will name itself.</p>
+
+<pre><code>  class New &lt; Trailblazer::Operation
+    step Model( Song, :new )
+  end
+</code></pre>
+
+
+      </div>
+    <div class="column medium-6 ">
+        <p>You can find out the name by inspecting the pipe.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 ==========================&amp;model.build
+</code></pre>
+
+
+      </div>
+</div></section>
+
+<p>For every kind of step, whether it’s a macro or a custom step, use <code class="highlighter-rouge">:name</code> to specify a name.</p>
+
+<pre><code>  class New &lt; Trailblazer::Operation
+    step Model( Song, :new ), name: "build.song.model"
+    step :validate_params!,   name: "my.params.validate"
+    # ..
+  end
+</code></pre>
+
+<p>When inspecting the pipe, you will see your names.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 =====================&amp;build.song.model
+ 2 ===================&amp;my.params.validate
+</code></pre>
+
+<p>Assign manual names to steps when using macros multiple times, or when planning to alter the pipe in subclasses.</p>
+
+<h3 id="options-position">Options: Position</h3>
+
+<p>Whenever inserting a step, you may provide the position in the pipe using <code class="highlighter-rouge">:before</code> or <code class="highlighter-rouge">:after</code>.</p>
+
+<pre><code>  class New &lt; Trailblazer::Operation
+    step Model( Song, :new )
+    step :validate_params!,   before: "model.build"
+    # ..
+  end
+</code></pre>
+
+<p>This will insert the custom step before the model builder.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 =====================&amp;validate_params!
+ 2 ==========================&amp;model.build
+</code></pre>
+
+<div class="callout">
+  
+<p>Naturally, <code>:after</code> will insert the step after an existing one.</p>
+
+</div>
+
+<h3 id="options-inheritance">Options: Inheritance</h3>
+
+<p>The position options are extremely helpful with inheritance.</p>
+
+<pre><code>  class Create &lt; New
+    step :policy!, after: "operation.new"
+  end
+</code></pre>
+
+<p>It allows inserting new steps without repeating the existing pipe.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 1 ==============================&amp;policy!
+ 2 =====================&amp;validate_params!
+ 3 ==========================&amp;model.build
+</code></pre>
+
+<h3 id="options-replace">Options: Replace</h3>
+
+<p>Replace existing (or inherited) steps using <code class="highlighter-rouge">:replace</code>.</p>
+
+<pre><code>  class Update &lt; New
+    step Model(Song, :find_by), replace: "model.build"
+  end
+</code></pre>
+
+<p>The existing step will be discarded with the newly provided one.</p>
+
+<pre><code> 0 =======================&gt;&gt;operation.new
+ 2 ==========================&amp;model.build
+</code></pre>
+
+<h3 id="options-delete">Options: Delete</h3>
+
 <h2 id="step-macros" data-magellan-target="step-macros">Step Macros</h2>
 
 <p>Trailblazer provides predefined steps to for all kinds of business logic.</p>
@@ -982,6 +1087,7 @@ end
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#inheritance">Inheritance</a></li>
+<li><a href="#options">Options</a></li>
 <li><a href="#step-macros">Step Macros</a></li>
 <li><a href="#model">Model</a></li>
 <li><a href="#nested">Nested</a></li>
