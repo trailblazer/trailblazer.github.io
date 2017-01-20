@@ -219,7 +219,7 @@ Instead, use your own virtual fields.
       property :password, virtual: true
       property :password_confirmation, virtual: true
 
-      validate :passwork_ok? do
+      validate :password_ok? do
         errors.add(:password, "Password mismatch") if password != password_confirmation
       end
     end
