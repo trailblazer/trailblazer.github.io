@@ -199,23 +199,23 @@ result = Song::Create.(
 
 <pre><code>class Song::Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
     validates :title, presence: true
   end
-  
+
   step     Model( Song, :new )
   step     :assign_current_user!
   step     Contract::Build()
   step     Contract::Validate( )
   failure  :log_error!
   step     Contract::Persist(  )
-  
+
   def log_error!(options)
     # ..
   end
-  
+
   def assign_current_user!(options)
     options["model"].created_by =
       options["current_user"]
@@ -390,7 +390,7 @@ end
     <div class="column medium-4 ">
         <p><i class="fa fa-book"></i></p>
 
-<p>Make sure to spend some hours reading the <a href="guides/getting_started_with_trailblazer_2.html"><strong>→GETTING STARTED</strong></a> guide.</p>
+<p>Make sure to spend some hours reading the <a href="/guides/trailblazer/2.0/01-getting-started-with-operation.html"><strong>→GETTING STARTED</strong></a> guide.</p>
 
 <p>You will be ready to work with Trailblazer 2.</p>
 
