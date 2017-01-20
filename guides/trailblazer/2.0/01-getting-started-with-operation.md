@@ -54,7 +54,7 @@ In `app/post/operation/create.rb` I add an empty class.
 
 `Create` is derived from `Trailblazer::Operation`. Do note that we're inheriting [a few dozens lines](https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb) of code here, only.
 
-### Naming
+## Naming
 
 The actual `Create` operation is put into the `Post` namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named `Post::Create`, a very expressive class name, don't you think?
 
@@ -64,7 +64,7 @@ Before adding any logic, let's run this very operation via a spec in `spec/post/
 
 In an empty test case, we invoke (or *call*) our yet unspoiled operation.
 
-### Call
+## Call
 
 That's right, there's only one way to run an operation, and that's the "`call` style". Confused? Here's how to spell that alternatively.
 
@@ -149,15 +149,68 @@ The step following the "broken" step now doesn't get executed, anymore. Furtherm
 
 ## Basic Flow Control
 
+Apparently, `step` allows us to define some kind of flow. If one `step` returns a falsey value, all other remaining steps are skipped. We will soon see that this is great for error handling, as it takes away nested `if`s and `else`s in your code and formalizes them in a declarative pipe.
+
+## Success!
+
+We don't really test anything in the first two steps, and returning `true` looks weird. Luckily, Trailblazer gives us the `success` method to define a step that always passes. Or, in other words: the return value is ignored and assumed it was `true`.
+
+{{ "create.rb:success:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+This looks better, and, more important: another developer looking at this operation will instantly understand the first two steps do always pass.
+
+We now understand how to implement an operation with successive steps, and how to communicate that to the caller with the result object. Next, we should explore how to *read* input, test it and maybe have alternative flows depending on a certain value.
+
+## Handling Input
+
+Since our operation seems to be interested in our health, and actually asks us about it, we should pass the answer into it. With operations, there's only one way to pass data into it, and that's, of course, in `call`.
+
+{{ "create_spec.rb:input:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+We now have to implement a check that tests our answer, and if it happens to be `"yes"`, wish a good day, and make the outcome successful.
 
 
+{{ "create.rb:input:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+The middle step `how_are_you?` is now added with `step`, making its return value matter. That means, if the `params[:healthy] == "yes"` check is true, the next step is going to be executed. And, surprisingly, given the above test case with the respective input, this works.
+
+Of course, we now have to test the opposite scenario, too. What if we're unhappy?
+
+{{ "create_spec.rb:input-false:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+Then, only the first two steps are executed, the third is skipped. Also, the result's state is "failed".
+
+## Options
+
+Before we dive into error handling, let's quickly discuss how steps access the input.
+
+Remember how we called the operation?
+
+{{ "create_spec.rb:input-call:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+The first argument passed to `call` will be available via `options["params"]` in every step.
+
+    def how_are_you?(options, *)
+      # ...
+      options["params"] #=> { healthy: "yes" }
+    end
+
+It's a bit tedious to always go through `options`, so Trailblazer harnesses *keyword arguments* a lot to simplify accessing data. Keyword arguments are an incredibly cool feature introduced in Ruby 2.0.
+
+So, instead of going through `options`, you can tell Ruby to extract the params into the local `params` variable.
+
+    def how_are_you?(options, params:, **)
+      # ...
+      params #=> { healthy: "yes" }
+    end
+
+This is highly recommended as it simplifies the method body, and as a nice side effect, Ruby will complain if params are not available. You may also set a default value for the keyword argument, but let's talk about this another time.
+
+Note the double-splat `**` at the end of the argument list. It means "I know there are more keyword arguments coming in, but I'm not interested right now". It ignores other kw args that Trailblazer passes into the step.
+
+## Error Handling
 
 
-
-
-
-
-Apparently, `step` and `success` allow you to define some kind of flow. If one `step` returns a falsey value, all other remaining steps are skipped. This is great for error handling as it takes away nested `if`s and `else`s in your code and formalizes them in a declarative pipe.
 
 ## Railway
 
