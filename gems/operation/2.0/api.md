@@ -11,7 +11,7 @@ This document describes Trailblazer's `Operation` API.
 {% callout %}
   The generic implementation can be found in the [trailblazer-operation gem](https://github.com/trailblazer/trailblazer-operation). This gem only provides the pipe and dependency handling.
 
-  Higher-level abstractions, such as form object or policy integration is implemented in the [trailblazer gem](https://github.com/trailblazer/trailblazer).
+  Higher-level abstractions, such as form object or policy integration, are implemented in the [trailblazer gem](https://github.com/trailblazer/trailblazer).
 {% endcallout %}
 
 
@@ -74,7 +74,7 @@ The flow pipetree is a mix of the [`Either` monad](http://dry-rb.org/gems/dry-mo
 
 The following high-level API is available.
 
-* `step` adds a step to right track. If its return value is `falsey`, the pipe deviates to left track. Can be called with macros, which will run their own insertion logic.
+* `step` adds a step to the right track. If its return value is `falsey`, the pipe deviates to the left track. Can be called with macros, which will run their own insertion logic.
 * `success` always add step to the right. The return value is ignored.
 * `failure` always add step to the left for error handling. The return value is ignored.
 
@@ -120,7 +120,7 @@ However, if the step returns `falsey`, the pipe will change to the left track.
       end
     end
 
-In the above example, it deviates to left should the respective model **not** be found.
+In the above example, it deviates to the left should the respective model **not** be found.
 
 When adding [step macros](#step-macros) with `step`, the behavior changes a bit. Macros can command `step` to internally use other operators to attach their step(s).
 
@@ -283,7 +283,7 @@ After that, only extract the parameters you need (such as `params:`). Any unspec
 
 {% callout %}
 
-Keywords arguments work fine in Ruby 2.1 and >=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.
+Keyword arguments work fine in Ruby 2.1 and >=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.
 
 {% endcallout %}
 
@@ -300,7 +300,7 @@ All three steps add data to the `options` object. That data can be used in the f
 
 {{  "operation_test.rb:step-val" | tsnippet }}
 
-It is a convention to use a `"namespaced.key"` on the result object. This will help you structuring and managing the data. It's clever to namespace your data with something like `my.`.
+It is a convention to use a `"namespaced.key"` on the result object. This will help you structure and manage the data. It's clever to namespace your data with something like `my.`.
 
 <div class="callout">
   In future versions of Trailblazer, the <em>Hash Explore API™</em> will allow to search for fragments or namespace paths on the result object. That's why it's a good idea to follow our namespacing convention.

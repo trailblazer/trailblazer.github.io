@@ -112,7 +112,7 @@ end
 
 Per default, the `call` method returns a result object. Currently, this is simply the immutable *operation instance* (it's not really immutable, yet, but that's easily achievable).
 
-That makes is super simple to read all kinds of states from it.
+That makes it super simple to read all kinds of states from it.
 
 ```ruby
 Create.({})["state"]                 #=> :created

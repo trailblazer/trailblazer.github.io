@@ -63,7 +63,7 @@ With a Reform contract the relevant steps are as follows.
 
 ## Validate
 
-The `Contract::Validate` step in the pipe is responsible to validate the incoming params against its contract. This boils down to the following simple code.
+The `Contract::Validate` step in the pipe is responsible for validating the incoming params against its contract. This boils down to the following simple code:
 
     contract.validate(params)
 
