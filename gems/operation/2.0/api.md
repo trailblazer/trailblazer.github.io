@@ -457,7 +457,7 @@ It allows inserting new steps without repeating the existing pipe.
 
 Replace existing (or inherited) steps using `:replace`.
 
-{{  "operation_test.rb:replace-inh" | tsnippet : "replace-val" }}
+{{  "operation_test.rb:replace-inh" | tsnippet  }}
 
 The existing step will be discarded with the newly provided one.
 
