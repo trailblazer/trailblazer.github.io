@@ -402,6 +402,69 @@ The pipe flow will remain the same.
 
 Use the `:name` option to assign a new name if you don't want to override an existing step.
 
+## Options
+
+When adding steps using `step`, `failure` and `success`, you may name steps explicitly or specify the position.
+
+### Options: Name
+
+{% row %}
+  ~~~6
+A step macro will name itself.
+
+{{  "operation_test.rb:name-auto" | tsnippet }}
+  ~~~6
+You can find out the name by inspecting the pipe.
+
+{{  "operation_test.rb:name-auto-pipe" | tsnippet }}
+{% endrow %}
+
+For every kind of step, whether it's a macro or a custom step, use `:name` to specify a name.
+
+{{  "operation_test.rb:name-manu" | tsnippet }}
+
+When inspecting the pipe, you will see your names.
+
+{{  "operation_test.rb:name-manu-pipe" | tsnippet }}
+
+Assign manual names to steps when using macros multiple times, or when planning to alter the pipe in subclasses.
+
+### Options: Position
+
+Whenever inserting a step, you may provide the position in the pipe using `:before` or `:after`.
+
+{{  "operation_test.rb:pos-before" | tsnippet }}
+
+This will insert the custom step before the model builder.
+
+{{  "operation_test.rb:pos-before-pipe" | tsnippet }}
+
+{% callout %}
+Naturally, `:after` will insert the step after an existing one.
+{% endcallout %}
+
+### Options: Inheritance
+
+The position options are extremely helpful with inheritance.
+
+{{  "operation_test.rb:pos-inh" | tsnippet }}
+
+It allows inserting new steps without repeating the existing pipe.
+
+{{  "operation_test.rb:pos-inh-pipe" | tsnippet }}
+
+### Options: Replace
+
+Replace existing (or inherited) steps using `:replace`.
+
+{{  "operation_test.rb:replace-inh" | tsnippet : "replace-val" }}
+
+The existing step will be discarded with the newly provided one.
+
+{{  "operation_test.rb:replace-inh-pipe" | tsnippet }}
+
+### Options: Delete
+
 ## Step Macros
 
 Trailblazer provides predefined steps to for all kinds of business logic.
