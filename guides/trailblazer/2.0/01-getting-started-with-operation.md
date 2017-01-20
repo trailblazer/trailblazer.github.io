@@ -149,7 +149,16 @@ The step following the "broken" step now doesn't get executed, anymore. Furtherm
 
 ## Basic Flow Control
 
-Apparently, `step` allows us to define some kind of flow. If one `step` returns a falsey value, all other remaining steps are skipped. We will soon see that this is great for error handling, as it takes away nested `if`s and `else`s in your code and formalizes them in a declarative pipe.
+{% row %}
+  ~~~4
+  <img src="/images/diagrams/guide-op-railway1.gif" width="140">
+  ~~~8
+  Apparently, `step` allows us to define some kind of flow. If one `step` returns a falsey value, all other remaining steps are skipped.
+
+  We will soon see that this is great for error handling, as it takes away nested `if`s and `else`s in your code and formalizes them in a declarative pipe.
+
+  Check out the diagram on the left hand. This is how Trailblazer structures the flow, but more on that [later](#error-handling).
+{% endrow %}
 
 ## Success!
 
@@ -172,7 +181,7 @@ We now have to implement a check that tests our answer, and if it happens to be 
 
 {{ "create.rb:input:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
 
-The middle step `how_are_you?` is now added with `step`, making its return value matter. That means, if the `params[:healthy] == "yes"` check is true, the next step is going to be executed. And, surprisingly, given the above test case with the respective input, this works.
+The middle step `how_are_you?` is now added with `step`, making its return value matter. That means, if the `params[:happy] == "yes"` check is true, the next step is going to be executed. And, surprisingly, given the above test case with the respective input, this works.
 
 Of course, we now have to test the opposite scenario, too. What if we're unhappy?
 
@@ -192,7 +201,7 @@ The first argument passed to `call` will be available via `options["params"]` in
 
     def how_are_you?(options, *)
       # ...
-      options["params"] #=> { healthy: "yes" }
+      options["params"] #=> { happy: "yes" }
     end
 
 It's a bit tedious to always go through `options`, so Trailblazer harnesses *keyword arguments* a lot to simplify accessing data. Keyword arguments are an incredibly cool feature introduced in Ruby 2.0.
@@ -201,20 +210,64 @@ So, instead of going through `options`, you can tell Ruby to extract the params 
 
     def how_are_you?(options, params:, **)
       # ...
-      params #=> { healthy: "yes" }
+      params #=> { happy: "yes" }
     end
 
 This is highly recommended as it simplifies the method body, and as a nice side effect, Ruby will complain if params are not available. You may also set a default value for the keyword argument, but let's talk about this another time.
 
-Note the double-splat `**` at the end of the argument list. It means "I know there are more keyword arguments coming in, but I'm not interested right now". It ignores other kw args that Trailblazer passes into the step.
+Note the double-splat `**` at the end of the argument list. It means "I know there are more keyword arguments coming in, but I'm not interested right now". It ignores other kw args that [Trailblazer passes into the step](/gems/operation/2.0/api.html#step-arguments).
 
 ## Error Handling
 
-
-
-## Railway
-
 The operation's pipe doesn't only allow you to skip steps, but also to handle errors. And this is where it makes sense to introduce the mental model for Trailblazer, the [*Railway* paradigm from functional programming](http://fsharpforfunandprofit.com/rop/).
 
-We also call the pipe a *railway* because it has different tracks.
+{% row %}
+  ~~~4
+  <img src="/images/diagrams/guide-op-railway1.gif">
+  ~~~8
+  Steps added with `success` will go on the *right track*. Once that step is executed, a following step will be invoked regardless of the preceding result. This is why `hello_world!` and then `how_are_you?` are always called, in that very order.
+
+  When adding with `step`, it will also go on the right track. However, now the step's result is crucial. This is where you create a switch that might deviate to the *left track*.
+
+  Handling an eventual error in `how_are_you?` now becomes nothing more than adding a step on the left track, after the erroring one. This works with `failure`.
+
+  And keep in mind, there can be any number of steps on each track. You can even jump back and fourth.
+{% endrow %}
+
+{% callout %}
+We also call the pipe a *railway* because it has different tracks and mentally follows a train/track scenario.
+{% endcallout %}
+
+
+## Failure
+
+In order to handle the case that `how_are_you?` returns a negative mood, we need to add an error handler on the left track. As already discussed, this happens via `failure`.
+
+{{ "create.rb:failure:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+The pipe, or railway, created now represents the one we've just seen in the diagram. Due to the way `failure` works, it will only be executed if `how_are_you?` fails.
+
+## Writing Output
+
+In the new `tell_joke!` step, you can see that we write to `options`. That's how you communicate state changes to the outer world. For example, that could be an error message interpreted by the operation user.
+
+Note that writing applies to any kind of state, right or left track! To keep this example brief, we only write in this one step, though.
+
+{{ "create_spec.rb:failure:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+When passing in a negative (or false) value for `:happy`, the second step `how_are_you?` will deviate to the left track. This is why we can test the result's state for `failure?` and why the `options[:joke]` value is set.
+
+It's up to the operation caller to decide whether or not they find this joke hilarious.
+
+## Interpretation
+
+Speaking about decisions: in Trailblazer, it is not the operation's job or scope to decide what will happen given that the railway took path A, B or even C. The operation may write as many flags, objects, booleans, whatever you need to the `options` hash and thus expose state and internal decisions.
+
+Nevertheless, the interpretation of the result is the sole business of the caller. *What* will happen with this result is up to the controller, the background job, or wherever else you use the operation.
+
+To make sure that the operation provides those values and to have a contract with the outer world, you write tests with assumptions. In case someone changes those assumptions, the test will fail.
+
+Given these boundaries, it's quite obvious now why the operation does not have access to the environment, and why HTTP is not it's business at all. We will learn how this is handled in a further chapter.
+
+Having understood the basic mechanics of the operation, in the next chapter we are going to discover what additional abstractions Trailblazer brings, and how policies, forms, persistence layer and all that hooks into the operation's workflow.
 
