@@ -72,6 +72,7 @@ That's right, there's only one way to run an operation, and that's the "`call` s
 
 This behavior is pure Ruby and was introduced in Ruby 1.9, if I remember correctly. While this might look bizarre to you at first glance, there's a profound reasoning behind this decision.
 
+<!-- instantiation? -->
 An operation conceptually is a *function*, it does only one thing and doesn't need more than one public method. Since the operation's name reflect what it does, you don't need a method name. This is why in Trailblazer you will have many `call`able objects instead of one object with many methods.
 
 {% callout %}
@@ -82,16 +83,85 @@ While our spec works, or at least no exception is raised, this is not very impre
 
 {{ "create_spec.rb:puts:../trailblazer-guides/spec/post/operation" | tsnippet }}
 
-Calling an operation always gives you a *result object*. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. We will talk about it in a few minutes.
+Calling an operation always gives you a *result object*. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. Why don't we make sure it didn't break?
 
-### Steps
+{{ "create_spec.rb:success:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+The `Result#success?` method and its friend `failure?` are here to test that, from the caller perspective.
+
+## Baby Steps
 
 It might be a good idea to actually add some logic to our operation. While we could simply add a big method with lots of code in a nested procedural style, Trailblazer encourages you to structure your code into a *pipeline*, where steps in the pipe implement parts of the domain code.
 
 {{ "create.rb:step:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
 
-Adding steps usually works with the [`step` method](http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step). It allows to implement steps using methods, [lambdas]() and [callable objects](). For simplicity, let's go with instance methods for now.
+You can add steps with the [`step` method](http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step). It allows to implement steps using methods, [lambdas](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda) and [callable objects](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable). For simplicity, let's go with instance methods for now. The `hello_world!` method sits in the operation as an instance method. It receives some arguments that we'll learn about later. In the body, it's up to us to implement that step.
+
+{% callout %}
+Suffixing step methods with a bang (e.g. `model!`) is purely style, it has no semantic.
+{% endcallout %}
+
+Running this operation will hopefully output something.
+
+{{ "create_spec.rb:step:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+We can see a greeting on our command line. But, hang on, what's that? The operation didn't finish successful, our test just broke... after working with TRB for 2 minutes!
+
+## Step: Return Value Matters
+
+The operation fails because the return value of a `step` matters! If a step returns `nil` or `false` (aka. *falsey*), the operation's result will be marked as failed, and the following steps won't be executed,
+
+Since `puts` will always return `nil` (and [no one knows why](http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil)), we manually have to return a trusy value to make the next step be invoked.
+
+{{ "create.rb:return-value:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+It looks odd, and we should've simply used `p`, but it will probably make the spec pass.
+
+{{ "create_spec.rb:return-value:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+Yes, our tests are green again.
+
+## Multiple Steps
+
+Having fixed the first problem, we should extend our operation with another step.
+
+Multiple steps will be executed in the order you added them.
+
+{{ "create.rb:steps:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+The operation will now greet and enquire about your wellbeing.
+
+{{ "create_spec.rb:steps:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+How friendly! I wish more operations could be like you.
+
+## Breaking Things
+
+We're all curious about what will happen when the first step returns `false` instead of `true`, aren't we?
+
+{{ "create.rb:breaking:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
+
+The `hello_world!` step now returns `nil`, making the operation's flow "fail". What does that mean?
+
+{{ "create_spec.rb:breaking:../trailblazer-guides/spec/post/operation" | tsnippet }}
+
+The step following the "broken" step now doesn't get executed, anymore. Furthermore, the operation's result is a failure. Awesome, we broke things, and that's exactly what we wanted!
+
+## Basic Flow Control
+
+
+
+
+
+
+
+
+
+Apparently, `step` and `success` allow you to define some kind of flow. If one `step` returns a falsey value, all other remaining steps are skipped. This is great for error handling as it takes away nested `if`s and `else`s in your code and formalizes them in a declarative pipe.
+
+## Railway
+
+The operation's pipe doesn't only allow you to skip steps, but also to handle errors. And this is where it makes sense to introduce the mental model for Trailblazer, the [*Railway* paradigm from functional programming](http://fsharpforfunandprofit.com/rop/).
 
 We also call the pipe a *railway* because it has different tracks.
-
 
