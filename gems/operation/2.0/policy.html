@@ -155,11 +155,11 @@
   def initialize(user, model)
     @user, @model = user, model
   end
-  
+
   def create?
     @user == Module &amp;&amp; @model.id.nil?
   end
-  
+
   def new?
     @user == Class
   end
@@ -248,7 +248,7 @@ result["result.policy.after_model"].success? #=&gt; true
 <pre><code>class Create &lt; Trailblazer::Operation
   step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
   step :process
-  
+
   def process(*)
     self["x"] = true
   end
@@ -293,7 +293,7 @@ end
 
 <pre><code>class MyGuard
   include Uber::Callable
-  
+
   def call(options)
     options["params"][:pass]
   end
@@ -482,7 +482,7 @@ result["result.policy.user"].success? #=&gt; true
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
         </a>
     </li>
-    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/trailblazer/2.0/01-getting-started-with-operation.html">01- Getting Started with Operation</a></li>
     <li><a href="/guides/getting-started.html">Getting Started</a></li>
     <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
     <li><a href="/guides/grape.html">Grape</a></li>

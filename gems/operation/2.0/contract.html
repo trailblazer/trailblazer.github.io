@@ -156,15 +156,15 @@
 <pre><code># app/concepts/comment/create.rb
 class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
     property :length
-  
+
     validates :title,  presence: true
     validates :length, numericality: true
   end
-  
+
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
@@ -186,11 +186,11 @@ end
 
 <p>Here’s how the result would look like after running the <code class="highlighter-rouge">Create</code> operation with invalid data.</p>
 
-<pre><code>  result = Create.({ length: "A" })
-  
-  result["result.contract.default"].success?        #=&gt; false
-  result["result.contract.default"].errors          #=&gt; Errors object
-  result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a number"]}
+<pre><code>result = Create.({ length: "A" })
+
+result["result.contract.default"].success?        #=&gt; false
+result["result.contract.default"].errors          #=&gt; Errors object
+result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a number"]}
 </code></pre>
 
 <h2 id="contract-definition" data-magellan-target="contract-definition">Contract Definition</h2>
@@ -202,7 +202,7 @@ end
 <pre><code>class MyContract &lt; Reform::Form
   property :title
   property :length
-  
+
   validates :title,  presence: true
   validates :length, numericality: true
 end
@@ -213,9 +213,9 @@ end
 <pre><code># app/concepts/comment/create.rb
 class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract MyContract
-  
+
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate()
@@ -303,7 +303,7 @@ end
 <pre><code># app/concepts/comment/create.rb
 class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
     # ...
@@ -332,7 +332,7 @@ result["contract.default"] #=&gt; &lt;Reform::Form ...&gt;
 <pre><code># app/concepts/comment/update.rb
 class Update &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract :params do
     property :id
     validates :id,  presence: true
@@ -372,13 +372,13 @@ end
 <pre><code>require "dry/validation"
 class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   # contract to verify params formally.
   contract "params", (Dry::Validation.Schema do
     required(:id).filled
   end)
   # ...
-  
+
   step Contract::Validate( name: "params" )
   # ...
 end
@@ -393,11 +393,11 @@ end
 <pre><code>require "dry/validation"
 class Delete &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract "params", (Dry::Validation.Schema do
     required(:id).filled
   end)
-  
+
   step Contract::Validate( name: "params" ), before: "operation.new"
   # ...
 end
@@ -422,7 +422,7 @@ end
 class Delete &lt; Trailblazer::Operation
   extend Contract::DSL
   contract "params", MySchema
-  
+
   step Contract::Validate( name: "params" ), before: "operation.new"
 end
 </code></pre>
@@ -433,11 +433,11 @@ end
 
 <pre><code>class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
   end
-  
+
   step Model( Song, :new )
   step Contract::Build()
   step Contract::Validate( key: "song" )
@@ -453,21 +453,21 @@ end
 
 <pre><code>class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
   end
-  
+
   def type
     "evergreen" # this is how you could do polymorphic lookups.
   end
-  
+
   step Model( Song, :new )
   step Contract::Build()
   step :extract_params!
   step Contract::Validate( skip_extract: true )
   step Contract::Persist( method: :sync )
-  
+
   def extract_params!(options)
     options["contract.default.params"] = options["params"][type]
   end
@@ -487,9 +487,9 @@ end
     property :title
     validates :title, length: 2..33
   end
-  
-  
-  
+
+
+
   step Model( Song, :new )
   step Contract::Build( constant: MyContract )
   step Contract::Validate()
@@ -510,7 +510,7 @@ end
     property :title
     validates :title, length: 2..33
   end
-  
+
   step Model( Song, :new )
   step Contract::Build( constant: MyContract, name: "form" )
   step Contract::Validate( name: "form" )
@@ -558,18 +558,18 @@ end
 
 <pre><code>class Create &lt; Trailblazer::Operation
   extend Contract::DSL
-  
+
   contract do
     property :title
     property :current_user, virtual: true
     validates :current_user, presence: true
   end
-  
+
   step Model( Song, :new )
   step Contract::Build( builder: :default_contract! )
   step Contract::Validate()
   step Contract::Persist( method: :sync )
-  
+
   def default_contract!(constant:, model:)
     constant.new(model, current_user: self["current_user"])
   end
@@ -580,9 +580,9 @@ end
 
 <p>As always, you may also use a proc.</p>
 
-<pre><code>  step Contract::Build( builder: -&gt;(operation, constant:, model:) {
-    constant.new(model, current_user: operation["current_user"])
-  })
+<pre><code>step Contract::Build( builder: -&gt;(operation, constant:, model:) {
+  constant.new(model, current_user: operation["current_user"])
+})
 </code></pre>
 
 <h2 id="result-object" data-magellan-target="result-object">Result Object</h2>
@@ -591,11 +591,11 @@ end
 
 <p>The path is <code class="highlighter-rouge">result.contract.#{name}</code>.</p>
 
-<pre><code>  result = Create.({ length: "A" })
-  
-  result["result.contract.default"].success?        #=&gt; false
-  result["result.contract.default"].errors          #=&gt; Errors object
-  result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a number"]}
+<pre><code>result = Create.({ length: "A" })
+
+result["result.contract.default"].success?        #=&gt; false
+result["result.contract.default"].errors          #=&gt; Errors object
+result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a number"]}
 </code></pre>
 
 <p>Each result object responds to <code class="highlighter-rouge">success?</code>, <code class="highlighter-rouge">failure?</code>, and <code class="highlighter-rouge">errors</code>, which is an <code class="highlighter-rouge">Errors</code> object. TODO: design/document Errors. WE ARE CURRENTLY WORKING ON A UNIFIED API FOR ERRORS (FOR DRY AND REFORM).</p>
@@ -739,7 +739,7 @@ end
             <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
         </a>
     </li>
-    <li><a href="/guides/trailblazer-in-20-minutes.html">Trailblazer In 20 Minutes</a></li>
+    <li><a href="/guides/trailblazer/2.0/01-getting-started-with-operation.html">01- Getting Started with Operation</a></li>
     <li><a href="/guides/getting-started.html">Getting Started</a></li>
     <li><a href="/guides/sinatra/getting-started.html">Sinatra</a></li>
     <li><a href="/guides/grape.html">Grape</a></li>
