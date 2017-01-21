@@ -280,12 +280,11 @@ result["result.policy.default"].success? #=&gt; false
 
 <pre><code>class Create &lt; Trailblazer::Operation
   step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
-  step :process
   # ...
 end
 </code></pre>
 
-<p>The <code class="highlighter-rouge">Skill</code> options object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>.</p>
+<p>The <code class="highlighter-rouge">options</code> object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>.</p>
 
 <h2 id="guard-callable" data-magellan-target="guard-callable">Guard: Callable</h2>
 
@@ -304,7 +303,20 @@ end
 
 <pre><code>class Create &lt; Trailblazer::Operation
   step Policy::Guard( MyGuard.new )
-  step :process
+  # ...
+end
+</code></pre>
+
+<h2 id="guard-instance-method" data-magellan-target="guard-instance-method">Guard: Instance Method</h2>
+
+<p>As always, you may also use an instance method to implement a guard.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step Policy::Guard( :pass? )
+
+  def pass?(options, *)
+    options["params"][:pass]
+  end
   # ...
 end
 </code></pre>
@@ -368,6 +380,7 @@ result["result.policy.user"].success? #=&gt; true
 <li><a href="#guard">Guard</a></li>
 <li><a href="#guard-api">Guard: API</a></li>
 <li><a href="#guard-callable">Guard: Callable</a></li>
+<li><a href="#guard-instance-method">Guard: Instance Method</a></li>
 <li><a href="#guard-class-level">Guard: Class-level</a></li>
 <li><a href="#guard-name">Guard: Name</a></li>
 <li><a href="#guard-dependency-injection">Guard: Dependency Injection</a></li>
