@@ -570,7 +570,7 @@ end
   step Contract::Validate()
   step Contract::Persist( method: :sync )
 
-  def default_contract!(constant:, model:)
+  def default_contract!(options, constant:, model:, **)
     constant.new(model, current_user: self["current_user"])
   end
 end
@@ -580,8 +580,8 @@ end
 
 <p>As always, you may also use a proc.</p>
 
-<pre><code>step Contract::Build( builder: -&gt;(operation, constant:, model:) {
-  constant.new(model, current_user: operation["current_user"])
+<pre><code>step Contract::Build( builder: -&gt;(options, constant:, model:, **) {
+  constant.new(model, current_user: options["current_user"])
 })
 </code></pre>
 
