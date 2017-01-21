@@ -88,7 +88,7 @@ The `Policy::Guard` macro helps you inserting your guard logic. If not defined, 
 
 {{  "guard_test.rb:proc" | tsnippet : "pipeonly" }}
 
-The `Skill` options object is passed into the guard and allows you to read and inspect data like `params` or `current_user`.
+The `options` object is passed into the guard and allows you to read and inspect data like `params` or `current_user`.
 
 ## Guard: Callable
 
@@ -100,6 +100,11 @@ Insert the object instance via the `Policy::Guard` macro.
 
 {{  "guard_test.rb:callable-op" | tsnippet : "pipe-only" }}
 
+## Guard: Instance Method
+
+As always, you may also use an instance method to implement a guard.
+
+{{  "guard_test.rb:method" | tsnippet : "pipe-onlyy" }}
 
 ## Guard: Class-level
 

@@ -218,7 +218,7 @@ A mix of documentation and guides will help you to understand the operation quic
 ~~~4
   <i class="fa fa-book"></i>
 
-  Make sure to spend some hours reading the [**→GETTING STARTED**](guides/getting_started_with_trailblazer_2.html) guide.
+  Make sure to spend some hours reading the [**→GETTING STARTED**](/guides/trailblazer/2.0/01-getting-started-with-operation.html) guide.
 
   You will be ready to work with Trailblazer 2.
 ~~~4
