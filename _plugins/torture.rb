@@ -2,11 +2,18 @@ require "torture/snippet"
 module Torture
   module SnippetFilter
     def tsnippet(input, hide=nil)
-      file, section, root = input.split(":")
+      file, section, root, branch = input.split(":")
 
       root ||= "../trailblazer/test/docs"
 
-      Torture::Snippet.(root: root, file: file, marker: section, hide: hide)
+      if branch
+        original_branch = `cd #{root}; git branch`.match(/\*(.+)\n/)[1]
+        `cd #{root}; git checkout #{branch}`
+      end
+
+      Torture::Snippet.(root: root, file: file, marker: section, hide: hide).tap do
+        `cd #{root}; git checkout #{original_branch}` if branch
+      end
     end
   end
 end
