@@ -212,7 +212,7 @@ end
 
 <p>An operation is simply a Ruby object that can be run anywhere.</p>
 
-<p>In <code class="highlighter-rouge">app/post/operation/create.rb</code> I add an empty class.</p>
+<p>In <code class="highlighter-rouge">app/blog_post/operation/create.rb</code> I add an empty class.</p>
 
 <pre><code>require "trailblazer/operation"
 
@@ -228,7 +228,7 @@ end
 
 <p>The actual <code class="highlighter-rouge">Create</code> operation is put into the <code class="highlighter-rouge">BlogPost</code> namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named <code class="highlighter-rouge">BlogPost::Create</code>, a very expressive class name, don’t you think?</p>
 
-<p>Before adding any logic, let’s run this very operation via a spec in <code class="highlighter-rouge">spec/post/operation/create_spec.rb</code>.</p>
+<p>Before adding any logic, let’s run this very operation via a spec in <code class="highlighter-rouge">spec/blog_post/operation/create_spec.rb</code>.</p>
 
 <pre><code>require "spec_helper"
 require_relative "../../../app/post/operation/create"
