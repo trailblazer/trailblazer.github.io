@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">JSON API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 17 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 21 January 2017</span>
 
   
 
@@ -191,7 +191,7 @@
 
 <h2 id="resource-objects" data-magellan-target="resource-objects">Resource Objects</h2>
 
-<p>http://jsonapi.org/format/#document-resource-objects</p>
+<p><a href="http://jsonapi.org/format/#document-resource-objects">→ specification</a></p>
 
 <p>JSON API Resource Objects must contain an <code class="highlighter-rouge">id</code> and <code class="highlighter-rouge">type</code> member. You specify
 the <code class="highlighter-rouge">type</code> when you include <code class="highlighter-rouge">Roar::JSON::JSONAPI.resource(type)</code>:</p>
@@ -225,7 +225,7 @@ inclusion:</p>
 
 <h2 id="attributes" data-magellan-target="attributes">Attributes</h2>
 
-<p>http://jsonapi.org/format/#document-resource-object-attributes</p>
+<p><a href="http://jsonapi.org/format/#document-resource-object-attributes">→ specification</a></p>
 
 <p>Attributes should be defined with <code class="highlighter-rouge">::property</code> in an <code class="highlighter-rouge">::attributes</code> block.</p>
 
@@ -242,7 +242,7 @@ inclusion:</p>
 
 <h2 id="relationships" data-magellan-target="relationships">Relationships</h2>
 
-<p>http://jsonapi.org/format/#document-resource-object-relationships</p>
+<p><a href="http://jsonapi.org/format/#document-resource-object-relationships">→ specification</a></p>
 
 <p>To define relationships, use <code class="highlighter-rouge">::has_one</code> or <code class="highlighter-rouge">::has_many</code> with either an <a href="http://trailblazer.to/gems/representable/3.0/api.html#inline-representer">inline representer</a> or an <a href="http://trailblazer.to/gems/representable/3.0/api.html#explicit-representer">explicit, standalone representer</a> (specified with the <code class="highlighter-rouge">decorates:</code> or <code class="highlighter-rouge">extend:</code> option).</p>
 
@@ -278,7 +278,7 @@ inclusion:</p>
 
 <h2 id="member-names" data-magellan-target="member-names">Member Names</h2>
 
-<p>http://jsonapi.org/format/#document-member-names</p>
+<p><a href="http://jsonapi.org/format/#document-member-names">→ specification</a></p>
 
 <p>By default, member names will be rendered according to JSON API <strong>recommendations</strong>:
 only non-reserved, URL safe characters specified in RFC 3986 will be used.
@@ -321,7 +321,7 @@ characters), you can override this default:</p>
 
 <h2 id="meta-information" data-magellan-target="meta-information">Meta information</h2>
 
-<p>http://jsonapi.org/format/#document-meta</p>
+<p><a href="http://jsonapi.org/format/#document-meta">→ specification</a></p>
 
 <p>Meta information can be included into rendered singular and collection documents in two ways.</p>
 
@@ -453,7 +453,7 @@ characters), you can override this default:</p>
 query = Rack::Utils.parse_nested_query(uri.query)
 =&gt; {"include"=&gt;"author", "fields"=&gt;{"articles"=&gt;"title,body", "people"=&gt;"name"}}
 
-representer.to_json(include: query['include], fields: query['fields'])
+representer.to_json(include: query['include'], fields: query['fields'])
 </code></pre>
 </div>
 
