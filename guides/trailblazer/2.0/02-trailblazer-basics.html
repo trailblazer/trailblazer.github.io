@@ -239,7 +239,7 @@ end
 
 <h2 id="procedural-approach" data-magellan-target="procedural-approach">Procedural Approach</h2>
 
-<p>To implement the above controller action in an operation, you could simply throw the code into a single step, ignoring all the nice semantics and error handling that comes with the pipe, but making it “understandable” to a new developer.</p>
+<p>To implement the above controller action in an operation, you could simply throw the code into a single step, ignoring all the nice mechanics and error handling that comes with the pipe, but making it “understandable” to a new developer.</p>
 
 <p>For illustration purposes, this <code class="highlighter-rouge">Create</code> operation goes to <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
 
@@ -255,7 +255,7 @@ class BlogPost::Create &lt; Trailblazer::Operation
     model.update_attributes(params[:blog_post])
 
     if model.save
-      Notification.(current_user, model)
+      BlogPost::Notification.(current_user, model)
     else
       return false
     end
@@ -265,9 +265,89 @@ end
 
 <p>The operation now orchestrates model, validation and the notification “callback” that used to sit in the controller. Note that no HTTP-related code, like redirects or rendering results, is found here anymore. That’s a step forward in our quest to separating concerns!</p>
 
-<p>test</p>
+<h3 id="procedural-approach-test">Procedural Approach: Test</h3>
 
-<p>However, we don’t need an operation for this procedural piece of code. We could put that in a “service object” that spook through many Ruby applications out there. The operation</p>
+<p>A quick test makes sure that our authorization kicks in and an anonymous user leads to a failing operation, and no model is persisted.</p>
+
+<pre><code>require "spec_helper"
+require_relative "../../../../app/models/user"
+require_relative "../../../../app/models/blog_post"
+require_relative "../../../../app/concepts/blog_post/operation/create"
+
+RSpec.describe BlogPost::Create do
+  let (:anonymous) { User.new(false) }
+  let (:signed_in) { User.new(true) }
+  let (:pass_params) { { blog_post: { title: "Puns: Ode to Joy" } } }
+
+  it "fails with anonymous" do
+    result = BlogPost::Create.(pass_params, "current_user" =&gt; anonymous)
+
+    expect(result).to be_failure
+    expect(BlogPost.last).to be_nil
+  end
+</code></pre>
+
+<p>We also test the <a href="https://github.com/trailblazer/guides/blob/operation-02/spec/concepts/blog_post/operation/create_spec.rb#L21">successful case here</a>. It’s obvious that our current implementation is not great, for example, we don’t have access to the created model without manual work, which we don’t favor, do we?</p>
+
+<h2 id="dependencies" data-magellan-target="dependencies">Dependencies</h2>
+
+<p>Even though this operation is far from ideal, it demonstrates a very important concept in Trailblazer. Have you noticed how we pass in and access the current user?</p>
+
+<p>There is no global state in Trailblazer, everything you need in the operation needs to go in via <code class="highlighter-rouge">call</code>.</p>
+
+<p>The first argument is usually the framework’s <code class="highlighter-rouge">params</code> has <a href="01-getting-started-with-operation.html#options">as discussed here</a>. The second argument can be any hash specifying the dependencies needed in the operation, such as the current user.</p>
+
+<pre><code>result = BlogPost::Create.(pass_params, "current_user" =&gt; signed_in)
+</code></pre>
+
+<p>By passing the current user with a string key, you will be able to access it via <code class="highlighter-rouge">options</code> in all steps. And, of course, you as the attentive reader still remember that you can use keyword arguments to grab that current user (or whatever else you need from the options) in a local variable.</p>
+
+<pre><code>def do_everything!(options, params:, current_user:, **)
+  return unless current_user.signed_in?
+</code></pre>
+
+<p>Here’s what to remember about dependencies in a snapshot.</p>
+
+<ul>
+  <li>Every dependency needs to go in via <code class="highlighter-rouge">call</code>, whether that is in a controller, a test, or a background job.</li>
+  <li>Use <a href="https://robots.thoughtbot.com/ruby-2-keyword-arguments#required-keyword-arguments"><em>required</em> kw args</a> wherever you can, as they will automatically raise an exception should the required keyword be absent.</li>
+</ul>
+
+<h2 id="exposing-values" data-magellan-target="exposing-values">Exposing Values</h2>
+
+<p>Before breaking up this monolith into small, flexible steps, it’s a good time to learn how we can communicate values to the caller via the result object. You remember, in our specs, in order to grab the model for specing, we had to use <code class="highlighter-rouge">BlogPost.last</code> - which yields potential for bugs.</p>
+
+<p>Instead, we can simply write values to the <code class="highlighter-rouge">options</code> object. Those will be accessable to all following steps, as we’ll see in a few seconds.</p>
+
+<pre><code>def do_everything!(options, params:, current_user:, **)
+  return unless current_user.signed_in?
+
+  model = BlogPost.new
+  options["model"] = model # readable in steps and result.
+
+  model.update_attributes(params[:blog_post])
+  # ...
+end
+</code></pre>
+
+<p>Writing to <code class="highlighter-rouge">options</code> will also allow to read that very value in the result object, allowing us to change the specs slightly.</p>
+
+<pre><code>it "fails with anonymous" do
+  result = BlogPost::Create.(pass_params, "current_user" =&gt; anonymous)
+
+  expect(result).to be_failure
+  expect(result["model"]).to be_nil
+end
+</code></pre>
+
+<p>We can now test against <code class="highlighter-rouge">result["model"]</code> and retrieve the actual processed model instance.</p>
+
+<h2 id="manual-steps" data-magellan-target="manual-steps">Manual Steps</h2>
+
+<p>While this all works fine, we actually don’t need an operation for this procedural piece of code. We could put that in a “service object” that spook through many Ruby applications out there.</p>
+
+<p>Splitting up the procedural logic into steps will give us a better code structure and automatic error handling. Going further, using Trailblazer macros instead of manual steps, we will maximise stability and get helpful statuses in the result object.</p>
+
 
             </div>
 
@@ -283,6 +363,9 @@ end
 <li><a href="#gemfile">Gemfile</a></li>
 <li><a href="#model">Model</a></li>
 <li><a href="#procedural-approach">Procedural Approach</a></li>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#exposing-values">Exposing Values</a></li>
+<li><a href="#manual-steps">Manual Steps</a></li>
         </ul>
       
 </nav>
