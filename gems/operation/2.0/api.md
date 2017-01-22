@@ -535,7 +535,7 @@ When looking at the operation's pipe, you can see how, in our example, the defau
 
 {{  "macro_test.rb:simple-pipe" | tsnippet }}
 
-It is not advised to test macros in isolation. Note that it *is* possible by simply calling your macro in a test case. However, macros should be tested via an operation unit test.
+It is not advised to test macros in isolation. Note that it *is* possible by simply calling your macro in a test case. However, macros should be tested via an operation unit test to make sure the wiring is correct.
 
 {% callout %}
 In future versions (TRB 2.0.2+) we will have public APIs for creating nested pipes, providing temporary arguments to steps and allowing injectable options.

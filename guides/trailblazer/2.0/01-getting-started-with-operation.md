@@ -4,8 +4,15 @@ title: 01- Getting Started With Operation
 gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0"]
 ---
+{% row %}
+  ~~~6
+  {{ "create.rb:failure:../trailblazer-guides/app/post/operation:operation-01" | tsnippet : "impl" }}
 
-The *Operation* is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
+  ~~~6
+  The *Operation* is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
+
+  Or, as in this guide, leading a small conversation and fixing the other person's mood.
+{% endrow %}
 
 In order to do so, the operation provides you an API to structure your business code into *steps*. Its API is heavily inspired by the "Railsway-oriented programming" pattern that combines structuring linear code, and error handling - but more on that later.
 
@@ -56,7 +63,7 @@ In `app/post/operation/create.rb` I add an empty class.
 
 ## Naming
 
-The actual `Create` operation is put into the `Post` namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named `Post::Create`, a very expressive class name, don't you think?
+The actual `Create` operation is put into the `BlogPost` namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named `BlogPost::Create`, a very expressive class name, don't you think?
 
 Before adding any logic, let's run this very operation via a spec in `spec/post/operation/create_spec.rb`.
 
@@ -68,7 +75,7 @@ In an empty test case, we invoke (or *call*) our yet unspoiled operation.
 
 That's right, there's only one way to run an operation, and that's the "`call` style". Confused? Here's how to spell that alternatively.
 
-    Post::Create.call()
+    BlogPost::Create.call()
 
 This behavior is pure Ruby and was introduced in Ruby 1.9, if I remember correctly. While this might look bizarre to you at first glance, there's a profound reasoning behind this decision.
 
@@ -111,7 +118,7 @@ We can see a greeting on our command line. But, hang on, what's that? The operat
 
 The operation fails because the return value of a `step` matters! If a step returns `nil` or `false` (aka. *falsey*), the operation's result will be marked as failed, and the following steps won't be executed,
 
-Since `puts` will always return `nil` (and [no one knows why](http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil)), we manually have to return a trusy value to make the next step be invoked.
+Since `puts` will always return `nil` (and [no one knows why](http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil)), we manually have to return a truthy value to make the next step be invoked.
 
 {{ "create.rb:return-value:../trailblazer-guides/app/post/operation:operation-01" | tsnippet }}
 
