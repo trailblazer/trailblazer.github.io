@@ -84,11 +84,11 @@ Learn more about [→ dependency injection](skill.md) to pass params and current
 
 ## Guard: API
 
-The `Policy::Guard` macro helps you inserting your guard logic. If not defined, it will be evaluated where you insert it. → [Class-level guards](#guard-class-level)
+The `Policy::Guard` macro helps you inserting your guard logic. If not defined, it will be evaluated [where you insert](#guard-position) it.
 
 {{  "guard_test.rb:proc" | tsnippet : "pipeonly" }}
 
-The `options` object is passed into the guard and allows you to read and inspect data like `params` or `current_user`.
+The `options` object is passed into the guard and allows you to read and inspect data like `params` or `current_user`. Please use kw args.
 
 ## Guard: Callable
 
@@ -105,14 +105,6 @@ Insert the object instance via the `Policy::Guard` macro.
 As always, you may also use an instance method to implement a guard.
 
 {{  "guard_test.rb:method" | tsnippet : "pipe-onlyy" }}
-
-## Guard: Class-level
-
-You can also place any kind of guard before the operation instantiation using `before:`.
-
-{{  "guard_test.rb:class-level" | tsnippet : "pipe--only" }}
-
-This is helpful to clear out breaches quickly.
 
 ## Guard: Name
 
@@ -133,3 +125,15 @@ Instead of using the configured guard, you can inject any callable object that r
 An easy way to let Trailblazer build a compatible object for you is using `Guard.build`.
 
 This is helpful to override a certain policy for testing, or to invoke it with special rights, e.g. for an admin.
+
+## Guard: Position
+
+You may specify a position.
+
+{{  "guard_test.rb:before" | tsnippet }}
+
+Resulting in the guard inserted before `model!`, even though it was added at a later point.
+
+{{  "guard_test.rb:before-pipe" | tsnippet }}
+
+This is helpful if you maintain modules for operations with generic steps.

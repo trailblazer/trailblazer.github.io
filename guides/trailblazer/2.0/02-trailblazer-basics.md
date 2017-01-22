@@ -136,8 +136,22 @@ We can now test against `result["model"]` and retrieve the actual processed mode
 
 ## Manual Steps
 
-While this all works fine, we actually don't need an operation for this procedural piece of code. We could put that in a "service object" that spook through many Ruby applications out there.
+While all this works fine, we actually don't need an operation for this procedural piece of code. We could put that in one of the "service objects" that spook through many Ruby applications out there.
 
 Splitting up the procedural logic into steps will give us a better code structure and automatic error handling. Going further, using Trailblazer macros instead of manual steps, we will maximise stability and get helpful statuses in the result object.
 
+{{ "create.rb:firststeps:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet  }}
 
+Four steps now implement the exact same that we did in one procedural step. As you can see, error handling and `if`s disappeared because if a step returns a falsey value, the remaining steps will be skipped. I also advise you to take a minute and check out how we use different kw args per step - this is such a helpful feature, you should use it and understand it.
+
+The specs we wrote still pass, so we're good to go to the next step.
+
+## Policy
+
+One big advantage of Trailblazer's `Policy` macro over our home-made `authorize!` step is: It will add its outcome to the result object, making it extremely simple to track what went wrong should things go wrong.
+
+The other benefit of using this macro is: You don't have to use [the primitive *guard* implementation](/gems/operation/2.0/policy.html#guard), but use your existing [Pundit-style policies](/gems/operation/2.0/policy.html#pundit) to intercept unauthorized users.
+
+{{ "create.rb:policy:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet  }}
+
+Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as [pundit]((/gems/operation/2.0/policy.html#pundit)).
