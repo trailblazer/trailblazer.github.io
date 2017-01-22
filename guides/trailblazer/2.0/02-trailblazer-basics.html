@@ -344,10 +344,71 @@ end
 
 <h2 id="manual-steps" data-magellan-target="manual-steps">Manual Steps</h2>
 
-<p>While this all works fine, we actually don’t need an operation for this procedural piece of code. We could put that in a “service object” that spook through many Ruby applications out there.</p>
+<p>While all this works fine, we actually don’t need an operation for this procedural piece of code. We could put that in one of the “service objects” that spook through many Ruby applications out there.</p>
 
 <p>Splitting up the procedural logic into steps will give us a better code structure and automatic error handling. Going further, using Trailblazer macros instead of manual steps, we will maximise stability and get helpful statuses in the result object.</p>
 
+<pre><code>class BlogPost::Create &lt; Trailblazer::Operation
+  step :authorize!
+  step :model!
+  step :persist!
+  step :notify!
+
+  def authorize!(options, current_user:, **)
+    current_user.signed_in?
+  end
+
+  def model!(options, **)
+    options["model"] = BlogPost.new
+  end
+
+  def persist!(options, params:, model:, **)
+    model.update_attributes(params[:blog_post])
+    model.save
+  end
+
+  def notify!(options, current_user:, model:, **)
+    BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>Four steps now implement the exact same that we did in one procedural step. As you can see, error handling and <code class="highlighter-rouge">if</code>s disappeared because if a step returns a falsey value, the remaining steps will be skipped. I also advise you to take a minute and check out how we use different kw args per step - this is such a helpful feature, you should use it and understand it.</p>
+
+<p>The specs we wrote still pass, so we’re good to go to the next step.</p>
+
+<h2 id="policy" data-magellan-target="policy">Policy</h2>
+
+<p>One big advantage of Trailblazer’s <code class="highlighter-rouge">Policy</code> macro over our home-made <code class="highlighter-rouge">authorize!</code> step is: It will add its outcome to the result object, making it extremely simple to track what went wrong should things go wrong.</p>
+
+<p>The other benefit of using this macro is: You don’t have to use <a href="/gems/operation/2.0/policy.html#guard">the primitive <em>guard</em> implementation</a>, but use your existing <a href="/gems/operation/2.0/policy.html#pundit">Pundit-style policies</a> to intercept unauthorized users.</p>
+
+<pre><code>class BlogPost::Create &lt; Trailblazer::Operation
+  step Policy::Guard( :authorize! )
+  step :model!
+  step :persist!
+  step :notify!
+
+  def authorize!(options, current_user:, **)
+    current_user.signed_in?
+  end
+
+  def model!(options, **)
+    options["model"] = BlogPost.new
+  end
+
+  def persist!(options, params:, model:, **)
+    model.update_attributes(params[:blog_post])
+    model.save
+  end
+
+  def notify!(options, current_user:, model:, **)
+    BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as <a href="(/gems/operation/2.0/policy.html#pundit)">pundit</a>.</p>
 
             </div>
 
@@ -366,6 +427,7 @@ end
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#exposing-values">Exposing Values</a></li>
 <li><a href="#manual-steps">Manual Steps</a></li>
+<li><a href="#policy">Policy</a></li>
         </ul>
       
 </nav>

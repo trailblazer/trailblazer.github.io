@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation Policy</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 03 December 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 22 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -246,7 +246,7 @@ result["result.policy.after_model"].success? #=&gt; true
 <p>A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as <code class="highlighter-rouge">falsey</code>, the pipe won’t be further processed and a policy breach is reported in <code class="highlighter-rouge">Result["result.policy.default"]</code>.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
+  step Policy::Guard( -&gt;(options, params:, **) { params[:pass] } )
   step :process
 
   def process(*)
@@ -276,15 +276,15 @@ result["result.policy.default"].success? #=&gt; false
 
 <h2 id="guard-api" data-magellan-target="guard-api">Guard: API</h2>
 
-<p>The <code class="highlighter-rouge">Policy::Guard</code> macro helps you inserting your guard logic. If not defined, it will be evaluated where you insert it. → <a href="#guard-class-level">Class-level guards</a></p>
+<p>The <code class="highlighter-rouge">Policy::Guard</code> macro helps you inserting your guard logic. If not defined, it will be evaluated <a href="#guard-position">where you insert</a> it.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  step Policy::Guard( -&gt;(options) { options["params"][:pass] } )
+  step Policy::Guard( -&gt;(options, params:, **) { params[:pass] } )
   # ...
 end
 </code></pre>
 
-<p>The <code class="highlighter-rouge">options</code> object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>.</p>
+<p>The <code class="highlighter-rouge">options</code> object is passed into the guard and allows you to read and inspect data like <code class="highlighter-rouge">params</code> or <code class="highlighter-rouge">current_user</code>. Please use kw args.</p>
 
 <h2 id="guard-callable" data-magellan-target="guard-callable">Guard: Callable</h2>
 
@@ -293,8 +293,8 @@ end
 <pre><code>class MyGuard
   include Uber::Callable
 
-  def call(options)
-    options["params"][:pass]
+  def call(options, params:, **)
+    params[:pass]
   end
 end
 </code></pre>
@@ -314,32 +314,19 @@ end
 <pre><code>class Create &lt; Trailblazer::Operation
   step Policy::Guard( :pass? )
 
-  def pass?(options, *)
-    options["params"][:pass]
+  def pass?(options, params:, **)
+    params[:pass]
   end
   # ...
 end
 </code></pre>
-
-<h2 id="guard-class-level" data-magellan-target="guard-class-level">Guard: Class-level</h2>
-
-<p>You can also place any kind of guard before the operation instantiation using <code class="highlighter-rouge">before:</code>.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  step Policy::Guard( -&gt;(options) { options["current_user"] == Module } ),
-    before: "operation.new"
-  # ...
-end
-</code></pre>
-
-<p>This is helpful to clear out breaches quickly.</p>
 
 <h2 id="guard-name" data-magellan-target="guard-name">Guard: Name</h2>
 
 <p>The guard name defaults to <code class="highlighter-rouge">default</code> and can be set via <code class="highlighter-rouge">name:</code>. This allows having multiple guards.</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
-  step Policy::Guard( -&gt;(options) { options["current_user"] }, name: :user )
+  step Policy::Guard( -&gt;(options, current_user:, **) { current_user }, name: :user )
   # ...
 end
 </code></pre>
@@ -364,6 +351,27 @@ result["result.policy.user"].success? #=&gt; true
 
 <p>This is helpful to override a certain policy for testing, or to invoke it with special rights, e.g. for an admin.</p>
 
+<h2 id="guard-position" data-magellan-target="guard-position">Guard: Position</h2>
+
+<p>You may specify a position.</p>
+
+<pre><code>class Create &lt; Trailblazer::Operation
+  step :model!
+  step Policy::Guard( :authorize! ),
+    before: :model!
+end
+</code></pre>
+
+<p>Resulting in the guard inserted before <code class="highlighter-rouge">model!</code>, even though it was added at a later point.</p>
+
+<pre><code>  puts Create["pipetree"].inspect(style: :rows) #=&gt;
+   # 0 ========================&gt;operation.new
+   # 1 ==================&gt;policy.default.eval
+   # 2 ===============================&gt;model!
+</code></pre>
+
+<p>This is helpful if you maintain modules for operations with generic steps.</p>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -381,9 +389,9 @@ result["result.policy.user"].success? #=&gt; true
 <li><a href="#guard-api">Guard: API</a></li>
 <li><a href="#guard-callable">Guard: Callable</a></li>
 <li><a href="#guard-instance-method">Guard: Instance Method</a></li>
-<li><a href="#guard-class-level">Guard: Class-level</a></li>
 <li><a href="#guard-name">Guard: Name</a></li>
 <li><a href="#guard-dependency-injection">Guard: Dependency Injection</a></li>
+<li><a href="#guard-position">Guard: Position</a></li>
         </ul>
       
 </nav>
