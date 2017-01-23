@@ -126,16 +126,16 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
 
 {% row %}
 ~~~4
-  <i class="fa fa-cogs"></i>
+  <i class="engage fa fa-cogs"></i>
 
   <code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.
 
 ~~~4
-  <i class="fa fa-search"></i>
+  <i class="engage fa fa-search"></i>
 
   <code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.
 ~~~4
-  <i class="fa fa-shield"></i>
+  <i class="engage fa fa-shield"></i>
 
   <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
 {% endrow %}
@@ -212,19 +212,19 @@ A mix of documentation and guides will help you to understand the operation quic
 
 {% row %}
 ~~~4
-  <i class="fa fa-map"></i>
+  <i class="engage fa fa-map"></i>
 
   Read the [**→API DOCS**](api.html) to learn about the pipe and step implementations and what macros Trailblazer provides for you.
 ~~~4
-  <i class="fa fa-book"></i>
+  <i class="engage fa fa-book"></i>
 
   Make sure to spend some hours reading the [**→GETTING STARTED**](/guides/trailblazer/2.0/01-operation-basics.html) guide.
 
   You will be ready to work with Trailblazer 2.
 ~~~4
-  <i class="fa fa-comments-o"></i>
+  <i class="engage fa fa-comments-o"></i>
 
-  Jump on our [public support chat](https://gitter.im/trailblazer/chat).
+  Jump on our public [**→SUPPORT CHAT**](https://gitter.im/trailblazer/chat).
 
   It doesn't matter whether you have specific questions or just want to chat about software architecture, whisky or TDD - we'll be there!
 {% endrow %}

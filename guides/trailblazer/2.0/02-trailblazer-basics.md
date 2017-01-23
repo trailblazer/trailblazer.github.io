@@ -75,7 +75,7 @@ For validations, we refrain from using `ActiveModel::Validation` in this example
 
 Since we're going to create a new blog post record, it's a good idea to add a model class. I put that in `app/models/blog_post.rb`.
 
-{{ "blog_post.rb:model:../trailblazer-guides/app/models:operation-02" | tsnippet }}
+{{ "app/models/blog_post.rb:model:../trailblazer-guides:operation-02" | tsnippet }}
 
 This is an empty model that skips all the features of ActiveRecord's that should've never been added, and leverages what ActiveRecord is amazing at: persistence.
 
@@ -89,7 +89,7 @@ To implement the above controller action in an operation, you could simply throw
 
 For illustration purposes, this `Create` operation goes to `app/concepts/blog_post/operation/create.rb`.
 
-{{ "create.rb:procedural:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet }}
+{{ "app/concepts/blog_post/operation/create.rb:procedural:../trailblazer-guides:operation-02" | tsnippet }}
 
 The operation now orchestrates model, validation and the notification "callback" that used to sit in the controller. Note that no HTTP-related code, like redirects or rendering results, is found here anymore. That's a step forward in our quest to separating concerns!
 
@@ -113,7 +113,7 @@ The first argument is usually the framework's `params` has [as discussed here](0
 
 By passing the current user with a string key, you will be able to access it via `options` in all steps. And, of course, you as the attentive reader still remember that you can use keyword arguments to grab that current user (or whatever else you need from the options) in a local variable.
 
-{{ "create.rb:args:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet }}
+{{ "app/concepts/blog_post/operation/create.rb:args:../trailblazer-guides:operation-02" | tsnippet }}
 
 Here's what to remember about dependencies in a snapshot.
 
@@ -126,7 +126,7 @@ Before breaking up this monolith into small, flexible steps, it's a good time to
 
 Instead, we can simply write values to the `options` object. Those will be accessable to all following steps, as we'll see in a few seconds.
 
-{{ "create.rb:procedural-set:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet : "hide" }}
+{{ "app/concepts/blog_post/operation/create.rb:procedural-set:../trailblazer-guides:operation-02" | tsnippet : "hide" }}
 
 Writing to `options` will also allow to read that very value in the result object, allowing us to change the specs slightly.
 
@@ -140,7 +140,7 @@ While all this works fine, we actually don't need an operation for this procedur
 
 Splitting up the procedural logic into steps will give us a better code structure and automatic error handling. Going further, using Trailblazer macros instead of manual steps, we will maximise stability and get helpful statuses in the result object.
 
-{{ "create.rb:firststeps:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet  }}
+{{ "app/concepts/blog_post/operation/create.rb:firststeps:../trailblazer-guides:operation-02" | tsnippet  }}
 
 Four steps now implement the exact same that we did in one procedural step. As you can see, error handling and `if`s disappeared because if a step returns a falsey value, the remaining steps will be skipped. I also advise you to take a minute and check out how we use different kw args per step - this is such a helpful feature, you should use it and understand it.
 
@@ -152,6 +152,8 @@ One big advantage of Trailblazer's `Policy` macro over our home-made `authorize!
 
 The other benefit of using this macro is: You don't have to use [the primitive *guard* implementation](/gems/operation/2.0/policy.html#guard), but use your existing [Pundit-style policies](/gems/operation/2.0/policy.html#pundit) to intercept unauthorized users.
 
-{{ "create.rb:policy:../trailblazer-guides/app/concepts/blog_post/operation:operation-02" | tsnippet  }}
+For simplicity, let's go with the `Guard` macro for now.
+
+{{ "app/concepts/blog_post/operation/create.rb:policy:../trailblazer-guides:operation-02" | tsnippet  }}
 
 Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as [pundit]((/gems/operation/2.0/policy.html#pundit)).
