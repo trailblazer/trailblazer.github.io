@@ -1068,9 +1068,9 @@ end
 
 <h3 id="nested-data">Nested: Data</h3>
 
-<p>The nested operation (<code class="highlighter-rouge">Edit</code>) will, per default only receive runtime data from the composing operation (<code class="highlighter-rouge">Update</code>). Mutable data is not available.</p>
+<p>The nested operation (<code class="highlighter-rouge">Edit</code>) will, per default, only receive runtime data from the composing operation (<code class="highlighter-rouge">Update</code>). Mutable data is not available to protect the nested operation from unsolicited input.</p>
 
-<p>After running the nested <code class="highlighter-rouge">Edit</code> operation its runtime data (e.g. <code class="highlighter-rouge">"model"</code>) is available in the <code class="highlighter-rouge">Update</code> operation to protect the nested operation from unsolicited input.</p>
+<p>After running the nested <code class="highlighter-rouge">Edit</code> operation its runtime data (e.g. <code class="highlighter-rouge">"model"</code>) is available in the <code class="highlighter-rouge">Update</code> operation.</p>
 
 <pre><code>result = Update.(id: 1, title: "Call It A Night")
 
@@ -1109,6 +1109,60 @@ end
   def build!(options, current_user:nil, **)
     current_user.admin? ? Create::Admin : Create::NeedsModeration
   end
+end
+</code></pre>
+
+<h3 id="nested-input">Nested: Input</h3>
+
+<p>Per default, only the runtime data will be passed into the nested operation. You can use <code class="highlighter-rouge">:input</code> to change the data getting passed on.</p>
+
+<p>The following operation multiplies two factors.</p>
+
+<pre><code>class Multiplier &lt; Trailblazer::Operation
+  step -&gt;(options, x:, y:, **) { options["product"] = x*y }
+end
+</code></pre>
+
+<p>It is <code class="highlighter-rouge">Nested</code> in another operation.</p>
+
+<pre><code>class MultiplyByPi &lt; Trailblazer::Operation
+  step -&gt;(options) { options["pi_constant"] = 3.14159 }
+  step Nested( Multiplier, input: -&gt;(options, mutable_data:, runtime_data:, **) do
+    { "y" =&gt; mutable_data["pi_constant"],
+      "x" =&gt; runtime_data["x"] }
+  end )
+end
+</code></pre>
+
+<p>The examplary composing operation uses both runtime and mutable data. Its invocation could look as follows.</p>
+
+<pre><code>result = MultiplyByPi.({}, "x" =&gt; 9)
+result["product"] #=&gt; [28.27431]
+</code></pre>
+
+<p>The <code class="highlighter-rouge">:input</code> option for <code class="highlighter-rouge">Nested</code> allows to specify what options will go into the nested operation. It passes <code class="highlighter-rouge">mutable_data</code> and <code class="highlighter-rouge">runtime_data</code> to the option for your convenience.</p>
+
+<p>While the runtime data normally gets passed on to nested operations automatically, mutual data won’t. <code class="highlighter-rouge">:input</code> has to compile all data being passed on to the nested operation and return that hash.</p>
+
+<p>Use a <code class="highlighter-rouge">Callable</code> to share mapping code.</p>
+
+<pre><code>class MyInput
+  extend Uber::Callable
+
+  def self.call(options, mutable_data:, runtime_data:, **)
+    {
+      "y" =&gt; mutable_data["pi_constant"],
+      "x" =&gt; runtime_data["x"]
+    }
+  end
+end
+</code></pre>
+
+<p>It will improve readability.</p>
+
+<pre><code>class MultiplyByPi &lt; Trailblazer::Operation
+  step -&gt;(options) { options["pi_constant"] = 3.14159 }
+  step Nested( Multiplier, input: MyInput )
 end
 </code></pre>
 
