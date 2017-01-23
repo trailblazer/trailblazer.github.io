@@ -218,8 +218,18 @@ A mix of documentation and guides will help you to understand the operation quic
 ~~~4
   <i class="fa fa-book"></i>
 
-  Make sure to spend some hours reading the [**→GETTING STARTED**](/guides/trailblazer/2.0/01-getting-started-with-operation.html) guide.
+  Make sure to spend some hours reading the [**→GETTING STARTED**](/guides/trailblazer/2.0/01-operation-basics.html) guide.
 
   You will be ready to work with Trailblazer 2.
 ~~~4
+  <i class="fa fa-comments-o"></i>
+
+  Jump on our [public support chat](https://gitter.im/trailblazer/chat).
+
+  It doesn't matter whether you have specific questions or just want to chat about software architecture, whisky or TDD - we'll be there!
+{% endrow %}
+
+{% row %}
+  ~~~12,text-center
+  <a href="/guides/trailblazer/2.0/01-operation-basics" class="button">GET STARTED!</a>
 {% endrow %}

@@ -1,12 +1,13 @@
 ---
 layout: operation2
-title: 01- Getting Started With Operation
+title: 01- Operation Basics
 gems:
   - ["operation", "trailblazer/trailblazer-operation", "2.0"]
+redirect_from: "/guides/trailblazer/2.0/01-getting-started-with-operation.html"
 ---
 {% row %}
   ~~~6
-  {{ "create.rb:failure:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet : "impl" }}
+  {{ "app/blog_post/operation/create.rb:failure:../trailblazer-guides:operation-01" | tsnippet : "impl" }}
 
   ~~~6
   The *Operation* is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
@@ -57,7 +58,7 @@ An operation is simply a Ruby object that can be run anywhere.
 
 In `app/blog_post/operation/create.rb` I add an empty class.
 
-{{ "create.rb:op:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:op:../trailblazer-guides/:operation-01" | tsnippet }}
 
 `Create` is derived from `Trailblazer::Operation`. Do note that we're inheriting [a few dozens lines](https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb) of code here, only.
 
@@ -67,7 +68,7 @@ The actual `Create` operation is put into the `BlogPost` namespace. This is very
 
 Before adding any logic, let's run this very operation via a spec in `spec/blog_post/operation/create_spec.rb`.
 
-{{ "create_spec.rb:fresh:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:fresh:../trailblazer-guides" | tsnippet }}
 
 In an empty test case, we invoke (or *call*) our yet unspoiled operation.
 
@@ -88,11 +89,11 @@ You will soon learn how this greatly improves your architecture since the functi
 
 While our spec works, or at least no exception is raised, this is not very impressive. Let's see what it actually returns.
 
-{{ "create_spec.rb:puts:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:puts:../trailblazer-guides" | tsnippet }}
 
 Calling an operation always gives you a *result object*. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. Why don't we make sure it didn't break?
 
-{{ "create_spec.rb:success:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:success:../trailblazer-guides" | tsnippet }}
 
 The `Result#success?` method and its friend `failure?` are here to test that, from the caller perspective.
 
@@ -100,7 +101,7 @@ The `Result#success?` method and its friend `failure?` are here to test that, fr
 
 It might be a good idea to actually add some logic to our operation. While we could simply add a big method with lots of code in a nested procedural style, Trailblazer encourages you to structure your code into a *pipeline*, where steps in the pipe implement parts of the domain code.
 
-{{ "create.rb:step:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:step:../trailblazer-guides/:operation-01" | tsnippet }}
 
 You can add steps with the [`step` method](http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step). It allows to implement steps using methods, [lambdas](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda) and [callable objects](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable). For simplicity, let's go with instance methods for now. The `hello_world!` method sits in the operation as an instance method. It receives some arguments that we'll learn about later. In the body, it's up to us to implement that step.
 
@@ -110,7 +111,7 @@ Suffixing step methods with a bang (e.g. `model!`) is purely style, it has no se
 
 Running this operation will hopefully output something.
 
-{{ "create_spec.rb:step:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:step:../trailblazer-guides" | tsnippet }}
 
 We can see a greeting on our command line. But, hang on, what's that? The operation didn't finish successful, our test just broke... after working with TRB for 2 minutes!
 
@@ -120,11 +121,11 @@ The operation fails because the return value of a `step` matters! If a step retu
 
 Since `puts` will always return `nil` (and [no one knows why](http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil)), we manually have to return a truthy value to make the next step be invoked.
 
-{{ "create.rb:return-value:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:return-value:../trailblazer-guides/:operation-01" | tsnippet }}
 
 It looks odd, and we should've simply used `p`, but it will probably make the spec pass.
 
-{{ "create_spec.rb:return-value:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:return-value:../trailblazer-guides" | tsnippet }}
 
 Yes, our tests are green again.
 
@@ -134,11 +135,11 @@ Having fixed the first problem, we should extend our operation with another step
 
 Multiple steps will be executed in the order you added them.
 
-{{ "create.rb:steps:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:steps:../trailblazer-guides/:operation-01" | tsnippet }}
 
 The operation will now greet and enquire about your wellbeing.
 
-{{ "create_spec.rb:steps:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:steps:../trailblazer-guides" | tsnippet }}
 
 How friendly! I wish more operations could be like you.
 
@@ -146,11 +147,11 @@ How friendly! I wish more operations could be like you.
 
 We're all curious about what will happen when the first step returns `false` instead of `true`, aren't we?
 
-{{ "create.rb:breaking:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:breaking:../trailblazer-guides/:operation-01" | tsnippet }}
 
 The `hello_world!` step now returns `nil`, making the operation's flow "fail". What does that mean?
 
-{{ "create_spec.rb:breaking:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:breaking:../trailblazer-guides" | tsnippet }}
 
 The step following the "broken" step now doesn't get executed, anymore. Furthermore, the operation's result is a failure. Awesome, we broke things, and that's exactly what we wanted!
 
@@ -171,7 +172,7 @@ The step following the "broken" step now doesn't get executed, anymore. Furtherm
 
 We don't really test anything in the first two steps, and returning `true` looks weird. Luckily, Trailblazer gives us the `success` method to define a step that always passes. Or, in other words: the return value is ignored and assumed it was `true`.
 
-{{ "create.rb:success:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:success:../trailblazer-guides/:operation-01" | tsnippet }}
 
 This looks better, and, more important: another developer looking at this operation will instantly understand the first two steps do always pass.
 
@@ -181,18 +182,18 @@ We now understand how to implement an operation with successive steps, and how t
 
 Since our operation seems to be interested in our health, and actually asks us about it, we should pass the answer into it. With operations, there's only one way to pass data into it, and that's, of course, in `call`.
 
-{{ "create_spec.rb:input:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:input:../trailblazer-guides" | tsnippet }}
 
 We now have to implement a check that tests our answer, and if it happens to be `"yes"`, wish a good day, and make the outcome successful.
 
 
-{{ "create.rb:input:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:input:../trailblazer-guides/:operation-01" | tsnippet }}
 
 The middle step `how_are_you?` is now added with `step`, making its return value matter. That means, if the `params[:happy] == "yes"` check is true, the next step is going to be executed. And, surprisingly, given the above test case with the respective input, this works.
 
 Of course, we now have to test the opposite scenario, too. What if we're unhappy?
 
-{{ "create_spec.rb:input-false:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:input-false:../trailblazer-guides" | tsnippet }}
 
 Then, only the first two steps are executed, the third is skipped. Also, the result's state is "failed".
 
@@ -202,7 +203,7 @@ Before we dive into error handling, let's quickly discuss how steps access the i
 
 Remember how we called the operation?
 
-{{ "create_spec.rb:input-call:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:input-call:../trailblazer-guides" | tsnippet }}
 
 The first argument passed to `call` will be available via `options["params"]` in every step.
 
@@ -250,7 +251,7 @@ We also call the pipe a *railway* because it has different tracks and mentally f
 
 In order to handle the case that `how_are_you?` returns a negative mood, we need to add an error handler on the left track. As already discussed, this happens via `failure`.
 
-{{ "create.rb:failure:../trailblazer-guides/app/blog_post/operation:operation-01" | tsnippet }}
+{{ "app/blog_post/operation/create.rb:failure:../trailblazer-guides/:operation-01" | tsnippet }}
 
 The pipe, or railway, created now represents the one we've just seen in the diagram. Due to the way `failure` works, it will only be executed if `how_are_you?` fails.
 
@@ -260,7 +261,7 @@ In the new `tell_joke!` step, you can see that we write to `options`. That's how
 
 Note that writing applies to any kind of state, right or left track! To keep this example brief, we only write in this one step, though.
 
-{{ "create_spec.rb:failure:../trailblazer-guides/spec/blog_post/operation" | tsnippet }}
+{{ "spec/blog_post/operation/create_spec.rb:failure:../trailblazer-guides" | tsnippet }}
 
 When passing in a negative (or false) value for `:happy`, the second step `how_are_you?` will deviate to the left track. This is why we can test the result's state for `failure?` and why the `options[:joke]` value is set.
 
@@ -276,5 +277,9 @@ To make sure that the operation provides those values and to have a contract wit
 
 Given these boundaries, it's quite obvious now why the operation does not have access to the environment, and why HTTP is not it's business at all. We will learn how this is handled in a further chapter.
 
-Having understood the basic mechanics of the operation, in the next chapter we are going to discover what additional abstractions Trailblazer brings, and how policies, forms, persistence layer and all that hooks into the operation's workflow.
+Having understood the basic mechanics of the operation, in [the next chapter](02-trailblazer-basics.html) we are going to discover what additional abstractions Trailblazer brings, and how policies, forms, persistence layer and all that hooks into the operation's workflow.
 
+{% row %}
+  ~~~12,text-center
+  <a href="02-trailblazer-basics" class="button">GO TO PART 2: TRAILBLAZER BASICS!</a>
+{% endrow %}

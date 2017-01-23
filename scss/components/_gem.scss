@@ -73,7 +73,7 @@ $generic-color: #af111c;
 }
 
 
-.macros {
+.row {
   i {
     font-size: 3em;
     text-align: center;
@@ -85,4 +85,8 @@ $generic-color: #af111c;
 .diagram.left {
   float: left;
   margin-right: 33px;
+}
+
+a.button {
+  color: white;
 }
