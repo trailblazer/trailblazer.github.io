@@ -1166,6 +1166,26 @@ end
 end
 </code></pre>
 
+<h3 id="nested-output">Nested: Output</h3>
+
+<p>After running a nested operation, its mutable data gets copied into the <code class="highlighter-rouge">options</code> of the composing operation.</p>
+
+<p>Use <code class="highlighter-rouge">:output</code> to change that, should you need only specific values.</p>
+
+<pre><code>class Update &lt; Trailblazer::Operation
+  step Nested( Edit, output: -&gt;(options, mutable_data:, **) do
+    {
+      "contract.my" =&gt; mutable_data["contract.default"],
+      "model"       =&gt; mutable_data["model"]
+    }
+  end )
+  step Contract::Validate( name: "my" )
+  step Contract::Persist( method: :sync, name: "my" )
+end
+</code></pre>
+
+<p>This works with lambdas, <code class="highlighter-rouge">:method</code> and <code class="highlighter-rouge">Callable</code>.</p>
+
 <h2 id="wrap" data-magellan-target="wrap">Wrap</h2>
 
 <p>Steps can be wrapped by an embracing step. This is necessary when defining a set of steps to be contained in a database transaction or a database lock.</p>
