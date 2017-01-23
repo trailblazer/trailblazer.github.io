@@ -644,6 +644,15 @@ It will improve readability.
 
 {{  "nested_test.rb:input-callable-op" | tsnippet }}
 
+### Nested: Output
+
+After running a nested operation, its mutable data gets copied into the `options` of the composing operation.
+
+Use `:output` to change that, should you need only specific values.
+
+{{  "nested_test.rb:output" | tsnippet }}
+
+This works with lambdas, `:method` and `Callable`.
 
 ## Wrap
 
