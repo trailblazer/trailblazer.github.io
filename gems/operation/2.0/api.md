@@ -591,6 +591,10 @@ This operation could now be leveraged in `Update`.
 
 The `Nested` macro helps you invoking an operation at any point in the pipe.
 
+### Nested: Data
+
+The nested operation (`Edit`) will, per default, only receive runtime data from the composing operation (`Update`). Mutable data is not available to protect the nested operation from unsolicited input.
+
 After running the nested `Edit` operation its runtime data (e.g. `"model"`) is available in the `Update` operation.
 
 {{  "nested_test.rb:update-call" | tsnippet }}
@@ -610,6 +614,35 @@ The object's `call` method has the exact same interface as any other step.
 Note that `Nested` also works with `:instance_method` and lambdas.
 
 {{  "nested_test.rb:method" | tsnippet }}
+
+### Nested: Input
+
+Per default, only the runtime data will be passed into the nested operation. You can use `:input` to change the data getting passed on.
+
+The following operation multiplies two factors.
+
+{{  "nested_test.rb:input-multiply" | tsnippet }}
+
+It is `Nested` in another operation.
+
+{{  "nested_test.rb:input-pi" | tsnippet }}
+
+The examplary composing operation uses both runtime and mutable data. Its invocation could look as follows.
+
+{{  "nested_test.rb:input-result" | tsnippet }}
+
+
+The `:input` option for `Nested` allows to specify what options will go into the nested operation. It passes `mutable_data` and `runtime_data` to the option for your convenience.
+
+While the runtime data normally gets passed on to nested operations automatically, mutual data won't. `:input` has to compile all data being passed on to the nested operation and return that hash.
+
+Use a `Callable` to share mapping code.
+
+{{  "nested_test.rb:input-callable" | tsnippet }}
+
+It will improve readability.
+
+{{  "nested_test.rb:input-callable-op" | tsnippet }}
 
 
 ## Wrap
