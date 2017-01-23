@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 22 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -149,7 +149,7 @@
   
 <p>The generic implementation can be found in the <a href="https://github.com/trailblazer/trailblazer-operation">trailblazer-operation gem</a>. This gem only provides the pipe and dependency handling.</p>
 
-<p>Higher-level abstractions, such as form object or policy integration is implemented in the <a href="https://github.com/trailblazer/trailblazer">trailblazer gem</a>.</p>
+<p>Higher-level abstractions, such as form object or policy integration, are implemented in the <a href="https://github.com/trailblazer/trailblazer">trailblazer gem</a>.</p>
 
 </div>
 
@@ -252,7 +252,7 @@ end
 
 <ul>
   <li>
-<code class="highlighter-rouge">step</code> adds a step to right track. If its return value is <code class="highlighter-rouge">falsey</code>, the pipe deviates to left track. Can be called with macros, which will run their own insertion logic.</li>
+<code class="highlighter-rouge">step</code> adds a step to the right track. If its return value is <code class="highlighter-rouge">falsey</code>, the pipe deviates to the left track. Can be called with macros, which will run their own insertion logic.</li>
   <li>
 <code class="highlighter-rouge">success</code> always add step to the right. The return value is ignored.</li>
   <li>
@@ -312,7 +312,7 @@ end
 </code></pre>
 </div>
 
-<p>In the above example, it deviates to left should the respective model <strong>not</strong> be found.</p>
+<p>In the above example, it deviates to the left should the respective model <strong>not</strong> be found.</p>
 
 <p>When adding <a href="#step-macros">step macros</a> with <code class="highlighter-rouge">step</code>, the behavior changes a bit. Macros can command <code class="highlighter-rouge">step</code> to internally use other operators to attach their step(s).</p>
 
@@ -566,7 +566,7 @@ end
 
 <div class="callout">
   
-<p>Keywords arguments work fine in Ruby 2.1 and &gt;=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.</p>
+<p>Keyword arguments work fine in Ruby 2.1 and &gt;=2.2.3. They are broken in Ruby 2.2.2 and have a to-be-confirmed unexpected behavior in 2.0.</p>
 
 
 </div>
@@ -591,11 +591,9 @@ end
     model.title= params[:title]
   end
 
-  #:step-val
   def validate!(options, model:, **)
     options["result.validate"] = ( model.created_by &amp;&amp; model.title )
   end
-  #:step-val end
 end
 </code></pre>
 
@@ -606,7 +604,7 @@ end
 end
 </code></pre>
 
-<p>It is a convention to use a <code class="highlighter-rouge">"namespaced.key"</code> on the result object. This will help you structuring and managing the data. It’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
+<p>It is a convention to use a <code class="highlighter-rouge">"namespaced.key"</code> on the result object. This will help you structure and manage the data. It’s clever to namespace your data with something like <code class="highlighter-rouge">my.</code>.</p>
 
 <div class="callout">
   In future versions of Trailblazer, the <em>Hash Explore API™</em> will allow to search for fragments or namespace paths on the result object. That's why it's a good idea to follow our namespacing convention.
@@ -1068,7 +1066,11 @@ end
 
 <p>The <code class="highlighter-rouge">Nested</code> macro helps you invoking an operation at any point in the pipe.</p>
 
-<p>After running the nested <code class="highlighter-rouge">Edit</code> operation its runtime data (e.g. <code class="highlighter-rouge">"model"</code>) is available in the <code class="highlighter-rouge">Update</code> operation.</p>
+<h3 id="nested-data">Nested: Data</h3>
+
+<p>The nested operation (<code class="highlighter-rouge">Edit</code>) will, per default only receive runtime data from the composing operation (<code class="highlighter-rouge">Update</code>). Mutable data is not available.</p>
+
+<p>After running the nested <code class="highlighter-rouge">Edit</code> operation its runtime data (e.g. <code class="highlighter-rouge">"model"</code>) is available in the <code class="highlighter-rouge">Update</code> operation to protect the nested operation from unsolicited input.</p>
 
 <pre><code>result = Update.(id: 1, title: "Call It A Night")
 
