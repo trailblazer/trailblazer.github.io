@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Reform: API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 04 October 2016</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 24 January 2017</span>
 
   
 
@@ -143,9 +143,9 @@
   <li>
 <code class="highlighter-rouge">#errors</code> returns validation messages in a classic ActiveModel style.</li>
   <li>
-<code class="highlighter-rouge">#sync</code> writes form data back to the model. This will only use setter methods on the model(s).</li>
+<code class="highlighter-rouge">#sync</code> writes form data back to the model. This will only use setter methods on the model(s). It returns the underlying model.</li>
   <li>
-<code class="highlighter-rouge">#save</code> (optional) will call <code class="highlighter-rouge">#save</code> on the model and nested models. Note that this implies a <code class="highlighter-rouge">#sync</code> call.</li>
+<code class="highlighter-rouge">#save</code> (optional) will call <code class="highlighter-rouge">#save</code> on the model and nested models. Note that this implies a <code class="highlighter-rouge">#sync</code> call. It returns the result of <code class="highlighter-rouge">model.save</code>.</li>
   <li>
 <code class="highlighter-rouge">#prepopulate!</code> (optional) will run pre-population hooks to “fill out” your form before rendering.</li>
 </ol>
