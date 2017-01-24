@@ -690,7 +690,7 @@ class BlogPost::Create &lt; Trailblazer::Operation
   end
 
   def notify!(options, current_user:, model:, **)
-    BlogPost::Notification.(current_user, model)
+    options["result.notify"] = BlogPost::Notification.(current_user, model)
   end
 end
 </code></pre>
@@ -709,7 +709,21 @@ Contract::Persist( )
 
 <p>And… our tests pass!</p>
 
-<p>You can do things yourself.</p>
+<p>BTW, another nice thing is: if the model’s save returns false, this will also result in the pipe jumping to the left track, skipping our last step <code class="highlighter-rouge">notify!</code></p>
+
+<h2 id="notify" data-magellan-target="notify">Notify</h2>
+
+<p>Speaking of <code class="highlighter-rouge">notify!</code>, this is the last step we need to review, and then you’re can call yourself a Trailblazer expert. In the current state of our application, <code class="highlighter-rouge">Notification</code> is just an empty class doing nothing.</p>
+
+<p>To sum up this chapter, I would like to keep it that way. A dedicated guide will talk about post-processing logic (<em>callbacks</em>), testing and mocking external services like mailers with dependency injections.</p>
+
+<h2 id="summary" data-magellan-target="summary">Summary</h2>
+
+<p>You’re now ready to write full-blown operations implementing the entire workflow for a function of an application. Even though you could do all the steps yourself the TRB macros help you in doing so.</p>
+
+<p>There might be open questions around contracts, but we will discuss them in a separate guide. If you can’t wait for it, have a look at the Trailblazer book, page 51 et seq. explain Reform in great detail.</p>
+
+<p>In the next chapter we will discover how to use operations in Rails, where HTML forms get rendered and send input to endpoints. Exciting stuff!</p>
 
             </div>
 
@@ -735,6 +749,8 @@ Contract::Persist( )
 <li><a href="#validation">Validation</a></li>
 <li><a href="#errors">Errors</a></li>
 <li><a href="#persist">Persist</a></li>
+<li><a href="#notify">Notify</a></li>
+<li><a href="#summary">Summary</a></li>
         </ul>
       
 </nav>
