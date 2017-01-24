@@ -3,6 +3,8 @@ layout: operation2
 title: 02- Trailblazer Basics
 gems:
   - ["trailblazer", "trailblazer/trailblazer", "2.0"]
+description: "Having discussed the operation mechanics, we now explore the world of Trailblazer macros, how to leverage contracts and validations, and focus on strong tests for the business logic."
+imageurl: http://trailblazer.to/images/summary/guide-02.png
 ---
 
 {% row %}
@@ -107,7 +109,7 @@ Even though this operation is far from ideal, it demonstrates a very important c
 
 There is no global state in Trailblazer, everything you need in the operation needs to go in via `call`.
 
-The first argument is usually the framework's `params` has [as discussed here](01-getting-started-with-operation.html#options). The second argument can be any hash specifying the dependencies needed in the operation, such as the current user.
+The first argument is usually the framework's `params` hash [as discussed here](01-operation-basics.html#options). The second argument can be any hash specifying the dependencies needed in the operation, such as the current user.
 
 {{ "spec/concepts/blog_post/operation/create_spec.rb:dependencies:../trailblazer-guides/:operation-02" | tsnippet }}
 
@@ -196,7 +198,7 @@ The first new step is `Contract::Build`.
 
 {{ "app/concepts/blog_post/operation/create.rb:contract-build:../trailblazer-guides:operation-02" | tsnippet  }}
 
-Even though Trailblazer allows to have ["inline contracts"](/gems/operation/2.0/contract.html#overview-reform), we don't want to clutter our operation with additional validation code. This is why I use the `:constant` option to tell `Contract::Build` what class to instantiate.
+Even though Trailblazer allows to have ["inline contracts"](/gems/operation/2.0/contract.html#overview-reform), we don't want to clutter our operation with additional validation code. This is why I use the `:constant` option to tell `Contract::Build` what contract class to use.
 
 Don't try to understand everything at once right now, just believe me that `Contract::Build` will create this mysterious contract class and pass it the operation's model.
 
@@ -234,20 +236,21 @@ In the test case, we pass in a manual hash to `call`, but in, say, a Rails app, 
 
 {{ "app/concepts/blog_post/operation/create.rb:contract-validate:../trailblazer-guides:operation-02" | tsnippet  }}
 
-Again, Reform's API will be utilized here by Trailblazer. Remember, I told you the operation is only an orchestrator knowing how to operate abstractions such as the contract, but it has no idea how.
+Again, Reform's API will be utilized here by Trailblazer. We discussed earlier that the operation is only an orchestrator knowing how to operate abstractions such as the contract, but it has no idea how.
 
 What `Contract::Validate` will do at run-time could be expressed as follows.
 
     # pseudo code
     Contract::Validate( key: :blog_post )
-      result = options["contract.default"].validate(options["params"][:blog_post])
+      reform_contract = options["contract.default"]
+      result = reform_contract.validate(options["params"][:blog_post])
 
 In a nutshell, Trailblazer uses the contract's `validate` method, passes in the fragment from the `params` hash you provided, and lets Reform sort out validations, generating error messages and providing an actual result for us. If that fails due to insufficient input, `Contract::Validate` will deviate to the left track and no further steps will be executed.
 
 {% callout %}
 It is incredibly important to understand the `:key` option here. `Validate` will extract the `blog_post:` fragment from the params hash, if you provide the `:key` option, and it won't continue if it can't find this key.
 
-Omitting `:key`, `Validate` will try to validate the entire params hash, which is fine if you don't use wrappers. However, gems like `simple_form` always add this wrap, so be weary.
+Omitting `:key`, `Validate` will try to validate the entire params hash, which is fine if you don't use wrappers. However, frameworks like Rails and gems such as `simple_form` always add this wrap, so be weary.
 {% endcallout %}
 
 Also, please note that Reform's validation takes away the need for `strong_parameters`. Since all desired input fields were declared using `property` in the contract, it can simply filter out other irrelevant keys.
@@ -258,3 +261,74 @@ You don't need `strong_parameters` with Trailblazer.
 
 ## Errors
 
+Let's play a bit with different input for our operation to learn how errors can be extracted from the result object.
+
+In the first spec, we completely fail to provide any sensible input.
+
+{{ "spec/concepts/blog_post/operation/create_spec.rb:validation-missing:../trailblazer-guides/:operation-02" | tsnippet }}
+
+Here, the `blog_post:` fragment in the params hash is completely missing, the validation is not even triggered. That is, because the extraction of the `blog_post:` fragment fails, which leads to a failed operation without any error message.
+
+{% callout %}
+In upcoming versions of TRB, this specific failure will be indicated better.
+{% endcallout %}
+
+The next spec sends a `body` with the wrong length - it must be more than 9 characters long. Why, we don't know, but the business asks for this validation.
+
+{{ "spec/concepts/blog_post/operation/create_spec.rb:validation-size:../trailblazer-guides/:operation-02" | tsnippet }}
+
+By inspecting the contract's `errors` object, we can assert that our validations work. It's usually best to test the error messages to see if and what validations were triggered.
+
+{% callout %}
+We are working on `trailblazer-test` that will provide matchers for Minitest and Rspec to have less verbose tests.
+{% endcallout %}
+
+Trailblazer tries to abstract the Reform or dry-validation internals from you, so you can always access the contract's result field in the result object for errors and state. This also works pretty well when using form builders, which we will see in the next chapter.
+
+## Persist
+
+When running our to-be-successful test case, whatsoever, it still breaks.
+
+{{ "spec/concepts/blog_post/operation/create_spec.rb:validation-fail:../trailblazer-guides/:operation-02" | tsnippet }}
+
+The error message here will give us some hint.
+
+    Failure/Error: expect(result["model"].title).to eq("Puns: Ode to Joy") # fails!
+
+    expected: "Puns: Ode to Joy"
+         got: nil
+
+Apparently, the operation's `BlogPost` model got persisted, but it's empty. No attributes were assigned, even though they were valid.
+
+This is because when validating the input, this all happens in the *contract*. Values to-be-validated are written and checked on the contract instance, not on the model. The model is not touched until we say so.
+
+In other words: what we need is to push the validated data from contract to the model, and then save the model. This can be done with the `Contract::Persist` macro.
+
+{{ "app/concepts/blog_post/operation/create.rb:persist:../trailblazer-guides:operation-02" | tsnippet  }}
+
+Replacing our own step, `Persist` will use Reform's API to push the data to the model. In pseudo code, this is what takes place.
+
+    # pseudo code
+    Contract::Persist( )
+      reform_contract = options["contract.default"]
+      reform_contract.save
+
+The [contract's `save` method](http://localhost:4000/gems/reform/api.html#save) does exactly that for us, plus it saves the model.
+
+And... our tests pass!
+
+BTW, another nice thing is: if the model's save returns false, this will also result in the pipe jumping to the left track, skipping our last step `notify!`
+
+## Notify
+
+Speaking of `notify!`, this is the last step we need to review, and then you're can call yourself a Trailblazer expert. In the current state of our application, `Notification` is just an empty class doing nothing.
+
+To sum up this chapter, I would like to keep it that way. A dedicated guide will talk about post-processing logic (*callbacks*), testing and mocking external services like mailers with dependency injections.
+
+## Summary
+
+You're now ready to write full-blown operations implementing the entire workflow for a function of an application. Even though you could do all the steps yourself the TRB macros help you in doing so.
+
+There might be open questions around contracts, but we will discuss them in a separate guide. If you can't wait for it, have a look at the Trailblazer book, page 51 et seq. explain Reform in great detail.
+
+In the next chapter we will discover how to use operations in Rails, where HTML forms get rendered and send input to endpoints. Exciting stuff!

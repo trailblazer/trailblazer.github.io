@@ -3,50 +3,35 @@ layout: guide
 title: Guides
 ---
 
+{% row %}
+~~~6,medium-centered
 
+A collection of guides to help you learn how Trailblazer and its gems work.
+{% endrow %}
 
-<div class="row text-center">
-  <div class="columns">
-    <h2>Trailblazer</h2>
-  <p>
-  A collection of guides to help you learn how Trailblazer works.
-  </p>
-  </div>
-</div>
+{% row %}
+  ~~~3,medium-offset-3
+  **TRAILBLAZER**
 
+  * [01 - Operation Basics](/guides/trailblazer/2.0/01-operation-basics.html)
+  * [02 - Trailblazer Basics](/guides/trailblazer/2.0/02-trailblazer-basics.html)
+  ~~~3,end
+  **REFORM**
+{% endrow %}
 
-<section class="guide">
-  <div class="row">
-    <div class="column medium-6">
+{% row %}
+  ~~~6,medium-centered
+  <h3>
+  <img src="/images/3dbuch-freigestellt.png" class="teaser-logo">
+  Trailblazer - The Book
+</h3>
 
-      <h3>
-        <img src="/images/guides/getting-started-logo.png" class="teaser-logo">
-        Trailblazer in 2̶0̶ 12 Minutes
-      </h3>
+<p>The Trailblazer book walks you through building a realistic Rails application from scratch. It includes all basic knowledge, discusses authentication, authorization using policies, callback objects, how to build consuming and rendering hypermedia APIs with TRB, and much more.</p>
 
-      <p>Trailblazer adds a set of abstraction layers to existing web frameworks and pipelines the workflow.</p>
-
-      <p>It takes less than 20 minutes to understand the mechanics.</p>
-      <p>
-        <a href="/guides/trailblazer-in-20-minutes.html">→ Read it here!</a>
-      </p>
-
-    </div>
-
-    <div class="column medium-6">
-      <h3>
-        <img src="/images/3dbuch-freigestellt.png" class="teaser-logo">
-        Trailblazer - The Book
-      </h3>
-
-      <p>The Trailblazer book walks you through building a realistic Rails application from scratch. It includes all basic knowledge, discusses authentication, authorization using policies, callback objects, how to build consuming and rendering hypermedia APIs with TRB, and much more.</p>
-
-      <p>
-        <a href="http://leanpub.com/trailblazer">→ Buy the book!</a>
-      </p>
-    </div>
-  </div>
-</section>
+<p>
+  <a href="http://leanpub.com/trailblazer">→ Grab the book!</a>
+</p>
+{% endrow %}
 
 <div class="row text-center">
   <div class="columns">
