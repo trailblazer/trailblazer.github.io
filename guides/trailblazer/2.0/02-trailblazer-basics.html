@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">02- Trailblazer Basics</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 22 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 23 January 2017</span>
 
   
     <span class="doc-last-updated">
@@ -383,6 +383,8 @@ end
 
 <p>The other benefit of using this macro is: You don’t have to use <a href="/gems/operation/2.0/policy.html#guard">the primitive <em>guard</em> implementation</a>, but use your existing <a href="/gems/operation/2.0/policy.html#pundit">Pundit-style policies</a> to intercept unauthorized users.</p>
 
+<p>For simplicity, let’s go with the <code class="highlighter-rouge">Guard</code> macro for now.</p>
+
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   step Policy::Guard( :authorize! )
   step :model!
@@ -410,6 +412,305 @@ end
 
 <p>Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as <a href="(/gems/operation/2.0/policy.html#pundit)">pundit</a>.</p>
 
+<p>All <code class="highlighter-rouge">Policy</code> macros will leave a trace in the operation’s result object. Here’s the test snippet for anonymous users who will be declined.</p>
+
+<pre><code>it "fails with anonymous" do
+  result = BlogPost::Create.(pass_params, "current_user" =&gt; anonymous)
+
+  expect(result).to be_failure
+  expect(result["model"]).to be_nil
+  expect(result["result.policy.default"]).to be_failure
+end
+</code></pre>
+
+<p>In other words: every <code class="highlighter-rouge">Policy</code> macro creates its own result object within the operation result. With <code class="highlighter-rouge">Guard</code>, you can only ask for validity.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>result["result.policy.default"].success?
+</code></pre>
+</div>
+
+<p>However, with <code class="highlighter-rouge">Pundit</code> policies, additional messages will be accessable via this “nested” result object. This is a great way to find out what happened in the operation should you get an unexpected invalid result.</p>
+
+<h2 id="model-1" data-magellan-target="model-1">Model</h2>
+
+<p>Trailblazer also has a convenient way to handle model creation and finding. The <code class="highlighter-rouge">Model</code> macro literally does what our <code class="highlighter-rouge">model!</code> step did.</p>
+
+<pre><code>class BlogPost::Create &lt; Trailblazer::Operation
+  step Policy::Guard( :authorize! )
+  step Model( BlogPost, :new )
+  step :persist!
+  step :notify!
+
+  def authorize!(options, current_user:, **)
+    current_user.signed_in?
+  end
+
+  def persist!(options, params:, model:, **)
+    model.update_attributes(params[:blog_post])
+    model.save
+  end
+
+  def notify!(options, current_user:, model:, **)
+    BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>This shortens our code even more, and reduces possible bugs. Of course, <code class="highlighter-rouge">Model</code> can also <a href="http://localhost:4000/gems/operation/2.0/api.html#model-findby">find records</a> as we will discover in the next chapter.</p>
+
+<p>Note that <code class="highlighter-rouge">Model</code> is <em>not</em> designed for complex query logic - should you need that, you might want to write your own step, use a query object or even combine both in a macro. Also, you can maintain multiple models, should you require that.</p>
+
+<p>The specs still pass, as we haven’t changed public behavior.</p>
+
+<h2 id="contract" data-magellan-target="contract">Contract</h2>
+
+<p>As a next step, or better, as next steps, we need to bring the validation into the operation. Remember, in Trailblazer, you don’t want validations in the model or the controller. These go into <em>contracts</em>.</p>
+
+<p>Contracts are basically validations, and they can be simple callable objects you write yourself, or <code class="highlighter-rouge">Dry::Schema</code>s, or, and that’s what we do in this example, Reform objects. Luckily, the <code class="highlighter-rouge">Contract</code> macros make dealing with contracts (or forms, it’s the same!) very simple.</p>
+
+<pre><code>require_relative "../contract/create"
+
+class BlogPost::Create &lt; Trailblazer::Operation
+  step Policy::Guard( :authorize! )
+  step Model( BlogPost, :new )
+  step Contract::Build( constant: BlogPost::Contract::Create )
+  step Contract::Validate( key: :blog_post )
+  step :persist!
+  step :notify!
+
+  def authorize!(options, current_user:, **)
+    current_user.signed_in?
+  end
+
+  def persist!(options, params:, model:, **)
+    model.save
+  end
+
+  def notify!(options, current_user:, model:, **)
+    BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>As you can see, we added two steps after <code class="highlighter-rouge">Model</code>, and reduced the logic in <code class="highlighter-rouge">persist!</code> to saving the model. This code will break, but it’s great to show you some mechanics with contracts, so bear with me.</p>
+
+<h2 id="build" data-magellan-target="build">Build</h2>
+
+<p>The first new step is <code class="highlighter-rouge">Contract::Build</code>.</p>
+
+<pre><code>step Contract::Build( constant: BlogPost::Contract::Create )
+</code></pre>
+
+<p>Even though Trailblazer allows to have <a href="/gems/operation/2.0/contract.html#overview-reform">“inline contracts”</a>, we don’t want to clutter our operation with additional validation code. This is why I use the <code class="highlighter-rouge">:constant</code> option to tell <code class="highlighter-rouge">Contract::Build</code> what contract class to use.</p>
+
+<p>Don’t try to understand everything at once right now, just believe me that <code class="highlighter-rouge">Contract::Build</code> will create this mysterious contract class and pass it the operation’s model.</p>
+
+<p>Have a look at this contract in <code class="highlighter-rouge">app/concepts/blog_post/contract/create.rb</code>.</p>
+
+<pre><code>require "reform"
+require "reform/form/dry"
+
+module BlogPost::Contract
+  class Create &lt; Reform::Form
+    include Dry
+
+    property :title
+    property :body
+
+    validation do
+      required(:title).filled
+      required(:body).maybe(min_size?: 9)
+    end
+  end
+end
+</code></pre>
+
+<p>Without going into too much detail about contracts (they have their own guides), it’s obvious that this contract defines its fields with <code class="highlighter-rouge">property</code> and then uses dry-validation’s specific DSL to create a validation chain.</p>
+
+<pre><code>validation do
+  required(:title).filled
+  required(:body).maybe(min_size?: 9)
+end
+</code></pre>
+
+<p>We simply define <code class="highlighter-rouge">title</code> as a required field, which must not be blank. Also, the <code class="highlighter-rouge">body</code> might filled, and if it is, it should be 9 characters minimum. Dry-validation needs a few minutes to sink in, but then it is so much more powerful and readable than the outdated <code class="highlighter-rouge">ActiveModel::Validations</code>.</p>
+
+<p>The <code class="highlighter-rouge">Build</code> macro will always pass the operation’s default model to the contract constructor and save the contract instance in <code class="highlighter-rouge">options</code>. What goes on here is this.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># pseudo code
+Contract::Build()
+  options["contract.default"] = BlogPost::Contract::Create.new(options["model"])
+</code></pre>
+</div>
+
+<p>Again, no need to understand this right now, should you be unexperienced with Reform. We will go that at a later point.</p>
+
+<div class="callout">
+  
+<p>For those who know Reform: after <code>Contract::Build</code>, you always have the contract instance in <code>options["contract.default"]</code>.</p>
+
+</div>
+
+<h2 id="validation" data-magellan-target="validation">Validation</h2>
+
+<p>Now, whatever building the contract implies, how do we run that <em>validation</em> against the incoming parameters?</p>
+
+<p>Here’s a passing spec snippet.</p>
+
+<pre><code>result = BlogPost::Create.(
+  { blog_post: { title: "Puns: Ode to Joy", body: "" } },
+  "current_user" =&gt; signed_in
+)
+</code></pre>
+
+<p>In the test case, we pass in a manual hash to <code class="highlighter-rouge">call</code>, but in, say, a Rails app, this would be the params hash. This input is now validated via the <code class="highlighter-rouge">Contract::Validate</code> macro.</p>
+
+<pre><code>step Contract::Validate( key: :blog_post )
+</code></pre>
+
+<p>Again, Reform’s API will be utilized here by Trailblazer. We discussed earlier that the operation is only an orchestrator knowing how to operate abstractions such as the contract, but it has no idea how.</p>
+
+<p>What <code class="highlighter-rouge">Contract::Validate</code> will do at run-time could be expressed as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># pseudo code
+Contract::Validate( key: :blog_post )
+  reform_contract = options["contract.default"]
+  result = reform_contract.validate(options["params"][:blog_post])
+</code></pre>
+</div>
+
+<p>In a nutshell, Trailblazer uses the contract’s <code class="highlighter-rouge">validate</code> method, passes in the fragment from the <code class="highlighter-rouge">params</code> hash you provided, and lets Reform sort out validations, generating error messages and providing an actual result for us. If that fails due to insufficient input, <code class="highlighter-rouge">Contract::Validate</code> will deviate to the left track and no further steps will be executed.</p>
+
+<div class="callout">
+  
+<p>It is incredibly important to understand the <code>:key</code> option here. <code>Validate</code> will extract the <code>blog_post:</code> fragment from the params hash, if you provide the <code>:key</code> option, and it won’t continue if it can’t find this key.</p>
+
+<p>Omitting <code>:key</code>, <code>Validate</code> will try to validate the entire params hash, which is fine if you don’t use wrappers. However, gems like <code>simple_form</code> always add this wrap, so be weary.</p>
+
+</div>
+
+<p>Also, please note that Reform’s validation takes away the need for <code class="highlighter-rouge">strong_parameters</code>. Since all desired input fields were declared using <code class="highlighter-rouge">property</code> in the contract, it can simply filter out other irrelevant keys.</p>
+
+<pre><code>property :title
+property :body
+</code></pre>
+
+<p>You don’t need <code class="highlighter-rouge">strong_parameters</code> with Trailblazer.</p>
+
+<h2 id="errors" data-magellan-target="errors">Errors</h2>
+
+<p>Let’s play a bit with different input for our operation to learn how errors can be extracted from the result object.</p>
+
+<p>In the first spec, we completely fail to provide any sensible input.</p>
+
+<pre><code>it "fails with missing input" do
+  result = BlogPost::Create.({}, "current_user" =&gt; signed_in)
+  expect(result).to be_failure
+end
+</code></pre>
+
+<p>Here, the <code class="highlighter-rouge">blog_post:</code> fragment in the params hash is completely missing, the validation is not even triggered. That is, because the extraction of the <code class="highlighter-rouge">blog_post:</code> fragment fails, which leads to a failed operation without any error message.</p>
+
+<div class="callout">
+  
+<p>In upcoming versions of TRB, this specific failure will be indicated better.</p>
+
+</div>
+
+<p>The next spec sends a <code class="highlighter-rouge">body</code> with the wrong length - it must be more than 9 characters long. Why, we don’t know, but the business asks for this validation.</p>
+
+<pre><code>it "fails with body too short" do
+  result = BlogPost::Create.(
+    { blog_post: { title: "Heatwave!", body: "Too hot!" } },
+    "current_user" =&gt; signed_in
+  )
+
+  expect(result).to be_failure
+  expect(result["result.contract.default"].errors.messages).to eq(
+    {:body =&gt; ["size cannot be less than 9"]} )
+end
+</code></pre>
+
+<p>By inspecting the contract’s <code class="highlighter-rouge">errors</code> object, we can assert that our validations work. It’s usually best to test the error messages to see if and what validations were triggered.</p>
+
+<div class="callout">
+  
+<p>We are working on <code>trailblazer-test</code> that will provide matchers for Minitest and Rspec to have less verbose tests.</p>
+
+</div>
+
+<p>Trailblazer tries to abstract the Reform or dry-validation internals from you, so you can always access the contract’s result field in the result object for errors and state. This also works pretty well when using form builders, which we will see in the next chapter.</p>
+
+<h2 id="persist" data-magellan-target="persist">Persist</h2>
+
+<p>When running our to-be-successful test case, whatsoever, it still breaks.</p>
+
+<pre><code>it "works with known user" do
+  result = BlogPost::Create.(
+    { blog_post: { title: "Puns: Ode to Joy", body: "" } },
+    "current_user" =&gt; signed_in
+  )
+  expect(result).to be_success
+  expect(result["model"]).to be_persisted
+  expect(result["model"].title).to eq("Puns: Ode to Joy") # fails!
+end
+</code></pre>
+
+<p>The error message here will give us some hint.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Failure/Error: expect(result["model"].title).to eq("Puns: Ode to Joy") # fails!
+
+expected: "Puns: Ode to Joy"
+     got: nil
+</code></pre>
+</div>
+
+<p>Apparently, the operation’s <code class="highlighter-rouge">BlogPost</code> model got persisted, but it’s empty. No attributes were assigned, even though they were valid.</p>
+
+<p>This is because when validating the input, this all happens in the <em>contract</em>. Values to-be-validated are written and checked on the contract instance, not on the model. The model is not touched until we say so.</p>
+
+<p>In other words: what we need is to push the validated data from contract to the model, and then save the model. This can be done with the <code class="highlighter-rouge">Contract::Persist</code> macro.</p>
+
+<pre><code>require_relative "../contract/create"
+
+class BlogPost::Create &lt; Trailblazer::Operation
+  step Policy::Guard( :authorize! )
+  step Model( BlogPost, :new )
+  step Contract::Build( constant: BlogPost::Contract::Create )
+  step Contract::Validate( key: :blog_post )
+  step Contract::Persist()
+  step :notify!
+
+  def authorize!(options, current_user:, **)
+    current_user.signed_in?
+  end
+
+  def notify!(options, current_user:, model:, **)
+    BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>Replacing our own step, <code class="highlighter-rouge">Persist</code> will use Reform’s API to push the data to the model. In pseudo code, this is what takes place.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code># pseudo code
+Contract::Persist( )
+  reform_contract = options["contract.default"]
+  reform_contract.save
+</code></pre>
+</div>
+
+<p>The <a href="http://localhost:4000/gems/reform/api.html#save">contract’s <code class="highlighter-rouge">save</code> method</a> does exactly that for us, plus it saves the model.</p>
+
+<p>And… our tests pass!</p>
+
+<p>You can do things yourself.</p>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -428,6 +729,12 @@ end
 <li><a href="#exposing-values">Exposing Values</a></li>
 <li><a href="#manual-steps">Manual Steps</a></li>
 <li><a href="#policy">Policy</a></li>
+<li><a href="#model-1">Model</a></li>
+<li><a href="#contract">Contract</a></li>
+<li><a href="#build">Build</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#errors">Errors</a></li>
+<li><a href="#persist">Persist</a></li>
         </ul>
       
 </nav>
