@@ -157,3 +157,104 @@ For simplicity, let's go with the `Guard` macro for now.
 {{ "app/concepts/blog_post/operation/create.rb:policy:../trailblazer-guides:operation-02" | tsnippet  }}
 
 Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as [pundit]((/gems/operation/2.0/policy.html#pundit)).
+
+All `Policy` macros will leave a trace in the operation's result object. Here's the test snippet for anonymous users who will be declined.
+
+{{ "spec/concepts/blog_post/operation/create_spec.rb:guard-result:../trailblazer-guides/:operation-02" | tsnippet }}
+
+In other words: every `Policy` macro creates its own result object within the operation result. With `Guard`, you can only ask for validity.
+
+    result["result.policy.default"].success?
+
+However, with `Pundit` policies, additional messages will be accessable via this "nested" result object. This is a great way to find out what happened in the operation should you get an unexpected invalid result.
+
+## Model
+
+Trailblazer also has a convenient way to handle model creation and finding. The `Model` macro literally does what our `model!` step did.
+
+{{ "app/concepts/blog_post/operation/create.rb:model:../trailblazer-guides:operation-02" | tsnippet  }}
+
+This shortens our code even more, and reduces possible bugs. Of course, `Model` can also [find records](http://localhost:4000/gems/operation/2.0/api.html#model-findby) as we will discover in the next chapter.
+
+Note that `Model` is *not* designed for complex query logic - should you need that, you might want to write your own step, use a query object or even combine both in a macro. Also, you can maintain multiple models, should you require that.
+
+The specs still pass, as we haven't changed public behavior.
+
+## Contract
+
+As a next step, or better, as next steps, we need to bring the validation into the operation. Remember, in Trailblazer, you don't want validations in the model or the controller. These go into *contracts*.
+
+Contracts are basically validations, and they can be simple callable objects you write yourself, or `Dry::Schema`s, or, and that's what we do in this example, Reform objects. Luckily, the `Contract` macros make dealing with contracts (or forms, it's the same!) very simple.
+
+{{ "app/concepts/blog_post/operation/create.rb:contract:../trailblazer-guides:operation-02" | tsnippet  }}
+
+As you can see, we added two steps after `Model`, and reduced the logic in `persist!` to saving the model. This code will break, but it's great to show you some mechanics with contracts, so bear with me.
+
+## Build
+
+The first new step is `Contract::Build`.
+
+{{ "app/concepts/blog_post/operation/create.rb:contract-build:../trailblazer-guides:operation-02" | tsnippet  }}
+
+Even though Trailblazer allows to have ["inline contracts"](/gems/operation/2.0/contract.html#overview-reform), we don't want to clutter our operation with additional validation code. This is why I use the `:constant` option to tell `Contract::Build` what class to instantiate.
+
+Don't try to understand everything at once right now, just believe me that `Contract::Build` will create this mysterious contract class and pass it the operation's model.
+
+Have a look at this contract in `app/concepts/blog_post/contract/create.rb`.
+
+{{ "app/concepts/blog_post/contract/create.rb:contract:../trailblazer-guides:operation-02" | tsnippet  }}
+
+Without going into too much detail about contracts (they have their own guides), it's obvious that this contract defines its fields with `property` and then uses dry-validation's specific DSL to create a validation chain.
+
+{{ "app/concepts/blog_post/contract/create.rb:validation:../trailblazer-guides:operation-02" | tsnippet  }}
+
+We simply define `title` as a required field, which must not be blank. Also, the `body` might filled, and if it is, it should be 9 characters minimum. Dry-validation needs a few minutes to sink in, but then it is so much more powerful and readable than the outdated `ActiveModel::Validations`.
+
+The `Build` macro will always pass the operation's default model to the contract constructor and save the contract instance in `options`. What goes on here is this.
+
+    # pseudo code
+    Contract::Build()
+      options["contract.default"] = BlogPost::Contract::Create.new(options["model"])
+
+Again, no need to understand this right now, should you be unexperienced with Reform. We will go that at a later point.
+
+{% callout %}
+For those who know Reform: after `Contract::Build`, you always have the contract instance in `options["contract.default"]`.
+{% endcallout %}
+
+## Validation
+
+Now, whatever building the contract implies, how do we run that *validation* against the incoming parameters?
+
+Here's a passing spec snippet.
+
+{{ "spec/concepts/blog_post/operation/create_spec.rb:validation-pass:../trailblazer-guides/:operation-02" | tsnippet }}
+
+In the test case, we pass in a manual hash to `call`, but in, say, a Rails app, this would be the params hash. This input is now validated via the `Contract::Validate` macro.
+
+{{ "app/concepts/blog_post/operation/create.rb:contract-validate:../trailblazer-guides:operation-02" | tsnippet  }}
+
+Again, Reform's API will be utilized here by Trailblazer. Remember, I told you the operation is only an orchestrator knowing how to operate abstractions such as the contract, but it has no idea how.
+
+What `Contract::Validate` will do at run-time could be expressed as follows.
+
+    # pseudo code
+    Contract::Validate( key: :blog_post )
+      result = options["contract.default"].validate(options["params"][:blog_post])
+
+In a nutshell, Trailblazer uses the contract's `validate` method, passes in the fragment from the `params` hash you provided, and lets Reform sort out validations, generating error messages and providing an actual result for us. If that fails due to insufficient input, `Contract::Validate` will deviate to the left track and no further steps will be executed.
+
+{% callout %}
+It is incredibly important to understand the `:key` option here. `Validate` will extract the `blog_post:` fragment from the params hash, if you provide the `:key` option, and it won't continue if it can't find this key.
+
+Omitting `:key`, `Validate` will try to validate the entire params hash, which is fine if you don't use wrappers. However, gems like `simple_form` always add this wrap, so be weary.
+{% endcallout %}
+
+Also, please note that Reform's validation takes away the need for `strong_parameters`. Since all desired input fields were declared using `property` in the contract, it can simply filter out other irrelevant keys.
+
+{{ "app/concepts/blog_post/contract/create.rb:property:../trailblazer-guides:operation-02" | tsnippet  }}
+
+You don't need `strong_parameters` with Trailblazer.
+
+## Errors
+
