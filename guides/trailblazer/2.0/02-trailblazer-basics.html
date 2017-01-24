@@ -295,7 +295,7 @@ RSpec.describe BlogPost::Create do
 
 <p>There is no global state in Trailblazer, everything you need in the operation needs to go in via <code class="highlighter-rouge">call</code>.</p>
 
-<p>The first argument is usually the framework’s <code class="highlighter-rouge">params</code> has <a href="01-getting-started-with-operation.html#options">as discussed here</a>. The second argument can be any hash specifying the dependencies needed in the operation, such as the current user.</p>
+<p>The first argument is usually the framework’s <code class="highlighter-rouge">params</code> hash <a href="01-operation-basics.html#options">as discussed here</a>. The second argument can be any hash specifying the dependencies needed in the operation, such as the current user.</p>
 
 <pre><code>result = BlogPost::Create.(pass_params, "current_user" =&gt; signed_in)
 </code></pre>
@@ -588,7 +588,7 @@ Contract::Validate( key: :blog_post )
   
 <p>It is incredibly important to understand the <code>:key</code> option here. <code>Validate</code> will extract the <code>blog_post:</code> fragment from the params hash, if you provide the <code>:key</code> option, and it won’t continue if it can’t find this key.</p>
 
-<p>Omitting <code>:key</code>, <code>Validate</code> will try to validate the entire params hash, which is fine if you don’t use wrappers. However, gems like <code>simple_form</code> always add this wrap, so be weary.</p>
+<p>Omitting <code>:key</code>, <code>Validate</code> will try to validate the entire params hash, which is fine if you don’t use wrappers. However, frameworks like Rails and gems such as <code>simple_form</code> always add this wrap, so be weary.</p>
 
 </div>
 
