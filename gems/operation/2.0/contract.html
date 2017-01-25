@@ -147,13 +147,99 @@
 
 <p>The actual validation can be implemented using Reform with <code class="highlighter-rouge">ActiveModel::Validation</code> or dry-validation, or a <a href="#dry-schema"><code class="highlighter-rouge">Dry::Schema</code> directly</a> without Reform.</p>
 
-<p>The <code class="highlighter-rouge">Contract</code> module helps you defining contracts and assists with instantiating and validating data with those contracts at runtime.</p>
+<p>The <code class="highlighter-rouge">Contract</code> macros helps you defining contracts and assists with instantiating and validating data with those contracts at runtime.</p>
 
 <h2 id="overview-reform" data-magellan-target="overview-reform">Overview: Reform</h2>
 
 <p>Most contracts are <a href="/gems/reform">Reform</a> objects that you can define and validate in the operation. Reform is a fantastic tool for deserializing and validating deeply nested hashes, and then, when valid, writing those to the database using your persistence layer such as ActiveRecord.</p>
 
-<pre><code># app/concepts/comment/create.rb
+<pre><code># app/concepts/song/contract/create.rb
+module Song::Contract
+  class Create &lt; Reform::Form
+    property :title
+    property :length
+
+    validates :title,  length: 2..33
+    validates :length, numericality: true
+  end
+end
+</code></pre>
+
+<p>The contract then gets hooked into the operation.</p>
+
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate()
+  step Contract::Persist()
+end
+</code></pre>
+
+<p>As you can see, using contracts consists of five steps.</p>
+
+<ol>
+  <li>Define the contract class (or multiple of them) for the operation.</li>
+  <li>Plug the contract creation into the operation’s pipe using <code class="highlighter-rouge">Contract::Build</code>.</li>
+  <li>Run the contract’s validation for the params using <code class="highlighter-rouge">Contract::Validate</code>.</li>
+  <li>If successful, write the sane data to the model(s). This will usually happen in the <code class="highlighter-rouge">Contract::Persist</code> macro.</li>
+  <li>After the operation has been run, <a href="#result-object">interpret the result</a>. For instance, a controller calling an operation will render a erroring form for invalid input.</li>
+</ol>
+
+<div class="callout">
+  
+<p>You don’t have to use any of the TRB macros to deal with contracts, and do everything yourself. They are an abstraction that will save code and bugs, and introduce strong conventions. However, feel free to use your own code.</p>
+
+</div>
+
+<p>Here’s what the result would look like after running the <code class="highlighter-rouge">Create</code> operation with invalid data.</p>
+
+<pre><code>result = Song::Create.( title: "A" )
+result.success? #=&gt; false
+result["contract.default"].errors.messages
+  #=&gt; {:title=&gt;["is too short (minimum is 2 characters)"], :length=&gt;["is not a number"]}
+</code></pre>
+
+<h2 id="definition" data-magellan-target="definition">Definition</h2>
+
+<p>Trailblazer offers a few different ways to define contract classes and use them in an operation.</p>
+
+<h3 id="definition-explicit">Definition: Explicit</h3>
+
+<p>The preferred way of defining contracts is to use a separate file and class, such as the example below.</p>
+
+<pre><code># app/concepts/song/contract/create.rb
+module Song::Contract
+  class Create &lt; Reform::Form
+    property :title
+    property :length
+
+    validates :title,  length: 2..33
+    validates :length, numericality: true
+  end
+end
+</code></pre>
+
+<p>This is called <em>explicit contract</em>.</p>
+
+<p>The contract file could be located just anywhere, but it’s clever to follow the Trailblazer conventions.</p>
+
+<p>Using the contract happens via <code class="highlighter-rouge">Contract::Build</code>, and the <code class="highlighter-rouge">:constant</code> option.</p>
+
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate()
+  step Contract::Persist()
+end
+</code></pre>
+
+<p>Since both operations and contracts grow during development, the completely encapsulated approach of the explicit contract is what we recommend.</p>
+
+<h3 id="definition-inline">Definition: Inline</h3>
+
+<p>Contracts can also be defined in the operation itself.</p>
+
+<pre><code># app/concepts/song/create.rb
 class Create &lt; Trailblazer::Operation
   extend Contract::DSL
 
@@ -172,198 +258,139 @@ class Create &lt; Trailblazer::Operation
 end
 </code></pre>
 
-<p>Using contracts consists of four steps.</p>
+<p>Defining the contract happens via the <code class="highlighter-rouge">contract</code> block. This is called an <em>inline contract</em>. Note that you need to extend the class with the <code class="highlighter-rouge">Contract::DSL</code> module. You don’t have to specify anything in the <code class="highlighter-rouge">Build</code> macro.</p>
 
-<ul>
-  <li>
-<a href="#contract-definition">Defining the contract</a> class(es) used in the operation.</li>
-  <li>
-<a href="#pipetree">Plugging</a> creation and validation into the operation’s pipetree.</li>
-  <li>
-<a href="#validate">Run the validation</a>, and if successful, write the sane data to the model(s). This will usually be done in the <code class="highlighter-rouge">Persist</code> step.</li>
-  <li>After the operation has been run, <a href="#result-object">interpret the result</a>. For instance, a controller calling an operation will render a erroring form for invalid input.</li>
-</ul>
+<p>While this is nice for a quick example, this usually ends up quite convoluted and we advise you to use the <a href="#definition-explicit">explicit style</a>.</p>
 
-<p>Here’s how the result would look like after running the <code class="highlighter-rouge">Create</code> operation with invalid data.</p>
+<h2 id="build" data-magellan-target="build">Build</h2>
 
-<pre><code>result = Create.({ length: "A" })
-
-result["result.contract.default"].success?        #=&gt; false
-result["result.contract.default"].errors          #=&gt; Errors object
-result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a number"]}
-</code></pre>
-
-<h2 id="contract-definition" data-magellan-target="contract-definition">Contract Definition</h2>
-
-<p>Defining the contract can be done via the <code class="highlighter-rouge">contract</code> block as in the example above. This is called <em>inline contract</em> since it happens straight in the operation class.</p>
-
-<p>An alternative approach is to reference an external Reform class from a separate file. This is called an <em>explicit contract</em>.</p>
-
-<pre><code>class MyContract &lt; Reform::Form
-  property :title
-  property :length
-
-  validates :title,  presence: true
-  validates :length, numericality: true
-end
-</code></pre>
-
-<p>This class can now be referenced in the operation.</p>
-
-<pre><code># app/concepts/comment/create.rb
-class Create &lt; Trailblazer::Operation
-  extend Contract::DSL
-
-  contract MyContract
-
+<p>The <code class="highlighter-rouge">Contract::Build</code> macro helps you to instantiate the contract.
+It is both helpful for a complete workflow, or to create the contract, only, without validating it, e.g. when presenting the form.</p>
+<pre><code>class Song::New &lt; Trailblazer::Operation
   step Model( Song, :new )
-  step Contract::Build()
-  step Contract::Validate()
-  step Contract::Persist( method: :sync )
+  step Contract::Build( constant: Song::Contract::Create )
 end
 </code></pre>
 
-<p>The explicit file/class convention is the preferred Trailblazer style as it keeps classes small and maximizes reusability. Please make sure you’re following Trailblazer’s naming convention to avoid friction. # TODO: link.</p>
+<p>This macro will grab the model from <code class="highlighter-rouge">options["model"]</code> and pass it into the contract’s constructor. The contract is then saved in <code class="highlighter-rouge">options["contract.default"]</code>.</p>
 
-<h2 id="pipetree" data-magellan-target="pipetree">Pipetree</h2>
-
-<p>After defining, you have to create and invoke the Reform object in your operation. The easiest way is to use <code class="highlighter-rouge">Contract</code>’s macros for that.</p>
-
-<pre><code># app/concepts/comment/create.rb
-class Create &lt; Trailblazer::Operation
-  # ...
-  step Model( Song, :new )
-  step Contract::Build()
-  step Contract::Validate()
-  step Contract::Persist( method: :sync )
-end
+<pre><code>result = Song::New.()
+result["model"] #=&gt; #&lt;struct Song title=nil, length=nil&gt;
+result["contract.default"]
+  #=&gt; #&lt;Song::Contract::Create model=#&lt;struct Song title=nil, length=nil&gt;&gt;
 </code></pre>
 
-<p>For a better understanding, here’s the compiled pipetree.</p>
-
-<pre><code> 0 =======================&gt;&gt;operation.new
- 1 ==========================&amp;model.build
- 2 =======================&gt;contract.build
- 3 ==============&amp;validate.params.extract
- 4 ====================&amp;contract.validate
- 5 =========================&amp;persist.save
-</code></pre>
-
-<p>With a Reform contract the relevant steps are as follows.</p>
-
-<ol>
-  <li>Since every Reform object needs a model, use <a href="model.html">the <code class="highlighter-rouge">Model</code> macro</a> to instantiate or find it.</li>
-  <li>Let the <code class="highlighter-rouge">Contract</code> macro instantiate the Reform object for you. The object will per default be pushed to <code class="highlighter-rouge">self["contract.default"]</code>.</li>
-  <li>Let <code class="highlighter-rouge">Contract::Validate</code> extract the correct hash from the params. If this fails because the params are not a hash or the specified key can’t be found, it deviates to left track.</li>
-  <li>Instruct <code class="highlighter-rouge">Contract::Validate</code> to validate the params against this contract. When validation turns out to be successful, it will remain on the right track. Otherwise, when invalid, deviate to the left track.</li>
-  <li>Use the <code class="highlighter-rouge">Persist</code> macro to call <code class="highlighter-rouge">sync</code> or <code class="highlighter-rouge">save</code> on the contract in case of a successful validation.</li>
-</ol>
+<p>The <code class="highlighter-rouge">Build</code> macro accepts <a href="#name">the <code class="highlighter-rouge">:name</code> option</a> to change the name from <code class="highlighter-rouge">default</code>.</p>
 
 <h2 id="validate" data-magellan-target="validate">Validate</h2>
 
-<p>The <code class="highlighter-rouge">Contract::Validate</code> step in the pipe is responsible for validating the incoming params against its contract. This boils down to the following simple code:</p>
+<p>The <code class="highlighter-rouge">Contract::Validate</code> macro is responsible for validating the incoming params against its contract. That means you have to use <code class="highlighter-rouge">Contract::Build</code> beforehand, or create the contract yourself. The macro will then grab the params and throw then into the contract’s <code class="highlighter-rouge">validate</code> (or <code class="highlighter-rouge">call</code>) method.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>contract.validate(params)
+<pre><code>class Song::ValidateOnly &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate()
+end
 </code></pre>
+
+<p>Depending on the outcome of the validation, it either stays on the right track, or deviates to left, skipping the remaining steps.</p>
+
+<pre><code>result = Song::ValidateOnly.({}) # empty params
+result.success? #=&gt; false
+</code></pre>
+
+<p>Note that <code class="highlighter-rouge">Validate</code> really only validates the contract, nothing is written to the model, yet. You need to push data to the model manually, e.g. <a href="#persist">with <code class="highlighter-rouge">Contract::Persist</code></a>.</p>
+
+<pre><code>result = Song::ValidateOnly.({ title: "Rising Force", length: 13 })
+
+result.success? #=&gt; true
+result["model"] #=&gt; #&lt;struct Song title=nil, length=nil&gt;
+result["contract.default"].title #=&gt; "Rising Force"
+</code></pre>
+
+<p><code class="highlighter-rouge">Validate</code> will use <code class="highlighter-rouge">options["params"]</code> as the input. You can change the nesting with <a href="#key">the <code class="highlighter-rouge">:key</code> option</a>.</p>
+
+<div class="callout">
+  
+<p>Internally, this macro will simply call <code>Form#validate</code> on the Reform object.</p>
+
+<p>Note that Reform comes with sophisticated deserialization semantics for nested forms, it might be worth reading <a href="/gems/reform">a bit about Reform</a> to fully understand what you can do in the <code>Validate</code> step.</p>
+
 </div>
 
-<p>Given the contract is a Reform object, the step invokes the <code class="highlighter-rouge">validate</code> method for you and passes in the params from the operation call.</p>
+<h2 id="key" data-magellan-target="key">Key</h2>
 
-<p>Note that Reform comes with sophisticated deserialization semantics for nested forms, it might be worth reading <a href="/gems/reform">a bit about Reform</a> to fully understand what you can do in the <code class="highlighter-rouge">Validate</code> step.</p>
+<p>Per default, <code class="highlighter-rouge">Contract::Validate</code> will use <code class="highlighter-rouge">options["params"]</code> as the data to be validated. Use the <code class="highlighter-rouge">key:</code> option if you want to validate a nested hash from the original params structure.</p>
 
-<p>After the validation, the sane data sits in the contract. No model is touched for validation, you still need to push the validated data from the contract to the model(s).</p>
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate( key: "song" )
+  step Contract::Persist( )
+end
+</code></pre>
 
-<p>This typically happens via the <code class="highlighter-rouge">Persist</code> step which usually sits right after the validation in the pipe. Since <code class="highlighter-rouge">Validate</code> will deviate to the left track in case of an unsuccessful validation, this step is only called for valid data.</p>
+<p>This automatically extracts the nested <code class="highlighter-rouge">"song"</code> hash.</p>
+
+<pre><code>result = Song::Create.({ "song" =&gt; { title: "Rising Force", length: 13 } })
+result.success? #=&gt; true
+</code></pre>
+
+<p>If that key isn’t present in the params hash, the operation fails before the actual validation.</p>
+
+<pre><code>result = Song::Create.({ title: "Rising Force", length: 13 })
+result.success? #=&gt; false
+</code></pre>
+
+<p>Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.</p>
 
 <h2 id="persist" data-magellan-target="persist">Persist</h2>
 
-<p>To push data from the contract to the model(s), use <code class="highlighter-rouge">Persist</code>. Again, this simply calls Reform’s persisting for you and can be reduced to the following snippet.</p>
+<p>To push validated data from the contract to the model(s), use <code class="highlighter-rouge">Persist</code>. Like <code class="highlighter-rouge">Validate</code>, this requires a contract to be set up beforehand.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>contract.save
+<pre><code>class Song::Create &lt; Trailblazer::Operation
+  step Model( Song, :new )
+  step Contract::Build( constant: Song::Contract::Create )
+  step Contract::Validate()
+  step Contract::Persist()
+end
 </code></pre>
-</div>
+
+<p>After the step, the contract’s attribute values are written to the model, and the contract will call <code class="highlighter-rouge">save</code> on the model.</p>
+
+<pre><code>result = Song::Create.( title: "Rising Force", length: 13 )
+result.success? #=&gt; true
+result["model"] #=&gt; #&lt;Song title="Rising Force", length=13&gt;
+</code></pre>
 
 <p>You can also configure the <code class="highlighter-rouge">Persist</code> step to call <code class="highlighter-rouge">sync</code> instead of Reform’s <code class="highlighter-rouge">save</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>self.| Persist[method: :sync]
+<pre class="highlight"><code>step Persist( method: :sync )
 </code></pre>
 </div>
 
 <p>This will only write the contract’s data to the model without calling <code class="highlighter-rouge">save</code> on it.</p>
 
-<p>Read more about how Reform handles validations and persisting.</p>
+<h2 id="name" data-magellan-target="name">Name</h2>
 
-<h2 id="default-contract" data-magellan-target="default-contract">Default Contract</h2>
+<p>Explicit naming for the contract is possible, too.</p>
 
-<p>You don’t have to assign a name for a contract when using only one per operation.</p>
-
-<pre><code># app/concepts/comment/create.rb
-class Create &lt; Trailblazer::Operation
-  extend Contract::DSL
-
-  contract do
-    property :title
-    # ...
-  end
-  # ...
-end
-</code></pre>
-
-<p>The name will be <code class="highlighter-rouge">default</code>. The contract class will be available via <code class="highlighter-rouge">self["contract.default.class"]</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>Create["contract.default.class"] #=&gt; Reform::Form subclass
-</code></pre>
-</div>
-
-<p>After running the operation, the contract instance is available via <code class="highlighter-rouge">self["contract.default"]</code>.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.(..)
-result["contract.default"] #=&gt; &lt;Reform::Form ...&gt;
-</code></pre>
-</div>
-
-<p>You can pass a name to <code class="highlighter-rouge">contract</code>.</p>
-
-<pre><code># app/concepts/comment/update.rb
-class Update &lt; Trailblazer::Operation
-  extend Contract::DSL
-
-  contract :params do
-    property :id
-    validates :id,  presence: true
-  end
-  # ...
-end
-</code></pre>
-
-<h2 id="multiple-contracts" data-magellan-target="multiple-contracts">Multiple Contracts</h2>
-
-<p>Since <code class="highlighter-rouge">contract</code> can be called multiple times, this allows you to maintain as many contracts as you need per operation.</p>
-
-<p>Naming also works when referencing constants.</p>
-
-<pre><code># app/concepts/comment/update.rb
-class Update &lt; Trailblazer::Operation
-  extend Contract::DSL
-  contract :user, MyContract
-end
-</code></pre>
-
-<p>When using named contracts, you can still use the <code class="highlighter-rouge">Contract</code> macros, but now you need to say what contract you’re referring to using the <code class="highlighter-rouge">name:</code> option.</p>
-
-<pre><code># app/concepts/comment/update.rb
-class Update &lt; Trailblazer::Operation
-  # ...
+<pre><code>class Song::Create &lt; Trailblazer::Operation
   step Model( Song, :new )
-  step Contract::Build( name: "params" )
-  step Contract::Validate( name: "params" )
+  step Contract::Build(    name: "form", constant: Song::Contract::Create )
+  step Contract::Validate( name: "form" )
+  step Contract::Persist(  name: "form" )
 end
 </code></pre>
+
+<p>You have to use the <code class="highlighter-rouge">name:</code> option to tell each step what contract to use. The contract and its result will now use your name instead of <code class="highlighter-rouge">default</code>.</p>
+
+<pre><code>result = Song::Create.({ title: "A" })
+result["contract.form"].errors.messages #=&gt; {:title=&gt;["is too short (minimum is 2 ch...
+</code></pre>
+
+<p>Use this if your operation has multiple contracts.</p>
 
 <h2 id="dry-schema" data-magellan-target="dry-schema">Dry-Schema</h2>
 
@@ -427,26 +454,6 @@ class Delete &lt; Trailblazer::Operation
 end
 </code></pre>
 
-<h2 id="extracting-params" data-magellan-target="extracting-params">Extracting Params</h2>
-
-<p>Per default, <code class="highlighter-rouge">Contract::Validate</code> will use <code class="highlighter-rouge">self["params"]</code> as the data to be validated. Use the <code class="highlighter-rouge">key:</code> option if you want to validate a nested hash from the original params structure.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  extend Contract::DSL
-
-  contract do
-    property :title
-  end
-
-  step Model( Song, :new )
-  step Contract::Build()
-  step Contract::Validate( key: "song" )
-  step Contract::Persist( method: :sync )
-end
-</code></pre>
-
-<p>Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.</p>
-
 <h3 id="manual-extraction">Manual Extraction</h3>
 
 <p>You can plug your own complex logic to extract params for validation into the pipe.</p>
@@ -478,48 +485,6 @@ end
 
 <p>Keep in mind that <code class="highlighter-rouge">&amp;</code> will deviate to the left track if your <code class="highlighter-rouge">extract_params!</code> logic returns falsey.</p>
 
-<h2 id="naming-interface" data-magellan-target="naming-interface">Naming Interface</h2>
-
-<p>You don’t have to use the <code class="highlighter-rouge">contract</code> interface to register contract classes in your operation. Use the <code class="highlighter-rouge">constant:</code> option to point the <code class="highlighter-rouge">Contract</code> builder directly to a class.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  class MyContract &lt; Reform::Form
-    property :title
-    validates :title, length: 2..33
-  end
-
-
-
-  step Model( Song, :new )
-  step Contract::Build( constant: MyContract )
-  step Contract::Validate()
-  step Contract::Persist( method: :sync )
-end
-</code></pre>
-
-<p>No DSL is used here.</p>
-
-<p>Instead, the <code class="highlighter-rouge">Contract</code> step will build the contract instance and register it under <code class="highlighter-rouge">self["contract.default"]</code>, which will then be used in the <code class="highlighter-rouge">Validate</code> step.</p>
-
-<h3 id="explicit-naming">Explicit Naming</h3>
-
-<p>Explicit naming for the contract is possible, too.</p>
-
-<pre><code>class Create &lt; Trailblazer::Operation
-  class MyContract &lt; Reform::Form
-    property :title
-    validates :title, length: 2..33
-  end
-
-  step Model( Song, :new )
-  step Contract::Build( constant: MyContract, name: "form" )
-  step Contract::Validate( name: "form" )
-  step Contract::Persist( method: :sync, name: "form" )
-end
-</code></pre>
-
-<p>Here, you have to use the <code class="highlighter-rouge">name:</code> option to tell each step what dependency to use.</p>
-
 <h2 id="dependency-injection" data-magellan-target="dependency-injection">Dependency Injection</h2>
 
 <p>In fact, the operation doesn’t need any reference to a contract class at all.</p>
@@ -550,7 +515,7 @@ end
 )
 </code></pre>
 
-<p>This will work with any name if you follow <a href="#explicit-naming">the naming conventions</a>.</p>
+<p>This will work with any name if you follow <a href="#name">the naming conventions</a>.</p>
 
 <h2 id="manual-build" data-magellan-target="manual-build">Manual Build</h2>
 
@@ -600,11 +565,6 @@ result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a
 
 <p>Each result object responds to <code class="highlighter-rouge">success?</code>, <code class="highlighter-rouge">failure?</code>, and <code class="highlighter-rouge">errors</code>, which is an <code class="highlighter-rouge">Errors</code> object. TODO: design/document Errors. WE ARE CURRENTLY WORKING ON A UNIFIED API FOR ERRORS (FOR DRY AND REFORM).</p>
 
-<h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
-
-<p>—- do it yourself
-— -procedural</p>
-
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -615,19 +575,16 @@ result["result.contract.default"].errors.messages #=&gt; {:length=&gt;["is not a
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#overview-reform">Overview: Reform</a></li>
-<li><a href="#contract-definition">Contract Definition</a></li>
-<li><a href="#pipetree">Pipetree</a></li>
+<li><a href="#definition">Definition</a></li>
+<li><a href="#build">Build</a></li>
 <li><a href="#validate">Validate</a></li>
+<li><a href="#key">Key</a></li>
 <li><a href="#persist">Persist</a></li>
-<li><a href="#default-contract">Default Contract</a></li>
-<li><a href="#multiple-contracts">Multiple Contracts</a></li>
+<li><a href="#name">Name</a></li>
 <li><a href="#dry-schema">Dry-Schema</a></li>
-<li><a href="#extracting-params">Extracting Params</a></li>
-<li><a href="#naming-interface">Naming Interface</a></li>
 <li><a href="#dependency-injection">Dependency Injection</a></li>
 <li><a href="#manual-build">Manual Build</a></li>
 <li><a href="#result-object">Result Object</a></li>
-<li><a href="#cheatsheet">Cheatsheet</a></li>
         </ul>
       
 </nav>
