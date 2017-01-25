@@ -101,6 +101,22 @@ Internally, this macro will simply call `Form#validate` on the Reform object.
 Note that Reform comes with sophisticated deserialization semantics for nested forms, it might be worth reading [a bit about Reform](/gems/reform) to fully understand what you can do in the `Validate` step.
 {% endcallout %}
 
+## Key
+
+Per default, `Contract::Validate` will use `options["params"]` as the data to be validated. Use the `key:` option if you want to validate a nested hash from the original params structure.
+
+{{  "contract_test.rb:key" | tsnippet }}
+
+This automatically extracts the nested `"song"` hash.
+
+{{  "contract_test.rb:key-res" | tsnippet }}
+
+If that key isn't present in the params hash, the operation fails before the actual validation.
+
+{{  "contract_test.rb:key-res-false" | tsnippet }}
+
+Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.
+
 ## Persist
 
 To push validated data from the contract to the model(s), use `Persist`. Like `Validate`, this requires a contract to be set up beforehand.
@@ -117,38 +133,17 @@ You can also configure the `Persist` step to call `sync` instead of Reform's `sa
 
 This will only write the contract's data to the model without calling `save` on it.
 
+## Name
 
-## Default Contract
+Explicit naming for the contract is possible, too.
 
-You don't have to assign a name for a contract when using only one per operation.
+{{  "contract_test.rb:constant-name" | tsnippet }}
 
-{{  "contract_test.rb:overv-reform" | tsnippet : "contractonly" }}
+You have to use the `name:` option to tell each step what contract to use. The contract and its result will now use your name instead of `default`.
 
-The name will be `default`. The contract class will be available via `self["contract.default.class"]`.
+{{  "contract_test.rb:name-res" | tsnippet }}
 
-    Create["contract.default.class"] #=> Reform::Form subclass
-
-After running the operation, the contract instance is available via `self["contract.default"]`.
-
-    result = Create.(..)
-    result["contract.default"] #=> <Reform::Form ...>
-
-You can pass a name to `contract`.
-
-{{  "contract_test.rb:contract-name" | tsnippet : "pipe" }}
-
-## Multiple Contracts
-
-Since `contract` can be called multiple times, this allows you to maintain as many contracts as you need per operation.
-
-Naming also works when referencing constants.
-
-{{  "contract_test.rb:contract-ref" | tsnippet }}
-
-When using named contracts, you can still use the `Contract` macros, but now you need to say what contract you're referring to using the `name:` option.
-
-{{  "contract_test.rb:contract-name" | tsnippet : "contract" }}
-
+Use this if your operation has multiple contracts.
 
 ## Dry-Schema
 
@@ -176,13 +171,6 @@ Just reference the schema constant in the `contract` method.
 
 {{  "contract_test.rb:dry-schema-expl" | tsnippet }}
 
-## Extracting Params
-
-Per default, `Contract::Validate` will use `self["params"]` as the data to be validated. Use the `key:` option if you want to validate a nested hash from the original params structure.
-
-{{  "contract_test.rb:key" | tsnippet }}
-
-Note that string vs. symbol do matter here since the operation will simply do a hash lookup using the key you provided.
 
 ### Manual Extraction
 
@@ -194,13 +182,6 @@ Note that you have to set the `self["params.validate"]` field in your own step, 
 
 Keep in mind that `&` will deviate to the left track if your `extract_params!` logic returns falsey.
 
-### Name
-
-Explicit naming for the contract is possible, too.
-
-{{  "contract_test.rb:constant-name" | tsnippet }}
-
-Here, you have to use the `name:` option to tell each step what dependency to use.
 
 ## Dependency Injection
 
@@ -218,7 +199,7 @@ When calling, you now have to provide the default contract class as a dependency
 
 {{  "contract_test.rb:di-contract-call" | tsnippet }}
 
-This will work with any name if you follow [the naming conventions](#explicit-naming).
+This will work with any name if you follow [the naming conventions](#name).
 
 ## Manual Build
 
