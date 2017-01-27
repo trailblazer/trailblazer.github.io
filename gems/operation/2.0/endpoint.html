@@ -219,7 +219,7 @@ Trailblazer::Endpoint.new.(result)
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code># run operation.
-result = Song::Create.({ title: "SVT" }, "user.current" =&gt; User.root)
+result = Song::Create.({ title: "SVT" }, "current_user" =&gt; User.root)
 
 Trailblazer::Endpoint.new.(result) do |m|
   m.success         { |result| puts "Model #{result["model"]} was created successfully." }
@@ -275,7 +275,7 @@ class SongsController &lt; ApplicationController
   include Trailblazer::Endpoint::Controller
 
   def create
-    endpoint Song::Create, path: songs_path, args: [ params, { "user.current" =&gt; current_user } ]
+    endpoint Song::Create, path: songs_path, args: [ params, { "current_user" =&gt; current_user } ]
   end
 end
 </code></pre>
@@ -302,7 +302,7 @@ TODO: add descriptions once it’s stable.</li>
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class SongsController &lt; ApplicationController
   def create
-    endpoint Create, path: songs_path, args: [ params, { "user.current" =&gt; current_user } ] do |m|
+    endpoint Create, path: songs_path, args: [ params, { "current_user" =&gt; current_user } ] do |m|
       m.created { |result| render json: result["representer.serializer.class"].new(result["model"]), status: 999 }
     end
   end

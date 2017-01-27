@@ -178,7 +178,7 @@
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">params</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">id: </span><span class="mi">1</span> <span class="p">}</span>
 
-<span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"user.current"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span> <span class="c1"># just an example for the current user</span>
+<span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"current_user"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span> <span class="c1"># just an example for the current user</span>
 </code></pre>
 </div>
 
@@ -187,11 +187,11 @@
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
   <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="nb">self</span><span class="p">[</span><span class="s2">"user.current"</span><span class="p">]</span>
+    <span class="nb">puts</span> <span class="nb">self</span><span class="p">[</span><span class="s2">"current_user"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"user.current"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span> <span class="c1">#=&gt; "Object"</span>
+<span class="no">Create</span><span class="o">.</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">"current_user"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span> <span class="c1">#=&gt; "Object"</span>
 </code></pre>
 </div>
 
@@ -216,11 +216,11 @@
 
   <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="nb">puts</span> <span class="nb">self</span><span class="p">[</span><span class="s2">"contract.params.class"</span><span class="p">]</span>
-    <span class="nb">puts</span> <span class="nb">self</span><span class="p">[</span><span class="s2">"user.current"</span><span class="p">]</span>
+    <span class="nb">puts</span> <span class="nb">self</span><span class="p">[</span><span class="s2">"current_user"</span><span class="p">]</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="no">Create</span><span class="o">.</span><span class="p">({</span> <span class="ss">id: </span><span class="mi">1</span><span class="p">},</span> <span class="s2">"user.current"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span>
+<span class="no">Create</span><span class="o">.</span><span class="p">({</span> <span class="ss">id: </span><span class="mi">1</span><span class="p">},</span> <span class="s2">"current_user"</span> <span class="o">=&gt;</span> <span class="no">Object</span><span class="p">)</span>
 <span class="c1">#=&gt; MyContract</span>
 <span class="c1">#=&gt; Object</span>
 </code></pre>
