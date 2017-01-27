@@ -37,7 +37,7 @@ Add your polices using the `Policy::Pundit` macro. It accepts the policy class n
 
 The step will create the policy instance automatically for you and passes the `"model"` and the `"current_user"` skill into the policies constructor. Just make sure those dependencies are available before the step is executed.
 
-If the policy returns `falsey`, it [deviates to the left track](pipetree.html).
+If the policy returns `falsey`, it [deviates to the left track](api.html#flow-control-step).
 
 After running the `Pundit` step, its result is readable from the `Result` object.
 
