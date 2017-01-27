@@ -62,14 +62,19 @@ Naturally, this works both ways.
 
 The same concept can also be applied to content. If you need to map a property to the top-level node's content, use the `:content` option. Again, _top-level_ refers to the document fragment that maps to the representer.
 
-    class SongRepresenter < Representable::Decorator
-      include Representable::XML
+```ruby
+class SongRepresenter < Representable::Decorator
+  include Representable::XML
 
-      property :title, content: true
-    end
+  property :title, content: true
+end
 
-    SongRepresenter.new(song).to_xml
-    #=> <song>Fallout</song>
+SongRepresenter.new(song).to_xml
+```
+
+```xml
+<song>Fallout</song>
+```
 
 ## Wrapping Collections
 
