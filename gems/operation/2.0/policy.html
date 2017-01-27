@@ -201,7 +201,7 @@ end
 
 <p>The step will create the policy instance automatically for you and passes the <code class="highlighter-rouge">"model"</code> and the <code class="highlighter-rouge">"current_user"</code> skill into the policies constructor. Just make sure those dependencies are available before the step is executed.</p>
 
-<p>If the policy returns <code class="highlighter-rouge">falsey</code>, it <a href="pipetree.html">deviates to the left track</a>.</p>
+<p>If the policy returns <code class="highlighter-rouge">falsey</code>, it <a href="api.html#flow-control-step">deviates to the left track</a>.</p>
 
 <p>After running the <code class="highlighter-rouge">Pundit</code> step, its result is readable from the <code class="highlighter-rouge">Result</code> object.</p>
 
