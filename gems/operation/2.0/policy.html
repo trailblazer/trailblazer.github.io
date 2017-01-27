@@ -182,7 +182,7 @@ end
 <p>This policy will only pass when the operation is invoked as follows.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>Create.({}, "user.current" =&gt; Module)
+<pre class="highlight"><code>Create.( {}, "current_user" =&gt; User.find(1) )
 </code></pre>
 </div>
 
