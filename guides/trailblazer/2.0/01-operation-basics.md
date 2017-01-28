@@ -10,14 +10,14 @@ redirect_from: "/guides/trailblazer/2.0/01-getting-started-with-operation.html"
   {{ "app/blog_post/operation/create.rb:failure:../trailblazer-guides:operation-01" | tsnippet : "impl" }}
 
   ~~~6
-  The *Operation* is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
+  The *Operation* is the central concept of the Trailblazer architecture. It's a simple service object that encapsulates and executes all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
 
-  Or, as in this guide, leading a small conversation and fixing the other person's mood.
+  In this guide we'll create a small example operation that's responsible for having a simple conversation and fixing the other person's mood.
 {% endrow %}
 
-In order to do so, the operation provides you an API to structure your business code into *steps*. Its API is heavily inspired by the "Railsway-oriented programming" pattern that combines structuring linear code, and error handling - but more on that later.
+Operation provides you with an API that lets you structure your business code into *steps*. Its API is heavily inspired by the "Railway-oriented programming" pattern that combines structuring linear code, and error handling - but more on that later.
 
-Don't let yourself trick into the thinking the operation is a "god object", as it's been called by critics. The opposite is the case: the operation knows what to orchestrates and when, however, it has zero knowledge about the *how* since the implementation of the steps are hidden from it.
+Don't let yourself be tricked into thinking the operation is a "god object", as it's been called by critics. The opposite is the case: while the operation knows *what* to orchestrate and *when*, it has zero knowledge about *how*, since the implementation of its steps is hidden from it.
 
 {% callout %}
 You can find the code for this page [here](https://github.com/trailblazer/guides/tree/operation-01).
@@ -30,13 +30,13 @@ In the [repository](https://github.com/trailblazer/guides/tree/operation-01) for
     gem "trailblazer-operation"
     gem "rspec"
 
-The `trailblazer-operation` gem gives you the `Trailblazer::Operation` class and its Railway semantics. Nothing more. It does *not* have any other dependencies, which is why it is a great idea to start learning Trailblazer with a setup as simple as possible.
+The `trailblazer-operation` gem gives you the `Trailblazer::Operation` class and its Railway semantics. Nothing more. It does *not* have any other dependencies, which is helpful as it means you can start learning Trailblazer with a setup as simple as possible.
 
-We will explore the operation's behavior using specs. This is my personal favorite way to play with new ideas or gems. If you prefer Minitest, you may do so, Trailblazer is not coupled to any specific test framework.
+We will explore the operation's behavior using specs. This is my personal favorite way to play with new ideas or gems. The examples here will use RSpec, but you can use Minitest if you prefer. Trailblazer is not coupled to any specific test framework.
 
 ## Our first Operation
 
-When implementing a blog website, it's probably quite handy to empower a user to write and create a blog post.
+When implementing a blog website, it's probably quite handy to give a user the ability to write and create a blog post.
 
 In most web frameworks like Rails, you'd start with a `PostsController` and an action `#create` that receives and processes a post form.
 
@@ -52,36 +52,36 @@ In most web frameworks like Rails, you'd start with a `PostsController` and an a
       end
     end
 
-In Trailblazer, this is identical, only that the entire *business code* to create a post is embraced by an operation. Leaving routing and rendering responses up to the controller, the operation solely focuses on domain logic. The nice thing here is that we can start coding without any web framework or routing, and even without thinking about HTTP - a deeply relaxing thought.
+Notice how the #create method encapsulates all the business logic involved in creating a post. In Trailblazer we follow the same philosophy of keeping our business logic in one place, but instead of placing it directly into the controller layer (where it's now tightly coupled to things like HTTP, routing, and rendering a response), we encapsulate everything within a separate class called an operation. The operation focuses solely on domain logic and leaves routing and rendering up to the controller, which also means that Trailblazer operations can be used with any Ruby framework, not just Rails. Another nice thing about this approach is that it means we can start coding our operations right away without any web framework or routing, and even without thinking about HTTP - a deeply relaxing thought.
 
-An operation is simply a Ruby object that can be run anywhere.
+An operation is simply a Ruby object that inherits from `Trailblazer::Operation` and that can be run anywhere.
 
-In `app/blog_post/operation/create.rb` I add an empty class.
+In `app/blog_post/operation/create.rb` I add an empty class:
 
 {{ "app/blog_post/operation/create.rb:op:../trailblazer-guides/:operation-01" | tsnippet }}
 
-`Create` is derived from `Trailblazer::Operation`. Do note that we're inheriting [a few dozens lines](https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb) of code here, only.
+`Create` is a subclass of `Trailblazer::Operation`, but it's worth noting that we're only actually inheriting [a few dozen lines](https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb) of code here.
 
 ## Naming
 
-The actual `Create` operation is put into the `BlogPost` namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named `BlogPost::Create`, a very expressive class name, don't you think?
+The actual `Create` operation is put into the `BlogPost` namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named `BlogPost::Create`; a very expressive class name, don't you think?
 
 Before adding any logic, let's run this very operation via a spec in `spec/blog_post/operation/create_spec.rb`.
 
 {{ "spec/blog_post/operation/create_spec.rb:fresh:../trailblazer-guides" | tsnippet }}
 
-In an empty test case, we invoke (or *call*) our yet unspoiled operation.
+In an empty test case, we invoke (or *call*) our as-yet unspoiled operation.
 
 ## Call
 
-That's right, there's only one way to run an operation, and that's the "`call` style". Confused? Here's how to spell that alternatively.
+That's right, there's only one way to run an operation, and that's the "`call` style". Confused? Here's an alternative way to spell `BlogPost::Create.()`:
 
     BlogPost::Create.call()
 
-This behavior is pure Ruby and was introduced in Ruby 1.9, if I remember correctly. While this might look bizarre to you at first glance, there's a profound reasoning behind this decision.
+`.()` is just an alias for `.call()`. This is pure Ruby, nothing to do with Trailblazer, and was introduced in Ruby 1.9 if I remember correctly. While it might look bizarre to you at first glance, there's a profound reasoning behind this decision.
 
 <!-- instantiation? -->
-An operation conceptually is a *function*, it does only one thing and doesn't need more than one public method. Since the operation's name reflect what it does, you don't need a method name. This is why in Trailblazer you will have many `call`able objects instead of one object with many methods.
+An operation, conceptually, is just a *function*. It does only one thing and doesn't need more than one public method. Since the operation's name reflect what it does, you don't need a method name. This is why in Trailblazer you will have many `call`able objects instead of one object with many methods.
 
 {% callout %}
 You will soon learn how this greatly improves your architecture since the functional approach minimizes internal state and the [associated mess it might create](https://apotonick.wordpress.com/2014/05/22/rails-misapprehensions-single-responsibility-principle/).
@@ -91,11 +91,11 @@ While our spec works, or at least no exception is raised, this is not very impre
 
 {{ "spec/blog_post/operation/create_spec.rb:puts:../trailblazer-guides" | tsnippet }}
 
-Calling an operation always gives you a *result object*. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. Why don't we make sure it didn't break?
+Calling an operation always gives you a *result object*. This object is used to transport state, communicate internals to the outer world, and to indicate whether or not the operation was successful. Why don't we make sure it didn't break?
 
 {{ "spec/blog_post/operation/create_spec.rb:success:../trailblazer-guides" | tsnippet }}
 
-The `Result#success?` method and its friend `failure?` are here to test that, from the caller perspective.
+The `Result#success?` method and its inverse `failure?` are here to test that, from the caller perspective.
 
 ## Baby Steps
 
@@ -103,27 +103,27 @@ It might be a good idea to actually add some logic to our operation. While we co
 
 {{ "app/blog_post/operation/create.rb:step:../trailblazer-guides/:operation-01" | tsnippet }}
 
-You can add steps with the [`step` method](http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step). It allows to implement steps using methods, [lambdas](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda) and [callable objects](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable). For simplicity, let's go with instance methods for now. The `hello_world!` method sits in the operation as an instance method. It receives some arguments that we'll learn about later. In the body, it's up to us to implement that step.
+You can add steps with the [`step` method](http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step). It allows you to implement steps using methods, [lambdas](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda) and [callable objects](http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable). For simplicity, let's start with instance methods. The `hello_world!` method sits in the operation as an instance method. It receives some arguments that we'll learn about later. In the body, it's up to us to implement that step.
 
 {% callout %}
-Suffixing step methods with a bang (e.g. `model!`) is purely style, it has no semantic.
+Suffixing step methods with a bang (e.g. `model!`) is a purely stylistic choice; it has no semantic meaning.
 {% endcallout %}
 
 Running this operation will hopefully output something.
 
 {{ "spec/blog_post/operation/create_spec.rb:step:../trailblazer-guides" | tsnippet }}
 
-We can see a greeting on our command line. But, hang on, what's that? The operation didn't finish successful, our test just broke... after working with TRB for 2 minutes!
+We can see a greeting on our command line. But, hang on, what's that? The operation didn't finish successfuly, our test just broke... after working with TRB for 2 minutes!
 
 ## Step: Return Value Matters
 
-The operation fails because the return value of a `step` matters! If a step returns `nil` or `false` (aka. *falsey*), the operation's result will be marked as failed, and the following steps won't be executed,
+The operation fails because the return value of a `step` matters! If a step returns `nil` or `false` (aka. if it returns a *falsey* value - these are the only two falsey values in Ruby), the operation's result will be marked as failed, and any steps after the failing step won't be executed.
 
 Since `puts` will always return `nil` (and [no one knows why](http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil)), we manually have to return a truthy value to make the next step be invoked.
 
 {{ "app/blog_post/operation/create.rb:return-value:../trailblazer-guides/:operation-01" | tsnippet }}
 
-It looks odd, and we should've simply used `p`, but it will probably make the spec pass.
+It looks odd, and we should've simply used `p` (which prints the string *and* returns a truthy value), but it will probably make the spec pass.
 
 {{ "spec/blog_post/operation/create_spec.rb:return-value:../trailblazer-guides" | tsnippet }}
 
@@ -153,7 +153,7 @@ The `hello_world!` step now returns `nil`, making the operation's flow "fail". W
 
 {{ "spec/blog_post/operation/create_spec.rb:breaking:../trailblazer-guides" | tsnippet }}
 
-The step following the "broken" step now doesn't get executed, anymore. Furthermore, the operation's result is a failure. Awesome, we broke things, and that's exactly what we wanted!
+The step following the "broken" step now doesn't get executed anymore. Furthermore, the operation's result is a failure. Awesome, we broke things, and that's exactly what we wanted!
 
 ## Basic Flow Control
 
