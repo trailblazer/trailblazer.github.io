@@ -115,7 +115,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">01- Operation Basics</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 24 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 04 February 2017</span>
 
   
     <span class="doc-last-updated">
@@ -156,16 +156,16 @@ end
 
       </div>
     <div class="column medium-6 ">
-        <p>The <em>Operation</em> is the central concept of the Trailblazer architecture. It is a simple service object that embraces and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.</p>
+        <p>The <em>Operation</em> is the central concept of the Trailblazer architecture. It’s a simple service object that encapsulates and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.</p>
 
-<p>Or, as in this guide, leading a small conversation and fixing the other person’s mood.</p>
+<p>In this guide we’ll create a small example operation that’s responsible for having a simple conversation and fixing the other person’s mood.</p>
 
       </div>
 </div></section>
 
-<p>In order to do so, the operation provides you an API to structure your business code into <em>steps</em>. Its API is heavily inspired by the “Railsway-oriented programming” pattern that combines structuring linear code, and error handling - but more on that later.</p>
+<p>Operation provides you with an API that lets you structure your business code into <em>steps</em>. Its API is heavily inspired by the “Railway-oriented programming” pattern that combines structuring linear code, and error handling - but more on that later.</p>
 
-<p>Don’t let yourself trick into the thinking the operation is a “god object”, as it’s been called by critics. The opposite is the case: the operation knows what to orchestrates and when, however, it has zero knowledge about the <em>how</em> since the implementation of the steps are hidden from it.</p>
+<p>Don’t let yourself be tricked into thinking the operation is a “god object”, as it’s been called by critics. The opposite is the case: while the operation knows <em>what</em> to orchestrate and <em>when</em>, it has zero knowledge about <em>how</em>, since the implementation of its steps is hidden from it.</p>
 
 <div class="callout">
   
@@ -183,13 +183,13 @@ gem "rspec"
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">trailblazer-operation</code> gem gives you the <code class="highlighter-rouge">Trailblazer::Operation</code> class and its Railway semantics. Nothing more. It does <em>not</em> have any other dependencies, which is why it is a great idea to start learning Trailblazer with a setup as simple as possible.</p>
+<p>The <code class="highlighter-rouge">trailblazer-operation</code> gem gives you the <code class="highlighter-rouge">Trailblazer::Operation</code> class and its Railway semantics. Nothing more. It does <em>not</em> have any other dependencies, which is helpful as it means you can start learning Trailblazer with a setup as simple as possible.</p>
 
-<p>We will explore the operation’s behavior using specs. This is my personal favorite way to play with new ideas or gems. If you prefer Minitest, you may do so, Trailblazer is not coupled to any specific test framework.</p>
+<p>We will explore the operation’s behavior using specs. This is my personal favorite way to play with new ideas or gems. The examples here will use RSpec, but you can use Minitest if you prefer. Trailblazer is not coupled to any specific test framework.</p>
 
 <h2 id="our-first-operation" data-magellan-target="our-first-operation">Our first Operation</h2>
 
-<p>When implementing a blog website, it’s probably quite handy to empower a user to write and create a blog post.</p>
+<p>When implementing a blog website, it’s probably quite handy to give a user the ability to write and create a blog post.</p>
 
 <p>In most web frameworks like Rails, you’d start with a <code class="highlighter-rouge">PostsController</code> and an action <code class="highlighter-rouge">#create</code> that receives and processes a post form.</p>
 
@@ -208,11 +208,11 @@ end
 </code></pre>
 </div>
 
-<p>In Trailblazer, this is identical, only that the entire <em>business code</em> to create a post is embraced by an operation. Leaving routing and rendering responses up to the controller, the operation solely focuses on domain logic. The nice thing here is that we can start coding without any web framework or routing, and even without thinking about HTTP - a deeply relaxing thought.</p>
+<p>Notice how the #create method encapsulates all the business logic involved in creating a post. In Trailblazer we follow the same philosophy of keeping our business logic in one place, but instead of placing it directly into the controller layer (where it’s now tightly coupled to things like HTTP, routing, and rendering a response), we encapsulate everything within a separate class called an operation. The operation focuses solely on domain logic and leaves routing and rendering up to the controller, which also means that Trailblazer operations can be used with any Ruby framework, not just Rails. Another nice thing about this approach is that it means we can start coding our operations right away without any web framework or routing, and even without thinking about HTTP - a deeply relaxing thought.</p>
 
-<p>An operation is simply a Ruby object that can be run anywhere.</p>
+<p>An operation is simply a Ruby object that inherits from <code class="highlighter-rouge">Trailblazer::Operation</code> and that can be run anywhere.</p>
 
-<p>In <code class="highlighter-rouge">app/blog_post/operation/create.rb</code> I add an empty class.</p>
+<p>In <code class="highlighter-rouge">app/blog_post/operation/create.rb</code> I add an empty class:</p>
 
 <pre><code>require "trailblazer/operation"
 
@@ -222,11 +222,11 @@ module BlogPost
 end
 </code></pre>
 
-<p><code class="highlighter-rouge">Create</code> is derived from <code class="highlighter-rouge">Trailblazer::Operation</code>. Do note that we’re inheriting <a href="https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb">a few dozens lines</a> of code here, only.</p>
+<p><code class="highlighter-rouge">Create</code> is a subclass of <code class="highlighter-rouge">Trailblazer::Operation</code>, but it’s worth noting that we’re only actually inheriting <a href="https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation.rb">a few dozen lines</a> of code here.</p>
 
 <h2 id="naming" data-magellan-target="naming">Naming</h2>
 
-<p>The actual <code class="highlighter-rouge">Create</code> operation is put into the <code class="highlighter-rouge">BlogPost</code> namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named <code class="highlighter-rouge">BlogPost::Create</code>, a very expressive class name, don’t you think?</p>
+<p>The actual <code class="highlighter-rouge">Create</code> operation is put into the <code class="highlighter-rouge">BlogPost</code> namespace. This is very common in Trailblazer: we leverage Ruby namespaces. This results in the beautiful operation class named <code class="highlighter-rouge">BlogPost::Create</code>; a very expressive class name, don’t you think?</p>
 
 <p>Before adding any logic, let’s run this very operation via a spec in <code class="highlighter-rouge">spec/blog_post/operation/create_spec.rb</code>.</p>
 
@@ -240,21 +240,21 @@ RSpec.describe BlogPost::Create do
 end
 </code></pre>
 
-<p>In an empty test case, we invoke (or <em>call</em>) our yet unspoiled operation.</p>
+<p>In an empty test case, we invoke (or <em>call</em>) our as-yet unspoiled operation.</p>
 
 <h2 id="call" data-magellan-target="call">Call</h2>
 
-<p>That’s right, there’s only one way to run an operation, and that’s the “<code class="highlighter-rouge">call</code> style”. Confused? Here’s how to spell that alternatively.</p>
+<p>That’s right, there’s only one way to run an operation, and that’s the “<code class="highlighter-rouge">call</code> style”. Confused? Here’s an alternative way to spell <code class="highlighter-rouge">BlogPost::Create.()</code>:</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>BlogPost::Create.call()
 </code></pre>
 </div>
 
-<p>This behavior is pure Ruby and was introduced in Ruby 1.9, if I remember correctly. While this might look bizarre to you at first glance, there’s a profound reasoning behind this decision.</p>
+<p><code class="highlighter-rouge">.()</code> is just an alias for <code class="highlighter-rouge">.call()</code>. This is pure Ruby, nothing to do with Trailblazer, and was introduced in Ruby 1.9 if I remember correctly. While it might look bizarre to you at first glance, there’s a profound reasoning behind this decision.</p>
 
 <!-- instantiation? -->
-<p>An operation conceptually is a <em>function</em>, it does only one thing and doesn’t need more than one public method. Since the operation’s name reflect what it does, you don’t need a method name. This is why in Trailblazer you will have many <code class="highlighter-rouge">call</code>able objects instead of one object with many methods.</p>
+<p>An operation, conceptually, is just a <em>function</em>. It does only one thing and doesn’t need more than one public method. Since the operation’s name reflect what it does, you don’t need a method name. This is why in Trailblazer you will have many <code class="highlighter-rouge">call</code>able objects instead of one object with many methods.</p>
 
 <div class="callout">
   
@@ -270,7 +270,7 @@ end
 end
 </code></pre>
 
-<p>Calling an operation always gives you a <em>result object</em>. It is used to transport state, communicate internals to the outer world, and to indicate whether or not this operation was successful. Why don’t we make sure it didn’t break?</p>
+<p>Calling an operation always gives you a <em>result object</em>. This object is used to transport state, communicate internals to the outer world, and to indicate whether or not the operation was successful. Why don’t we make sure it didn’t break?</p>
 
 <pre><code>it do
   result = BlogPost::Create.()
@@ -278,7 +278,7 @@ end
 end
 </code></pre>
 
-<p>The <code class="highlighter-rouge">Result#success?</code> method and its friend <code class="highlighter-rouge">failure?</code> are here to test that, from the caller perspective.</p>
+<p>The <code class="highlighter-rouge">Result#success?</code> method and its inverse <code class="highlighter-rouge">failure?</code> are here to test that, from the caller perspective.</p>
 
 <h2 id="baby-steps" data-magellan-target="baby-steps">Baby Steps</h2>
 
@@ -295,11 +295,11 @@ end
 end
 </code></pre>
 
-<p>You can add steps with the <a href="http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step"><code class="highlighter-rouge">step</code> method</a>. It allows to implement steps using methods, <a href="http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda">lambdas</a> and <a href="http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable">callable objects</a>. For simplicity, let’s go with instance methods for now. The <code class="highlighter-rouge">hello_world!</code> method sits in the operation as an instance method. It receives some arguments that we’ll learn about later. In the body, it’s up to us to implement that step.</p>
+<p>You can add steps with the <a href="http://trailblazer.to/gems/operation/2.0/api.html#flow-control-step"><code class="highlighter-rouge">step</code> method</a>. It allows you to implement steps using methods, <a href="http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-lambda">lambdas</a> and <a href="http://trailblazer.to/gems/operation/2.0/api.html#step-implementation-callable">callable objects</a>. For simplicity, let’s start with instance methods. The <code class="highlighter-rouge">hello_world!</code> method sits in the operation as an instance method. It receives some arguments that we’ll learn about later. In the body, it’s up to us to implement that step.</p>
 
 <div class="callout">
   
-<p>Suffixing step methods with a bang (e.g. <code>model!</code>) is purely style, it has no semantic.</p>
+<p>Suffixing step methods with a bang (e.g. <code>model!</code>) is a purely stylistic choice; it has no semantic meaning.</p>
 
 </div>
 
@@ -312,11 +312,11 @@ end
 end
 </code></pre>
 
-<p>We can see a greeting on our command line. But, hang on, what’s that? The operation didn’t finish successful, our test just broke… after working with TRB for 2 minutes!</p>
+<p>We can see a greeting on our command line. But, hang on, what’s that? The operation didn’t finish successfuly, our test just broke… after working with TRB for 2 minutes!</p>
 
 <h2 id="step-return-value-matters" data-magellan-target="step-return-value-matters">Step: Return Value Matters</h2>
 
-<p>The operation fails because the return value of a <code class="highlighter-rouge">step</code> matters! If a step returns <code class="highlighter-rouge">nil</code> or <code class="highlighter-rouge">false</code> (aka. <em>falsey</em>), the operation’s result will be marked as failed, and the following steps won’t be executed,</p>
+<p>The operation fails because the return value of a <code class="highlighter-rouge">step</code> matters! If a step returns <code class="highlighter-rouge">nil</code> or <code class="highlighter-rouge">false</code> (aka. if it returns a <em>falsey</em> value - these are the only two falsey values in Ruby), the operation’s result will be marked as failed, and any steps after the failing step won’t be executed.</p>
 
 <p>Since <code class="highlighter-rouge">puts</code> will always return <code class="highlighter-rouge">nil</code> (and <a href="http://stackoverflow.com/questions/14741329/why-are-all-my-puts-returning-nil">no one knows why</a>), we manually have to return a truthy value to make the next step be invoked.</p>
 
@@ -332,7 +332,7 @@ end
 end
 </code></pre>
 
-<p>It looks odd, and we should’ve simply used <code class="highlighter-rouge">p</code>, but it will probably make the spec pass.</p>
+<p>It looks odd, and we should’ve simply used <code class="highlighter-rouge">p</code> (which prints the string <em>and</em> returns a truthy value), but it will probably make the spec pass.</p>
 
 <pre><code>it do
   result = BlogPost::Create.()
@@ -408,7 +408,7 @@ end
 expect(result.failure?).to be_truthy
 </code></pre>
 
-<p>The step following the “broken” step now doesn’t get executed, anymore. Furthermore, the operation’s result is a failure. Awesome, we broke things, and that’s exactly what we wanted!</p>
+<p>The step following the “broken” step now doesn’t get executed anymore. Furthermore, the operation’s result is a failure. Awesome, we broke things, and that’s exactly what we wanted!</p>
 
 <h2 id="basic-flow-control" data-magellan-target="basic-flow-control">Basic Flow Control</h2>
 

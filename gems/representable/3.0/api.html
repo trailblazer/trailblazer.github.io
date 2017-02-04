@@ -451,7 +451,7 @@ end
 </code></pre>
 </div>
 
-<p>The <code class="highlighter-rouge">representation_wrap</code> from the nested representer now won’t be rendered nor parsed…</p>
+<p>The <code class="highlighter-rouge">representation_wrap</code> from the nested representer now won’t be rendered or parsed…</p>
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="no">Album</span> <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:songs</span><span class="p">)</span>
@@ -461,7 +461,7 @@ end
 </code></pre>
 </div>
 
-<p>.. and will result:</p>
+<p>.. and will result in:</p>
 
 <div class="language-json highlighter-rouge">
 <pre class="highlight"><code><span class="p">{</span><span class="nt">"songs"</span><span class="p">:[{</span><span class="nt">"title"</span><span class="p">:</span><span class="s2">"Fallout"</span><span class="p">,</span><span class="nt">"id"</span><span class="p">:</span><span class="mi">1</span><span class="p">}]}</span><span class="w">

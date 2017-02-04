@@ -193,15 +193,19 @@ end
 
 <p>The same concept can also be applied to content. If you need to map a property to the top-level node’s content, use the <code class="highlighter-rouge">:content</code> option. Again, <em>top-level</em> refers to the document fragment that maps to the representer.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class SongRepresenter &lt; Representable::Decorator
-  include Representable::XML
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+  <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">XML</span>
 
-  property :title, content: true
-end
+  <span class="n">property</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">content: </span><span class="kp">true</span>
+<span class="k">end</span>
 
-SongRepresenter.new(song).to_xml
-#=&gt; &lt;song&gt;Fallout&lt;/song&gt;
+<span class="no">SongRepresenter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">song</span><span class="p">).</span><span class="nf">to_xml</span>
+</code></pre>
+</div>
+
+<div class="language-xml highlighter-rouge">
+<pre class="highlight"><code><span class="nt">&lt;song&gt;</span>Fallout<span class="nt">&lt;/song&gt;</span>
 </code></pre>
 </div>
 
