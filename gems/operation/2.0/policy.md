@@ -25,7 +25,7 @@ Note that you don't have to create the model via the `Model` macro - you can use
 
 This policy will only pass when the operation is invoked as follows.
 
-    Create.({}, "user.current" => Module)
+    Create.( {}, "current_user" => User.find(1) )
 
 Any other call will cause a policy breach and stop the pipe from executing after the `Policy::Pundit` step.
 

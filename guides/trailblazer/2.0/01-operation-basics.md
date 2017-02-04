@@ -10,7 +10,7 @@ redirect_from: "/guides/trailblazer/2.0/01-getting-started-with-operation.html"
   {{ "app/blog_post/operation/create.rb:failure:../trailblazer-guides:operation-01" | tsnippet : "impl" }}
 
   ~~~6
-  The *Operation* is the central concept of the Trailblazer architecture. It's a simple service object that encapsulates and executes all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
+  The *Operation* is the central concept of the Trailblazer architecture. It's a simple service object that encapsulates and orchestrates all the business logic necessary to accomplish a certain task, such as creating a blog post, or updating a user.
 
   In this guide we'll create a small example operation that's responsible for having a simple conversation and fixing the other person's mood.
 {% endrow %}

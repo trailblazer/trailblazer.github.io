@@ -54,7 +54,7 @@ You no longer merge dependencies such as the current user into `params`, you can
 ```ruby
 params = { id: 1 }
 
-Create.(params, "user.current" => Object) # just an example for the current user
+Create.(params, "current_user" => Object) # just an example for the current user
 ```
 
 Any dependency passed into the operation is called *skill*. Skills, or dependencies, can be accessed via `#[]`.
@@ -62,11 +62,11 @@ Any dependency passed into the operation is called *skill*. Skills, or dependenc
 ```ruby
 class Create < Trailblazer::Operation
   def process(params)
-    puts self["user.current"]
+    puts self["current_user"]
   end
 end
 
-Create.(params, "user.current" => Object) #=> "Object"
+Create.(params, "current_user" => Object) #=> "Object"
 ```
 
 ## Skills
@@ -89,11 +89,11 @@ class Create < Trailblazer::Operation
 
   def process(params)
     puts self["contract.params.class"]
-    puts self["user.current"]
+    puts self["current_user"]
   end
 end
 
-Create.({ id: 1}, "user.current" => Object)
+Create.({ id: 1}, "current_user" => Object)
 #=> MyContract
 #=> Object
 ```

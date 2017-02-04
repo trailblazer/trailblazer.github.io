@@ -67,7 +67,7 @@ While `Matcher` is the authoritative source for deciding the state of the operat
 You can pass a block to `Endpoint#call` with your own handlers and hand in the `Result` object.
 
     # run operation.
-    result = Song::Create.({ title: "SVT" }, "user.current" => User.root)
+    result = Song::Create.({ title: "SVT" }, "current_user" => User.root)
 
     Trailblazer::Endpoint.new.(result) do |m|
       m.success         { |result| puts "Model #{result["model"]} was created successfully." }
@@ -114,7 +114,7 @@ Standard [handlers](#handlers) are provided for Rails and are meant to replace r
       include Trailblazer::Endpoint::Controller
 
       def create
-        endpoint Song::Create, path: songs_path, args: [ params, { "user.current" => current_user } ]
+        endpoint Song::Create, path: songs_path, args: [ params, { "current_user" => current_user } ]
       end
     end
 
@@ -135,7 +135,7 @@ To run your custom logic in a specific controller action, pass a block to `endpo
 
     class SongsController < ApplicationController
       def create
-        endpoint Create, path: songs_path, args: [ params, { "user.current" => current_user } ] do |m|
+        endpoint Create, path: songs_path, args: [ params, { "current_user" => current_user } ] do |m|
           m.created { |result| render json: result["representer.serializer.class"].new(result["model"]), status: 999 }
         end
       end
