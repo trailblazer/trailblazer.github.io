@@ -60,9 +60,8 @@ The public twin API is unbelievably simple.
 1. `Twin::new` creates and populates the twin.
 1. `Twin#"reader"` returns the value or nested twin of the property.
 1. `Twin#"writer"=(v)` writes the value to the twin, not the model.
-1. `Twin#sync` writes all values to the model.
-1. `Twin#save` writes all values to the model and calls `save` on configured models.
-
+1. `Twin#sync` writes all values to the model. Needs to be enabled explicity with `feature Sync`.
+1. `Twin#save` writes all values to the model, then calls `save` on configured models. Needs to be enabled explicity with `feature Save`.
 
 ## Constructor
 
@@ -162,20 +161,33 @@ twin.sync do |hash|
 end
 ```
 
-Invoking `sync` with block will _not_ write anything to the models. Note that `nil` values are included into the hash, too (0.4.0).
+Invoking `sync` with a block will _not_ write anything to the models. Note that `nil` values are included into the hash, too (0.4.0).
 
 ## Save
 
-Calling `#save` will do `sync` plus calling `save` on all nested models. This implies that the models need to implement `#save`.
+Calling `#save` will do `sync`, then call `save` on all nested models. This implies that the models need to implement `#save`. `save` is unavailable by default; you have to explicitly include it with `feature Save`:
 
 ```ruby
+class AlbumTwin < DispoableTwin
+  feature Sync
+  feature Save
+
+	property :title
+
+  collection :songs do
+    property :name
+    property :index
+  end
+end
+
+album = Album.find(1)
+twin  = AlbumTwin.new(album)
 twin.save
-#=> album.save
-#=>      .songs[0].save
+#=> syncs data back to the models, then calls:
+#=>   album.save
+#=>   album.songs.each { |song| song.save }
 
 ```
-
-Needs to be included explicitly (`Save`).
 
 ## Nested Twin
 
