@@ -23,7 +23,7 @@ Operations implement functions of your application, like creating a comment, fol
 
 Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistence layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.
 
-Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.
+Note that an operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.
 
 ## What It Looks Like
 
@@ -44,7 +44,7 @@ result = Song::Create.({ title: "SVT" })
     </p>
 
     <p>
-    The absence of a method name here is per design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
+    The absence of a method name here is by design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
     </p>
 
 <pre>
@@ -80,7 +80,7 @@ result = Song::Create.(
 
 
 
-The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with `if`s and `rescue`s. You can add your own, custom steps to that workflow and use Trailblazer's built-in macros.
+The operation's control flow is handled by a two-tracked pipe. This helps you deal with errors without littering your code with `if`s and `rescue`s. You can add your own, custom steps to that workflow and use Trailblazer's built-in macros.
 
 ## Flow Control
 
@@ -128,7 +128,7 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
 ~~~4
   <i class="engage fa fa-cogs"></i>
 
-  <code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.
+  <code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe in a <code>rescue</code> statement, a transaction, etc.
 
 ~~~4
   <i class="engage fa fa-search"></i>
@@ -140,14 +140,14 @@ Trailblazer comes with a set of helpful pipe macros that give you predefined ste
   <code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.
 {% endrow %}
 
-Macros are easily extendable and it's you can write your own application-wide macros.
+Macros are easily extendable and you can write your own application-wide macros.
 
 
 ## State and Result
 
 {% row %}
-~~~8
-  Each step in the operation can write to the *options* object that is passed from step to step, and in the end will be the result of the operation call.
+~~~7
+  Each step in the operation can write to the `options` object that is passed from step to step, and in the end will be in the result of the operation call.
 
     class Song::Update < Trailblazer::Operation
       step :find_model!
@@ -162,7 +162,7 @@ Macros are easily extendable and it's you can write your own application-wide ma
       end
     end
 
-~~~4
+~~~5
 
   Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.
 
