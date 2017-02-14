@@ -13,7 +13,7 @@ The return value of this public method (also called _state_) is what will be the
 
 ## Anatomy
 
-Cells are usually derived from `Cell::ViewModel`.
+Cells usually inherit from `Cell::ViewModel`.
 
 ```ruby
 class CommentCell < Cell::ViewModel
@@ -25,7 +25,7 @@ end
 
 When the `CommentCell` cell is invoked, its `show` method is called, the view is rendered, and returned as a HTML string.
 
-This snippet illustrates a _suffix cell_, because it is following the outdated Rails-style naming and file structure. We encourage you to use [Trailblazer cells](trailblazer.html). However, this document mostly specifies generic API.
+This snippet illustrates a _suffix cell_, because it follows the outdated Rails-style naming and file structure. We encourage you to use [Trailblazer cells](trailblazer.html). However, this document mostly describes the generic API.
 
 ## Show
 
@@ -39,7 +39,7 @@ def show
 end
 ```
 
-You're free to use return whatever string you desire, use your own rendering engine, or use cells `render` for templates.
+You're free to return whatever string you desire, use your own rendering engine, or use cells' `render` for templates.
 
 ## Manual Invocation
 
@@ -112,7 +112,7 @@ end
 
 ## Invocation
 
-Once you got the cell instance, you may call the rendering state. This happens via `ViewModel#call`.
+Once you've got the cell instance, you may call the rendering state. This happens via `ViewModel#call`.
 
 ```ruby
 cell.call(:show)
@@ -240,7 +240,7 @@ In a suffix environment, Cells expects the following file layout.
 
 Every cell - unless configured otherwise - has its own view  directory named after the cell's name (`comment`). Views do only have one extension to identify the template's format (`show.haml`). Again, you're free to provide arbitrary additional extensions.
 
-Note that the _suffix_ style is getting superseded by the [Trailblazer](trailblazer.html)-style naming and file structure.
+Note that the _suffix_ style shown above is deprecated, and will be superseded in Cells 5 by the [Trailblazer](trailblazer.html)-style naming and file structure.
 
 ## Render
 
@@ -368,18 +368,32 @@ This instantiates each collection cell as follows.
 CommentCell.new(comment, size: 9)
 ```
 
-The `join` method allows to customize the cell invocation. The block's return value is automatically joined.
+You can use the `join` method to customize how each item in the collection is invoked. The return value of the block is automatically inserted in between each rendered item in the collection0
 
 ```ruby
-cell(:comment, collection: Comment.all).join do |cell, i|
-  i.odd? cell.(:odd) : cell(:even)
+class CommentCell < Cell::ViewModel
+  def odd
+    "odd comment\n"
+  end
+
+  def even
+    "even comment\n"
+  end
 end
+
+cell(:comment, collection: Comment.all).join do |cell, i|
+  i.odd? ? cell.(:odd) : cell(:even)
+end
+# => "odd comment\neven comment\nodd comment\neven comment"
 ```
 
 An optional separator string can be passed to `join` when it concatenates the item fragments.
 
 ```ruby
 cell(:comment, collection: Comment.all).join("<hr/>") do |cell, i|
+  i.odd? ? cell.(:odd) : cell(:even)
+end
+# => "odd comment\n<hr/>even comment\n<hr/>odd comment\n<hr/>even comment"
 ```
 
 ## External Layout
@@ -431,12 +445,13 @@ class CommentCell < Cell::ViewModel
   self.view_paths = ["app/views"]
 ```
 
+Note that the default view paths are different if you're using the [Trailblazer-style file structure](trailblazer.html).
+
 ## Template Formats
 
-Cells provides a handful of popular Erb, Haml, etc.
+Cells provides support for a handful of popular template formats like ERB, Haml, etc.
 
-
-Various template engines are supported but need to be added to your Gemfile.
+You need to add the specific template engine to your Gemfile:
 
 * [cells-erb](https://github.com/trailblazer/cells-erb)
 * [cells-hamlit](https://github.com/trailblazer/cells-hamlit) We strongly recommend using [Hamlit](https://github.com/k0kubun/hamlit) as a Haml replacement.
@@ -457,7 +472,7 @@ end
 
 ## HTML Escaping
 
-Cells per default does no HTML escaping, anywhere. This is one of the reasons that makes Cells faster than Rails.
+Cells per default does no HTML escaping, anywhere. This is one of the reasons why Cells is much faster than Rails' ActionView.
 
 Include `Escaped` to make property readers return escaped strings.
 
@@ -480,22 +495,20 @@ You can suppress escaping manually.
       "#{title(escape: false)} on the edge!"
     end
 
-
-Of course, this works in views, too.
-
+Of course this works in views too:
 
     <%= title(escape: false) %>
 
 
 ## Context Object
 
-Per default, every cell maintains a context object. When [nesting cells](#nesting), this object passed on automatically. To add objects to the context, use the `:context` option.
+By default, every cell contains a context object. When [nesting cells](#nesting), this object gets passed in automatically. To add objects to the context, use the `:context` option.
 
 ```ruby
 cell("comment", comment, context: { user: current_user })
 ```
 
-Reading from the context works via the `context` method.
+You can read from the context object via the `context` method.
 
 ```ruby
 def show
@@ -506,8 +519,7 @@ end
 
 The context object is handy when dependencies need to be passed down (or up, when using layouts) a cell hierarchy.
 
-Note that the context object gets `dup`ed when adding to it in nested cells. This is to prevent leaking nested state back into parent objects.
-
+Note that the context object gets `dup`ed when adding to it into nested cells. This is to prevent leaking nested state back into parent objects.
 
 ## Nesting
 
@@ -525,7 +537,7 @@ The `cell` helper will automatically pass the context object to the nested cell.
 
 ## View Inheritance
 
-Cells can inherit code from each other with Ruby's inheritance.
+Cells can inherit code from each other through Ruby's regular inheritance mechanisms.
 
 ```ruby
 class CommentCell < Cell::ViewModel
@@ -555,7 +567,7 @@ PostCell.prefixes #=> ["app/cells/post", "app/cells/comment"]
 
 ## Builder
 
-Often, it is good practice to replace decider code from views or classes into separate sub-cells. Or in case you want to render a polymorphic collection, builders come in handy.
+Often, it's good practice to replace decider code from views or classes by extracting it out into separate sub-cells. Or in case you want to render a polymorphic collection, builders come in handy.
 
 Builders allow instantiating different cell classes for different models and options.
 
@@ -582,6 +594,7 @@ This also works with collections.
 ```ruby
 cell(:comment, collection: [@post, @comment]) #=> renders PostCell, then CommentCell.
 ```
+
 Multiple calls to `::builds` will be ORed. If no block returns a class, the original class will be used (`CommentCell`). Builders are inherited.
 
 
