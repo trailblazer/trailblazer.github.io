@@ -49,7 +49,6 @@
 
   </head>
   <body>
-
     <div data-sticky-container class="top-navbar">
   <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
     <div class="top-bar-title">
@@ -94,6 +93,13 @@
 </div>
 
 
+    <div class="secondary callout" data-closable>
+      <strong>TRB JOBS:</strong> Deutschsprachiger Ruby Developer in Hannover - <a href="/inc/jobs.html">Jaaaa!</a>
+      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
     <!-- Hero -->
 <div class="hero gems-hero disposable-hero">
   <div class="hero-unit">
@@ -115,7 +121,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Disposable API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 14 January 2017</span>
 
   
 
@@ -201,9 +207,9 @@ album.artist.email #=&gt; "duran@duran.com"
   <li>
 <code class="highlighter-rouge">Twin#"writer"=(v)</code> writes the value to the twin, not the model.</li>
   <li>
-<code class="highlighter-rouge">Twin#sync</code> writes all values to the model.</li>
+<code class="highlighter-rouge">Twin#sync</code> writes all values to the model. Needs to be enabled explicity with <code class="highlighter-rouge">feature Sync</code>.</li>
   <li>
-<code class="highlighter-rouge">Twin#save</code> writes all values to the model and calls <code class="highlighter-rouge">save</code> on configured models.</li>
+<code class="highlighter-rouge">Twin#save</code> writes all values to the model, then calls <code class="highlighter-rouge">save</code> on configured models. Needs to be enabled explicity with <code class="highlighter-rouge">feature Save</code>.</li>
 </ol>
 
 <h2 id="constructor" data-magellan-target="constructor">Constructor</h2>
@@ -315,21 +321,34 @@ end
 </code></pre>
 </div>
 
-<p>Invoking <code class="highlighter-rouge">sync</code> with block will <em>not</em> write anything to the models. Note that <code class="highlighter-rouge">nil</code> values are included into the hash, too (0.4.0).</p>
+<p>Invoking <code class="highlighter-rouge">sync</code> with a block will <em>not</em> write anything to the models. Note that <code class="highlighter-rouge">nil</code> values are included into the hash, too (0.4.0).</p>
 
 <h2 id="save" data-magellan-target="save">Save</h2>
 
-<p>Calling <code class="highlighter-rouge">#save</code> will do <code class="highlighter-rouge">sync</code> plus calling <code class="highlighter-rouge">save</code> on all nested models. This implies that the models need to implement <code class="highlighter-rouge">#save</code>.</p>
+<p>Calling <code class="highlighter-rouge">#save</code> will do <code class="highlighter-rouge">sync</code>, then call <code class="highlighter-rouge">save</code> on all nested models. This implies that the models need to implement <code class="highlighter-rouge">#save</code>. <code class="highlighter-rouge">save</code> is unavailable by default; you have to explicitly include it with <code class="highlighter-rouge">feature Save</code>:</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="n">twin</span><span class="p">.</span><span class="nf">save</span>
-<span class="c1">#=&gt; album.save</span>
-<span class="c1">#=&gt;      .songs[0].save</span>
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">AlbumTwin</span> <span class="o">&lt;</span> <span class="no">DispoableTwin</span>
+  <span class="n">feature</span> <span class="no">Sync</span>
+  <span class="n">feature</span> <span class="no">Save</span>
+
+	<span class="n">property</span> <span class="ss">:title</span>
+
+  <span class="n">collection</span> <span class="ss">:songs</span> <span class="k">do</span>
+    <span class="n">property</span> <span class="ss">:name</span>
+    <span class="n">property</span> <span class="ss">:index</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">album</span> <span class="o">=</span> <span class="no">Album</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">twin</span>  <span class="o">=</span> <span class="no">AlbumTwin</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">album</span><span class="p">)</span>
+<span class="n">twin</span><span class="p">.</span><span class="nf">save</span>
+<span class="c1">#=&gt; syncs data back to the models, then calls:</span>
+<span class="c1">#=&gt;   album.save</span>
+<span class="c1">#=&gt;   album.songs.each { |song| song.save }</span>
 
 </code></pre>
 </div>
-
-<p>Needs to be included explicitly (<code class="highlighter-rouge">Save</code>).</p>
 
 <h2 id="nested-twin" data-magellan-target="nested-twin">Nested Twin</h2>
 

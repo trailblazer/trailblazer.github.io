@@ -49,7 +49,6 @@
 
   </head>
   <body>
-
     <div data-sticky-container class="top-navbar">
   <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
     <div class="top-bar-title">
@@ -93,6 +92,13 @@
   </div>
 </div>
 
+
+    <div class="secondary callout" data-closable>
+      <strong>TRB JOBS:</strong> Deutschsprachiger Ruby Developer in Hannover - <a href="/inc/jobs.html">Jaaaa!</a>
+      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
 
     <!-- Hero -->
 <div class="hero gems-hero operation2-hero">
@@ -153,7 +159,7 @@
 
 <p>Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistence layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.</p>
 
-<p>Note that operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.</p>
+<p>Note that an operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.</p>
 
 <h2 id="what-it-looks-like" data-magellan-target="what-it-looks-like">What It Looks Like</h2>
 
@@ -174,7 +180,7 @@ result = Song::Create.({ title: "SVT" })
     </p>
 
     <p>
-    The absence of a method name here is per design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
+    The absence of a method name here is by design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
     </p>
 
 <pre>
@@ -228,7 +234,7 @@ end
 
 </section>
 
-<p>The operations control flow is handled by a two-tracked pipe. It helps you dealing with errors without littering your code with <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">rescue</code>s. You can add your own, custom steps to that workflow and use Trailblazer’s built-in macros.</p>
+<p>The operation’s control flow is handled by a two-tracked pipe. This helps you deal with errors without littering your code with <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">rescue</code>s. You can add your own, custom steps to that workflow and use Trailblazer’s built-in macros.</p>
 
 <h2 id="flow-control" data-magellan-target="flow-control">Flow Control</h2>
 
@@ -277,7 +283,7 @@ end
     <div class="column medium-4 ">
         <p><i class="engage fa fa-cogs"></i></p>
 
-<p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe into a <code>rescue</code> statement, a transaction, etc.</p>
+<p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe in a <code>rescue</code> statement, a transaction, etc.</p>
 
 
       </div>
@@ -295,14 +301,14 @@ end
       </div>
 </div></section>
 
-<p>Macros are easily extendable and it’s you can write your own application-wide macros.</p>
+<p>Macros are easily extendable and you can write your own application-wide macros.</p>
 
 <h2 id="state-and-result" data-magellan-target="state-and-result">State and Result</h2>
 
 <section class=" ">
   <div class="row">
-    <div class="column medium-8 ">
-        <p>Each step in the operation can write to the <em>options</em> object that is passed from step to step, and in the end will be the result of the operation call.</p>
+    <div class="column medium-7 ">
+        <p>Each step in the operation can write to the <code>options</code> object that is passed from step to step, and in the end will be in the result of the operation call.</p>
 
 <pre><code>class Song::Update &lt; Trailblazer::Operation
   step :find_model!
@@ -320,7 +326,7 @@ end
 
 
       </div>
-    <div class="column medium-4 ">
+    <div class="column medium-5 ">
         
 <p>Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.</p>
 
