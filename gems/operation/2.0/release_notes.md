@@ -180,7 +180,7 @@ The skill mechanics also support injecting [Dry::Container](https://github.com/d
 my_container = Dry::Container.new
 my_container.register("user_repository", -> { Object })
 
-Create.({}, my_container)["user_repository"] #=> Object
+Create.({}, {}, my_container)["user_repository"] #=> Object
 ```
 
 That means that all kinds of dependencies, such as contracts or policies, can be managed by Dry's loading and container logic.
