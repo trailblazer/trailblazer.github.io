@@ -170,7 +170,7 @@
 
 <h2 id="definition" data-magellan-target="definition">Definition</h2>
 
-<p>In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if you’re a PRO member) or simply define it using plain Ruby.</p>
+<p>In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if <a href="http://pro.trailblazer.to">you’re a PRO member</a>) or simply define it using plain Ruby.</p>
 
 <pre><code>activity = Circuit::Activity({id: "Blog/Publish"}) { |evt|
   {
@@ -185,43 +185,150 @@
 
 <p>The <code class="highlighter-rouge">Activity</code> function is a convenient tool to create an activity. Note that the yielded object allows to access <em>events</em> from the activity, such as the <code class="highlighter-rouge">Start</code> and <code class="highlighter-rouge">End</code> event that are created per default.</p>
 
-<p>This defines the control flow - the next step is to actually implement the tasks in this activity. A <em>task</em> usually maps to a particular box in your diagram.</p>
+<p>This defines the control flow - the next step is to actually implement the tasks in this activity.</p>
 
 <h2 id="task" data-magellan-target="task">Task</h2>
 
+<p>A <em>task</em> usually maps to a particular box in your diagram. Its API is very simple: a task needs to expose a <code class="highlighter-rouge">call</code> method, allowing it to be a lambda or any other callable object.</p>
+
+<pre><code>module Blog
+  Write = -&gt;(direction, options, *flow) do
+    options[:content] = "World peace!"
+    [ Circuit::Right, options, *flow ]
+  end
+</code></pre>
+
+<p>It receives all arguments returned from the task run before. This means a task should return everything it receives.</p>
+
+<p>To transport data across the flow, you can change the return value. In this example, we use one global hash <code class="highlighter-rouge">options</code> that is passed from task to task and used for writing.</p>
+
+<p>The first return value is crucial: it dictates what will be the next step when executing the flow.</p>
+
+<p>For example, the <code class="highlighter-rouge">SpellCheck</code> task needs to decide which route to take.</p>
+
+<pre><code>SpellCheck = -&gt;(direction, options, *flow) do
+  direction = options[:content].size &gt; 10 ? Circuit::Right : Circuit::Left
+  [ direction, options, *flow ]
+end
+</code></pre>
+
+<p>It’s as simple as returning the appropriate signal.</p>
+
+<div class="callout">
+  
+<p>You can use any object as a direction signal and return it, as long as it’s defined in the circuit.</p>
+
+</div>
+
 <h2 id="call" data-magellan-target="call">Call</h2>
+
+<p>After defining circuit and implementing the tasks, the circuit can be executed using its very own <code class="highlighter-rouge">call</code> method.</p>
+
+<pre><code>direction, options, flow = activity.(
+  activity[:Start],
+  { author: "Nick" }
+)
+</code></pre>
+
+<p>The first argument is where to start the circuit. Usually, this will be the activity’s <code class="highlighter-rouge">Start</code> event accessable via <code class="highlighter-rouge">activity[:Start]</code>.</p>
+
+<p>All options are passed straight to the first task, which in turn has to make sure it returns an appropriate result set.</p>
+
+<p>The activity’s return set is the last run task and all arguments from the last task.</p>
+
+<pre><code>direction #=&gt; #&lt;End: default {}&gt;
+options   #=&gt; {:author=&gt;"Nick", :content=&gt;"World peace!"}
+</code></pre>
+
+<p>As opposed to higher abstractions such as <code class="highlighter-rouge">Operation</code>, it is completely up to the developer what interfaces they provide to tasks and their return values. What is a mutable hash here could be an explicit array of return values in another implementation style, and so on.</p>
+
+<h2 id="tracing" data-magellan-target="tracing">Tracing</h2>
+
+<p>For debugging or simply understanding the flows of circuits, you can use tracing.</p>
+
+<pre><code>require "trailblazer/circuit/present"
+
+activity = Circuit::Activity({id: "Blog/Publish",
+  Blog::Write=&gt;"Blog::Write",Blog::SpellCheck=&gt;"Blog::SpellCheck",Blog::Correct=&gt;"Blog::Correct", Blog::Publish=&gt;"Blog::Publish" }) { |evt|
+  {
+    evt[:Start]      =&gt; { Circuit::Right =&gt; Blog::Write },
+    Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
+    Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::Publish    =&gt; { Circuit::Right =&gt; evt[:End] }
+  }
+}
+</code></pre>
+
+<p>The second argument to <code class="highlighter-rouge">Activity</code> takes debugging information, so you can set readable names for tasks.</p>
+
+<p>When invoking the activity, the <code class="highlighter-rouge">:runner</code> option will activate tracing and write debugging information about any executed task onto the <code class="highlighter-rouge">:stack</code> array.</p>
+
+<pre><code>stack=[]
+
+direction, options, flow = activity.(
+  activity[:Start],
+  { author: "Nick" },
+  runner: Trailblazer::Circuit::Trace.new, stack: stack
+)
+</code></pre>
+
+<p>The <code class="highlighter-rouge">stack</code> can then be passed to a presenter.</p>
+
+<pre><code>Circuit::Trace::Present.tree(stack)
+ |--&gt; #&lt;Start: default {}&gt;{:author=&gt;"Nick"}
+ |--&gt; Blog::Write{:author=&gt;"Nick", :content=&gt;"World peace!"}
+ |--&gt; Blog::SpellCheck{:author=&gt;"Nick", :content=&gt;"World peace!"}
+ |--&gt; Blog::Publish{:author=&gt;"Nick", :content=&gt;"World peace!"}
+ `--&gt; #&lt;End: default {}&gt;{:author=&gt;"Nick", :content=&gt;"World peace!"}
+</code></pre>
+
+<p>Tracing is extremely efficient to find out what is going wrong and supersedes cryptic debuggers by many times. Note that tracing also works for deeply nested circuits.</p>
+
+<div class="callout">
+  
+<p>🌅 In future versions of Trailblazer, our own debugger will take advantage of the explicit, traceable nature of circuits and also integrate with Ruby’s exception handling.</p>
+
+<p>Also, more options will make debugging of complex, nested workflows easier.</p>
+
+</div>
 
 <h2 id="event" data-magellan-target="event">Event</h2>
 
+<ul>
+  <li>how to add more ends, etc.</li>
+</ul>
+
+<h2 id="nested" data-magellan-target="nested">Nested</h2>
+
 <h2 id="operation" data-magellan-target="operation">Operation</h2>
 
-<h2 id="minimize-nil-errors" data-magellan-target="minimize-nil-errors">minimize Nil errors</h2>
+<p>If you need a higher abstraction of <code class="highlighter-rouge">circuit</code>, check out Trailblazer’s <a href="localhost:4000/gems/operation/2.0/api.html">operation</a> implemenation which provides a simple Railway-oriented interface to create linear circuits.</p>
 
-<ul>
-  <li>kw args guard input</li>
-</ul>
+<!-- ## minimize Nil errors
 
-<h2 id="architecture" data-magellan-target="architecture">ARCHITECTURE</h2>
+* kw args guard input
 
-<ul>
-  <li>Theoretically, you can build any network of circuits with <code class="highlighter-rouge">Circuit</code>, only.</li>
-  <li>DSL: <code class="highlighter-rouge">Activity</code> helps you building circuits and wiring them by exposing its events.</li>
-  <li>
-    <p><code class="highlighter-rouge">Task</code> is Options::KW. It will be converted to be its own circuit, so you can override and change things like KWs, what is returned, etc. ==&gt; do some benchmarks, and play with circuit-compiled.</p>
-  </li>
-  <li>An <code class="highlighter-rouge">Operation</code> simply is a <code class="highlighter-rouge">circuit</code>, with a limited, linear-only flow.</li>
-</ul>
+## ARCHITECTURE
 
-<h2 id="activity" data-magellan-target="activity">Activity</h2>
+* Theoretically, you can build any network of circuits with `Circuit`, only.
+* DSL: `Activity` helps you building circuits and wiring them by exposing its events.
+* `Task` is Options::KW. It will be converted to be its own circuit, so you can override and change things like KWs, what is returned, etc. ==> do some benchmarks, and play with circuit-compiled.
 
-<p>An <code class="highlighter-rouge">Activity</code> has start and end events. While <em>events</em> in BPMN have behavior and might trigger listeners, in <code class="highlighter-rouge">circuit</code> an event is simply a state. The activity always ends in an <code class="highlighter-rouge">End</code> state. It’s up to the user to interpret and trigger behavior.</p>
+* An `Operation` simply is a `circuit`, with a limited, linear-only flow.
 
-<h2 id="todo" data-magellan-target="todo">TODO:</h2>
 
-<ul>
-  <li>oPTIONS::kW</li>
-</ul>
 
+## Activity
+
+An `Activity` has start and end events. While *events* in BPMN have behavior and might trigger listeners, in `circuit` an event is simply a state. The activity always ends in an `End` state. It's up to the user to interpret and trigger behavior.
+
+
+
+## TODO:
+
+* oPTIONS::kW
+ -->
 
             </div>
 
@@ -237,12 +344,10 @@
 <li><a href="#definition">Definition</a></li>
 <li><a href="#task">Task</a></li>
 <li><a href="#call">Call</a></li>
+<li><a href="#tracing">Tracing</a></li>
 <li><a href="#event">Event</a></li>
+<li><a href="#nested">Nested</a></li>
 <li><a href="#operation">Operation</a></li>
-<li><a href="#minimize-nil-errors">minimize Nil errors</a></li>
-<li><a href="#architecture">ARCHITECTURE</a></li>
-<li><a href="#activity">Activity</a></li>
-<li><a href="#todo">TODO:</a></li>
         </ul>
       
 </nav>
