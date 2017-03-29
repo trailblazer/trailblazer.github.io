@@ -553,7 +553,7 @@ Even cooler, `PostCell` will now inherit views from `CommentCell`.
 PostCell.prefixes #=> ["app/cells/post", "app/cells/comment"]
 ```
 
-When views can't be found in the local `post` directory, they will be looked up in `comment`. This starts to become helpful when using [composed cells](#nested-cells).
+When views can't be found in the local `post` directory, they will be looked up in `comment`. This starts to become helpful when using [composed cells](#nesting).
 
 If you only want to inherit views, not the entire class, use `::inherit_views`.
 
@@ -655,7 +655,7 @@ You can expand the state's cache key by appending a versioner block to the `::ca
 
 ```ruby
 class CartCell < Cell::Rails
-  cache :show do |options|
+  cache :show do
     order.id
   end
 ```
@@ -666,7 +666,7 @@ As everywhere in Rails, you can also return an array.
 
 ```ruby
 class CartCell < Cell::Rails
-  cache :show do |options|
+  cache :show do
     [id, options[:items].md5]
   end
 ```

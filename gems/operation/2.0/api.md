@@ -204,7 +204,7 @@ This will **not** execute any steps on either track, but will result in a failed
 
 {{  "fast_test.rb:ffmeth-res" | tsnippet }}
 
-Note that you have to **return** `Step.fail_fast!` from the track. You can use this signal from any step, e.g. `step` or `failure`.
+Note that you have to **return** `Railway.fail_fast!` from the track. You can use this signal from any step, e.g. `step` or `failure`.
 
 <!-- ### Flow Control: Pass Fast
 

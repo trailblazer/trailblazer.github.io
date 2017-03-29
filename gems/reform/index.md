@@ -144,7 +144,7 @@ This usually happens in a processing controller action.
 After validation, the form's values reflect the validated data.
 
     @form.validate(title: "Greatest Hits")
-    @form.validate #=> "Greatest Hits"
+    @form.title #=> "Greatest Hits"
 
 Note that the model remains untouched - validation solely happens on the form object.
 
