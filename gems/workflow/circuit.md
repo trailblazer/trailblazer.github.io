@@ -37,27 +37,85 @@ Your job is solely to implement the tasks and deciders put into this activity - 
 
 ## Definition
 
-In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if you're a PRO member) or simply define it using plain Ruby.
+In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if [you're a PRO member](http://pro.trailblazer.to)) or simply define it using plain Ruby.
 
 {{ "test/docs/activity_test.rb:basic:../trailblazer-circuit" | tsnippet }}
 
 The `Activity` function is a convenient tool to create an activity. Note that the yielded object allows to access *events* from the activity, such as the `Start` and `End` event that are created per default.
 
-This defines the control flow - the next step is to actually implement the tasks in this activity. A *task* usually maps to a particular box in your diagram.
+This defines the control flow - the next step is to actually implement the tasks in this activity.
 
 ## Task
 
+A *task* usually maps to a particular box in your diagram. Its API is very simple: a task needs to expose a `call` method, allowing it to be a lambda or any other callable object.
 
+{{ "test/docs/activity_test.rb:write:../trailblazer-circuit" | tsnippet }}
+
+It receives all arguments returned from the task run before. This means a task should return everything it receives.
+
+To transport data across the flow, you can change the return value. In this example, we use one global hash `options` that is passed from task to task and used for writing.
+
+The first return value is crucial: it dictates what will be the next step when executing the flow.
+
+For example, the `SpellCheck` task needs to decide which route to take.
+
+{{ "test/docs/activity_test.rb:spell:../trailblazer-circuit" | tsnippet }}
+
+It's as simple as returning the appropriate signal.
+
+{% callout %}
+You can use any object as a direction signal and return it, as long as it's defined in the circuit.
+{% endcallout %}
 
 ## Call
 
+After defining circuit and implementing the tasks, the circuit can be executed using its very own `call` method.
 
+{{ "test/docs/activity_test.rb:call:../trailblazer-circuit" | tsnippet }}
+
+The first argument is where to start the circuit. Usually, this will be the activity's `Start` event accessable via `activity[:Start]`.
+
+All options are passed straight to the first task, which in turn has to make sure it returns an appropriate result set.
+
+The activity's return set is the last run task and all arguments from the last task.
+
+{{ "test/docs/activity_test.rb:call-ret:../trailblazer-circuit" | tsnippet }}
+
+As opposed to higher abstractions such as `Operation`, it is completely up to the developer what interfaces they provide to tasks and their return values. What is a mutable hash here could be an explicit array of return values in another implementation style, and so on.
+
+## Tracing
+
+For debugging or simply understanding the flows of circuits, you can use tracing.
+
+{{ "test/docs/activity_test.rb:trace-act:../trailblazer-circuit" | tsnippet }}
+
+The second argument to `Activity` takes debugging information, so you can set readable names for tasks.
+
+When invoking the activity, the `:runner` option will activate tracing and write debugging information about any executed task onto the `:stack` array.
+
+{{ "test/docs/activity_test.rb:trace-call:../trailblazer-circuit" | tsnippet }}
+
+The `stack` can then be passed to a presenter.
+
+{{ "test/docs/activity_test.rb:trace-res:../trailblazer-circuit" | tsnippet }}
+
+Tracing is extremely efficient to find out what is going wrong and supersedes cryptic debuggers by many times. Note that tracing also works for deeply nested circuits.
+
+{% callout %}
+🌅 In future versions of Trailblazer, our own debugger will take advantage of the explicit, traceable nature of circuits and also integrate with Ruby's exception handling.
+
+Also, more options will make debugging complex, nested workflows easier.
+{% endcallout %}
 
 ## Event
 
+* how to add more ends, etc.
+
 ## Operation
 
-## minimize Nil errors
+If you need a higher abstraction of `circuit`, check out Trailblazer's [operation](localhost:4000/gems/operation/2.0/api.html) implemenation which provides a simple Railway-oriented interface to create linear circuits.
+
+<!-- ## minimize Nil errors
 
 * kw args guard input
 
@@ -80,4 +138,4 @@ An `Activity` has start and end events. While *events* in BPMN have behavior and
 ## TODO:
 
 * oPTIONS::kW
-
+ -->
