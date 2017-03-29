@@ -416,7 +416,7 @@ end
 end
 </code></pre>
 
-<p>Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as <a href="(/gems/operation/2.0/policy.html#pundit)">pundit</a>.</p>
+<p>Check line 2. Guards are a good way to quickly implement access control, but I advise you to invest some time in a separated policy implementation such as <a href="/gems/operation/2.0/policy.html#pundit">pundit</a>.</p>
 
 <p>All <code class="highlighter-rouge">Policy</code> macros will leave a trace in the operation’s result object. Here’s the test snippet for anonymous users who will be declined.</p>
 
@@ -463,7 +463,7 @@ end
 end
 </code></pre>
 
-<p>This shortens our code even more, and reduces possible bugs. Of course, <code class="highlighter-rouge">Model</code> can also <a href="http://localhost:4000/gems/operation/2.0/api.html#model-findby">find records</a> as we will discover in the next chapter.</p>
+<p>This shortens our code even more, and reduces possible bugs. Of course, <code class="highlighter-rouge">Model</code> can also <a href="/gems/operation/2.0/api.html#model-findby">find records</a> as we will discover in the next chapter.</p>
 
 <p>Note that <code class="highlighter-rouge">Model</code> is <em>not</em> designed for complex query logic - should you need that, you might want to write your own step, use a query object or even combine both in a macro. Also, you can maintain multiple models, should you require that.</p>
 
@@ -473,7 +473,7 @@ end
 
 <p>As a next step, or better, as next steps, we need to bring the validation into the operation. Remember, in Trailblazer, you don’t want validations in the model or the controller. These go into <em>contracts</em>.</p>
 
-<p>Contracts are basically validations, and they can be simple callable objects you write yourself, or <code class="highlighter-rouge">Dry::Schema</code>s, or, and that’s what we do in this example, Reform objects. Luckily, the <code class="highlighter-rouge">Contract</code> macros make dealing with contracts (or forms, it’s the same!) very simple.</p>
+<p>Contracts are basically validations, and they can be simple callable objects you write yourself, or <code class="highlighter-rouge">Dry::Schema</code>s, or, as in this example, Reform objects. Luckily, the <code class="highlighter-rouge">Contract</code> macros make dealing with contracts (or forms, it’s the same!) very simple.</p>
 
 <pre><code>require_relative "../contract/create"
 
@@ -576,7 +576,7 @@ Contract::Build()
 <pre><code>step Contract::Validate( key: :blog_post )
 </code></pre>
 
-<p>Again, Reform’s API will be utilized here by Trailblazer. We discussed earlier that the operation is only an orchestrator knowing how to operate abstractions such as the contract, but it has no idea how.</p>
+<p>Again, Reform’s API will be utilized here by Trailblazer. We discussed earlier that the operation is only an orchestrator, knowing how to operate abstractions such as the contract, but having no further knowledge of how they work.</p>
 
 <p>What <code class="highlighter-rouge">Contract::Validate</code> will do at run-time could be expressed as follows.</p>
 
@@ -594,7 +594,7 @@ Contract::Validate( key: :blog_post )
   
 <p>It is incredibly important to understand the <code>:key</code> option here. <code>Validate</code> will extract the <code>blog_post:</code> fragment from the params hash, if you provide the <code>:key</code> option, and it won’t continue if it can’t find this key.</p>
 
-<p>Omitting <code>:key</code>, <code>Validate</code> will try to validate the entire params hash, which is fine if you don’t use wrappers. However, frameworks like Rails and gems such as <code>simple_form</code> always add this wrap, so be weary.</p>
+<p>Omitting <code>:key</code>, <code>Validate</code> will try to validate the entire params hash, which is fine if you don’t use wrappers. However, frameworks like Rails and gems such as <code>simple_form</code> always add this wrap, so be wary.</p>
 
 </div>
 
@@ -711,7 +711,7 @@ Contract::Persist( )
 </code></pre>
 </div>
 
-<p>The <a href="http://localhost:4000/gems/reform/api.html#save">contract’s <code class="highlighter-rouge">save</code> method</a> does exactly that for us, plus it saves the model.</p>
+<p>The <a href="/gems/reform/api.html#save">contract’s <code class="highlighter-rouge">save</code> method</a> does exactly that for us, plus it saves the model.</p>
 
 <p>And… our tests pass!</p>
 
@@ -719,13 +719,13 @@ Contract::Persist( )
 
 <h2 id="notify" data-magellan-target="notify">Notify</h2>
 
-<p>Speaking of <code class="highlighter-rouge">notify!</code>, this is the last step we need to review, and then you’re can call yourself a Trailblazer expert. In the current state of our application, <code class="highlighter-rouge">Notification</code> is just an empty class doing nothing.</p>
+<p>Speaking of <code class="highlighter-rouge">notify!</code>, this is the last step we need to review, and then you can call yourself a Trailblazer expert. In the current state of our application, <code class="highlighter-rouge">Notification</code> is just an empty class doing nothing.</p>
 
-<p>To sum up this chapter, I would like to keep it that way. A dedicated guide will talk about post-processing logic (<em>callbacks</em>), testing and mocking external services like mailers with dependency injections.</p>
+<p>To conclude this chapter, I would like to keep it that way. A dedicated guide will talk about post-processing logic (<em>callbacks</em>), testing and mocking external services like mailers with dependency injections.</p>
 
 <h2 id="summary" data-magellan-target="summary">Summary</h2>
 
-<p>You’re now ready to write full-blown operations implementing the entire workflow for a function of an application. Even though you could do all the steps yourself the TRB macros help you in doing so.</p>
+<p>You’re now ready to write full-blown operations implementing the entire workflow for a function of an application. Even though you could do all the steps yourself, the TRB macros help you in doing so.</p>
 
 <p>There might be open questions around contracts, but we will discuss them in a separate guide. If you can’t wait for it, have a look at the Trailblazer book, page 51 et seq. explain Reform in great detail.</p>
 

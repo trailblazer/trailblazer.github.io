@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation Overview</title>
-<meta name="description" content="Operation Overview - Trailblazer">
+<title>Trailblazer: Workflow: Circuit</title>
+<meta name="description" content="Workflow: Circuit - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,16 +36,16 @@
 </script>
 
 
-<meta property="og:title" content="Operation Overview">
+<meta property="og:title" content="Workflow: Circuit">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/">
-<meta property="og:description" content="An overview about the Operation in Trailblazer: an object that embraces and orchestrates all business logic for one function.">
+<meta property="og:url" content="http://trailblazer.to/gems/workflow/circuit.html">
+<meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation Overview">
-<meta name="twitter:description" content="An overview about the Operation in Trailblazer: an object that embraces and orchestrates all business logic for one function.">
-<meta name="twitter:image" content="http://trailblazer.to/images/diagrams/operation-2017-small.png">
+<meta name="twitter:title" content="Workflow: Circuit">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
   <body>
@@ -120,25 +120,9 @@
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation Overview</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 11 February 2017</span>
+  <h1 class="doc-page-title">Workflow: Circuit</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 March 2017</span>
 
-  
-    <span class="doc-last-updated">
-      <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
-
-      <a href="/gems/operation/2.0/index.html">
-      <span class="version">v2.0</span>
-      </a>
-
-    
-      <a href="/gems/operation/1.1/index.html">
-        <span class="version other">v1.1</span>
-      </a>
-    
-
-    </span>
   
 
   <hr>
@@ -149,275 +133,95 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p><img src="/images/diagrams/operation-2017-small.png" class="diagram left"></p>
+              <p>Circuit provides a simplified <a href="https://en.wikipedia.org/wiki/Flowchart">flowchart</a> implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual <em>circuit</em>) and execute it.</p>
 
-<p>An operation is a service object.</p>
+<p>Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.</p>
 
-<p>Its goal is simple: <strong>Remove all business logic from the controller and model and provide a separate, streamlined object for it.</strong></p>
+<p><code class="highlighter-rouge">Circuit</code> and <code class="highlighter-rouge">workflow</code> use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and flows. This document can be found in the <a href="http://trailblazer.to/gems/workflow/circuit.html">Trailblazer documentation</a>, too.</p>
 
-<p>Operations implement functions of your application, like creating a comment, following a user or exporting a PDF document. Sometimes this is also called <em>command</em>.</p>
+<div class="callout">
+  
+<p>The <code>circuit</code> gem is the lowest level of abstraction and is used in <code>operation</code> and <code>workflow</code>, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.</p>
 
-<p>Technically, an operation embraces and orchestrates all business logic between the controller dispatch and the persistence layer. This ranges from tasks as finding or creating a model, validating incoming data using a form object to persisting application state using model(s) and dispatching post-processing callbacks or even nested operations.</p>
+</div>
 
-<p>Note that an operation is not a monolithic god object, but a composition of many stakeholders. It is up to you to orchestrate features like policies, validations or callbacks.</p>
+<h2 id="installation" data-magellan-target="installation">Installation</h2>
 
-<h2 id="what-it-looks-like" data-magellan-target="what-it-looks-like">What It Looks Like</h2>
+<p>To use circuits, activities and nested tasks, you need one gem, only.</p>
 
-<section class="macros">
-  <div class="row">
-    <div class="column medium-6">
-    <p>
-      Operations are usually invoked straight from the controller action. They orchestrate all domain logic necessary to perform the app's function.
-    </p>
-<pre>
-<code>
-result = Song::Create.({ title: "SVT" })
-</code>
-</pre>
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"trailblazer-circuit"</span>
+</code></pre>
+</div>
 
-    <p>
-      There is only one way to run an operation: using <code>Operation.call</code>. This can also be written as <code>Operation.()</code>.
-    </p>
+<p>The <code class="highlighter-rouge">trailblazer-circuit</code> gem is often just called the <code class="highlighter-rouge">circuit</code> gem. It ships with the <code class="highlighter-rouge">operation</code> gem and implements the internal Railway.</p>
 
-    <p>
-    The absence of a method name here is by design: this object does only one thing, and hence <strong>what it does is reflected in the class name</strong>.
-    </p>
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
 
-<pre>
-<code>
-result = Song::Create.(
-  params,
-  "current_user" =&gt; Warden.get_user
-)
-</code>
-</pre>
+<p>The following diagram illustrates a common use-case for <code class="highlighter-rouge">circuit</code>, the task of publishing a blog post.</p>
 
-    <p>
-    You have to pass all runtime data to the operation in this call. <code>params</code>, current user, you name it.
-    </p>
+<p><img src="/images/diagrams/blog-bpmn1.png"></p>
 
-    </div>
+<p>After writing and spell-checking, the author has the chance to publish the post or, in case of typos, go back, correct, and go through the same flow, again. Note that there’s only a handful of defined transistions, or connections. An author, for example, is not allowed to jump from “correct” into “publish” without going through the check.</p>
 
-    <div class="column medium-6">
-    <p>
-    The implementation is a class.
-    </p>
+<p>The <code class="highlighter-rouge">circuit</code> gem allows you to define this <em>activity</em> and takes care of implementing the control flow, running the activity and making sure no invalid paths are taken.</p>
 
-<pre><code>class Song::Create &lt; Trailblazer::Operation
-  extend Contract::DSL
+<p>Your job is solely to implement the tasks and deciders put into this activity - you don’t have to take care of executing it in the right order, and so on.</p>
 
-  contract do
-    property :title
-    validates :title, presence: true
-  end
+<h2 id="definition" data-magellan-target="definition">Definition</h2>
 
-  step     Model( Song, :new )
-  step     :assign_current_user!
-  step     Contract::Build()
-  step     Contract::Validate( )
-  failure  :log_error!
-  step     Contract::Persist(  )
+<p>In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if you’re a PRO member) or simply define it using plain Ruby.</p>
 
-  def log_error!(options)
-    # ..
-  end
-
-  def assign_current_user!(options)
-    options["model"].created_by =
-      options["current_user"]
-  end
-end
+<pre><code>activity = Circuit::Activity({id: "Blog/Publish"}) { |evt|
+  {
+    evt[:Start]      =&gt; { Circuit::Right =&gt; Blog::Write },
+    Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
+    Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::Publish    =&gt; { Circuit::Right =&gt; evt[:End] }
+  }
+}
 </code></pre>
 
-    </div>
-  </div>
+<p>The <code class="highlighter-rouge">Activity</code> function is a convenient tool to create an activity. Note that the yielded object allows to access <em>events</em> from the activity, such as the <code class="highlighter-rouge">Start</code> and <code class="highlighter-rouge">End</code> event that are created per default.</p>
 
-</section>
+<p>This defines the control flow - the next step is to actually implement the tasks in this activity. A <em>task</em> usually maps to a particular box in your diagram.</p>
 
-<p>The operation’s control flow is handled by a two-tracked pipe. This helps you deal with errors without littering your code with <code class="highlighter-rouge">if</code>s and <code class="highlighter-rouge">rescue</code>s. You can add your own, custom steps to that workflow and use Trailblazer’s built-in macros.</p>
+<h2 id="task" data-magellan-target="task">Task</h2>
 
-<h2 id="flow-control" data-magellan-target="flow-control">Flow Control</h2>
+<h2 id="call" data-magellan-target="call">Call</h2>
 
-<section class="macros">
-  <div class="row">
-    <div class="column medium-3">
-      <img src="/images/diagrams/overview-flow-animated.gif">
-    </div>
+<h2 id="event" data-magellan-target="event">Event</h2>
 
-    <div class="column medium-4">
-      <p>
-        An operation has a two-tracked flow called a <em>pipe</em>. On the right track you add <em>steps</em> for the happy path, assuming no errors happen using <code>step</code>. They will executed in the order you add them.
-      </p>
+<h2 id="operation" data-magellan-target="operation">Operation</h2>
 
-      <p>
-        On the left track, you add error handler steps using <code>failure</code>. They work exactly like the right track, but won't be executed until you deviate from the right track.
-      </p>
-    </div>
+<h2 id="minimize-nil-errors" data-magellan-target="minimize-nil-errors">minimize Nil errors</h2>
 
-    <div class="column medium-5">
-<pre>
-<code>
-  step     Model( Song, :new )
-  step     :assign_current_user!
-  step     Contract::Build()
-  step     Contract::Validate( )
-  failure  :log_error!
-  step     Contract::Persist(  )
-</code>
-</pre>
-      <p>
-        Steps will deviate to the left track if their return value is falsey.
+<ul>
+  <li>kw args guard input</li>
+</ul>
 
-      </p>
-    </div>
+<h2 id="architecture" data-magellan-target="architecture">ARCHITECTURE</h2>
 
-  </div>
-</section>
+<ul>
+  <li>Theoretically, you can build any network of circuits with <code class="highlighter-rouge">Circuit</code>, only.</li>
+  <li>DSL: <code class="highlighter-rouge">Activity</code> helps you building circuits and wiring them by exposing its events.</li>
+  <li>
+    <p><code class="highlighter-rouge">Task</code> is Options::KW. It will be converted to be its own circuit, so you can override and change things like KWs, what is returned, etc. ==&gt; do some benchmarks, and play with circuit-compiled.</p>
+  </li>
+  <li>An <code class="highlighter-rouge">Operation</code> simply is a <code class="highlighter-rouge">circuit</code>, with a limited, linear-only flow.</li>
+</ul>
 
-<h2 id="macros" data-magellan-target="macros">Macros</h2>
+<h2 id="activity" data-magellan-target="activity">Activity</h2>
 
-<p>Trailblazer comes with a set of helpful pipe macros that give you predefined step logic to implement the most common tasks.</p>
+<p>An <code class="highlighter-rouge">Activity</code> has start and end events. While <em>events</em> in BPMN have behavior and might trigger listeners, in <code class="highlighter-rouge">circuit</code> an event is simply a state. The activity always ends in an <code class="highlighter-rouge">End</code> state. It’s up to the user to interpret and trigger behavior.</p>
 
-<section class=" ">
-  <div class="row">
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-cogs"></i></p>
+<h2 id="todo" data-magellan-target="todo">TODO:</h2>
 
-<p><code class="name"><a href="api.html#nested">Nested</a></code>, <code class="name"><a href="api.html#wrap">Wrap</a></code> and <code class="name"><a href="api.html#rescue">Rescue</a></code> help to nest operations, or wrap parts of the pipe in a <code>rescue</code> statement, a transaction, etc.</p>
+<ul>
+  <li>oPTIONS::kW</li>
+</ul>
 
-
-      </div>
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-search"></i></p>
-
-<p><code class="name">Contract::Build</code>, <code class="name">Validate</code> and <code class="name">Persist</code> help dealing with Dry schemas or Reform contracts to validate input, and push sane data to models.</p>
-
-      </div>
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-shield"></i></p>
-
-<p><code class="name"><a href="policy.html#guard">Guard</a></code> and <code class="name"><a href="policy.html#pundit">Policy::Pundit</a></code> are ideal steps to protect operations (or parts of it) from being run unauthorized.</p>
-
-      </div>
-</div></section>
-
-<p>Macros are easily extendable and you can write your own application-wide macros.</p>
-
-<h2 id="state-and-result" data-magellan-target="state-and-result">State and Result</h2>
-
-<section class=" ">
-  <div class="row">
-    <div class="column medium-7 ">
-        <p>Each step in the operation can write to the <code>options</code> object that is passed from step to step, and in the end will be in the result of the operation call.</p>
-
-<pre><code>class Song::Update &lt; Trailblazer::Operation
-  step :find_model!
-  step :assign_current_user!
-
-  def find_model!(options, params:, **)
-    options["model"] = Song.find_by(id: params[:id])
-  end
-
-  def assign_current_user!(options, current_user:, **)
-    options["model"].created_by = current_user
-  end
-end
-</code></pre>
-
-
-      </div>
-    <div class="column medium-5 ">
-        
-<p>Maintaining one stateful object, only, allows using callable objects and lambdas as steps as well.</p>
-
-<pre><code>class Song::Update &lt; Trailblazer::Operation
-  step MyCallable
-  step -&gt;(options, params:, **) { ... }
-</code></pre>
-
-<p>After running, this object is the result.</p>
-
-<pre><code>result = Song::Update.(id: 1, ..)
-
-result.success? #=&gt; true
-result["model"] #=&gt; #&lt;Song ..&gt;
-</code></pre>
-
-
-      </div>
-</div></section>
-
-<h2 id="testing" data-magellan-target="testing">Testing</h2>
-
-<section class=" ">
-  <div class="row">
-    <div class="column medium-6 ">
-        <p>Since operations embrace the entire workflow for an application’s function, you can write simple and fast unit-tests to assert the correct behavior.</p>
-
-<pre><code>describe Song::Create do
-  it "prohibits empty params" do
-    result = Song::Create.({})
-
-    expect(result).to be_failure
-    expect(result["model"]).to be_new
-  end
-end
-</code></pre>
-
-<p>All edge-cases and bugs can be tested via unit tests. Slow, inefficient integration tests are reduced to a minimum.</p>
-
-      </div>
-    <div class="column medium-6 ">
-        <p>Operations can also replace factories.</p>
-
-<pre><code>describe Song::Create do
-  let(:song) { Song::Create.(params) }
-</code></pre>
-
-<p>This will make sure your application test state is always inline with what happens in production. You won’t have an always diverging <em>factory vs. production state</em> ever again.</p>
-
-<p>Check out <a href="https://github.com/trailblazer/rspec-trailblazer">our Rspec gem</a> for TRB matcher integration. Matchers for Minitest are coming, too!</p>
-
-      </div>
-</div></section>
-
-<h2 id="learn-more" data-magellan-target="learn-more">Learn More</h2>
-
-<p>A mix of documentation and guides will help you to understand the operation quickly and how to use it to clean up existing codebases or start a new app.</p>
-
-<section class=" ">
-  <div class="row">
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-map"></i></p>
-
-<p>Read the <a href="api.html"><strong>→API DOCS</strong></a> to learn about the pipe and step implementations and what macros Trailblazer provides for you.</p>
-
-      </div>
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-book"></i></p>
-
-<p>Make sure to spend some hours reading the <a href="/guides/trailblazer/2.0/01-operation-basics.html"><strong>→GETTING STARTED</strong></a> guide.</p>
-
-<p>You will be ready to work with Trailblazer 2.</p>
-
-      </div>
-    <div class="column medium-4 ">
-        <p><i class="engage fa fa-comments-o"></i></p>
-
-<p>Jump on our public <a href="https://gitter.im/trailblazer/chat"><strong>→SUPPORT CHAT</strong></a>.</p>
-
-<p>It doesn’t matter whether you have specific questions or just want to chat about software architecture, whisky or TDD - we’ll be there!</p>
-
-      </div>
-</div></section>
-
-<section class=" ">
-  <div class="row">
-    <div class="column medium-12 text-center">
-        <p><a href="/guides/trailblazer/2.0/01-operation-basics" class="button">GET STARTED!</a></p>
-
-      </div>
-</div></section>
 
             </div>
 
@@ -428,12 +232,17 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#what-it-looks-like">What It Looks Like</a></li>
-<li><a href="#flow-control">Flow Control</a></li>
-<li><a href="#macros">Macros</a></li>
-<li><a href="#state-and-result">State and Result</a></li>
-<li><a href="#testing">Testing</a></li>
-<li><a href="#learn-more">Learn More</a></li>
+          <li><a href="#installation">Installation</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#definition">Definition</a></li>
+<li><a href="#task">Task</a></li>
+<li><a href="#call">Call</a></li>
+<li><a href="#event">Event</a></li>
+<li><a href="#operation">Operation</a></li>
+<li><a href="#minimize-nil-errors">minimize Nil errors</a></li>
+<li><a href="#architecture">ARCHITECTURE</a></li>
+<li><a href="#activity">Activity</a></li>
+<li><a href="#todo">TODO:</a></li>
         </ul>
       
 </nav>
