@@ -104,12 +104,14 @@ Tracing is extremely efficient to find out what is going wrong and supersedes cr
 {% callout %}
 🌅 In future versions of Trailblazer, our own debugger will take advantage of the explicit, traceable nature of circuits and also integrate with Ruby's exception handling.
 
-Also, more options will make debugging complex, nested workflows easier.
+Also, more options will make debugging of complex, nested workflows easier.
 {% endcallout %}
 
 ## Event
 
 * how to add more ends, etc.
+
+## Nested
 
 ## Operation
 
