@@ -3,6 +3,8 @@ layout: operation2
 title: "Workflow: Circuit"
 ---
 
+_Everything's a Circuit._
+
 Circuit provides a simplified [flowchart](https://en.wikipedia.org/wiki/Flowchart) implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual *circuit*) and execute it.
 
 Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.
@@ -104,8 +106,29 @@ Tracing is extremely efficient to find out what is going wrong and supersedes cr
 {% callout %}
 🌅 In future versions of Trailblazer, our own debugger will take advantage of the explicit, traceable nature of circuits and also integrate with Ruby's exception handling.
 
-Also, more options will make debugging of complex, nested workflows easier.
+Also, more available tracing options will make debugging of complex, nested workflows easier.
 {% endcallout %}
+
+## Connection
+
+A task is not limited to two outgoing connections.
+
+{% row %}
+  ~~~6
+<img src="/images/diagrams/blog-bpmn-tolerate.png">
+  ~~~6
+ Tasks can emit different types of direction signals and maintain many connections. The only requirement is that all possible signals are wired in the circuit.
+{% endrow %}
+
+You can emit any direction signal you want, and even use it to transport additional state. Using `Right` and `Left` is simply a convention following the mental image of a binary flow.
+
+{{ "test/docs/activity_test.rb:toll:../trailblazer-circuit" | tsnippet }}
+
+For example, the `SpellCheck3` task here emits a `:maybe` symbol which is then wired to the follow-up task `Warn`. Its implementation contains the decider that returns the appropriate direction.
+
+{{ "test/docs/activity_test.rb:toll-spell:../trailblazer-circuit" | tsnippet }}
+
+The decoupling of return values (directions) and the actual wiring is by design and allows to reconnect tasks and their outputs without having to change the implementation.
 
 ## Event
 
