@@ -133,7 +133,9 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>Circuit provides a simplified <a href="https://en.wikipedia.org/wiki/Flowchart">flowchart</a> implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual <em>circuit</em>) and execute it.</p>
+              <p><em>Everything’s a Circuit.</em></p>
+
+<p>Circuit provides a simplified <a href="https://en.wikipedia.org/wiki/Flowchart">flowchart</a> implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual <em>circuit</em>) and execute it.</p>
 
 <p>Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.</p>
 
@@ -193,7 +195,7 @@
 
 <pre><code>module Blog
   Write = -&gt;(direction, options, *flow) do
-    options[:content] = "World peace!"
+    options[:content] = options[:content].strip
     [ Circuit::Right, options, *flow ]
   end
 </code></pre>
@@ -207,7 +209,7 @@
 <p>For example, the <code class="highlighter-rouge">SpellCheck</code> task needs to decide which route to take.</p>
 
 <pre><code>SpellCheck = -&gt;(direction, options, *flow) do
-  direction = options[:content].size &gt; 10 ? Circuit::Right : Circuit::Left
+  direction = SpellChecker.error_count(options[:content]) ? Circuit::Right : Circuit::Left
   [ direction, options, *flow ]
 end
 </code></pre>
@@ -226,7 +228,7 @@ end
 
 <pre><code>direction, options, flow = activity.(
   activity[:Start],
-  { author: "Nick" }
+  { content: "Let's start writing   " } # gets trimmed in Write.
 )
 </code></pre>
 
@@ -237,7 +239,7 @@ end
 <p>The activity’s return set is the last run task and all arguments from the last task.</p>
 
 <pre><code>direction #=&gt; #&lt;End: default {}&gt;
-options   #=&gt; {:author=&gt;"Nick", :content=&gt;"World peace!"}
+options   #=&gt; {:content=&gt;"Let's start writing"}
 </code></pre>
 
 <p>As opposed to higher abstractions such as <code class="highlighter-rouge">Operation</code>, it is completely up to the developer what interfaces they provide to tasks and their return values. What is a mutable hash here could be an explicit array of return values in another implementation style, and so on.</p>
@@ -268,7 +270,7 @@ activity = Circuit::Activity({id: "Blog/Publish",
 
 direction, options, flow = activity.(
   activity[:Start],
-  { author: "Nick" },
+  { content: "Let's start writing" },
   runner: Trailblazer::Circuit::Trace.new, stack: stack
 )
 </code></pre>
@@ -276,11 +278,11 @@ direction, options, flow = activity.(
 <p>The <code class="highlighter-rouge">stack</code> can then be passed to a presenter.</p>
 
 <pre><code>Circuit::Trace::Present.tree(stack)
- |--&gt; #&lt;Start: default {}&gt;{:author=&gt;"Nick"}
- |--&gt; Blog::Write{:author=&gt;"Nick", :content=&gt;"World peace!"}
- |--&gt; Blog::SpellCheck{:author=&gt;"Nick", :content=&gt;"World peace!"}
- |--&gt; Blog::Publish{:author=&gt;"Nick", :content=&gt;"World peace!"}
- `--&gt; #&lt;End: default {}&gt;{:author=&gt;"Nick", :content=&gt;"World peace!"}
+ |--&gt; #&lt;Start: default {}&gt;{:content=&gt;"Let's start writing"}
+ |--&gt; Blog::Write{:content=&gt;"Let's start writing"}
+ |--&gt; Blog::SpellCheck{:content=&gt;"Let's start writing"}
+ |--&gt; Blog::Publish{:content=&gt;"Let's start writing"}
+ `--&gt; #&lt;End: default {}&gt;{:content=&gt;"Let's start writing"}
 </code></pre>
 
 <p>Tracing is extremely efficient to find out what is going wrong and supersedes cryptic debuggers by many times. Note that tracing also works for deeply nested circuits.</p>
@@ -289,9 +291,63 @@ direction, options, flow = activity.(
   
 <p>🌅 In future versions of Trailblazer, our own debugger will take advantage of the explicit, traceable nature of circuits and also integrate with Ruby’s exception handling.</p>
 
-<p>Also, more options will make debugging of complex, nested workflows easier.</p>
+<p>Also, more available tracing options will make debugging of complex, nested workflows easier.</p>
 
 </div>
+
+<h2 id="connection" data-magellan-target="connection">Connection</h2>
+
+<p>A task is not limited to two outgoing connections.</p>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-6 ">
+        <p><img src="/images/diagrams/blog-bpmn-tolerate.png"></p>
+
+
+      </div>
+    <div class="column medium-6 ">
+        <p>Tasks can emit different types of direction signals and maintain many connections. The only requirement is that all possible signals are wired in the circuit.</p>
+
+      </div>
+</div></section>
+
+<p>You can emit any direction signal you want, and even use it to transport additional state. Using <code class="highlighter-rouge">Right</code> and <code class="highlighter-rouge">Left</code> is simply a convention following the mental image of a binary flow.</p>
+
+<pre><code>activity = Circuit::Activity({id: "Blog/Publish"}) { |evt|
+  {
+    evt[:Start]       =&gt; { Circuit::Right =&gt; Blog::Write },
+    Blog::Write       =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
+    Blog::SpellCheck3 =&gt; {
+      Circuit::Right  =&gt; Blog::Publish,
+      Circuit::Left   =&gt; Blog::Correct,
+      :maybe          =&gt; Blog::Warn
+    },
+    Blog::Warn        =&gt; { Circuit::Right =&gt; Blog::Publish },
+    Blog::Correct     =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
+    Blog::Publish     =&gt; { Circuit::Right =&gt; evt[:End] }
+  }
+}
+</code></pre>
+
+<p>For example, the <code class="highlighter-rouge">SpellCheck3</code> task here emits a <code class="highlighter-rouge">:maybe</code> symbol which is then wired to the follow-up task <code class="highlighter-rouge">Warn</code>. Its implementation contains the decider that returns the appropriate direction.</p>
+
+<pre><code>Blog::SpellCheck3 = -&gt;(direction, options, *flow) do
+  error_count = SpellChecker.error_count(options[:content])
+  direction =
+    if error_count &lt;= 2 &amp;&amp; error_count &gt; 0
+      :maybe
+    elsif error_count &gt; 2
+      Circuit::Left
+    else
+      Circuit::Right
+    end
+
+  [ direction, options, *flow ]
+end
+</code></pre>
+
+<p>The decoupling of return values (directions) and the actual wiring is by design and allows to reconnect tasks and their outputs without having to change the implementation.</p>
 
 <h2 id="event" data-magellan-target="event">Event</h2>
 
@@ -345,6 +401,7 @@ An `Activity` has start and end events. While *events* in BPMN have behavior and
 <li><a href="#task">Task</a></li>
 <li><a href="#call">Call</a></li>
 <li><a href="#tracing">Tracing</a></li>
+<li><a href="#connection">Connection</a></li>
 <li><a href="#event">Event</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#operation">Operation</a></li>
