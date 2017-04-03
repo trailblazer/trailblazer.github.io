@@ -135,15 +135,15 @@
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
               <p><em>Everything’s a Circuit.</em></p>
 
-<p>Circuit provides a simplified <a href="https://en.wikipedia.org/wiki/Flowchart">flowchart</a> implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual <em>circuit</em>) and execute it.</p>
+<p>Circuit provides a generic <a href="https://en.wikipedia.org/wiki/Flowchart">flowchart</a> implementation for workflows.</p>
 
-<p>Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.</p>
+<p>A circuit is a flow composed of tasks with connections and terminals (for example, start or end state). Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.</p>
 
 <p><code class="highlighter-rouge">Circuit</code> and <code class="highlighter-rouge">workflow</code> use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and flows. This document can be found in the <a href="http://trailblazer.to/gems/workflow/circuit.html">Trailblazer documentation</a>, too.</p>
 
 <div class="callout">
   
-<p>The <code>circuit</code> gem is the lowest level of abstraction and is used in <code>operation</code> and <code>workflow</code>, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.</p>
+<p>The <code>circuit</code> gem is the lowest level of abstraction and is a very generic implemention. It is used in <code>operation</code> and <code>workflow</code>, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.</p>
 
 </div>
 
@@ -351,9 +351,52 @@ end
 
 <h2 id="event" data-magellan-target="event">Event</h2>
 
-<ul>
-  <li>how to add more ends, etc.</li>
-</ul>
+<p>Sometimes it is necessary to exit an activity using different end states, or <em>events</em>, as we call them in BPMN. An activity can have multiple end events.</p>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-6 ">
+        <p><img src="/images/diagrams/blog-bpmn-events.png"></p>
+
+
+      </div>
+    <div class="column medium-6 ">
+        <p>While <em>events</em> in BPMN have behavior and might trigger listeners, an event in <code>circuit</code> is simply a state. The activity always exits from an <code>End</code> state. It’s up to the user to interpret and trigger behavior.</p>
+
+<div class="callout">
+  
+<p>The <a href="/gems/workflow/index.html"><code>workflow</code> gem</a> adds additional semantics, real-time messaging, parallel activities, and suspend/resume events to the primitive circuit.</p>
+
+</div>
+
+      </div>
+</div></section>
+
+<p>Additional <code class="highlighter-rouge">End</code> events must be defined when creating the <code class="highlighter-rouge">Activity</code>.</p>
+
+<pre><code>activity = Circuit::Activity({id: "Blog/Publish"},
+  end: {
+    default: Circuit::End.new(:published),
+    warn:    Circuit::End.new(:warned),
+    wrong:   Circuit::End.new(:wrong)
+  }
+) { |evt|
+  {
+    evt[:Start]       =&gt; { Circuit::Right =&gt; Blog::Write },
+    Blog::Write       =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
+    Blog::SpellCheck3 =&gt; {
+      Circuit::Right  =&gt; Blog::Publish,
+      Circuit::Left   =&gt; evt[:End, :wrong],
+      :maybe          =&gt; Blog::Warn
+    },
+    Blog::Warn        =&gt; { Circuit::Right =&gt; evt[:End, :warn] },
+    Blog::Correct     =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
+    Blog::Publish     =&gt; { Circuit::Right =&gt; evt[:End] }
+  }
+}
+</code></pre>
+
+<p>Events are provided as the second <code class="highlighter-rouge">Activity</code> argument. All <code class="highlighter-rouge">:end</code> events will be considered stop events that exit the circuit.</p>
 
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
 
@@ -372,12 +415,6 @@ end
 * `Task` is Options::KW. It will be converted to be its own circuit, so you can override and change things like KWs, what is returned, etc. ==> do some benchmarks, and play with circuit-compiled.
 
 * An `Operation` simply is a `circuit`, with a limited, linear-only flow.
-
-
-
-## Activity
-
-An `Activity` has start and end events. While *events* in BPMN have behavior and might trigger listeners, in `circuit` an event is simply a state. The activity always ends in an `End` state. It's up to the user to interpret and trigger behavior.
 
 
 
