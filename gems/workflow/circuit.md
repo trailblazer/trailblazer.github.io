@@ -5,14 +5,14 @@ title: "Workflow: Circuit"
 
 _Everything's a Circuit._
 
-Circuit provides a simplified [flowchart](https://en.wikipedia.org/wiki/Flowchart) implementation with terminals (for example, start or end state), connectors and tasks (processes). It allows to define the flow (the actual *circuit*) and execute it.
+Circuit provides a generic [flowchart](https://en.wikipedia.org/wiki/Flowchart) implementation for workflows.
 
-Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.
+A circuit is a flow composed of tasks with connections and terminals (for example, start or end state). Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.
 
 `Circuit` and `workflow` use [BPMN](http://www.bpmn.org/) lingo and concepts for describing processes and flows. This document can be found in the [Trailblazer documentation](http://trailblazer.to/gems/workflow/circuit.html), too.
 
 {% callout %}
-The `circuit` gem is the lowest level of abstraction and is used in `operation` and `workflow`, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.
+The `circuit` gem is the lowest level of abstraction and is a very generic implemention. It is used in `operation` and `workflow`, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.
 {% endcallout %}
 
 ## Installation
@@ -132,7 +132,24 @@ The decoupling of return values (directions) and the actual wiring is by design 
 
 ## Event
 
-* how to add more ends, etc.
+Sometimes it is necessary to exit an activity using different end states, or *events*, as we call them in BPMN. An activity can have multiple end events.
+
+{% row %}
+  ~~~6
+<img src="/images/diagrams/blog-bpmn-events.png">
+  ~~~6
+While *events* in BPMN have behavior and might trigger listeners, an event in `circuit` is simply a state. The activity always exits from an `End` state. It's up to the user to interpret and trigger behavior.
+
+{% callout %}
+The [`workflow` gem](/gems/workflow/index.html) adds additional semantics, real-time messaging, parallel activities, and suspend/resume events to the primitive circuit.
+{% endcallout %}
+{% endrow %}
+
+Additional `End` events must be defined when creating the `Activity`.
+
+{{ "test/docs/activity_test.rb:events:../trailblazer-circuit" | tsnippet }}
+
+Events are provided as the second `Activity` argument. All `:end` events will be considered stop events that exit the circuit.
 
 ## Nested
 
@@ -151,12 +168,6 @@ If you need a higher abstraction of `circuit`, check out Trailblazer's [operatio
 * `Task` is Options::KW. It will be converted to be its own circuit, so you can override and change things like KWs, what is returned, etc. ==> do some benchmarks, and play with circuit-compiled.
 
 * An `Operation` simply is a `circuit`, with a limited, linear-only flow.
-
-
-
-## Activity
-
-An `Activity` has start and end events. While *events* in BPMN have behavior and might trigger listeners, in `circuit` an event is simply a state. The activity always ends in an `End` state. It's up to the user to interpret and trigger behavior.
 
 
 
