@@ -121,7 +121,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Workflow: Circuit</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 March 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 03 April 2017</span>
 
   
 
@@ -139,13 +139,15 @@
 
 <p>A circuit is a flow composed of tasks with connections and terminals (for example, start or end state). Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.</p>
 
-<p><code class="highlighter-rouge">Circuit</code> and <code class="highlighter-rouge">workflow</code> use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and flows. This document can be found in the <a href="http://trailblazer.to/gems/workflow/circuit.html">Trailblazer documentation</a>, too.</p>
+<p><code class="highlighter-rouge">Circuit</code> and <code class="highlighter-rouge">workflow</code> use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and flows.</p>
 
 <div class="callout">
   
 <p>The <code>circuit</code> gem is the lowest level of abstraction and is a very generic implemention. It is used in <code>operation</code> and <code>workflow</code>, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.</p>
 
 </div>
+
+<p><i class="fa fa-download" aria-hidden="true"></i> Where’s the <a href="https://github.com/trailblazer/trailblazer-circuit/blob/master/test/docs/activity_test.rb"><strong>EXAMPLE CODE?</strong></a></p>
 
 <h2 id="installation" data-magellan-target="installation">Installation</h2>
 
@@ -398,7 +400,57 @@ end
 
 <p>Events are provided as the second <code class="highlighter-rouge">Activity</code> argument. All <code class="highlighter-rouge">:end</code> events will be considered stop events that exit the circuit.</p>
 
+<p>When running the sample activity with toleratable typos in the <code class="highlighter-rouge">content</code> field, this will now result in the circuit stopping on <code class="highlighter-rouge">warned</code> end event.</p>
+
+<pre><code>direction, options, flow = activity.(
+  activity[:Start],
+  { content: " Let's sdart" }
+)
+
+direction #=&gt; #&lt;End: warned {}&gt;
+options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"}
+</code></pre>
+
+<p>Note how the last returned direction signal is now <code class="highlighter-rouge">warned</code> and not the <code class="highlighter-rouge">default</code> event.</p>
+
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
+
+<p>With complex workflows, it’s a good idea to structure flows into smaller activities, or <em>sub processes</em> (BPMN) and nest those. While a task could be a callable Ruby object, you can also nest activities.</p>
+
+<p><img src="/images/diagrams/blog-bpmn-nested.png"></p>
+
+<p>Existing activities can be composed into other activities using <code class="highlighter-rouge">Nested</code>.</p>
+
+<pre><code>complete = Circuit::Activity(
+  {id: "Shop, Blog"},
+  end: { default: Circuit::End.new(:default), error: Circuit::End.new(:error) }
+) do |evt|
+  {
+    evt[:Start] =&gt; { Circuit::Right =&gt; Shop },
+    Shop        =&gt; { Circuit::Right =&gt; _nested = Circuit::Nested(activity) },
+    _nested     =&gt; {
+      activity[:End, :default] =&gt; evt[:End], # connect published to our End.
+      activity[:End, :wrong]   =&gt; evt[:End, :error],
+      activity[:End, :warn]    =&gt; evt[:End, :error]
+    }
+  }
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">Nested</code> macro only calls the nested activity and simply forwards all its arguments on to the nested one, with one change: instead of passing the last direction, it will pass the nested’s <code class="highlighter-rouge">Start</code> signal when calling it. An optional second argument to <code class="highlighter-rouge">Nested</code> allows to change that “start” signal to anything.</p>
+
+<p>When the nested activity is finished, its return value is passed on to the outer activity. This allows to wire specific end events from the nested to different outputs.</p>
+
+<pre><code>direction, options, flow = complete.(
+  complete[:Start],
+  { content: " Let's sdart" }
+)
+
+direction #=&gt; #&lt;End: error {}&gt;
+options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"}
+</code></pre>
+
+<p>Engineering complex business workflows is best done using a BPMN editor and then use our circuit converter, or use <a href="/gems/workflow/index.html#editor">our online editor</a> right away.</p>
 
 <h2 id="operation" data-magellan-target="operation">Operation</h2>
 
