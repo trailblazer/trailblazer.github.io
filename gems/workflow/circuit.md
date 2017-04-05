@@ -9,11 +9,13 @@ Circuit provides a generic [flowchart](https://en.wikipedia.org/wiki/Flowchart) 
 
 A circuit is a flow composed of tasks with connections and terminals (for example, start or end state). Circuit refrains from implementing deciders. The decisions are encoded in the output signals of tasks.
 
-`Circuit` and `workflow` use [BPMN](http://www.bpmn.org/) lingo and concepts for describing processes and flows. This document can be found in the [Trailblazer documentation](http://trailblazer.to/gems/workflow/circuit.html), too.
+`Circuit` and `workflow` use [BPMN](http://www.bpmn.org/) lingo and concepts for describing processes and flows.
 
 {% callout %}
 The `circuit` gem is the lowest level of abstraction and is a very generic implemention. It is used in `operation` and `workflow`, which both provide higher-level APIs for the Railway pattern and complex BPMN workflows.
 {% endcallout %}
+
+<i class="fa fa-download" aria-hidden="true"></i> Where's the [**EXAMPLE CODE?**](https://github.com/trailblazer/trailblazer-circuit/blob/master/test/docs/activity_test.rb)
 
 ## Installation
 
@@ -151,7 +153,30 @@ Additional `End` events must be defined when creating the `Activity`.
 
 Events are provided as the second `Activity` argument. All `:end` events will be considered stop events that exit the circuit.
 
+When running the sample activity with toleratable typos in the `content` field, this will now result in the circuit stopping on `warned` end event.
+
+{{ "test/docs/activity_test.rb:events-call:../trailblazer-circuit" | tsnippet }}
+
+Note how the last returned direction signal is now `warned` and not the `default` event.
+
 ## Nested
+
+With complex workflows, it's a good idea to structure flows into smaller activities, or *sub processes* (BPMN) and nest those. While a task could be a callable Ruby object, you can also nest activities.
+
+<img src="/images/diagrams/blog-bpmn-nested.png">
+
+
+Existing activities can be composed into other activities using `Nested`.
+
+{{ "test/docs/activity_test.rb:nested:../trailblazer-circuit" | tsnippet }}
+
+The `Nested` macro only calls the nested activity and simply forwards all its arguments on to the nested one, with one change: instead of passing the last direction, it will pass the nested's `Start` signal when calling it. An optional second argument to `Nested` allows to change that "start" signal to anything.
+
+When the nested activity is finished, its return value is passed on to the outer activity. This allows to wire specific end events from the nested to different outputs.
+
+{{ "test/docs/activity_test.rb:nested-call:../trailblazer-circuit" | tsnippet }}
+
+Engineering complex business workflows is best done using a BPMN editor and then use our circuit converter, or use [our online editor](/gems/workflow/index.html#editor) right away.
 
 ## Operation
 
