@@ -660,15 +660,15 @@ Steps can be wrapped by an embracing step. This is necessary when defining a set
 
 {{  "wrap_test.rb:sequel-transaction" | tsnippet }}
 
-The `Wrap` macro helps you to define the wrapping code (such as a `Sequel.transaction` call) and allows you defining the wrapped steps.
+The `Wrap` macro helps you to define the wrapping code (such as a `Sequel.transaction` call) and allows you to define the wrapped steps. (Because of the precedence works in Ruby, you need to use `{...}` instead of `do...end`.)
 
 {{  "wrap_test.rb:sequel-transaction" | tsnippet : "wrap-only" }}
 
-As always, you can have steps before and after `Wrap` in the pipe. The block passed to `Wrap` allows defining the nested steps (you need to use `{...}` instead of `do...end`).
+As always, you can have steps before and after `Wrap` in the pipe.
 
 The proc passed to `Wrap` will be called when the pipe is executed, and receives `block`. `block.call` will execute the nested pipe.
 
-You may have any number of `Wrap` nesting.
+You may have any amount of `Wrap` nesting.
 
 ### Wrap: Return Value
 
