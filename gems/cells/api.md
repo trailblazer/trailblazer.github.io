@@ -396,6 +396,19 @@ end
 # => "odd comment\n<hr/>even comment\n<hr/>odd comment\n<hr/>even comment"
 ```
 
+Alternatively, if you just want to add some extra content in between each rendered item and don't need to customize how each item is invokved, you can call `join` with a separator and no block:
+
+```ruby
+class PostCell
+  def show
+    'My post'
+  end
+end
+
+cell(:post, collection: Post.all).join("<hr/>")
+# => "My post<hr/>My post<hr/>My post"
+```
+
 ## External Layout
 
 Since Cells 4.1, you can instruct your cell to use a second cell as a wrapper. This will first render your actual content cell, then pass the content via a block to the layout cell.
