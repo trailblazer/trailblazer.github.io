@@ -121,7 +121,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Operation API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 23 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 April 2017</span>
 
   
     <span class="doc-last-updated">
@@ -1220,7 +1220,7 @@ end
 end
 </code></pre>
 
-<p>The <code class="highlighter-rouge">Wrap</code> macro helps you to define the wrapping code (such as a <code class="highlighter-rouge">Sequel.transaction</code> call) and allows you defining the wrapped steps.</p>
+<p>The <code class="highlighter-rouge">Wrap</code> macro helps you to define the wrapping code (such as a <code class="highlighter-rouge">Sequel.transaction</code> call) and allows you to define the wrapped steps. (Because of the precedence works in Ruby, you need to use <code class="highlighter-rouge"><span class="p">{</span><span class="err">...</span><span class="p">}</span></code> instead of <code class="highlighter-rouge">do...end</code>.)</p>
 
 <pre><code>class Create &lt; Trailblazer::Operation
   # ...
@@ -1233,11 +1233,11 @@ end
 end
 </code></pre>
 
-<p>As always, you can have steps before and after <code class="highlighter-rouge">Wrap</code> in the pipe. The block passed to <code class="highlighter-rouge">Wrap</code> allows defining the nested steps (you need to use <code class="highlighter-rouge"><span class="p">{</span><span class="err">...</span><span class="p">}</span></code> instead of <code class="highlighter-rouge">do...end</code>).</p>
+<p>As always, you can have steps before and after <code class="highlighter-rouge">Wrap</code> in the pipe.</p>
 
 <p>The proc passed to <code class="highlighter-rouge">Wrap</code> will be called when the pipe is executed, and receives <code class="highlighter-rouge">block</code>. <code class="highlighter-rouge">block.call</code> will execute the nested pipe.</p>
 
-<p>You may have any number of <code class="highlighter-rouge">Wrap</code> nesting.</p>
+<p>You may have any amount of <code class="highlighter-rouge">Wrap</code> nesting.</p>
 
 <h3 id="wrap-return-value">Wrap: Return Value</h3>
 

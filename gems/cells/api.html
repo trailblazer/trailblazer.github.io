@@ -121,7 +121,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Cells API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 February 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 April 2017</span>
 
   
 
@@ -567,6 +567,20 @@
   <span class="n">i</span><span class="p">.</span><span class="nf">odd?</span> <span class="p">?</span> <span class="n">cell</span><span class="o">.</span><span class="p">(</span><span class="ss">:odd</span><span class="p">)</span> <span class="p">:</span> <span class="n">cell</span><span class="p">(</span><span class="ss">:even</span><span class="p">)</span>
 <span class="k">end</span>
 <span class="c1"># =&gt; "odd comment\n&lt;hr/&gt;even comment\n&lt;hr/&gt;odd comment\n&lt;hr/&gt;even comment"</span>
+</code></pre>
+</div>
+
+<p>Alternatively, if you just want to add some extra content in between each rendered item and don’t need to customize how each item is invokved, you can call <code class="highlighter-rouge">join</code> with a separator and no block:</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">PostCell</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="s1">'My post'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">cell</span><span class="p">(</span><span class="ss">:post</span><span class="p">,</span> <span class="ss">collection: </span><span class="no">Post</span><span class="p">.</span><span class="nf">all</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">"&lt;hr/&gt;"</span><span class="p">)</span>
+<span class="c1"># =&gt; "My post&lt;hr/&gt;My post&lt;hr/&gt;My post"</span>
 </code></pre>
 </div>
 
