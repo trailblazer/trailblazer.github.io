@@ -135,9 +135,9 @@ After defining the namespace URIs in the representers, you can map them to a doc
 
 {{ "test/xml_namespace_test.rb:map-class:../representable" | tsnippet }}
 
-Note how you also can use `:namespace` to reference a certain differing prefix per property.
+Note how you can also use `:namespace` to reference a certain differing prefix per property.
 
-When rendering or parsing, the local property will be extended, e.g. `author/name` will become `hr:author/hr:name`.
+When rendering or parsing, the local property will be extended, e.g. `/library/book/isbn` will become `/lib:library/lib:book/lib:isbn`.
 
 {{ "test/xml_namespace_test.rb:map-xml:../representable" | tsnippet }}
 
@@ -149,7 +149,7 @@ Namespaces also apply when parsing an XML document to an object structure. When 
 
 {{ "test/xml_namespace_test.rb:parse-call:../representable" | tsnippet }}
 
-In this example, only the `lib:character/hr:name` was parsed.
+In this example, only the `/lib:library/lib:book/lib:character/hr:name` was parsed.
 
 {{ "test/xml_namespace_test.rb:parse-res:../representable" | tsnippet }}
 
