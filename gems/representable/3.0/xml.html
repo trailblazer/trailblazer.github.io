@@ -247,9 +247,139 @@ album_representer.to_xml</p>
 </code></pre>
 </div>
 
-<h2 id="namespaces" data-magellan-target="namespaces">Namespaces</h2>
+<h2 id="namespace" data-magellan-target="namespace">Namespace</h2>
 
-<p>Support for namespaces are not yet implemented. However, if an incoming parsed document contains namespaces, you can automatically remove them.</p>
+<p>Namespaces in XML allow the use of different vocabularies, or set of names, in one document. <a href="http://books.xmlschemata.org/relaxng/relax-CHP-11-SECT-1.html">Read this great article</a> to share our fascination about them.</p>
+
+<p><i class="fa fa-download" aria-hidden="true"></i> Where’s the <a href="https://github.com/trailblazer/representable/blob/master/test/xml_namespace_test.rb"><strong>EXAMPLE CODE?</strong></a></p>
+
+<div class="callout">
+  
+<p>The <code>Namespace</code> module is available in Representable &gt;= 3.0.4. It doesn’t work with JRuby due to Nokogiri’s extremely complex implementation. Please wait for Representable 4.0 where we replace Nokogiri.</p>
+
+<p>For future-compat: <code>Namespace</code> only works in decorator classes, not modules.</p>
+
+</div>
+
+<h3 id="namespace-default">Namespace: Default</h3>
+
+<p>You can define <em>one</em> namespace per representer using <code class="highlighter-rouge">::namespace</code> to set the section’s default namespace.</p>
+
+<pre><code>class Library &lt; Representable::Decorator
+  feature Representable::XML
+  feature Representable::XML::Namespace
+
+  namespace "http://eric.van-der-vlist.com/ns/library"
+
+  property :book do
+    namespace "http://eric.van-der-vlist.com/ns/library"
+
+    property :id,  attribute: true
+    property :isbn
+  end
+end
+</code></pre>
+
+<p>Nested representers can be inline or classes (referenced via <code class="highlighter-rouge">:decorator</code>). Each class can maintain its own namespace.</p>
+
+<p>Without any mappings, the namespace will be used as the default one.</p>
+
+<pre><code>%{&lt;library xmlns="http://eric.van-der-vlist.com/ns/library"&gt;
+  &lt;book id="1"&gt;
+    &lt;isbn&gt;666&lt;/isbn&gt;
+  &lt;/book&gt;
+&lt;/library&gt;}
+</code></pre>
+
+<h3 id="namespace-prefix">Namespace: Prefix</h3>
+
+<p>After defining the namespace URIs in the representers, you can map them to a document-wide <em>prefix</em> in the top representer via <code class="highlighter-rouge">::namespace_def</code>.</p>
+
+<pre><code>class Library &lt; Representable::Decorator
+  feature Representable::XML
+  feature Representable::XML::Namespace
+
+  namespace "http://eric.van-der-vlist.com/ns/library"
+  namespace_def lib: "http://eric.van-der-vlist.com/ns/library"
+  namespace_def hr: "http://eric.van-der-vlist.com/ns/person"
+
+  property :book, class: Model::Book do
+    namespace "http://eric.van-der-vlist.com/ns/library"
+
+    property :id,  attribute: true
+    property :isbn
+
+    property :author, class: Model::Character do
+      namespace "http://eric.van-der-vlist.com/ns/person"
+
+      property :name
+      property :born
+    end
+
+    collection :character, class: Model::Character do
+      namespace "http://eric.van-der-vlist.com/ns/library"
+
+      property :qualification
+
+      property :name, namespace: "http://eric.van-der-vlist.com/ns/person"
+      property :born, namespace: "http://eric.van-der-vlist.com/ns/person"
+    end
+  end
+end
+</code></pre>
+
+<p>Note how you also can use <code class="highlighter-rouge">:namespace</code> to reference a certain differing prefix per property.</p>
+
+<p>When rendering or parsing, the local property will be extended, e.g. <code class="highlighter-rouge">author/name</code> will become <code class="highlighter-rouge">hr:author/hr:name</code>.</p>
+
+<pre><code>%{&lt;lib:library xmlns:lib=\"http://eric.van-der-vlist.com/ns/library\" xmlns:hr=\"http://eric.van-der-vlist.com/ns/person\"&gt;
+  &lt;lib:book id=\"1\"&gt;
+    &lt;lib:isbn&gt;666&lt;/lib:isbn&gt;
+    &lt;hr:author&gt;
+      &lt;hr:name&gt;Fowler&lt;/hr:name&gt;
+    &lt;/hr:author&gt;
+    &lt;lib:character&gt;
+      &lt;lib:qualification&gt;typed&lt;/lib:qualification&gt;
+      &lt;hr:name&gt;Frau Java&lt;/hr:name&gt;
+      &lt;hr:born&gt;1991&lt;/hr:born&gt;
+    &lt;/lib:character&gt;
+  &lt;/lib:book&gt;
+&lt;/lib:library&gt;}
+</code></pre>
+
+<p>The top representer will include all namespace definitions as <code class="highlighter-rouge">xmlns</code> attributes.</p>
+
+<h3 id="namespace-parse">Namespace: Parse</h3>
+
+<p>Namespaces also apply when parsing an XML document to an object structure. When defined, only the known, prefixed tags will be considered.</p>
+
+<pre><code>Library.new(lib).from_xml(%{&lt;lib:library xmlns:lib=\"http://eric.van-der-vlist.com/ns/library\" xmlns:hr=\"http://eric.van-der-vlist.com/ns/person\"&gt;
+ib:book id=\"1\"&gt;
+&lt;lib:isbn&gt;666&lt;/lib:isbn&gt;
+&lt;hr:author&gt;
+  &lt;hr:name&gt;Fowler&lt;/hr:name&gt;
+&lt;/hr:author&gt;
+&lt;lib:character&gt;
+  &lt;lib:qualification&gt;typed&lt;/lib:qualification&gt;
+  &lt;hr:name&gt;Frau Java&lt;/hr:name&gt;
+  &lt;bogus:name&gt;Mr. Ruby&lt;/hr:name&gt;
+  &lt;name&gt;Dr. Elixir&lt;/hr:name&gt;
+  &lt;hr:born&gt;1991&lt;/hr:born&gt;
+&lt;/lib:character&gt;
+lib:book&gt;
+b:library&gt;}
+</code></pre>
+
+<p>In this example, only the <code class="highlighter-rouge">lib:character/hr:name</code> was parsed.</p>
+
+<pre><code>lib.book.character[0].name #=&gt; "Frau Java"
+</code></pre>
+
+<p>If your incoming document has namespaces, please do use and specify them properly.</p>
+
+<h3 id="namespace-remove">Namespace: Remove</h3>
+
+<p>If an incoming document contains namespaces, but you don’t want to define them in your representers, you can automatically remove them.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class AlbumRepresenter &lt; Representable::Decorator
@@ -259,9 +389,14 @@ album_representer.to_xml</p>
 </code></pre>
 </div>
 
-<h2 id="development-status" data-magellan-target="development-status">Development Status</h2>
+<p>This will ditch the namespace prefix and parse all properties as if they never had any prefix in the document, e.g. <code class="highlighter-rouge">lib:author</code> becomes <code class="highlighter-rouge">author</code>.</p>
 
-<p>The <code class="highlighter-rouge">Representable::XML</code> module is currently not being further developed. If you are interested in working on it, feel free to PR. In case you need a feature but want us to build it, consider <a href="/inc/oss.html">hiring us</a> for an OSS feature project.</p>
+<div class="callout">
+  
+<p>Removing namespaces is a Nokogiri hack. It’s absolutely not recommended as it defeats the purpose of XML namespaces and might result in wrong values being parsed and interpreted.</p>
+
+</div>
+
 
             </div>
 
@@ -275,8 +410,7 @@ album_representer.to_xml</p>
           <li><a href="#tag-attributes">Tag Attributes</a></li>
 <li><a href="#mapping-content">Mapping Content</a></li>
 <li><a href="#wrapping-collections">Wrapping Collections</a></li>
-<li><a href="#namespaces">Namespaces</a></li>
-<li><a href="#development-status">Development Status</a></li>
+<li><a href="#namespace">Namespace</a></li>
         </ul>
       
 </nav>
