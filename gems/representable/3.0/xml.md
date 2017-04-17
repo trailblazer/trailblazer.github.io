@@ -106,6 +106,55 @@ Note that `:wrap` defines the container tag name.
 
 ## Namespace
 
+Namespaces in XML allow the use of different vocabularies, or set of names, in one document. [Read this great article](http://books.xmlschemata.org/relaxng/relax-CHP-11-SECT-1.html) to share our fascination about them.
+
+<i class="fa fa-download" aria-hidden="true"></i> Where's the [**EXAMPLE CODE?**](https://github.com/trailblazer/representable/blob/master/test/xml_namespace_test.rb)
+
+{% callout %}
+  The `Namespace` module is available in Representable >= 3.0.4. It doesn't work with JRuby due to Nokogiri's extremely complex implementation. Please wait for Representable 4.0 where we replace Nokogiri.
+
+  For future-compat: `Namespace` only works in decorator classes, not modules.
+{% endcallout %}
+
+
+### Namespace: Default
+
+You can define *one* namespace per representer using `::namespace` to set the section's default namespace.
+
+{{ "test/xml_namespace_test.rb:simple-class:../representable" | tsnippet }}
+
+Nested representers can be inline or classes (referenced via `:decorator`). Each class can maintain its own namespace.
+
+Without any mappings, the namespace will be used as the default one.
+
+{{ "test/xml_namespace_test.rb:simple-xml:../representable" | tsnippet }}
+
+### Namespace: Prefix
+
+After defining the namespace URIs in the representers, you can map them to a document-wide *prefix* in the top representer via `::namespace_def`.
+
+{{ "test/xml_namespace_test.rb:map-class:../representable" | tsnippet }}
+
+Note how you also can use `:namespace` to reference a certain differing prefix per property.
+
+When rendering or parsing, the local property will be extended, e.g. `author/name` will become `hr:author/hr:name`.
+
+{{ "test/xml_namespace_test.rb:map-xml:../representable" | tsnippet }}
+
+The top representer will include all namespace definitions as `xmlns` attributes.
+
+### Namespace: Parse
+
+Namespaces also apply when parsing an XML document to an object structure. When defined, only the known, prefixed tags will be considered.
+
+{{ "test/xml_namespace_test.rb:parse-call:../representable" | tsnippet }}
+
+In this example, only the `lib:character/hr:name` was parsed.
+
+{{ "test/xml_namespace_test.rb:parse-res:../representable" | tsnippet }}
+
+If your incoming document has namespaces, please do use and specify them properly.
+
 ### Namespace: Remove
 
 If an incoming document contains namespaces, but you don't want to define them in your representers, you can automatically remove them.
