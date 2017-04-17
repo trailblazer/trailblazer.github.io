@@ -104,16 +104,20 @@ Note that `:wrap` defines the container tag name.
 </album>
 ```
 
-## Namespaces
+## Namespace
 
-Support for namespaces are not yet implemented. However, if an incoming parsed document contains namespaces, you can automatically remove them.
+### Namespace: Remove
+
+If an incoming document contains namespaces, but you don't want to define them in your representers, you can automatically remove them.
 
     class AlbumRepresenter < Representable::Decorator
       include Representable::XML
 
       remove_namespaces!
 
+This will ditch the namespace prefix and parse all properties as if they never had any prefix in the document, e.g. `lib:author` becomes `author`.
 
-## Development Status
+{% callout %}
+  Removing namespaces is a Nokogiri hack. It's absolutely not recommended as it defeats the purpose of XML namespaces and might result in wrong values being parsed and interpreted.
+{% endcallout %}
 
-The `Representable::XML` module is currently not being further developed. If you are interested in working on it, feel free to PR. In case you need a feature but want us to build it, consider [hiring us](/inc/oss.html) for an OSS feature project.
