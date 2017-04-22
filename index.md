@@ -454,6 +454,12 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
         </div>
 
         <div class="column medium-2 text-center logo-leveler">
+          <a href="https://www.pollpush.com/" target="_blank">
+            <img src="/images/users/pollpush.png" />
+          </a>
+        </div>
+
+        <div class="column medium-2 text-center logo-leveler">
           <a href="https://www.clickfunnels.com/" target="_blank">
             <img src="/images/users/cf-logo-dark-blue.png" />
           </a>
