@@ -961,7 +961,7 @@ SongRepresenter.for_collection.new(songs).to_json
 <p>For parsing, you need to provide the class for the nested items. This happens via <code class="highlighter-rouge">collection_representer</code> in the representer class.</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
   <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
   <span class="n">property</span> <span class="ss">:title</span>
 
