@@ -684,7 +684,7 @@ Rendering a collection of objects comes for free, using `for_collection`.
 For parsing, you need to provide the class for the nested items. This happens via `collection_representer` in the representer class.
 
 ```ruby
-class SongsRepresenter < Representable::Decorator
+class SongRepresenter < Representable::Decorator
   include Representable::JSON
   property :title
 
