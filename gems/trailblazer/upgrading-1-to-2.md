@@ -39,9 +39,9 @@ Compat gem ships with the [TRB 1.1 code in the `V1_1` namespace](https://github.
 
 All your 1.1 legacy code can now be run in parallel to 2.x operations and workflows - you can upgrade old code and introduce the new semantics as you go. Please note that this does not slow down any runtime execution and mustn't be considered "dirty".
 
-## Upgrade Path / Overview
+## Upgrade Path
 
-Theoretically, you don't have to touch any 1.1 code at all.
+Theoretically, you don't have to touch any 1.1 code at all. The file structure is identical and all abstractions from 1.1 still exist (except for `Builder`). Only the internals of `Operation` have changed: you now structure your business code into steps on a "railway".
 
 1. You can keep old TRB1 operations.
 
@@ -94,7 +94,7 @@ Theoretically, you don't have to touch any 1.1 code at all.
 
 ## Macros
 
-In TRB2, step macros can do a lot of work for you. This used to be implemented in an overly complicated nested chain of methods. Macros simply return a callable object to be inserted into the railway.
+In TRB2, [step macros](/gems/operation/2.0/api.html#macro-api) can do a lot of work for you. This used to be implemented in an overly complicated nested chain of methods. Macros simply return a callable object to be inserted into the railway.
 
 ```ruby
 step Contract::Build( constant: Form::Create ) # used to happen in #validate
@@ -110,7 +110,42 @@ Always remember, calling a macro is calling a function that **returns a callable
 
 ## Model
 
-The `Model( )` macro replaces `model Song, :create|:find`. Make sure to change `:create` to `:new` as in 2.x, the action is simply passed on to ActiveRecord (or any other ORM).
+The [`Model( )` macro](/gems/operation/2.0/api.html#model) replaces `model Song, :create|:find`.
+
+Make sure to change `:create` to `:new` as in 2.x, the action is simply passed on to ActiveRecord (or any other ORM).
+
+```ruby
+step Model( Song, :new )
+```
+
+## Controller
+
+In TRB2, there is no `#present` and `#form` anymore. You can only `run` an operation.
+
+```ruby
+class SongsController < ApplicationController
+  def create
+    run Song::Create
+  end
+end
+```
+
+In turn, that means you need special operations if you want the model(s) or form(s) for rendering, only.
+
+```ruby
+class SongsController < ApplicationController
+  def show
+    run Song::Create::Present # gives you @model and @form.
+  end
+end
+```
+
+Note that in the operation code, you [don't need to create redundancy](#present).
+
+## Present
+
+## Test
+
 
 ## Development Status
 
