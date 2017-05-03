@@ -108,3 +108,39 @@ Contracts can be pure `dry-validation` schemas or Reform objects that can in tur
 ## Contract Rendering
 
 We now have the form and operation in place and are ready to hook that into the `BlogPostsController`'s `new` action.
+
+{{ "app/controllers/blog_posts_controller.rb:new:../trailblazer-guides:operation-03" | tsnippet }}
+
+The `run` method invokes the operation, optionally passes dependencies such as the `current_user` into the operation's `call`, and then sets some default variables such as `@model` and `@form` for you.
+
+{% callout %}
+The instance variables in the controller are only set for your convenience and could be retrieved via the result object, too. [→ API ](/gems/trailblazer/2.0/rails.html#run)
+{% endcallout %}
+
+After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via `render` and by passing the `@form` object to it.
+
+The `BlogPost::Cell::New` cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here's the cell view in `app/concepts/blog_post/view/new.slim`.
+
+{{ "app/concepts/blog_post/view/new.slim:new:../trailblazer-guides:operation-03" | tsnippet }}
+
+Submitting the form will POST it to `/blog_posts/`, which is the next controller action we have to implement.
+
+## Form Processing
+
+Again, we run an operation. This time it's `BlogPost::Create`.
+
+{{ "app/controllers/blog_posts_controller.rb:create:../trailblazer-guides:operation-03" | tsnippet }}
+
+A nice detail about `run` is: it executes an optional block when the operation was run successful. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.
+
+## Nested
+
+To understand how the operation knows whether or not it was run successful, we should have a look at the code in `app/concepts/blog_post/operation/create.rb`.
+
+{{ "app/concepts/blog_post/operation/create.rb:createop:../trailblazer-guides:operation-03" | tsnippet }}
+
+As you can see, we reuse the existing `Create::Present` to create the model and contract for it, and then run validation and persisting steps after it. This all happens [by leveraging `Nested`](http://localhost:4000/gems/operation/2.0/api.html#nested). It runs the `Create::Present` operation and copies the key/value pairs from its result object into the composing operation's result object.
+
+## Feature Tests
+
+## Operation Tests
