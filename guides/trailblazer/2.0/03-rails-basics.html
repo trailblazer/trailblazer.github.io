@@ -157,20 +157,27 @@
 
 <p>Here’s the <code class="highlighter-rouge">Gemfile</code>.</p>
 
-<pre><code>source 'https://rubygems.org'
+<pre><code>source "https://rubygems.org"
 
 gem "rails", "~&gt; 5.1"
 gem "activerecord"
 gem "sqlite3"
 
-gem 'simple_form'
-gem "formular", github: "trailblazer/formular"
+gem "simple_form"
+# gem "formular", github: "trailblazer/formular"
 gem "dry-validation"
 
 gem "trailblazer", "&gt;= 2.0.3"
-gem 'trailblazer-rails'
-gem 'trailblazer-cells'
-gem 'cells-rails'
+gem "trailblazer-rails", path: "../trailblazer-rails"
+gem "trailblazer-cells"
+gem "cells-rails"
+gem "cells-slim"
+
+
+group :test do
+  gem "rspec-rails"
+  gem "capybara"
+end
 </code></pre>
 
 <p>The <code class="highlighter-rouge">trailblazer-rails</code> gem makes the integration a walk in the park. It pulls and invokes the <a href="/gems/trailblazer/loader.html"><code class="highlighter-rouge">trailblazer-loader</code> gem</a> automatically for you <a href="https://github.com/trailblazer/trailblazer-rails/blob/master/lib/trailblazer/rails/railtie.rb">via a Railtie</a>. All Trailblazer files are eager-loaded.</p>
@@ -253,7 +260,7 @@ gem 'cells-rails'
 
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   class Present &lt; Trailblazer::Operation
-    step Policy::Guard( :authorize! )
+    # step Policy::Guard( :authorize! )
     step Model(BlogPost, :new)
     step Contract::Build( constant: BlogPost::Contract::Create )
 
@@ -303,6 +310,90 @@ end
 
 <p>We now have the form and operation in place and are ready to hook that into the <code class="highlighter-rouge">BlogPostsController</code>’s <code class="highlighter-rouge">new</code> action.</p>
 
+<pre><code>class BlogPostsController &lt; ApplicationController
+  def new
+    run BlogPost::Create::Present
+    render BlogPost::Cell::New, @form
+  end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">run</code> method invokes the operation, optionally passes dependencies such as the <code class="highlighter-rouge">current_user</code> into the operation’s <code class="highlighter-rouge">call</code>, and then sets some default variables such as <code class="highlighter-rouge">@model</code> and <code class="highlighter-rouge">@form</code> for you.</p>
+
+<div class="callout">
+  
+<p>The instance variables in the controller are only set for your convenience and could be retrieved via the result object, too. <a href="/gems/trailblazer/2.0/rails.html#run">→ API </a></p>
+
+</div>
+
+<p>After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via <code class="highlighter-rouge">render</code> and by passing the <code class="highlighter-rouge">@form</code> object to it.</p>
+
+<p>The <code class="highlighter-rouge">BlogPost::Cell::New</code> cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here’s the cell view in <code class="highlighter-rouge">app/concepts/blog_post/view/new.slim</code>.</p>
+
+<pre><code>.row.new
+  h1 New Post
+
+  = simple_form_for model do |f|
+    .row
+      .col-sm-12
+        = f.input :title, placeholder: "Title", label: false
+    .row
+      .col-sm-12
+        = f.input :body, placeholder: "What do you wanna say?", label: false
+    .row
+      .col-sm-12
+        = f.submit 'Create Post'
+</code></pre>
+
+<p>Submitting the form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
+
+<h2 id="form-processing" data-magellan-target="form-processing">Form Processing</h2>
+
+<p>Again, we run an operation. This time it’s <code class="highlighter-rouge">BlogPost::Create</code>.</p>
+
+<pre><code>def create
+  run BlogPost::Create do |result|
+    flash[:notice] = "#{result["model"].title} has been created"
+    return redirect_to "/posts"
+  end
+
+  render BlogPost::Cell::New, @form
+end
+</code></pre>
+
+<p>A nice detail about <code class="highlighter-rouge">run</code> is: it executes an optional block when the operation was run successful. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.</p>
+
+<h2 id="nested" data-magellan-target="nested">Nested</h2>
+
+<p>To understand how the operation knows whether or not it was run successful, we should have a look at the code in <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
+
+<pre><code>class BlogPost::Create &lt; Trailblazer::Operation
+  class Present &lt; Trailblazer::Operation
+    # step Policy::Guard( :authorize! )
+    step Model(BlogPost, :new)
+    step Contract::Build( constant: BlogPost::Contract::Create )
+
+    def authorize!(options, current_user:, **)
+      current_user == nil ? false : current_user.signed_in
+    end
+  end
+
+  step Nested( Present )
+  step Contract::Validate( )
+  step Contract::Persist( )
+  step :notify!
+
+  def notify!(options, current_user:, model:, **)
+    options["result.notify"] = BlogPost::Notification.(current_user, model)
+  end
+end
+</code></pre>
+
+<p>As you can see, we reuse the existing <code class="highlighter-rouge">Create::Present</code> to create the model and contract for it, and then run validation and persisting steps after it. This all happens <a href="http://localhost:4000/gems/operation/2.0/api.html#nested">by leveraging <code class="highlighter-rouge">Nested</code></a>. It runs the <code class="highlighter-rouge">Create::Present</code> operation and copies the key/value pairs from its result object into the composing operation’s result object.</p>
+
+<h2 id="feature-tests" data-magellan-target="feature-tests">Feature Tests</h2>
+
+<h2 id="operation-tests" data-magellan-target="operation-tests">Operation Tests</h2>
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -317,6 +408,10 @@ end
 <li><a href="#presentation-operation">Presentation Operation</a></li>
 <li><a href="#contract">Contract</a></li>
 <li><a href="#contract-rendering">Contract Rendering</a></li>
+<li><a href="#form-processing">Form Processing</a></li>
+<li><a href="#nested">Nested</a></li>
+<li><a href="#feature-tests">Feature Tests</a></li>
+<li><a href="#operation-tests">Operation Tests</a></li>
         </ul>
       
 </nav>
