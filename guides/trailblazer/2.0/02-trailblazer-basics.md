@@ -332,3 +332,8 @@ You're now ready to write full-blown operations implementing the entire workflow
 There might be open questions around contracts, but we will discuss them in a separate guide. If you can't wait for it, have a look at the Trailblazer book, page 51 et seq. explain Reform in great detail.
 
 In the next chapter we will discover how to use operations in Rails, where HTML forms get rendered and send input to endpoints. Exciting stuff!
+
+{% row %}
+  ~~~12,text-center
+  <a href="03-rails-basics" class="button">GO TO PART 3: RAILS BASICS!</a>
+{% endrow %}
