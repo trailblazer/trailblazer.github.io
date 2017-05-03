@@ -390,6 +390,8 @@ end
 
 <p>As you can see, we reuse the existing <code class="highlighter-rouge">Create::Present</code> to create the model and contract for it, and then run validation and persisting steps after it. This all happens <a href="http://localhost:4000/gems/operation/2.0/api.html#nested">by leveraging <code class="highlighter-rouge">Nested</code></a>. It runs the <code class="highlighter-rouge">Create::Present</code> operation and copies the key/value pairs from its result object into the composing operation’s result object.</p>
 
+<p>This is enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+
 <h2 id="feature-tests" data-magellan-target="feature-tests">Feature Tests</h2>
 
 <h2 id="operation-tests" data-magellan-target="operation-tests">Operation Tests</h2>
@@ -525,6 +527,7 @@ end
     </li>
     <li><a href="/guides/trailblazer/2.0/01-operation-basics.html">01 - Operation Basics</a></li>
     <li><a href="/guides/trailblazer/2.0/02-trailblazer-basics.html">02 - Trailblazer Basics</a></li>
+    <li><a href="/guides/trailblazer/2.0/03-rails-basics.html" class="active">03 - Rails Basics</a></li>
 </ul>
 
       </div>
