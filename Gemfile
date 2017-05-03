@@ -7,4 +7,5 @@ end
 
 gem "jekyll-last-modified-at"
 
-gem "torture", path: "../torture"
+# gem "torture", path: "../torture"
+gem "torture", git: "https://github.com/apotonick/torture"
