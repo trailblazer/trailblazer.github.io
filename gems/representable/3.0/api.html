@@ -123,7 +123,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Representable API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 27 January 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 27 April 2017</span>
 
   
 
@@ -961,7 +961,7 @@ SongRepresenter.for_collection.new(songs).to_json
 <p>For parsing, you need to provide the class for the nested items. This happens via <code class="highlighter-rouge">collection_representer</code> in the representer class.</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongRepresenter</span> <span class="o">&lt;</span> <span class="no">Representable</span><span class="o">::</span><span class="no">Decorator</span>
   <span class="kp">include</span> <span class="no">Representable</span><span class="o">::</span><span class="no">JSON</span>
   <span class="n">property</span> <span class="ss">:title</span>
 
