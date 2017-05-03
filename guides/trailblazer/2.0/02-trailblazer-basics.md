@@ -335,5 +335,5 @@ In the next chapter we will discover how to use operations in Rails, where HTML 
 
 {% row %}
   ~~~12,text-center
-  <a href="03-rails-basics" class="button">GO TO PART 3: RAILS BASICS!</a>
+  <a href="03-rails-basics.html" class="button">GO TO PART 3: RAILS BASICS!</a>
 {% endrow %}
