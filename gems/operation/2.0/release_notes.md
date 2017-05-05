@@ -7,6 +7,9 @@ Please find the complete list of [changes here](https://github.com/trailblazer/t
 
 Trailblazer 2.0.0 was released in December 2016.
 
+<a href="/gems/trailblazer/upgrading-1-to-2.html" class="button">→ UPGRADING GUIDE</a>
+
+
 ## Installation / Structure
 
 **We will provide installation instructions as soon as the code is presentable.**

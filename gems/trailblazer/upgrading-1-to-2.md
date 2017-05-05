@@ -1,6 +1,6 @@
 ---
 layout: operation2
-title: Trailblazer-Compat
+title: Trailblazer Upgrade 1.1 to 2.0
 gems:
   - ["trailblazer-compat", "trailblazer/trailblazer-compat", "0.1"]
 ---
@@ -118,9 +118,9 @@ Make sure to change `:create` to `:new` as in 2.x, the action is simply passed o
 step Model( Song, :new )
 ```
 
-## Controller
+## Present / Form
 
-In TRB2, there is no `#present` and `#form` anymore. You can only `run` an operation.
+In TRB2, there are no `#present` and `#form` anymore. You can only `run` an operation.
 
 ```ruby
 class SongsController < ApplicationController
@@ -130,22 +130,109 @@ class SongsController < ApplicationController
 end
 ```
 
-In turn, that means you need special operations if you want the model(s) or form(s) for rendering, only.
+You now need to write [dedicated presentation operations](/guides/trailblazer/2.0/03-rails-basics.html#nested) for both `present` and `form`.
+
+What used to be one big operation with two or even three confusing "modes" are now two separate operations that are combined via `Nested`.
+
+    class BlogPost::Create < Trailblazer::Operation
+      class Present < Trailblazer::Operation
+        # steps to setup model and contract
+        step Model(BlogPost, :new)
+        step Contract::Build( constant: BlogPost::Contract::Create )
+      end
+
+      # code for the Create/Update/..
+      step Nested( Present )
+      step Contract::Validate( )
+      step Contract::Persist( )
+      # ..
+    end
+
+Be wary to run the correct operation for the respective controller action.
 
 ```ruby
 class SongsController < ApplicationController
   def show
     run Song::Create::Present # gives you @model and @form.
   end
+
+  def create
+    run Song::Create          # gives you @model and @form, too!
+  end
 end
 ```
 
-Note that in the operation code, you [don't need to create redundancy](#present).
+## Controller
 
-## Present
+In 1.1, you mutated `params` in the controller to inject additional dependencies. This is now done via the second optional argument to `Operation::call`. You have [several options to hook into](/gems/trailblazer/2.0/rails.html#runtime-options) how those arguments are created in the controller.
+
+What used to be the following snippet..
+
+    class ApplicationController < ActionController::Base
+      def process_params!(params)
+        params.merge!(current_user: current_user)
+      end
+    end
+
+.. now becomes something along the following.
+
+    class ApplicationController < ActionController::Base
+      def _run_options(options)
+        options.merge("current_user" => current_user)
+      end
+
 
 ## Test
 
+In 1.1, this used to be a common pattern.
+
+    op = AccountManager::Update.run(
+      current_user: Admin.new,
+      id: account_manager.id, account_manager: { email: "" }
+    )
+
+    expect(res).to be false
+    expect(op.errors.to_s).to eq(..)
+
+This would now look as follows.
+
+    res = AccountManager::Update(
+      { id: account_manager.id, account_manager: { email: "" } },
+      current_user: Admin.new # this is a 2nd argument to #call.
+    )
+
+    expect(res).to be_failure
+    expect(res["contract.default"].errors.to_s).to eq(..)
+
+
+When testing, it was handy to have the `Operation::call` method throw an exception when run invalid. In 2.0, since only have `call`, there will never be any exception thrown.
+
+Use `TestCase#run` to get back the exception-throwing behavior.
+
+    RSpec.describe AccountManager::Update do
+      let(:account_manager) do
+        run(AccountManager::Create,
+          {
+            account_manager: {
+              name: "Ad Min", email: "account_manager@example.com", password: '12345'
+            }
+          },
+          "current_user" => Admin.new
+        )
+      end
+    end
+
+`run` in tests works exactly the way it does in controllers, except that it throws an error when the result is `failure?`.
+
+## Builder
+
+The `Operation::Builder` module doesn't exist anymore and should be done with `Nested`.
+
+## Common Problems
+
+* `NoMethodError: undefined method reforms_path' for` in cells or views: You have to [pass the `@form` instance](/gems/trailblazer/2.0/rails.html#run) to the cell, and not the `result["contract.default"]` reference. The latter one has not been wrapped to make it compatible with ActiveModel's insanity.
+
+    Alternatively, use the [formular](/gems/formular) form builder.
 
 ## Development Status
 
