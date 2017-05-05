@@ -141,6 +141,8 @@ To understand how the operation knows whether or not it was run successful, we s
 
 As you can see, we reuse the existing `Create::Present` to create the model and contract for it, and then run validation and persisting steps after it. This all happens [by leveraging `Nested`](http://localhost:4000/gems/operation/2.0/api.html#nested). It runs the `Create::Present` operation and copies the key/value pairs from its result object into the composing operation's result object.
 
+This is enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.
+
 ## Feature Tests
 
 ## Operation Tests

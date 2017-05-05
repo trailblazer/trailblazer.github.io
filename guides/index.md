@@ -15,6 +15,7 @@ A collection of guides to help you learn how Trailblazer and its gems work.
 
   * [01 - Operation Basics](/guides/trailblazer/2.0/01-operation-basics.html)
   * [02 - Trailblazer Basics](/guides/trailblazer/2.0/02-trailblazer-basics.html)
+  * [03 - Rails Basics](/guides/trailblazer/2.0/03-rails-basics.html)
   ~~~3,end
   **REFORM**
 {% endrow %}
