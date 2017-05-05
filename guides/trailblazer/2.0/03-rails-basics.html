@@ -186,7 +186,7 @@ end
   
 <p>In Trailblazer, we don’t believe that an ever-changing runtime environment is a good idea. Code that is, maybe, loaded, in a certain order, maybe, is a source of many production problems. Even in development mode we want an environment as close to production as possible.</p>
 
-<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds and ignorable, since the automatic reloading with Rails still works.</p>
+<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds is ignorable, since the automatic reloading with Rails still works.</p>
 
 </div>
 
@@ -278,7 +278,7 @@ end
 
 <h2 id="contract" data-magellan-target="contract">Contract</h2>
 
-<p>The interesting part here is the <code class="highlighter-rouge">:constant</code> option: it references the <code class="highlighter-rouge">BlogPost::Contract::Create</code> class, which itself lives in <code class="highlighter-rouge">app/concepts/blog_post/contract/create.rb</code>.</p>
+<p>The interesting part in the <code class="highlighter-rouge">Present</code> operation is the <code class="highlighter-rouge">:constant</code> option: it references the <code class="highlighter-rouge">BlogPost::Contract::Create</code> class, which itself lives in <code class="highlighter-rouge">app/concepts/blog_post/contract/create.rb</code>.</p>
 
 <pre><code>module BlogPost::Contract
   class Create &lt; Reform::Form
@@ -299,7 +299,7 @@ end
 end
 </code></pre>
 
-<p>Contracts can be pure <code class="highlighter-rouge">dry-validation</code> schemas or Reform objects that can in turn use <code class="highlighter-rouge">dry-validation</code> as their validation engine. Using a reform object, whatsoever, will allow rendering that form in a view.</p>
+<p>Contracts can be pure <code class="highlighter-rouge">dry-validation</code> schemas or Reform objects that can in turn use <code class="highlighter-rouge">dry-validation</code> or <code class="highlighter-rouge">ActiveModel::Validations</code> as their validation engine. Using a Reform object, whatsoever, will allow rendering that form in a view.</p>
 
 <h2 id="contract-rendering" data-magellan-target="contract-rendering">Contract Rendering</h2>
 
@@ -320,9 +320,24 @@ end
 
 </div>
 
-<p>After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via <code class="highlighter-rouge">render</code> and by passing the <code class="highlighter-rouge">@form</code> object to it.</p>
+<p>After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via <code class="highlighter-rouge">render</code> and by invoking a cell. The cell’s job is rendering the form, so we need to pass the <code class="highlighter-rouge">@form</code> object to it.</p>
 
-<p>The <code class="highlighter-rouge">BlogPost::Cell::New</code> cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here’s the cell view in <code class="highlighter-rouge">app/concepts/blog_post/view/new.slim</code>.</p>
+<p>BTW, the Cells gem and the rendering layer it brings is completely optional. If you want, you can keep using ActionView rendering along with operations.</p>
+
+<h2 id="form-cell" data-magellan-target="form-cell">Form Cell</h2>
+
+<p>The <code class="highlighter-rouge">BlogPost::Cell::New</code> cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here’s the cell class.</p>
+
+<pre><code>module BlogPost::Cell
+  class New &lt; Trailblazer::Cell
+    include ActionView::RecordIdentifier
+    include ActionView::Helpers::FormOptionsHelper
+    include SimpleForm::ActionViewExtensions::FormHelper
+  end
+end
+</code></pre>
+
+<p>As all we do is rendering the view, there’s no real code yet. Speaking of views, here is the cell’s view in <code class="highlighter-rouge">app/concepts/blog_post/view/new.slim</code>.</p>
 
 <pre><code>.row.new
   h1 New Post
@@ -333,13 +348,13 @@ end
         = f.input :title, placeholder: "Title", label: false
     .row
       .col-sm-12
-        = f.input :body, placeholder: "What do you wanna say?", label: false
+        = f.input :body, placeholder: "Say it out loud!", label: false
     .row
       .col-sm-12
         = f.submit 'Create Post'
 </code></pre>
 
-<p>Submitting the form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
+<p>Enough code to render the blog form. Submitting this very form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
 
 <h2 id="form-processing" data-magellan-target="form-processing">Form Processing</h2>
 
@@ -400,6 +415,7 @@ end
 <li><a href="#presentation-operation">Presentation Operation</a></li>
 <li><a href="#contract">Contract</a></li>
 <li><a href="#contract-rendering">Contract Rendering</a></li>
+<li><a href="#form-cell">Form Cell</a></li>
 <li><a href="#form-processing">Form Processing</a></li>
 <li><a href="#nested">Nested</a></li>
 <li><a href="#feature-tests">Feature Tests</a></li>
