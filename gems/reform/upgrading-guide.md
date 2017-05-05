@@ -1,6 +1,8 @@
 ---
 layout: reform
 title: "Reform Upgrading Guide"
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 # Upgrading Guide

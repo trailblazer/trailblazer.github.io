@@ -1,6 +1,8 @@
 ---
 layout: disposable
 title: "Disposable API"
+gems:
+  - ["disposable", "apotonick/disposable"]
 ---
 
 # Twin API

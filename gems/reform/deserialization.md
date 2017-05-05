@@ -1,5 +1,7 @@
 ---
 layout: default
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 ## Skipping

@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Cells Render API"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 # Rendering

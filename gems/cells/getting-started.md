@@ -2,6 +2,8 @@
 title: "Cells: Getting Started"
 layout: cells
 description: "Learn how Trailblazer::Cell helps you refactoring legacy views. 4-minutes read."
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 The [Cells](https://github.com/apotonick/cells) gem provides view models for Ruby web applications. View models are plain objects that represent a part of the web page, such as a dashboard widget. View models can also render views, and be nested.

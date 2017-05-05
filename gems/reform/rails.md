@@ -1,6 +1,8 @@
 ---
 layout: reform
 title: "Reform with Rails"
+gems:
+  - ["reform-rails", "trailblazer/reform-rails"]
 ---
 
 Reform works with any framework, but comes with additional Rails glue code.

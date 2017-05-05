@@ -1,5 +1,7 @@
 ---
 layout: default
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 # Cells 4

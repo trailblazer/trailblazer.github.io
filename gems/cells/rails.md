@@ -2,6 +2,8 @@
 layout: cells
 title: "Cells and Rails"
 redirect_from: "/gems/cells/helpers.html"
+gems:
+  - ["cells-rails", "trailblazer/cells-rails"]
 ---
 
 # Rails

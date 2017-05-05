@@ -1,6 +1,8 @@
 ---
 layout: roar
 title: "JSON API"
+gems:
+  - ["roar-jsonapi", "trailblazer/roar-jsonapi"]
 ---
 
 Roar JSON API supports rendering and parsing documents using the [JSON API 1.0](http://jsonapi.org/format/) specification.

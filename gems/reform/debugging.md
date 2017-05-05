@@ -1,5 +1,7 @@
 ---
 layout: reform
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 # Debugging Reform

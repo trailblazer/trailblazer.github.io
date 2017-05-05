@@ -1,6 +1,8 @@
 ---
 layout: disposable
 title: "Disposable Default"
+gems:
+  - ["disposable", "apotonick/disposable"]
 ---
 
 # Twin: Default

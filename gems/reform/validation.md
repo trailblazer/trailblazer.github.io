@@ -1,6 +1,8 @@
 ---
 layout: reform
 title: "Validation"
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 Validation in Reform happens in the `validate` method, and only there.

@@ -1,6 +1,8 @@
 ---
 layout: disposable
 title: "Disposable Callbacks"
+gems:
+  - ["disposable", "apotonick/disposable"]
 ---
 
 # Disposable: Callback
