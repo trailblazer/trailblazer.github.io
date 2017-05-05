@@ -24,7 +24,7 @@ The `trailblazer-rails` gem makes the integration a walk in the park. It pulls a
 {% callout %}
 In Trailblazer, we don't believe that an ever-changing runtime environment is a good idea. Code that is, maybe, loaded, in a certain order, maybe, is a source of many production problems. Even in development mode we want an environment as close to production as possible.
 
-This is why `trailblazer-loader` always loads all TRB files at server startup. The speed decrease is about 2 seconds and ignorable, since the automatic reloading with Rails still works.
+This is why `trailblazer-loader` always loads all TRB files at server startup. The speed decrease is about 2 seconds is ignorable, since the automatic reloading with Rails still works.
 {% endcallout %}
 
 The Traiblazer-rails gem also adds one single method `#run` to the `ApplicationController` which we'll discover soon.
@@ -99,11 +99,11 @@ It's totally up to you whether or not you want a separate file for `Present` ope
 
 ## Contract
 
-The interesting part here is the `:constant` option: it references the `BlogPost::Contract::Create` class, which itself lives in `app/concepts/blog_post/contract/create.rb`.
+The interesting part in the `Present` operation is the `:constant` option: it references the `BlogPost::Contract::Create` class, which itself lives in `app/concepts/blog_post/contract/create.rb`.
 
 {{ "app/concepts/blog_post/contract/create.rb:contract:../trailblazer-guides:operation-03" | tsnippet : "present" }}
 
-Contracts can be pure `dry-validation` schemas or Reform objects that can in turn use `dry-validation` as their validation engine. Using a reform object, whatsoever, will allow rendering that form in a view.
+Contracts can be pure `dry-validation` schemas or Reform objects that can in turn use `dry-validation` or `ActiveModel::Validations` as their validation engine. Using a Reform object, whatsoever, will allow rendering that form in a view.
 
 ## Contract Rendering
 
@@ -117,13 +117,25 @@ The `run` method invokes the operation, optionally passes dependencies such as t
 The instance variables in the controller are only set for your convenience and could be retrieved via the result object, too. [→ API ](/gems/trailblazer/2.0/rails.html#run)
 {% endcallout %}
 
-After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via `render` and by passing the `@form` object to it.
+After running the operation and retrieving the contract instance, it is now time to render a view with a form, that we can actually fill out and publish our blog post. This happens via `render` and by invoking a cell. The cell's job is rendering the form, so we need to pass the `@form` object to it.
 
-The `BlogPost::Cell::New` cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here's the cell view in `app/concepts/blog_post/view/new.slim`.
+BTW, the Cells gem and the rendering layer it brings is completely optional. If you want, you can keep using ActionView rendering along with operations.
+
+## Form Cell
+
+The `BlogPost::Cell::New` cell is responsible for rendering this view. We will discuss its internals later, but for a quick preview, here's the cell class.
+
+{{ "app/concepts/blog_post/cell/new.rb:cell:../trailblazer-guides:operation-03" | tsnippet }}
+
+As all we do is rendering the view, there's no real code yet. Speaking of views, here is the cell's view in `app/concepts/blog_post/view/new.slim`.
 
 {{ "app/concepts/blog_post/view/new.slim:new:../trailblazer-guides:operation-03" | tsnippet }}
 
-Submitting the form will POST it to `/blog_posts/`, which is the next controller action we have to implement.
+Enough code to render the blog form. It looks a bit sad without any layout, but we'll come to that shortly.
+
+<img src="/images/guides/03-new-form-layoutless.png">
+
+Submitting this very form will POST it to `/blog_posts/`, which is the next controller action we have to implement.
 
 ## Form Processing
 
@@ -131,7 +143,13 @@ Again, we run an operation. This time it's `BlogPost::Create`.
 
 {{ "app/controllers/blog_posts_controller.rb:create:../trailblazer-guides:operation-03" | tsnippet }}
 
-A nice detail about `run` is: it executes an optional block when the operation was run successful. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.
+A nice detail about `run` is: it executes an optional block when the operation was run successfully. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.
+
+{% callout %}
+Please note that there's a `return` in the block, causing the controller's execution to stop. If you forget this, the rest of the `create` method will be executed, too.
+{% endcallout %}
+
+Let's check out the `BlogPost::Create` operation in detail, now.
 
 ## Nested
 
