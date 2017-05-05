@@ -354,7 +354,11 @@ end
         = f.submit 'Create Post'
 </code></pre>
 
-<p>Enough code to render the blog form. Submitting this very form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
+<p>Enough code to render the blog form. It looks a bit sad without any layout, but we’ll come to that shortly.</p>
+
+<p><img src="/images/guides/03-new-form-layoutless.png"></p>
+
+<p>Submitting this very form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
 
 <h2 id="form-processing" data-magellan-target="form-processing">Form Processing</h2>
 
@@ -362,7 +366,6 @@ end
 
 <pre><code>def create
   run BlogPost::Create do |result|
-    flash[:notice] = "#{result["model"].title} has been created"
     return redirect_to "/posts"
   end
 
@@ -370,7 +373,15 @@ end
 end
 </code></pre>
 
-<p>A nice detail about <code class="highlighter-rouge">run</code> is: it executes an optional block when the operation was run successful. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.</p>
+<p>A nice detail about <code class="highlighter-rouge">run</code> is: it executes an optional block when the operation was run successfully. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.</p>
+
+<div class="callout">
+  
+<p>Please note that there’s a <code>return</code> in the block, causing the controller’s execution to stop. If you forget this, the rest of the <code>create</code> method will be executed, too.</p>
+
+</div>
+
+<p>Let’s check out the <code class="highlighter-rouge">BlogPost::Create</code> operation in detail, now.</p>
 
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
 
