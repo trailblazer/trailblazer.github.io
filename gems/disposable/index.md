@@ -1,6 +1,8 @@
 ---
 layout: disposable
 title: "Disposable"
+gems:
+  - ["disposable", "apotonick/disposable"]
 ---
 
 # Disposable

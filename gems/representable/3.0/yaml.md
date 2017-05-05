@@ -1,6 +1,8 @@
 ---
 layout: representable
 title: "Representable: YAML"
+gems:
+  - ["representable", "trailblazer/representable"]
 ---
 
 # Representable YAML

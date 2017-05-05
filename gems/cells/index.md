@@ -2,6 +2,8 @@
 layout: cells
 permalink: /gems/cells/
 title: "Cells"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 Out of the frustration with Rails' view layer, its lack of encapsulation and the convoluted code resulting from partials and helpers both accessing global state, the [Cells](https://github.com/apotonick/cells) gem emerged.

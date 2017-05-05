@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Cells API"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 A cell is an object that can render views. It represents a fragment of the page, or the entire page.

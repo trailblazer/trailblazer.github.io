@@ -1,6 +1,8 @@
 ---
 layout: representable
 title: "Representable: Getting Started"
+gems:
+  - ["representable", "trailblazer/representable"]
 ---
 
 # Getting Started with Representable

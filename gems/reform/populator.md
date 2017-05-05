@@ -1,6 +1,8 @@
 ---
 layout: reform
 title: "Reform Populators"
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 # Populating

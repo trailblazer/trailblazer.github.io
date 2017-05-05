@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Cells Templates"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 # Template Engines
