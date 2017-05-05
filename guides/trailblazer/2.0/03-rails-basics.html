@@ -260,13 +260,8 @@ end
 
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   class Present &lt; Trailblazer::Operation
-    # step Policy::Guard( :authorize! )
     step Model(BlogPost, :new)
     step Contract::Build( constant: BlogPost::Contract::Create )
-
-    def authorize!(options, current_user:, **)
-      current_user == nil ? false : current_user.signed_in
-    end
   end
 
   # ...
@@ -313,7 +308,7 @@ end
 <pre><code>class BlogPostsController &lt; ApplicationController
   def new
     run BlogPost::Create::Present
-    render BlogPost::Cell::New, @form
+    render cell(BlogPost::Cell::New, @form), layout: false
   end
 </code></pre>
 
@@ -356,7 +351,7 @@ end
     return redirect_to "/posts"
   end
 
-  render BlogPost::Cell::New, @form
+  render cell(BlogPost::Cell::New, @form), layout: false
 end
 </code></pre>
 
@@ -368,13 +363,8 @@ end
 
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   class Present &lt; Trailblazer::Operation
-    # step Policy::Guard( :authorize! )
     step Model(BlogPost, :new)
     step Contract::Build( constant: BlogPost::Contract::Create )
-
-    def authorize!(options, current_user:, **)
-      current_user == nil ? false : current_user.signed_in
-    end
   end
 
   step Nested( Present )
