@@ -3,7 +3,7 @@ layout: cells
 title: "Cells and Rails"
 redirect_from: "/gems/cells/helpers.html"
 gems:
-  - ["cells-rails", "trailblazer/cells-rails"]
+  - ["cells-rails", "trailblazer/cells-rails", "0.0.x"]
 ---
 
 # Rails

@@ -2,7 +2,7 @@
 layout: cells
 title: "Cells Render API"
 gems:
-  - ["cells", "trailblazer/cells"]
+  - ["cells", "trailblazer/cells", "4.1"]
 ---
 
 # Rendering

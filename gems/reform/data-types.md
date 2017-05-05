@@ -2,7 +2,7 @@
 layout: reform
 title: "Reform Data Types"
 gems:
-  - ["reform", "trailblazer/reform"]
+  - ["reform", "trailblazer/reform", "2.2"]
 ---
 
 ## Composition

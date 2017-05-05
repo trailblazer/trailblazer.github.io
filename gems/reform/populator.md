@@ -2,7 +2,7 @@
 layout: reform
 title: "Reform Populators"
 gems:
-  - ["reform", "trailblazer/reform"]
+  - ["reform", "trailblazer/reform", "2.2"]
 ---
 
 # Populating

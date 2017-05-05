@@ -2,7 +2,7 @@
 layout: reform
 title: "Reform: API"
 gems:
-  - ["reform", "trailblazer/reform"]
+  - ["reform", "trailblazer/reform", "2.2"]
 ---
 
 This document discusses Reform's declarative API to define form classes and the instance API that is used at run-time on the form object, e.g. to validate an incoming hash.

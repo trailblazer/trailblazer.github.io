@@ -2,7 +2,7 @@
 layout: reform
 title: "Validation"
 gems:
-  - ["reform", "trailblazer/reform"]
+  - ["reform", "trailblazer/reform", "2.2"]
 ---
 
 Validation in Reform happens in the `validate` method, and only there.

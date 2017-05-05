@@ -3,7 +3,7 @@ layout: cells
 title: "Formular"
 description: "Formular is a form builder for Ruby. It's fast and framework-agnostic, supports Bootstrap, Foundation, and UIKit."
 gems:
-  - ["formular", "trailblazer/formular"]
+  - ["formular", "trailblazer/formular", "0.1"]
 ---
 
 ## Bootstrap 3

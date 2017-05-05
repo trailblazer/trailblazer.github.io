@@ -2,7 +2,7 @@
 layout: reform
 title: "Reform: Options API"
 gems:
-  - ["reform", "trailblazer/reform"]
+  - ["reform", "trailblazer/reform", "2.2"]
 ---
 
 This document describes available options for Reform's declarative API.

@@ -2,7 +2,7 @@
 layout: cells
 title: "Testing Cells"
 gems:
-  - ["cells", "trailblazer/cells"]
+  - ["cells", "trailblazer/cells", "4.1"]
 ---
 
 # Testing

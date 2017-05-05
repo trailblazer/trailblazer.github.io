@@ -2,7 +2,7 @@
 layout: cells
 title: "Cells Templates"
 gems:
-  - ["cells", "trailblazer/cells"]
+  - ["cells", "trailblazer/cells", "4.1"]
 ---
 
 # Template Engines

@@ -2,7 +2,7 @@
 layout: representable
 title: "Representable: Getting Started"
 gems:
-  - ["representable", "trailblazer/representable"]
+  - ["representable", "trailblazer/representable", "3.0"]
 ---
 
 # Getting Started with Representable

@@ -2,7 +2,7 @@
 layout: disposable
 title: "Disposable API"
 gems:
-  - ["disposable", "apotonick/disposable"]
+  - ["disposable", "apotonick/disposable", "0.4"]
 ---
 
 # Twin API

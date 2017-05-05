@@ -2,7 +2,7 @@
 layout: disposable
 title: "Disposable Default"
 gems:
-  - ["disposable", "apotonick/disposable"]
+  - ["disposable", "apotonick/disposable", "0.4"]
 ---
 
 # Twin: Default

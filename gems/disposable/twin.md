@@ -3,7 +3,7 @@ layout: disposable
 permalink: /gems/disposable/twin/
 title: "Disposable Twin"
 gems:
-  - ["disposable", "apotonick/disposable"]
+  - ["disposable", "apotonick/disposable", "0.4"]
 ---
 
 # Twin

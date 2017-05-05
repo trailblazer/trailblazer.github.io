@@ -2,7 +2,7 @@
 layout: cells
 title: "Cells API"
 gems:
-  - ["cells", "trailblazer/cells"]
+  - ["cells", "trailblazer/cells", "4.1"]
 ---
 
 A cell is an object that can render views. It represents a fragment of the page, or the entire page.

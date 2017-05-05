@@ -3,7 +3,7 @@ layout: representable
 permalink: /gems/representable/
 title: "Representable"
 gems:
-  - ["representable", "trailblazer/representable"]
+  - ["representable", "trailblazer/representable", "3.0"]
 ---
 
 # Representable

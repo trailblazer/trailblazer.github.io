@@ -2,7 +2,7 @@
 layout: representable
 title: "Representable: XML"
 gems:
-  - ["representable", "trailblazer/representable"]
+  - ["representable", "trailblazer/representable", "3.0"]
 ---
 
 # Representable XML

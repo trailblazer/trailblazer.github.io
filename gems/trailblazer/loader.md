@@ -2,7 +2,7 @@
 layout: operation
 title: "Trailblazer Loader"
 gems:
-  - ["trailblazer-loader", "trailblazer/loader"]
+  - ["trailblazer-loader", "trailblazer/loader", "0.1"]
 ---
 
 _Generic loader for Trailblazer file structure._

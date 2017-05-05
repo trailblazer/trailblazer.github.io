@@ -1,7 +1,7 @@
 ---
 layout: default
 gems:
-  - ["cells", "trailblazer/cells"]
+  - ["cells", "trailblazer/cells", "4.1"]
 ---
 
 # Cells 4
