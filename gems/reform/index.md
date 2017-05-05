@@ -2,6 +2,8 @@
 layout: reform
 permalink: /gems/reform/
 title: "Reform"
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 Reform provides form objects to run validations for one or multiple models.

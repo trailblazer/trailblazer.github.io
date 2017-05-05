@@ -1,6 +1,8 @@
 ---
 layout: representable
 title: "Representable API"
+gems:
+  - ["representable", "trailblazer/representable"]
 ---
 
 # Representable API

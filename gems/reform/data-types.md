@@ -1,6 +1,8 @@
 ---
 layout: reform
 title: "Reform Data Types"
+gems:
+  - ["reform", "trailblazer/reform"]
 ---
 
 ## Composition

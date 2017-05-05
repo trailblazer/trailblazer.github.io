@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Cells Troubleshooting"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 # Troubleshooting

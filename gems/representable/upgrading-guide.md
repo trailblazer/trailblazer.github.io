@@ -1,6 +1,8 @@
 ---
 layout: representable
 title: "Representable Upgrading Guide"
+gems:
+  - ["representable", "trailblazer/representable"]
 ---
 
 # Upgrading Guide

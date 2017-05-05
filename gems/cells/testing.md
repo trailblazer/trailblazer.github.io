@@ -1,6 +1,8 @@
 ---
 layout: cells
 title: "Testing Cells"
+gems:
+  - ["cells", "trailblazer/cells"]
 ---
 
 # Testing

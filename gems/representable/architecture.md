@@ -1,5 +1,7 @@
 ---
 layout: representable
+gems:
+  - ["representable", "trailblazer/representable"]
 ---
 
 # Representable: Architecture

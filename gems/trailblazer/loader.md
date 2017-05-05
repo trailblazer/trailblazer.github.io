@@ -1,6 +1,8 @@
 ---
 layout: operation
 title: "Trailblazer Loader"
+gems:
+  - ["trailblazer-loader", "trailblazer/loader"]
 ---
 
 _Generic loader for Trailblazer file structure._
