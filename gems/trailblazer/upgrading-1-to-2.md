@@ -5,7 +5,7 @@ gems:
   - ["trailblazer-compat", "trailblazer/trailblazer-compat", "0.1"]
 ---
 
-This gem provides a seamless-er™ upgrade from TRB 1.1 to 2.x.
+The `trailblazer-compat` gem provides a seamless-er™ upgrade from TRB 1.1 to 2.x.
 
 It allows to run both old TRB 1.1 operations along with new or refactored 2.x code in the same application, making it easier to upgrade operation code `step`-wise (no pun intended!) or add new TRB2 operations, workflows, etc. without having to change the old code.
 
