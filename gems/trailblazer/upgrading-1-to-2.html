@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Trailblazer: Trailblazer Upgrade 1.1 to 2.0</title>
+<meta name="description" content="Trailblazer Upgrade 1.1 to 2.0 - Trailblazer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content=", ">
+
+<!-- style -->
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,%20400,700,800%7CRaleway:400,200,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="/css/application.css">
+
+<!-- script -->
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/application.min.js"></script>
+<script>
+  jQuery(document).ready(function($) {
+    $(document).foundation();
+
+    anchors.add("article h2");
+    anchors.add("article h3");
+
+    hljs.configure({
+      languages: ['ruby', 'haml']
+    });
+
+    hljs.initHighlightingOnLoad();
+
+    // $('#code-slider').slick({arrows: true, dots: true});
+    $('.carousel').slick({arrows: true, dots: true});
+  });
+</script>
+
+
+<meta property="og:title" content="Trailblazer Upgrade 1.1 to 2.0">
+<meta property="og:site_name" content="Trailblazer">
+<meta property="og:url" content="http://trailblazer.to/gems/trailblazer/upgrading-1-to-2.html">
+<meta property="og:description" content="">
+<meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@apotonick">
+<meta name="twitter:title" content="Trailblazer Upgrade 1.1 to 2.0">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
+
+  </head>
+  <body>
+    <div data-sticky-container class="top-navbar">
+  <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
+    <div class="top-bar-title">
+      <ul class="menu horizontal">
+        <li>
+          <a href="/"><img style="height: 25px;" src="/images/logo-top.svg"></a>
+        </li>
+        <li>
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle></button>
+        </span>
+        </li>
+      </ul>
+    </div>
+
+    <div id="responsive-menu">
+      <div class="top-bar-right">
+        <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
+          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.O IS COMING!</a></li>
+          <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
+          <li><a href="/newsletter/">NEWSLETTER</a></li>
+          <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
+          <li><a href="/guides">LEARN</a></li>
+          <li>
+            <a href="#">GEMS</a>
+            <ul class="menu vertical">
+              <li class=""><a href="/gems/cells">CELLS</a></li>
+              <li class=""><a href="/gems/operation/2.0/index.html">OPERATION</a></li>
+              <li class=""><a href="/gems/reform">REFORM</a></li>
+              <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
+              <li class=""><a href="/gems/roar">ROAR</a></li>
+              <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="https://leanpub.com/trailblazer" class="button secondary" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">GET THE BOOK</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--
+    <div class="secondary callout" data-closable>
+      <strong>TRB JOBS:</strong> Deutschsprachiger Ruby Developer in Hannover - <a href="/inc/jobs.html">Jaaaa!</a>
+      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+ -->
+
+    <!-- Hero -->
+<div class="hero gems-hero operation2-hero">
+  <div class="hero-unit">
+    <div class="expanded row">
+      <div class="columns">
+        <h1 id="project_title">
+          Operation
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="expanded row">
+      <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
+        <article class="operation2-body">
+
+          
+            <header id="doc-header">
+  <h1 class="doc-page-title">Trailblazer Upgrade 1.1 to 2.0</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 28 April 2017</span>
+
+  
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/trailblazer/trailblazer-compat">trailblazer-compat</a>
+
+      <a href="/gems/trailblazer/upgrading-1-to-2.html">
+      <span class="version">v0.1</span>
+      </a>
+
+    
+
+    </span>
+  
+
+  <hr>
+
+</header>
+
+          
+
+          <div class="row"> <!-- nach doc header -->
+            <div class="large-9 columns" id="docs">   <!-- actual docs -->
+              <p>This gem provides a seamless-er™ upgrade from TRB 1.1 to 2.x.</p>
+
+<p>It allows to run both old TRB 1.1 operations along with new or refactored 2.x code in the same application, making it easier to upgrade operation code <code class="highlighter-rouge">step</code>-wise (no pun intended!) or add new TRB2 operations, workflows, etc. without having to change the old code.</p>
+
+<div class="callout">
+  
+<p>With the release of TRB2, the API has become incredibly flexible and we promise you LTS (long-term support) for Trailblazer 2.x projects. Another hard upgrade is not to be expected.</p>
+
+<p>Instead, semantical changes will be introduced as completely optional API.</p>
+
+</div>
+
+<h2 id="installation" data-magellan-target="installation">Installation</h2>
+
+<p>Your exisiting application’s <code class="highlighter-rouge">Gemfile</code> should point to the new <code class="highlighter-rouge">trailblazer</code> gem.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"trailblazer"</span><span class="p">,</span> <span class="s2">"&gt;= 2.0.4"</span>
+<span class="n">gem</span> <span class="s2">"trailblazer-compat"</span>
+</code></pre>
+</div>
+
+<p>In a Rails application, you also need to pull the 1.x line of the <code class="highlighter-rouge">trailblazer-rails</code> gem.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">gem</span> <span class="s2">"trailblazer-rails"</span><span class="p">,</span> <span class="s2">"&gt;= 1.0.0"</span>
+</code></pre>
+</div>
+
+<h2 id="initialization" data-magellan-target="initialization">Initialization</h2>
+
+<p>Compat gem ships with the <a href="https://github.com/trailblazer/trailblazer-compat/blob/master/lib/trailblazer/1.1/operation.rb">TRB 1.1 code in the <code class="highlighter-rouge">V1_1</code> namespace</a>. It then loads the “real” TRB 2.x gem and <a href="https://github.com/trailblazer/trailblazer-compat/blob/master/lib/trailblazer/compat.rb#L38">remaps the constants</a>.</p>
+
+<ul>
+  <li>The <code class="highlighter-rouge">V1_1</code> namespace becomes the official <code class="highlighter-rouge">Trailblazer::Operation</code> one.</li>
+  <li>Code from 2.x is pushed into the <code class="highlighter-rouge">V2</code> namespace and can be accessed using <code class="highlighter-rouge">Trailblazer::Operation.version(2)</code>.</li>
+</ul>
+
+<p>All your 1.1 legacy code can now be run in parallel to 2.x operations and workflows - you can upgrade old code and introduce the new semantics as you go. Please note that this does not slow down any runtime execution and mustn’t be considered “dirty”.</p>
+
+<h2 id="upgrade-path" data-magellan-target="upgrade-path">Upgrade Path</h2>
+
+<p>Theoretically, you don’t have to touch any 1.1 code at all. The file structure is identical and all abstractions from 1.1 still exist (except for <code class="highlighter-rouge">Builder</code>). Only the internals of <code class="highlighter-rouge">Operation</code> have changed: you now structure your business code into steps on a “railway”.</p>
+
+<ol>
+  <li>
+    <p>You can keep old TRB1 operations.</p>
+
+    <div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="c1"># /app/concepts/song/create.rb</span>
+<span class="k">class</span> <span class="nc">Song</span>
+  <span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span>
+    <span class="n">model</span> <span class="no">Song</span><span class="p">,</span> <span class="ss">:create</span>
+    <span class="n">policy</span> <span class="no">Song</span><span class="o">::</span><span class="no">Policy</span><span class="p">,</span> <span class="ss">:admin?</span>
+
+    <span class="n">contract</span> <span class="k">do</span>
+      <span class="n">property</span> <span class="ss">:id</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+      <span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:song</span><span class="p">])</span> <span class="k">do</span> <span class="o">|</span><span class="n">form</span><span class="o">|</span>
+        <span class="n">form</span><span class="p">.</span><span class="nf">save</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>At any point, you can introduce new TRB2 operations or update old classes by inheriting from <code class="highlighter-rouge">Trailblazer::Operation.version(2)</code>.</p>
+
+    <div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="c1"># /app/concepts/song/create.rb</span>
+<span class="k">class</span> <span class="nc">Song</span>
+  <span class="k">class</span> <span class="nc">Create</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span><span class="p">.</span><span class="nf">version</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">class</span> <span class="nc">Form</span> <span class="o">&lt;</span> <span class="no">Reform</span><span class="o">::</span><span class="no">Form</span>
+      <span class="n">property</span> <span class="ss">:id</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span>
+
+    <span class="k">class</span> <span class="nc">Present</span> <span class="o">&lt;</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Operation</span><span class="p">.</span><span class="nf">version</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+      <span class="n">step</span> <span class="no">Model</span><span class="p">(</span> <span class="no">Song</span><span class="p">,</span> <span class="ss">:new</span> <span class="p">)</span>
+      <span class="n">step</span> <span class="no">Policy</span><span class="o">::</span><span class="no">Pundit</span><span class="p">(</span> <span class="no">Song</span><span class="o">::</span><span class="no">Policy</span><span class="p">,</span> <span class="ss">:admin?</span> <span class="p">)</span>
+      <span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Build</span><span class="p">(</span> <span class="ss">constant: </span><span class="no">Form</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">step</span> <span class="no">Nested</span><span class="p">(</span><span class="no">Present</span><span class="p">)</span>
+    <span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Validate</span><span class="p">(</span> <span class="ss">key: :admin</span> <span class="p">)</span>
+    <span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Persist</span><span class="p">()</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Should you ever be finished updating your application, simply remove the <code class="highlighter-rouge">trailblazer-compat</code> gem from the <code class="highlighter-rouge">Gemfile</code>. You can then safely delete <code class="highlighter-rouge">.version(2)</code> across all files.</p>
+  </li>
+</ol>
+
+<h2 id="macros" data-magellan-target="macros">Macros</h2>
+
+<p>In TRB2, <a href="/gems/operation/2.0/api.html#macro-api">step macros</a> can do a lot of work for you. This used to be implemented in an overly complicated nested chain of methods. Macros simply return a callable object to be inserted into the railway.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Build</span><span class="p">(</span> <span class="ss">constant: </span><span class="no">Form</span><span class="o">::</span><span class="no">Create</span> <span class="p">)</span> <span class="c1"># used to happen in #validate</span>
+</code></pre>
+</div>
+
+<p>Do not forget to add parenthesis even when there are no options.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Validate</span><span class="p">(</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Always remember, calling a macro is calling a function that <strong>returns a callable object</strong> at compile-time.</p>
+
+<h2 id="model" data-magellan-target="model">Model</h2>
+
+<p>The <a href="/gems/operation/2.0/api.html#model"><code class="highlighter-rouge">Model( )</code> macro</a> replaces <code class="highlighter-rouge">model Song, :create|:find</code>.</p>
+
+<p>Make sure to change <code class="highlighter-rouge">:create</code> to <code class="highlighter-rouge">:new</code> as in 2.x, the action is simply passed on to ActiveRecord (or any other ORM).</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">step</span> <span class="no">Model</span><span class="p">(</span> <span class="no">Song</span><span class="p">,</span> <span class="ss">:new</span> <span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="present--form" data-magellan-target="present--form">Present / Form</h2>
+
+<p>In TRB2, there are no <code class="highlighter-rouge">#present</code> and <code class="highlighter-rouge">#form</code> anymore. You can only <code class="highlighter-rouge">run</code> an operation.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">run</span> <span class="no">Song</span><span class="o">::</span><span class="no">Create</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>You now need to write <a href="/guides/trailblazer/2.0/03-rails-basics.html#nested">dedicated presentation operations</a> for both <code class="highlighter-rouge">present</code> and <code class="highlighter-rouge">form</code>.</p>
+
+<p>What used to be one big operation with two or even three confusing “modes” are now two separate operations that are combined via <code class="highlighter-rouge">Nested</code>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class BlogPost::Create &lt; Trailblazer::Operation
+  class Present &lt; Trailblazer::Operation
+    # steps to setup model and contract
+    step Model(BlogPost, :new)
+    step Contract::Build( constant: BlogPost::Contract::Create )
+  end
+
+  # code for the Create/Update/..
+  step Nested( Present )
+  step Contract::Validate( )
+  step Contract::Persist( )
+  # ..
+end
+</code></pre>
+</div>
+
+<p>Be wary to run the correct operation for the respective controller action.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">class</span> <span class="nc">SongsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">run</span> <span class="no">Song</span><span class="o">::</span><span class="no">Create</span><span class="o">::</span><span class="no">Present</span> <span class="c1"># gives you @model and @form.</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">run</span> <span class="no">Song</span><span class="o">::</span><span class="no">Create</span>          <span class="c1"># gives you @model and @form, too!</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h2 id="controller" data-magellan-target="controller">Controller</h2>
+
+<p>In 1.1, you mutated <code class="highlighter-rouge">params</code> in the controller to inject additional dependencies. This is now done via the second optional argument to <code class="highlighter-rouge">Operation::call</code>. You have <a href="/gems/trailblazer/2.0/rails.html#runtime-options">several options to hook into</a> how those arguments are created in the controller.</p>
+
+<p>What used to be the following snippet..</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class ApplicationController &lt; ActionController::Base
+  def process_params!(params)
+    params.merge!(current_user: current_user)
+  end
+end
+</code></pre>
+</div>
+
+<p>.. now becomes something along the following.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class ApplicationController &lt; ActionController::Base
+  def _run_options(options)
+    options.merge("current_user" =&gt; current_user)
+  end
+</code></pre>
+</div>
+
+<h2 id="test" data-magellan-target="test">Test</h2>
+
+<p>In 1.1, this used to be a common pattern.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>op = AccountManager::Update.run(
+  current_user: Admin.new,
+  id: account_manager.id, account_manager: { email: "" }
+)
+
+expect(res).to be false
+expect(op.errors.to_s).to eq(..)
+</code></pre>
+</div>
+
+<p>This would now look as follows.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>res = AccountManager::Update(
+  { id: account_manager.id, account_manager: { email: "" } },
+  current_user: Admin.new # this is a 2nd argument to #call.
+)
+
+expect(res).to be_failure
+expect(res["contract.default"].errors.to_s).to eq(..)
+</code></pre>
+</div>
+
+<p>When testing, it was handy to have the <code class="highlighter-rouge">Operation::call</code> method throw an exception when run invalid. In 2.0, since only have <code class="highlighter-rouge">call</code>, there will never be any exception thrown.</p>
+
+<p>Use <code class="highlighter-rouge">TestCase#run</code> to get back the exception-throwing behavior.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>RSpec.describe AccountManager::Update do
+  let(:account_manager) do
+    run(AccountManager::Create,
+      {
+        account_manager: {
+          name: "Ad Min", email: "account_manager@example.com", password: '12345'
+        }
+      },
+      "current_user" =&gt; Admin.new
+    )
+  end
+end
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">run</code> in tests works exactly the way it does in controllers, except that it throws an error when the result is <code class="highlighter-rouge">failure?</code>.</p>
+
+<h2 id="builder" data-magellan-target="builder">Builder</h2>
+
+<p>The <code class="highlighter-rouge">Operation::Builder</code> module doesn’t exist anymore and should be done with <code class="highlighter-rouge">Nested</code>.</p>
+
+<h2 id="common-problems" data-magellan-target="common-problems">Common Problems</h2>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">NoMethodError: undefined method reforms_path' for</code> in cells or views: You have to <a href="/gems/trailblazer/2.0/rails.html#run">pass the <code class="highlighter-rouge">@form</code> instance</a> to the cell, and not the <code class="highlighter-rouge">result["contract.default"]</code> reference. The latter one has not been wrapped to make it compatible with ActiveModel’s insanity.</p>
+
+    <p>Alternatively, use the <a href="/gems/formular">formular</a> form builder.</p>
+  </li>
+</ul>
+
+<h2 id="development-status" data-magellan-target="development-status">Development Status</h2>
+
+<p>The <code class="highlighter-rouge">compat</code> gem tries to make the transition to newer versions as painless as possible. However, if you run into any problems specific to your application, please <a href="https://gitter.im/trailblazer/chat">don’t hesitate to contact us</a>. Pull requests (even ugly hacks) are appreciated in this gem, and this gem only.</p>
+
+            </div>
+
+            <div class="large-3 columns sticky-container" data-sticky-container>
+
+              
+                <nav class="sticky columns docs-toc-wrap sticky is-anchored is-at-top side-nav" data-sticky data-anchor="docs" data-sticky-on="large" data-margin-top="5">
+  
+        <ul class="vertical menu" data-magellan id="page-toc">
+          <li class="page-toc-heading">ON THIS PAGE:</li>
+          <li><a href="#installation">Installation</a></li>
+<li><a href="#initialization">Initialization</a></li>
+<li><a href="#upgrade-path">Upgrade Path</a></li>
+<li><a href="#macros">Macros</a></li>
+<li><a href="#model">Model</a></li>
+<li><a href="#present--form">Present / Form</a></li>
+<li><a href="#controller">Controller</a></li>
+<li><a href="#test">Test</a></li>
+<li><a href="#builder">Builder</a></li>
+<li><a href="#common-problems">Common Problems</a></li>
+<li><a href="#development-status">Development Status</a></li>
+        </ul>
+      
+</nav>
+
+              
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="medium-3 large-2 medium-pull-9 large-pull-10 columns">
+        <ul class="vertical menu side-nav">
+    <li class="heading">
+        <a href="/gems/operation/2.0/index.html">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> OPERATION
+        </a>
+    </li>
+    <li><a href="/gems/operation/2.0/api.html">API</a></li>
+    <li><a href="/gems/operation/2.0/contract.html">Contract</a></li>
+    <!-- <li><a href="/gems/operation/2.0/representer.html">Representer</a></li> -->
+    <li><a href="/gems/operation/2.0/policy.html">Policy</a></li>
+    <li><a href="/gems/operation/2.0/representer.html">Representer</a></li>
+<!--     <li><a href="/gems/operation/2.0/pipetree.html">Pipetree</a></li>
+ -->
+    <li><a href="/gems/operation/2.0/endpoint.html">Endpoint</a></li>
+    <li>
+<a href="/gems/operation/1.1/index.html">
+          <span class="sidebar-info">→ v1.1</span>
+        </a>
+    </li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/trailblazer/index.html">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> TRAILBLAZER
+        </a>
+    </li>
+    <li><a href="/gems/trailblazer/2.0/rails.html">Rails</a></li>
+    <li><a href="/gems/trailblazer/loader.html">Loader</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/cells">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> CELLS
+        </a>
+    </li>
+    <li><a href="/gems/cells/getting-started.html">Getting Started<span class="sidebar-info">NEW</span></a></li>
+    <li><a href="/gems/cells/api.html">API</a></li>
+    <li><a href="/gems/cells/trailblazer.html">Trailblazer::Cell</a></li>
+    <li><a href="/gems/cells/testing.html">Testing</a></li>
+    <li><a href="/gems/cells/render.html">Rendering</a></li>
+    <li><a href="/gems/cells/rails.html">Rails</a></li>
+    <li><a href="/gems/cells/templates.html">Templates</a></li>
+    <li><a href="/gems/cells/troubleshooting.html">Troubleshooting</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/reform">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REFORM
+        </a>
+    </li>
+    <li><a href="/gems/reform/api.html">API</a></li>
+    <li><a href="/gems/reform/options.html">Options</a></li>
+    <li><a href="/gems/reform/data-types.html">Data Types</a></li>
+    <li><a href="/gems/reform/populator.html">Populator</a></li>
+    <li><a href="/gems/reform/prepopulator.html">Prepopulator</a></li>
+    <li><a href="/gems/reform/validation.html">Validation</a></li>
+    <li><a href="/gems/reform/rails.html">Rails</a></li>
+    <li><a href="/gems/reform/debugging.html">Debugging</a></li>
+    <li><a href="/gems/reform/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/representable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> REPRESENTABLE
+        </a>
+    </li>
+    <li><a href="/gems/representable/getting-started.html">Getting Started</a></li>
+    <li><a href="/gems/representable/3.0/api.html">API</a></li>
+    <li><a href="/gems/representable/3.0/function-api.html">Function API</a></li>
+    <li><a href="/gems/representable/3.0/populator.html">Populator</a></li>
+    <!-- <li><a href="/gems/representable/architecture.html">Architecture</a></li> -->
+    <li><a href="/gems/representable/3.0/xml.html">XML</a></li>
+    <li><a href="/gems/representable/3.0/yaml.html">YAML</a></li>
+    <li><a href="/gems/representable/upgrading-guide.html">Upgrading Guide</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/roar">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> ROAR
+        </a>
+    </li>
+    <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/gems/disposable">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> DISPOSABLE
+        </a>
+    </li>
+    <li><a href="/gems/disposable/api.html">API</a></li>
+    <li><a href="/gems/disposable/default.html">Default</a></li>
+    <li><a href="/gems/disposable/callback.html">Callback</a></li>
+    <li class="divider">
+
+    <li class="heading">
+        <a href="/guides">
+            <i class="fa fa-caret-square-o-right" aria-hidden="true"></i> GUIDES
+        </a>
+    </li>
+    <li><a href="/guides/trailblazer/2.0/01-operation-basics.html">01 - Operation Basics</a></li>
+    <li><a href="/guides/trailblazer/2.0/02-trailblazer-basics.html">02 - Trailblazer Basics</a></li>
+    <li><a href="/guides/trailblazer/2.0/03-rails-basics.html">03 - Rails Basics</a></li>
+</ul>
+
+      </div>
+    </div>
+
+
+    <section class="top-footer">
+  <div class="row">
+    <div class="columns medium-6">
+      <h3>Newsletter</h3>
+      <p>
+        Stay on top of what’s happening in Trailblazer.
+      </p>
+        <div class="row">
+          <div id="mc_embed_signup">
+            <form action="//trailblazerb.us8.list-manage.com/subscribe/post?u=bbe5021ab6fbdc94a16f0d036&amp;id=a69f6e4652" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+
+              <div class="columns large-9 medium-12 ">
+                <div class="row collapse prefix-radius">
+                  <div class="small-8 medium-7 large-8 columns">
+                    <div id="mc_embed_signup_scroll">
+                      <div class="mc-field-group">
+                        <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="youremail@trailblazer.to">
+                      </div>
+                      <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                      </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_bbe5021ab6fbdc94a16f0d036_a69f6e4652" tabindex="-1" value=""></div>
+
+                    </div>
+                  </div>
+                  <div class="small-4 medium-5 large-4 columns">
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button postfix secondary">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        </div>
+      <p>
+        And check out the <a href="/newsletter/">archive of newsletters</a>!
+      </p>
+
+
+    </div>
+    <div class="columns medium-6">
+      <h3>The Book</h3>
+      <p>Learn how to build a Rails app with Trailblazer, step-by-step.</p>
+      <a href="https://leanpub.com/trailblazer" class="button secondary">Get the book!</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="row">
+    <div class="columns medium-4">
+      <div class="logo-box">
+        <a href="/"><img src="/images/icon_trb.png">
+        </a>
+      </div>
+    </div>
+    <div class="columns medium-8">
+      <div class="row">
+        <div class="columns medium-6">
+          <h4>
+            Trailblazer
+          </h4>
+          <ul class="no-bullet">
+            <li><a href="https://gitter.im/trailblazer/chat">Gitter chat</a></li>
+            <li><a href="https://leanpub.com/trailblazer" onclick="trackOutboundLink('https://leanpub.com/trailblazer'); return false;">The book</a></li>
+          </ul>
+        </div>
+        <div class="columns medium-6">
+          <h4>
+            Follow Us
+          </h4>
+          <ul class="menu">
+            <li>
+              <a href="https://github.com/trailblazer">
+                <i class="footer-icon github-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/apotonick">
+                <i class="footer-icon twitter-icon"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/trbinc">
+                <i class="footer-icon facebook-icon"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">
+        Trailblazer is created by <a href="http://www.synergysoft.com.sg/">Synergy Software Solutions Pte Ltd,</a> and awesome friends.
+      </p>
+      <p class="copyright">
+        Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69514939-1', 'auto');
+  ga('send', 'pageview');
+
+  /**
+  * Function that tracks a click on an outbound link in Analytics.
+  * This function takes a valid URL string as an argument, and uses that URL string
+  * as the event label. Setting the transport method to 'beacon' lets the hit be sent
+  * using 'navigator.sendBeacon' in browser that support it.
+  */
+  var trackOutboundLink = function(url) {
+     ga('send', 'event', 'outbound', 'click', url, {
+       'transport': 'beacon',
+       'hitCallback': function(){document.location = url;}
+     });
+  }
+</script>
+
+
+
+  </body>
+</html>
