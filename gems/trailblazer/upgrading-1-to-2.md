@@ -1,6 +1,6 @@
 ---
 layout: operation2
-title: Trailblazer Upgrade 1.1 to 2.0
+title: Upgrading 1.1 to 2.0
 gems:
   - ["trailblazer-compat", "trailblazer/trailblazer-compat", "0.1"]
 ---
