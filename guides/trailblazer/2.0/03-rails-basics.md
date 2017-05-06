@@ -127,6 +127,13 @@ The `BlogPost::Cell::New` cell is responsible for rendering this view. We will d
 
 {{ "app/concepts/blog_post/cell/new.rb:cell:../trailblazer-guides:operation-03" | tsnippet }}
 
+The `include`s are necessary to import all helpers we need in the view.
+
+{% callout %}
+  The first line `module BlogPost::Cell` is crucial as it creates the module constant `Cell` in the `BlogPost` namespace. It has to be in one single line, otherwise you will get strange constant errors due to a never-fixed bug in Ruby.
+{% endcallout %}
+
+
 As all we do is rendering the view, there's no real code yet. Speaking of views, here is the cell's view in `app/concepts/blog_post/view/new.slim`.
 
 {{ "app/concepts/blog_post/view/new.slim:new:../trailblazer-guides:operation-03" | tsnippet }}
@@ -141,6 +148,14 @@ Submitting this very form will POST it to `/blog_posts/`, which is the next cont
 
 Again, we run an operation. This time it's `BlogPost::Create`.
 
+{% callout %}
+  Can you see how controller actions map to operations? This is because in Rails apps, actions correspond to specific application functions ("create blog post", "search user", "add comment"), and since the **business logic should be encapsulated in operations**, you will always find controller actions simply dispatching to one operation.
+
+  However, this doesn't mean you couldn't use operations for all kinds of smaller tasks, or in background jobs, or as console commands, too.
+{% endcallout %}
+
+Here's the controller action dispatching the operation.
+
 {{ "app/controllers/blog_posts_controller.rb:create:../trailblazer-guides:operation-03" | tsnippet }}
 
 A nice detail about `run` is: it executes an optional block when the operation was run successfully. This means we can redirect to the index page in case of a successful blog post create. Otherwise, we re-render the form cell.
@@ -151,15 +166,29 @@ Please note that there's a `return` in the block, causing the controller's execu
 
 Let's check out the `BlogPost::Create` operation in detail, now.
 
-## Nested
+## Create
 
-To understand how the operation knows whether or not it was run successful, we should have a look at the code in `app/concepts/blog_post/operation/create.rb`.
+While the operation we implemented earlier only creates an unpersisted model, the `BlogPost::Create` operation also processes the submitted form data and physically persists the model in case of validity.
+
+To understand how the operation knows whether or not it was run successful, and how this entire workflow is implemented, we should have a look at the code in `app/concepts/blog_post/operation/create.rb`.
 
 {{ "app/concepts/blog_post/operation/create.rb:createop:../trailblazer-guides:operation-03" | tsnippet }}
 
-As you can see, we reuse the existing `Create::Present` to create the model and contract for it, and then run validation and persisting steps after it. This all happens [by leveraging `Nested`](http://localhost:4000/gems/operation/2.0/api.html#nested). It runs the `Create::Present` operation and copies the key/value pairs from its result object into the composing operation's result object.
+Don't get confused by the nested `Present` class in `Create`! This is only Ruby's way of namespacing and doesn't leak any logic or state into the `Create` operation.
 
-This is enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.
+
+The `Create` operation definition starts with the `step Nested ( .. )` statement. This is where we're reusing the existing `Present` operation to create the model and contract for it. After that's done, we run validations, persist the data to the model (in case the validation is happy) and send a notification after it.
+
+{% callout %}
+  [The `Nested` step macro](http://localhost:4000/gems/operation/2.0/api.html#nested) runs the `Present` operation and copies the key/value pairs from its result object into `Create` our result object. Of course, this all happens at run-time.
+{% endcallout %}
+
+
+We wrote enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.
+
+While an invalid form submission will re-render the form, sane data causes us to get redirect to `/blog_posts/`, aka the *index* action.
+
+## Index
 
 ## Feature Tests
 
