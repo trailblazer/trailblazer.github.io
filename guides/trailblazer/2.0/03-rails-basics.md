@@ -190,6 +190,42 @@ While an invalid form submission will re-render the form, sane data causes us to
 
 ## Index
 
+The controller `index` method, again, simply dispatches to the `BlogPost::Index` operation and then uses its cell to render the list.
+
+{{ "app/controllers/blog_posts_controller.rb:index:../trailblazer-guides:operation-03" | tsnippet }}
+
+We're going to discuss the cell in another chapter. Here's the operation found in `app/concepts/blog_post/operation/index.rb`.
+
+{{ "app/concepts/blog_post/operation/index.rb:indexop:../trailblazer-guides:operation-03" | tsnippet }}
+
+In line with what we did in `Create::Present`, the `Index` operation's job is to retrieve a list of posts and expose them via the result object's `"model"` field.
+
+{% callout %}
+  Remember that this is the place where pagination, filtering, or even delegating to `Query` objects might happen. So far, we didn't see the need to introduce framework-based query objects, but with increasing usage this might be an optional feature in a future version.
+
+  Also, the name `"model"` - despite it being an array - is purely conventional.
+{% endcallout %}
+
+
+This array is then passed into the cell and renders an index list. In that list, clicking a link will direct you to a URL such as `/blog_posts/1`, which corresponds to a `show` action.
+
+## Show
+
+The `show` action in the controller now doesn't look anything special, anymore.
+
+{{ "app/controllers/blog_posts_controller.rb:show:../trailblazer-guides:operation-03" | tsnippet }}
+
+Given that we've just learned about the `Index` operation, the `Show` class in `app/concepts/blog_post/operation/index.rb` is almost boring.
+
+{{ "app/concepts/blog_post/operation/show.rb:showop:../trailblazer-guides:operation-03" | tsnippet }}
+
+Trailblazer already ships with the `Model` macro to retrieve the model and assign it to the `options` object.
+
+{% callout %}
+  We use `find_by`, which will either return the model matching the `:id` field, or `nil`. This has the advantage that there won't be an evil exception breaking our flow, but the operation will automatically jump to the error track if it can't find a model.
+{% endcallout %}
+
+
 ## Feature Tests
 
 ## Operation Tests
