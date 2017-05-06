@@ -4,8 +4,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <title>Trailblazer: Upgrading 1.1 to 2.0</title>
 <meta name="description" content="Upgrading 1.1 to 2.0 - Trailblazer">
+=======
+<title>Trailblazer: Trailblazer-Compat</title>
+<meta name="description" content="Trailblazer-Compat - Trailblazer">
+>>>>>>> update with upgrade path.
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,14 +41,22 @@
 </script>
 
 
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <meta property="og:title" content="Upgrading 1.1 to 2.0">
+=======
+<meta property="og:title" content="Trailblazer-Compat">
+>>>>>>> update with upgrade path.
 <meta property="og:site_name" content="Trailblazer">
 <meta property="og:url" content="http://trailblazer.to/gems/trailblazer/upgrading-1-to-2.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <meta name="twitter:title" content="Upgrading 1.1 to 2.0">
+=======
+<meta name="twitter:title" content="Trailblazer-Compat">
+>>>>>>> update with upgrade path.
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -122,7 +135,11 @@
 
           
             <header id="doc-header">
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
   <h1 class="doc-page-title">Upgrading 1.1 to 2.0</h1>
+=======
+  <h1 class="doc-page-title">Trailblazer-Compat</h1>
+>>>>>>> update with upgrade path.
   <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 28 April 2017</span>
 
   
@@ -147,7 +164,11 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
               <p>The <code class="highlighter-rouge">trailblazer-compat</code> gem provides a seamless-er™ upgrade from TRB 1.1 to 2.x.</p>
+=======
+              <p>This gem provides a seamless-er™ upgrade from TRB 1.1 to 2.x.</p>
+>>>>>>> update with upgrade path.
 
 <p>It allows to run both old TRB 1.1 operations along with new or refactored 2.x code in the same application, making it easier to upgrade operation code <code class="highlighter-rouge">step</code>-wise (no pun intended!) or add new TRB2 operations, workflows, etc. without having to change the old code.</p>
 
@@ -187,9 +208,15 @@
 
 <p>All your 1.1 legacy code can now be run in parallel to 2.x operations and workflows - you can upgrade old code and introduce the new semantics as you go. Please note that this does not slow down any runtime execution and mustn’t be considered “dirty”.</p>
 
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <h2 id="upgrade-path" data-magellan-target="upgrade-path">Upgrade Path</h2>
 
 <p>Theoretically, you don’t have to touch any 1.1 code at all. The file structure is identical and all abstractions from 1.1 still exist (except for <code class="highlighter-rouge">Builder</code>). Only the internals of <code class="highlighter-rouge">Operation</code> have changed: you now structure your business code into steps on a “railway”.</p>
+=======
+<h2 id="upgrade-path--overview" data-magellan-target="upgrade-path--overview">Upgrade Path / Overview</h2>
+
+<p>Theoretically, you don’t have to touch any 1.1 code at all.</p>
+>>>>>>> update with upgrade path.
 
 <ol>
   <li>
@@ -250,7 +277,11 @@
 
 <h2 id="macros" data-magellan-target="macros">Macros</h2>
 
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <p>In TRB2, <a href="/gems/operation/2.0/api.html#macro-api">step macros</a> can do a lot of work for you. This used to be implemented in an overly complicated nested chain of methods. Macros simply return a callable object to be inserted into the railway.</p>
+=======
+<p>In TRB2, step macros can do a lot of work for you. This used to be implemented in an overly complicated nested chain of methods. Macros simply return a callable object to be inserted into the railway.</p>
+>>>>>>> update with upgrade path.
 
 <div class="language-ruby highlighter-rouge">
 <pre class="highlight"><code><span class="n">step</span> <span class="no">Contract</span><span class="o">::</span><span class="no">Build</span><span class="p">(</span> <span class="ss">constant: </span><span class="no">Form</span><span class="o">::</span><span class="no">Create</span> <span class="p">)</span> <span class="c1"># used to happen in #validate</span>
@@ -268,6 +299,7 @@
 
 <h2 id="model" data-magellan-target="model">Model</h2>
 
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <p>The <a href="/gems/operation/2.0/api.html#model"><code class="highlighter-rouge">Model( )</code> macro</a> replaces <code class="highlighter-rouge">model Song, :create|:find</code>.</p>
 
 <p>Make sure to change <code class="highlighter-rouge">:create</code> to <code class="highlighter-rouge">:new</code> as in 2.x, the action is simply passed on to ActiveRecord (or any other ORM).</p>
@@ -414,6 +446,9 @@ end
     <p>Alternatively, use the <a href="/gems/formular">formular</a> form builder.</p>
   </li>
 </ul>
+=======
+<p>The <code class="highlighter-rouge">Model( )</code> macro replaces <code class="highlighter-rouge">model Song, :create|:find</code>. Make sure to change <code class="highlighter-rouge">:create</code> to <code class="highlighter-rouge">:new</code> as in 2.x, the action is simply passed on to ActiveRecord (or any other ORM).</p>
+>>>>>>> update with upgrade path.
 
 <h2 id="development-status" data-magellan-target="development-status">Development Status</h2>
 
@@ -430,6 +465,7 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#installation">Installation</a></li>
 <li><a href="#initialization">Initialization</a></li>
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
 <li><a href="#upgrade-path">Upgrade Path</a></li>
 <li><a href="#macros">Macros</a></li>
 <li><a href="#model">Model</a></li>
@@ -438,6 +474,11 @@ end
 <li><a href="#test">Test</a></li>
 <li><a href="#builder">Builder</a></li>
 <li><a href="#common-problems">Common Problems</a></li>
+=======
+<li><a href="#upgrade-path--overview">Upgrade Path / Overview</a></li>
+<li><a href="#macros">Macros</a></li>
+<li><a href="#model">Model</a></li>
+>>>>>>> update with upgrade path.
 <li><a href="#development-status">Development Status</a></li>
         </ul>
       
@@ -479,7 +520,10 @@ end
     </li>
     <li><a href="/gems/trailblazer/2.0/rails.html">Rails</a></li>
     <li><a href="/gems/trailblazer/loader.html">Loader</a></li>
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
     <li><a href="/gems/trailblazer/upgrading-1-to-2.html" class="active">Upgrading</a></li>
+=======
+>>>>>>> update with upgrade path.
     <li class="divider">
 
     <li class="heading">
@@ -553,7 +597,10 @@ end
     </li>
     <li><a href="/guides/trailblazer/2.0/01-operation-basics.html">01 - Operation Basics</a></li>
     <li><a href="/guides/trailblazer/2.0/02-trailblazer-basics.html">02 - Trailblazer Basics</a></li>
+<<<<<<< 6b97be39386eea7df6f28f8eaab610fbc1d471b7
     <li><a href="/guides/trailblazer/2.0/03-rails-basics.html">03 - Rails Basics</a></li>
+=======
+>>>>>>> update with upgrade path.
 </ul>
 
       </div>
