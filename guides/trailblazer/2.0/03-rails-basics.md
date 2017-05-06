@@ -24,7 +24,7 @@ The `trailblazer-rails` gem makes the integration a walk in the park. It pulls a
 {% callout %}
 In Trailblazer, we don't believe that an ever-changing runtime environment is a good idea. Code that is, maybe, loaded, in a certain order, maybe, is a source of many production problems. Even in development mode we want an environment as close to production as possible.
 
-This is why `trailblazer-loader` always loads all TRB files at server startup. The speed decrease is about 2 seconds is ignorable, since the automatic reloading with Rails still works.
+This is why `trailblazer-loader` always loads all TRB files at server startup. The speed decrease is about 2 seconds and is ignorable, since the automatic reloading with Rails still works.
 {% endcallout %}
 
 The Traiblazer-rails gem also adds one single method `#run` to the `ApplicationController` which we'll discover soon.
