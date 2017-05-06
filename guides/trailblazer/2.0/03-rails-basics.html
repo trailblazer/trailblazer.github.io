@@ -123,7 +123,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">03- Rails Basics</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 May 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 May 2017</span>
 
   
     <span class="doc-last-updated">
@@ -186,7 +186,7 @@ end
   
 <p>In Trailblazer, we don’t believe that an ever-changing runtime environment is a good idea. Code that is, maybe, loaded, in a certain order, maybe, is a source of many production problems. Even in development mode we want an environment as close to production as possible.</p>
 
-<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds is ignorable, since the automatic reloading with Rails still works.</p>
+<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds and is ignorable, since the automatic reloading with Rails still works.</p>
 
 </div>
 
@@ -286,13 +286,9 @@ end
 
     property :title
     property :body
-    property :author
-    property :user_id
 
     validation do
       required(:title).filled
-      required(:author).filled
-      required(:user_id).filled
       required(:body).filled(min_size?: 9)
     end
   end
@@ -337,6 +333,14 @@ end
 end
 </code></pre>
 
+<p>The <code class="highlighter-rouge">include</code>s are necessary to import all helpers we need in the view.</p>
+
+<div class="callout">
+  
+<p>The first line <code>module BlogPost::Cell</code> is crucial as it creates the module constant <code>Cell</code> in the <code>BlogPost</code> namespace. It has to be in one single line, otherwise you will get strange constant errors due to a never-fixed bug in Ruby.</p>
+
+</div>
+
 <p>As all we do is rendering the view, there’s no real code yet. Speaking of views, here is the cell’s view in <code class="highlighter-rouge">app/concepts/blog_post/view/new.slim</code>.</p>
 
 <pre><code>.row.new
@@ -364,6 +368,16 @@ end
 
 <p>Again, we run an operation. This time it’s <code class="highlighter-rouge">BlogPost::Create</code>.</p>
 
+<div class="callout">
+  
+<p>Can you see how controller actions map to operations? This is because in Rails apps, actions correspond to specific application functions (“create blog post”, “search user”, “add comment”), and since the <strong>business logic should be encapsulated in operations</strong>, you will always find controller actions simply dispatching to one operation.</p>
+
+<p>However, this doesn’t mean you couldn’t use operations for all kinds of smaller tasks, or in background jobs, or as console commands, too.</p>
+
+</div>
+
+<p>Here’s the controller action dispatching the operation.</p>
+
 <pre><code>def create
   run BlogPost::Create do |result|
     return redirect_to "/posts"
@@ -383,9 +397,11 @@ end
 
 <p>Let’s check out the <code class="highlighter-rouge">BlogPost::Create</code> operation in detail, now.</p>
 
-<h2 id="nested" data-magellan-target="nested">Nested</h2>
+<h2 id="create" data-magellan-target="create">Create</h2>
 
-<p>To understand how the operation knows whether or not it was run successful, we should have a look at the code in <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
+<p>While the operation we implemented earlier only creates an unpersisted model, the <code class="highlighter-rouge">BlogPost::Create</code> operation also processes the submitted form data and physically persists the model in case of validity.</p>
+
+<p>To understand how the operation knows whether or not it was run successful, and how this entire workflow is implemented, we should have a look at the code in <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
 
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   class Present &lt; Trailblazer::Operation
@@ -394,7 +410,7 @@ end
   end
 
   step Nested( Present )
-  step Contract::Validate( )
+  step Contract::Validate( key: :blog_post )
   step Contract::Persist( )
   step :notify!
 
@@ -404,9 +420,21 @@ end
 end
 </code></pre>
 
-<p>As you can see, we reuse the existing <code class="highlighter-rouge">Create::Present</code> to create the model and contract for it, and then run validation and persisting steps after it. This all happens <a href="http://localhost:4000/gems/operation/2.0/api.html#nested">by leveraging <code class="highlighter-rouge">Nested</code></a>. It runs the <code class="highlighter-rouge">Create::Present</code> operation and copies the key/value pairs from its result object into the composing operation’s result object.</p>
+<p>Don’t get confused by the nested <code class="highlighter-rouge">Present</code> class in <code class="highlighter-rouge">Create</code>! This is only Ruby’s way of namespacing and doesn’t leak any logic or state into the <code class="highlighter-rouge">Create</code> operation.</p>
 
-<p>This is enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+<p>The <code class="highlighter-rouge">Create</code> operation definition starts with the <code class="highlighter-rouge">step Nested ( .. )</code> statement. This is where we’re reusing the existing <code class="highlighter-rouge">Present</code> operation to create the model and contract for it. After that’s done, we run validations, persist the data to the model (in case the validation is happy) and send a notification after it.</p>
+
+<div class="callout">
+  
+<p><a href="http://localhost:4000/gems/operation/2.0/api.html#nested">The <code>Nested</code> step macro</a> runs the <code>Present</code> operation and copies the key/value pairs from its result object into <code>Create</code> our result object. Of course, this all happens at run-time.</p>
+
+</div>
+
+<p>We wrote enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+
+<p>While an invalid form submission will re-render the form, sane data causes us to get redirect to <code class="highlighter-rouge">/blog_posts/</code>, aka the <em>index</em> action.</p>
+
+<h2 id="index" data-magellan-target="index">Index</h2>
 
 <h2 id="feature-tests" data-magellan-target="feature-tests">Feature Tests</h2>
 
@@ -428,7 +456,8 @@ end
 <li><a href="#contract-rendering">Contract Rendering</a></li>
 <li><a href="#form-cell">Form Cell</a></li>
 <li><a href="#form-processing">Form Processing</a></li>
-<li><a href="#nested">Nested</a></li>
+<li><a href="#create">Create</a></li>
+<li><a href="#index">Index</a></li>
 <li><a href="#feature-tests">Feature Tests</a></li>
 <li><a href="#operation-tests">Operation Tests</a></li>
         </ul>
