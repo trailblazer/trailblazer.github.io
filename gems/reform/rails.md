@@ -75,6 +75,11 @@ This is especially helpful when your framework tries to render `cover_song_path`
 To make your forms work with all the form gems like `simple_form` or Rails `form_for` you need to include another module.
 
 Again, this step is implicit in Rails and you don't need to do it manually.
+If you've configured dry-validation as your validation framework the inclusion will not happen.
+You have to include at least the FormBuilderMethods module.
+This is needed to translate Rails' suboptimal songs_attributes weirdness
+back to normal `songs: ` naming in +#valiate+.
+This can be controlled via `config.reform.enable_active_model_builder_methods = true`.
 
     class SongForm < Reform::Form
       include Reform::Form::ActiveModel
