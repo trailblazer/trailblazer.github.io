@@ -123,7 +123,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Reform with Rails</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 May 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 07 May 2017</span>
 
   
     <span class="doc-last-updated">
@@ -227,7 +227,12 @@ end
 
 <p>To make your forms work with all the form gems like <code class="highlighter-rouge">simple_form</code> or Rails <code class="highlighter-rouge">form_for</code> you need to include another module.</p>
 
-<p>Again, this step is implicit in Rails and you don’t need to do it manually.</p>
+<p>Again, this step is implicit in Rails and you don’t need to do it manually.
+If you’ve configured dry-validation as your validation framework the inclusion will not happen.
+You have to include at least the FormBuilderMethods module.
+This is needed to translate Rails’ suboptimal songs_attributes weirdness
+back to normal <code class="highlighter-rouge">songs: </code> naming in +#valiate+.
+This can be controlled via <code class="highlighter-rouge">config.reform.enable_active_model_builder_methods = true</code>.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code>class SongForm &lt; Reform::Form

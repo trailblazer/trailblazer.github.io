@@ -123,7 +123,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">03- Rails Basics</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 May 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 May 2017</span>
 
   
     <span class="doc-last-updated">
@@ -186,7 +186,7 @@ end
   
 <p>In Trailblazer, we don’t believe that an ever-changing runtime environment is a good idea. Code that is, maybe, loaded, in a certain order, maybe, is a source of many production problems. Even in development mode we want an environment as close to production as possible.</p>
 
-<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds is ignorable, since the automatic reloading with Rails still works.</p>
+<p>This is why <code>trailblazer-loader</code> always loads all TRB files at server startup. The speed decrease is about 2 seconds and is ignorable, since the automatic reloading with Rails still works.</p>
 
 </div>
 
@@ -280,20 +280,19 @@ end
 
 <p>The interesting part in the <code class="highlighter-rouge">Present</code> operation is the <code class="highlighter-rouge">:constant</code> option: it references the <code class="highlighter-rouge">BlogPost::Contract::Create</code> class, which itself lives in <code class="highlighter-rouge">app/concepts/blog_post/contract/create.rb</code>.</p>
 
-<pre><code>module BlogPost::Contract
+<pre><code>require "reform"
+require "reform/form/dry"
+
+module BlogPost::Contract
   class Create &lt; Reform::Form
     include Dry
 
     property :title
     property :body
-    property :author
-    property :user_id
 
     validation do
       required(:title).filled
-      required(:author).filled
-      required(:user_id).filled
-      required(:body).filled(min_size?: 9)
+      required(:body).maybe(min_size?: 9)
     end
   end
 end
@@ -337,6 +336,14 @@ end
 end
 </code></pre>
 
+<p>The <code class="highlighter-rouge">include</code>s are necessary to import all helpers we need in the view.</p>
+
+<div class="callout">
+  
+<p>The first line <code>module BlogPost::Cell</code> is crucial as it creates the module constant <code>Cell</code> in the <code>BlogPost</code> namespace. It has to be in one single line, otherwise you will get strange constant errors due to a never-fixed bug in Ruby.</p>
+
+</div>
+
 <p>As all we do is rendering the view, there’s no real code yet. Speaking of views, here is the cell’s view in <code class="highlighter-rouge">app/concepts/blog_post/view/new.slim</code>.</p>
 
 <pre><code>.row.new
@@ -356,7 +363,7 @@ end
 
 <p>Enough code to render the blog form. It looks a bit sad without any layout, but we’ll come to that shortly.</p>
 
-<p><img src="/images/guides/03-new-form-layoutless.png"></p>
+<p><img class="thumbnail" src="/images/guides/03-new-form-layoutless.png"></p>
 
 <p>Submitting this very form will POST it to <code class="highlighter-rouge">/blog_posts/</code>, which is the next controller action we have to implement.</p>
 
@@ -364,9 +371,19 @@ end
 
 <p>Again, we run an operation. This time it’s <code class="highlighter-rouge">BlogPost::Create</code>.</p>
 
+<div class="callout">
+  
+<p>Can you see how controller actions map to operations? This is because in Rails apps, actions correspond to specific application functions (“create blog post”, “search user”, “add comment”), and since the <strong>business logic should be encapsulated in operations</strong>, you will always find controller actions simply dispatching to one operation.</p>
+
+<p>However, this doesn’t mean you couldn’t use operations for all kinds of smaller tasks, or in background jobs, or as console commands, too.</p>
+
+</div>
+
+<p>Here’s the controller action dispatching the operation.</p>
+
 <pre><code>def create
   run BlogPost::Create do |result|
-    return redirect_to "/posts"
+    return redirect_to blog_posts_path
   end
 
   render cell(BlogPost::Cell::New, @form), layout: false
@@ -383,9 +400,11 @@ end
 
 <p>Let’s check out the <code class="highlighter-rouge">BlogPost::Create</code> operation in detail, now.</p>
 
-<h2 id="nested" data-magellan-target="nested">Nested</h2>
+<h2 id="create" data-magellan-target="create">Create</h2>
 
-<p>To understand how the operation knows whether or not it was run successful, we should have a look at the code in <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
+<p>While the operation we implemented earlier only creates an unpersisted model, the <code class="highlighter-rouge">BlogPost::Create</code> operation also processes the submitted form data and physically persists the model in case of validity.</p>
+
+<p>To understand how the operation knows whether or not it was run successful, and how this entire workflow is implemented, we should have a look at the code in <code class="highlighter-rouge">app/concepts/blog_post/operation/create.rb</code>.</p>
 
 <pre><code>class BlogPost::Create &lt; Trailblazer::Operation
   class Present &lt; Trailblazer::Operation
@@ -394,23 +413,115 @@ end
   end
 
   step Nested( Present )
-  step Contract::Validate( )
+  step Contract::Validate( key: :blog_post )
   step Contract::Persist( )
   step :notify!
 
-  def notify!(options, current_user:, model:, **)
-    options["result.notify"] = BlogPost::Notification.(current_user, model)
+  def notify!(options, model:, **)
+    options["result.notify"] = Rails.logger.info("New blog post #{model.title}.")
   end
 end
 </code></pre>
 
-<p>As you can see, we reuse the existing <code class="highlighter-rouge">Create::Present</code> to create the model and contract for it, and then run validation and persisting steps after it. This all happens <a href="http://localhost:4000/gems/operation/2.0/api.html#nested">by leveraging <code class="highlighter-rouge">Nested</code></a>. It runs the <code class="highlighter-rouge">Create::Present</code> operation and copies the key/value pairs from its result object into the composing operation’s result object.</p>
+<p>Don’t get confused by the nested <code class="highlighter-rouge">Present</code> class in <code class="highlighter-rouge">Create</code>! This is only Ruby’s way of namespacing and doesn’t leak any logic or state into the <code class="highlighter-rouge">Create</code> operation.</p>
 
-<p>This is enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+<p>The <code class="highlighter-rouge">Create</code> operation definition starts with the <code class="highlighter-rouge">step Nested ( .. )</code> statement. This is where we’re reusing the existing <code class="highlighter-rouge">Present</code> operation to create the model and contract for it. After that’s done, we run validations, persist the data to the model (in case the validation is happy) and send a notification after it.</p>
 
-<h2 id="feature-tests" data-magellan-target="feature-tests">Feature Tests</h2>
+<div class="callout">
+  
+<p><a href="http://localhost:4000/gems/operation/2.0/api.html#nested">The <code>Nested</code> step macro</a> runs the <code>Present</code> operation and copies the key/value pairs from its result object into <code>Create</code> our result object. Of course, this all happens at run-time.</p>
 
-<h2 id="operation-tests" data-magellan-target="operation-tests">Operation Tests</h2>
+</div>
+
+<p>We wrote enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+
+<p>While an invalid form submission will re-render the form, sane data causes us to get redirect to <code class="highlighter-rouge">/blog_posts/</code>, aka the <em>index</em> action.</p>
+
+<h2 id="index" data-magellan-target="index">Index</h2>
+
+<p>The controller <code class="highlighter-rouge">index</code> method, again, simply dispatches to the <code class="highlighter-rouge">BlogPost::Index</code> operation and then uses its cell to render the list.</p>
+
+<pre><code>def index
+  run BlogPost::Index
+  render cell(BlogPost::Cell::Index, result["model"]), layout: false
+end
+</code></pre>
+
+<p>We’re going to discuss the cell in another chapter. Here’s the operation found in <code class="highlighter-rouge">app/concepts/blog_post/operation/index.rb</code>.</p>
+
+<pre><code>class BlogPost::Index &lt; Trailblazer::Operation
+  step :model!
+
+  def model!(options, *)
+    options["model"] = ::BlogPost.all.reverse_order
+  end
+end
+</code></pre>
+
+<p>In line with what we did in <code class="highlighter-rouge">Create::Present</code>, the <code class="highlighter-rouge">Index</code> operation’s job is to retrieve a list of posts and expose them via the result object’s <code class="highlighter-rouge">"model"</code> field.</p>
+
+<div class="callout">
+  
+<p>Remember that this is the place where pagination, filtering, or even delegating to <code>Query</code> objects might happen. So far, we didn’t see the need to introduce framework-based query objects, but with increasing usage this might be an optional feature in a future version.</p>
+
+<p>Also, the name <code>"model"</code> - despite it being an array - is purely conventional.</p>
+
+</div>
+
+<p>This array is then passed into the cell and renders an index list. In that list, clicking a link will direct you to a URL such as <code class="highlighter-rouge">/blog_posts/1</code>, which corresponds to a <code class="highlighter-rouge">show</code> action.</p>
+
+<h2 id="show" data-magellan-target="show">Show</h2>
+
+<p>The <code class="highlighter-rouge">show</code> action in the controller now doesn’t look anything special, anymore.</p>
+
+<pre><code>def show
+  run BlogPost::Show
+  render cell(BlogPost::Cell::Show, result["model"]), layout: false
+end
+</code></pre>
+
+<p>Given that we’ve just learned about the <code class="highlighter-rouge">Index</code> operation, the <code class="highlighter-rouge">Show</code> class in <code class="highlighter-rouge">app/concepts/blog_post/operation/index.rb</code> is almost boring.</p>
+
+<pre><code>class BlogPost::Show &lt; Trailblazer::Operation
+  step Model(BlogPost, :find_by)
+end
+</code></pre>
+
+<p>Trailblazer already ships with the <code class="highlighter-rouge">Model</code> macro to retrieve the model and assign it to the <code class="highlighter-rouge">options</code> object.</p>
+
+<div class="callout">
+  
+<p>We use <code>find_by</code>, which will either return the model matching the <code>:id</code> field, or <code>nil</code>. This has the advantage that there won’t be an evil exception breaking our flow, but the operation will automatically jump to the error track if it can’t find a model.</p>
+
+</div>
+
+<p>A colorless, but functional view of a particular blog post is the reward for our hard work.</p>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-7 ">
+        <p><img class="thumbnail" src="/images/guides/03-show-layoutless.png"></p>
+
+
+      </div>
+    <div class="column medium-5 ">
+        <p>Admittedly, this looks quite bare-bones, but we can read the blog post, and have links to edit and delete it.</p>
+
+<p>When clicking <em>Edit</em> we will be redirect to <code>/blog_posts/1/edit</code>. This is just another controller action dispatching to the <code>BlogPost::Update::Present</code> operation.</p>
+
+      </div>
+</div></section>
+
+<h2 id="edit" data-magellan-target="edit">Edit</h2>
+
+<p>When editing an existing blog post, the <code class="highlighter-rouge">BlogPostsController#edit</code> action is invoked.</p>
+
+<pre><code>def edit
+  run BlogPost::Update::Present
+  render cell(BlogPost::Cell::Edit, @form), layout: false
+end
+</code></pre>
+
 
             </div>
 
@@ -428,9 +539,10 @@ end
 <li><a href="#contract-rendering">Contract Rendering</a></li>
 <li><a href="#form-cell">Form Cell</a></li>
 <li><a href="#form-processing">Form Processing</a></li>
-<li><a href="#nested">Nested</a></li>
-<li><a href="#feature-tests">Feature Tests</a></li>
-<li><a href="#operation-tests">Operation Tests</a></li>
+<li><a href="#create">Create</a></li>
+<li><a href="#index">Index</a></li>
+<li><a href="#show">Show</a></li>
+<li><a href="#edit">Edit</a></li>
         </ul>
       
 </nav>
