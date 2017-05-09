@@ -419,6 +419,8 @@ end
 
   def notify!(options, model:, **)
     options["result.notify"] = Rails.logger.info("New blog post #{model.title}.")
+<<<<<<< HEAD
+=======
   end
 end
 </code></pre>
@@ -451,6 +453,81 @@ end
 
 <pre><code>class BlogPost::Index &lt; Trailblazer::Operation
   step :model!
+
+  def model!(options, *)
+    options["model"] = ::BlogPost.all.reverse_order
+>>>>>>> ce77d151ba7bf4987385e924cc7e20d3b659bdd0
+  end
+end
+</code></pre>
+
+<<<<<<< HEAD
+<p>Don’t get confused by the nested <code class="highlighter-rouge">Present</code> class in <code class="highlighter-rouge">Create</code>! This is only Ruby’s way of namespacing and doesn’t leak any logic or state into the <code class="highlighter-rouge">Create</code> operation.</p>
+
+<p>The <code class="highlighter-rouge">Create</code> operation definition starts with the <code class="highlighter-rouge">step Nested ( .. )</code> statement. This is where we’re reusing the existing <code class="highlighter-rouge">Present</code> operation to create the model and contract for it. After that’s done, we run validations, persist the data to the model (in case the validation is happy) and send a notification after it.</p>
+
+<div class="callout">
+  
+<p><a href="http://localhost:4000/gems/operation/2.0/api.html#nested">The <code>Nested</code> step macro</a> runs the <code>Present</code> operation and copies the key/value pairs from its result object into <code>Create</code> our result object. Of course, this all happens at run-time.</p>
+
+</div>
+
+<p>We wrote enough code to have a fully working setup to create, validate and persist blog posts along with post-processing logic such as sending out notifications, which would usually happen in an ActiveRecord callback.</p>
+
+<p>While an invalid form submission will re-render the form, sane data causes us to get redirect to <code class="highlighter-rouge">/blog_posts/</code>, aka the <em>index</em> action.</p>
+
+<h2 id="index" data-magellan-target="index">Index</h2>
+
+<p>The controller <code class="highlighter-rouge">index</code> method, again, simply dispatches to the <code class="highlighter-rouge">BlogPost::Index</code> operation and then uses its cell to render the list.</p>
+
+<pre><code>def index
+  run BlogPost::Index
+  render cell(BlogPost::Cell::Index, result["model"]), layout: false
+end
+</code></pre>
+
+<p>We’re going to discuss the cell in another chapter. Here’s the operation found in <code class="highlighter-rouge">app/concepts/blog_post/operation/index.rb</code>.</p>
+
+<pre><code>class BlogPost::Index &lt; Trailblazer::Operation
+  step :model!
+=======
+<p>In line with what we did in <code class="highlighter-rouge">Create::Present</code>, the <code class="highlighter-rouge">Index</code> operation’s job is to retrieve a list of posts and expose them via the result object’s <code class="highlighter-rouge">"model"</code> field.</p>
+
+<div class="callout">
+  
+<p>Remember that this is the place where pagination, filtering, or even delegating to <code>Query</code> objects might happen. So far, we didn’t see the need to introduce framework-based query objects, but with increasing usage this might be an optional feature in a future version.</p>
+
+<p>Also, the name <code>"model"</code> - despite it being an array - is purely conventional.</p>
+
+</div>
+
+<p>This array is then passed into the cell and renders an index list. In that list, clicking a link will direct you to a URL such as <code class="highlighter-rouge">/blog_posts/1</code>, which corresponds to a <code class="highlighter-rouge">show</code> action.</p>
+
+<h2 id="show" data-magellan-target="show">Show</h2>
+
+<p>The <code class="highlighter-rouge">show</code> action in the controller now doesn’t look anything special, anymore.</p>
+
+<pre><code>def show
+  run BlogPost::Show
+  render BlogPost::Cell::Show, result["model"]
+end
+</code></pre>
+
+<p>Given that we’ve just learned about the <code class="highlighter-rouge">Index</code> operation, the <code class="highlighter-rouge">Show</code> class in <code class="highlighter-rouge">app/concepts/blog_post/operation/index.rb</code> is almost boring.</p>
+
+<pre><code>class BlogPost::Show &lt; Trailblazer::Operation
+  step Model(BlogPost, :find_by)
+end
+</code></pre>
+
+<p>Trailblazer already ships with the <code class="highlighter-rouge">Model</code> macro to retrieve the model and assign it to the <code class="highlighter-rouge">options</code> object.</p>
+
+<div class="callout">
+  
+<p>We use <code>find_by</code>, which will either return the model matching the <code>:id</code> field, or <code>nil</code>. This has the advantage that there won’t be an evil exception breaking our flow, but the operation will automatically jump to the error track if it can’t find a model.</p>
+
+</div>
+>>>>>>> ce77d151ba7bf4987385e924cc7e20d3b659bdd0
 
   def model!(options, *)
     options["model"] = ::BlogPost.all.reverse_order
@@ -542,7 +619,12 @@ end
 <li><a href="#create">Create</a></li>
 <li><a href="#index">Index</a></li>
 <li><a href="#show">Show</a></li>
+<<<<<<< HEAD
 <li><a href="#edit">Edit</a></li>
+=======
+<li><a href="#feature-tests">Feature Tests</a></li>
+<li><a href="#operation-tests">Operation Tests</a></li>
+>>>>>>> ce77d151ba7bf4987385e924cc7e20d3b659bdd0
         </ul>
       
 </nav>
