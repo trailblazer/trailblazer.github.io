@@ -27,7 +27,7 @@ In Trailblazer, we don't believe that an ever-changing runtime environment is a 
 This is why `trailblazer-loader` always loads all TRB files at server startup. The speed decrease is about 2 seconds and is ignorable, since the automatic reloading with Rails still works.
 {% endcallout %}
 
-The Traiblazer-rails gem also adds one single method `#run` to the `ApplicationController` which we'll discover soon.
+The `traiblazer-rails` gem also adds one single method `#run` to the `ApplicationController` which we'll discover soon.
 
 ## File Structure
 
@@ -180,7 +180,7 @@ Don't get confused by the nested `Present` class in `Create`! This is only Ruby'
 The `Create` operation definition starts with the `step Nested ( .. )` statement. This is where we're reusing the existing `Present` operation to create the model and contract for it. After that's done, we run validations, persist the data to the model (in case the validation is happy) and send a notification after it.
 
 {% callout %}
-  [The `Nested` step macro](http://localhost:4000/gems/operation/2.0/api.html#nested) runs the `Present` operation and copies the key/value pairs from its result object into `Create` our result object. Of course, this all happens at run-time.
+  [The `Nested` step macro](/gems/operation/2.0/api.html#nested) runs the `Present` operation and copies the key/value pairs from its result object into `Create` our result object. Of course, this all happens at run-time.
 {% endcallout %}
 
 
