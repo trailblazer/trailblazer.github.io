@@ -140,7 +140,7 @@ As all we do is rendering the view, there's no real code yet. Speaking of views,
 
 Enough code to render the blog form. It looks a bit sad without any layout, but we'll come to that shortly.
 
-<img src="/images/guides/03-new-form-layoutless.png">
+<img class="thumbnail" src="/images/guides/03-new-form-layoutless.png">
 
 Submitting this very form will POST it to `/blog_posts/`, which is the next controller action we have to implement.
 
@@ -225,7 +225,20 @@ Trailblazer already ships with the `Model` macro to retrieve the model and assig
   We use `find_by`, which will either return the model matching the `:id` field, or `nil`. This has the advantage that there won't be an evil exception breaking our flow, but the operation will automatically jump to the error track if it can't find a model.
 {% endcallout %}
 
+A colorless, but functional view of a particular blog post is the reward for our hard work.
 
-## Feature Tests
+{% row %}
+  ~~~7
+  <img class="thumbnail" src="/images/guides/03-show-layoutless.png">
+  ~~~5
+  Admittedly, this looks quite bare-bones, but we can read the blog post, and have links to edit and delete it.
 
-## Operation Tests
+  When clicking *Edit* we will be redirect to `/blog_posts/1/edit`. This is just another controller action dispatching to the `BlogPost::Update::Present` operation.
+{% endrow %}
+
+## Edit
+
+When editing an existing blog post, the `BlogPostsController#edit` action is invoked.
+
+{{ "app/controllers/blog_posts_controller.rb:edit:../trailblazer-guides:operation-03" | tsnippet }}
+
