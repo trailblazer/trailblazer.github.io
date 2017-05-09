@@ -522,6 +522,79 @@ end
 end
 </code></pre>
 
+<p>The processing part of the update flow is implemented via the <code class="highlighter-rouge">#update</code> action.</p>
+
+<pre><code>def update
+  run BlogPost::Update do |result|
+    flash[:notice] = "#{result["model"].title} has been saved"
+    return redirect_to blog_post_path(result["model"].id)
+  end
+
+  render cell(BlogPost::Cell::Edit, @form), layout: false
+end
+</code></pre>
+
+<p>Again, the cells views will be discussed in chapter 05. Let’s focus on the business logic here.</p>
+
+<h2 id="update" data-magellan-target="update">Update</h2>
+
+<p>The following code file are the <code class="highlighter-rouge">BlogPost::Update::Present</code> and <code class="highlighter-rouge">BlogPost::Update</code> operations used in the two controller actions just introduced. Just as their <code class="highlighter-rouge">Create</code> counterpart, we put them in <code class="highlighter-rouge">app/concepts/blog_post/update.rb</code>.</p>
+
+<pre><code>class BlogPost::Update &lt; Trailblazer::Operation
+  class Present &lt; Trailblazer::Operation
+    step Model(BlogPost, :find_by)
+    step Contract::Build( constant: BlogPost::Contract::Create )
+  end
+
+  step Nested(Present)
+  step Contract::Validate( key: :blog_post )
+  step Contract::Persist()
+end
+</code></pre>
+
+<p>Note that in the <code class="highlighter-rouge">Model</code> step, we use the <code class="highlighter-rouge">:find_by</code> method, just as we did for <a href="#show">Show</a>. Another interesting fact here’s that the <code class="highlighter-rouge">Create</code> contract is reused. At the moment, we don’t need differing validations for the editing logic, which allows us to lazily point to that existing class.</p>
+
+<p>The last missing piece for our simple CRUD example is deleting: we want to be able to trash articles that no longer fit.</p>
+
+<h2 id="delete" data-magellan-target="delete">Delete</h2>
+
+<p>The controller action <code class="highlighter-rouge">#destroy</code> is responsible for triggering the respective delete logic.</p>
+
+<pre><code>def destroy
+  run BlogPost::Delete
+
+  flash[:alert] = "Post deleted"
+  redirect_to blog_posts_path
+end
+</code></pre>
+
+<p>Since we don’t have anything that could go wrong, <em>yet</em>, we don’t need the block for <code class="highlighter-rouge">run</code>. The operation in <code class="highlighter-rouge">app/concepts/blog_post/operation/delete.rb</code> is very simple, too.</p>
+
+<pre><code>class BlogPost::Delete &lt; Trailblazer::Operation
+  step Model(BlogPost, :find_by)
+  step :delete!
+
+  def delete!(options, model:, **)
+    model.destroy
+  end
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">Model</code> macro helps with finding the right blog post instance, and a custom <code class="highlighter-rouge">delete!</code> step actually deletes the model using ActiveRecord’s <code class="highlighter-rouge">destroy</code> method.</p>
+
+<h2 id="summary" data-magellan-target="summary">Summary</h2>
+
+<p>Building a simple CRUD component for a model is very easy with Trailblazer. In this chapter, we really only focused on the business code, and we will learn about Cells in chapter 05.</p>
+
+<p>However, and this is a terrible thing to do, we’ve totally neglected testing! Testing with Trailblazer is incredibly simple and much more straight-forward as compared to Rails and its quite fragmented testing style. We’ll discover the world of <a href="04-testing-basics.html">testing in the next chapter</a>, and only once we’re finished you can sit back and be proud of your work.</p>
+
+<section class=" ">
+  <div class="row">
+    <div class="column medium-12 text-center">
+        <p><a href="04-testing-basics.html" class="button">GO TO PART 4: TESTING BASICS!</a></p>
+
+      </div>
+</div></section>
 
             </div>
 
@@ -543,6 +616,9 @@ end
 <li><a href="#index">Index</a></li>
 <li><a href="#show">Show</a></li>
 <li><a href="#edit">Edit</a></li>
+<li><a href="#update">Update</a></li>
+<li><a href="#delete">Delete</a></li>
+<li><a href="#summary">Summary</a></li>
         </ul>
       
 </nav>
