@@ -3,7 +3,7 @@ layout: operation2
 title: 03- Rails Basics
 gems:
   - ["trailblazer", "trailblazer/trailblazer", "2.0"]
-description: "Learn how to use Trailblazer in Rails for processing and rendering actions."
+description: "In this guide were building a simple CRUD application with Trailblazer and Rails."
 imageurl: http://trailblazer.to/images/summary/guide-02.png
 ---
 
