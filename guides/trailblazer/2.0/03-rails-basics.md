@@ -242,3 +242,41 @@ When editing an existing blog post, the `BlogPostsController#edit` action is inv
 
 {{ "app/controllers/blog_posts_controller.rb:edit:../trailblazer-guides:operation-03" | tsnippet }}
 
+The processing part of the update flow is implemented via the `#update` action.
+
+{{ "app/controllers/blog_posts_controller.rb:update:../trailblazer-guides:operation-03" | tsnippet }}
+
+Again, the cells views will be discussed in chapter 05. Let's focus on the business logic here.
+
+## Update
+
+The following code file are the `BlogPost::Update::Present` and `BlogPost::Update` operations used in the two controller actions just introduced. Just as their `Create` counterpart, we put them in `app/concepts/blog_post/update.rb`.
+
+{{ "app/concepts/blog_post/operation/update.rb:update:../trailblazer-guides:operation-03" | tsnippet }}
+
+Note that in the `Model` step, we use the `:find_by` method, just as we did for [Show](#show). Another interesting fact here's that the `Create` contract is reused. At the moment, we don't need differing validations for the editing logic, which allows us to lazily point to that existing class.
+
+The last missing piece for our simple CRUD example is deleting: we want to be able to trash articles that no longer fit.
+
+## Delete
+
+The controller action `#destroy` is responsible for triggering the respective delete logic.
+
+{{ "app/controllers/blog_posts_controller.rb:delete:../trailblazer-guides:operation-03" | tsnippet }}
+
+Since we don't have anything that could go wrong, *yet*, we don't need the block for `run`. The operation in `app/concepts/blog_post/operation/delete.rb` is very simple, too.
+
+{{ "app/concepts/blog_post/operation/delete.rb:delete:../trailblazer-guides:operation-03" | tsnippet }}
+
+The `Model` macro helps with finding the right blog post instance, and a custom `delete!` step actually deletes the model using ActiveRecord's `destroy` method.
+
+## Summary
+
+Building a simple CRUD component for a model is very easy with Trailblazer. In this chapter, we really only focused on the business code, and we will learn about Cells in chapter 05.
+
+However, and this is a terrible thing to do, we've totally neglected testing! Testing with Trailblazer is incredibly simple and much more straight-forward as compared to Rails and its quite fragmented testing style. We'll discover the world of [testing in the next chapter](04-testing-basics.html), and only once we're finished you can sit back and be proud of your work.
+
+{% row %}
+  ~~~12,text-center
+  <a href="04-testing-basics.html" class="button">GO TO PART 4: TESTING BASICS!</a>
+{% endrow %}
