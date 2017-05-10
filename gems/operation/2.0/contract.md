@@ -2,7 +2,7 @@
 layout: operation2
 title: Operation Contract
 gems:
-  - ["operation", "trailblazer/trailblazer-operation", "2.0", "1.1"]
+  - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
 ---
 
 A *contract* is an abstraction to handle validation of arbitrary data or object state. It is a fully self-contained object that is orchestrated by the operation.
