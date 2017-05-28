@@ -51,7 +51,7 @@ header: false
           <h2>Archive</h2>
           <ul>
            <li>
-              <strong><a href="2017-may.html">May 2017</a></strong> newsletter is all about Trailblazer 2.0 and the control flow additions to the operation.
+              <strong><a href="http://mailchi.mp/5860579978a8/trailblazer-newsletter-may-2017?e=[UNIQID]">May 2017</a></strong> newsletter is all about Trailblazer 2.0 and the control flow additions to the operation.
             </li>
 
             <li>

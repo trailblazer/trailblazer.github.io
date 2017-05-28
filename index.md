@@ -467,9 +467,11 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
       </div>
 
       <div class="row">
-        <a href="http://companymood.com" target="_blank">
-          <img src="/images/users/CompanyMood-Logo-02.png" />
-        </a>
+        <div class="column medium-2 text-center">
+          <a href="http://companymood.com" target="_blank">
+            <img src="/images/users/CompanyMood-Logo-02.png" />
+          </a>
+        </div>
       </div>
 
     </div>
