@@ -224,7 +224,7 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
 
 {% row %}
   ~~~4,medium-offset-1
-  Any dependency, such as the current user, must be [injected from the outside](/gems/operation/api.html#dependency-injection).
+  Any dependency, such as the current user, must be [injected from the outside](/gems/operation/2.0/api.html#dependency-injection).
 
   The concept of global state does not exist in Trailblazer, which leads to simplified, mock-free testability and concurrent-ready code.
 
