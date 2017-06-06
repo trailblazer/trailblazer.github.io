@@ -29,7 +29,7 @@ Coming back to the controller from chapter 01, I want you to quickly get an idea
 
       def create
         post = BlogPost.new
-        post.update_attributes(params[:blog_post])
+        post.assign_attributes(params[:blog_post])
         if post.save
           notify_current_user!
         else
