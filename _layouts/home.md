@@ -4,6 +4,7 @@
     {% include head.html %}
   </head>
   <body>
+    {% include facebook-alert.html %}
 
     {% include top-bar.html %}
 
