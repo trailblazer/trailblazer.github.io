@@ -44,12 +44,16 @@ header: false
           </p>
 
           <p>
-            Please subscribe to the newsletter and never miss any new feature!
+            Please subscribe to the newsletter and never miss a new feature!
           </p>
 
 
           <h2>Archive</h2>
           <ul>
+           <li>
+              <strong><a href="http://mailchi.mp/5860579978a8/trailblazer-newsletter-may-2017?e=[UNIQID]">May 2017</a></strong> newsletter is all about Trailblazer 2.0 and the control flow additions to the operation.
+            </li>
+
             <li>
               <strong><a href="2016-july.html">July 2016</a></strong> newsletter discusses Reform 2.2, the new exciting hash field feature, Rails 5 and our website and documentation update.
             </li>

@@ -29,7 +29,7 @@ Coming back to the controller from chapter 01, I want you to quickly get an idea
 
       def create
         post = BlogPost.new
-        post.update_attributes(params[:blog_post])
+        post.assign_attributes(params[:blog_post])
         if post.save
           notify_current_user!
         else
@@ -71,7 +71,7 @@ The `trailblazer` gem brings the operation, the Reform gem for contracts, and so
 
 We already discussed `rspec`'s role. Mentioning the `activerecord` gem is important, since we need a persistence layer. Please be advised, though, that Trailblazer is database-agnostic: you can use ROM, `Hanami::Model`, Sequel, or whatever else you feel like.
 
-For validations, we refrain from using `ActiveModel::Validation` in this example and use the excellent [dry-validation gem](dry-rb.org/gems/dry-validation/). Reform allows using `dry-v` out-of-the-box. In case you want to/have to use ActiveModel's validations, no problem, Reform does that, too.
+For validations, we refrain from using `ActiveModel::Validation` in this example and use the excellent [dry-validation gem](http://dry-rb.org/gems/dry-validation/). Reform allows using `dry-v` out-of-the-box. In case you want to/have to use ActiveModel's validations, no problem, Reform does that, too.
 
 ## Model
 

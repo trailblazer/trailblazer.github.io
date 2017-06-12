@@ -43,7 +43,7 @@ In most web frameworks like Rails, you'd start with a `PostsController` and an a
     class PostsController < RubyOnTrails::Controller
       def create
         post = Post.new
-        post.update_attributes(params[:post])
+        post.assign_attributes(params[:post])
         if post.save
           notify_current_user!
         else
