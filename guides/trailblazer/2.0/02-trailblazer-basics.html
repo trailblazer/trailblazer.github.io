@@ -49,6 +49,27 @@
 
   </head>
   <body>
+
+
+  <!--
+    <div class="secondary callout" data-closable>
+      <strong>TRB JOBS:</strong> Deutschsprachiger Ruby Developer in Hannover - <a href="/inc/jobs.html">Jaaaa!</a>
+      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  -->
+
+      <a class="notice" style="display: block; overflow: hidden; position: relative; width: 100%; padding: 0.6rem 0; background-color: #3b5998;" href="http://fb.me/trailblazer.to">
+    <div class="info" style="text-align: center;">
+      <h5 style="font-size: 0.9rem; color: white; font-weight: bold;">
+        <i class="fa fa-facebook-square" aria-hidden="true" style="font-size: 1.2rem;"></i>
+        LIKE US FOR UPDATES + GET A FREE STICKER PACK!
+      </h5>
+    </div>
+  </a>
+
+
     <div data-sticky-container class="top-navbar">
   <div class="top-bar sticky" data-sticky data-options="marginTop:0;" style="width:100%">
     <div class="top-bar-title">
@@ -67,7 +88,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.O IS COMING!</a></li>
+          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.1 IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -93,15 +114,6 @@
 </div>
 
 
-<!--
-    <div class="secondary callout" data-closable>
-      <strong>TRB JOBS:</strong> Deutschsprachiger Ruby Developer in Hannover - <a href="/inc/jobs.html">Jaaaa!</a>
-      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
- -->
-
     <!-- Hero -->
 <div class="hero gems-hero operation2-hero">
   <div class="hero-unit">
@@ -123,7 +135,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">02- Trailblazer Basics</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 11 May 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 06 June 2017</span>
 
   
     <span class="doc-last-updated">
@@ -176,7 +188,7 @@
 
   def create
     post = BlogPost.new
-    post.update_attributes(params[:blog_post])
+    post.assign_attributes(params[:blog_post])
     if post.save
       notify_current_user!
     else
@@ -972,7 +984,7 @@ Contract::Persist( )
               </a>
             </li>
             <li>
-              <a href="https://facebook.com/trbinc">
+              <a href="https://facebook.com/trailblazer.to">
                 <i class="footer-icon facebook-icon"></i>
               </a>
             </li>
