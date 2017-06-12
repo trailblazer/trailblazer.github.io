@@ -286,15 +286,16 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
 
           <div class="row testimonial">
             <div class="columns medium-2">
-              <img src="../images/paulo.jpg" class="avatar">
+              <img src="../images/users/jared.jpg" class="avatar">
             </div>
             <div class="columns medium-10">
               <blockquote>
-                "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
-                <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
+                I'm a much stronger Ruby developer now because of TRB. More files, less code, I'll take it!! I wake up excited to start coding now again.
+                <cite><strong>Jared Rubin</strong>, CTO / <a href="feeder.nyc">Feeder Real Estate</a></cite>
               </blockquote>
             </div>
           </div>
+
         </div>
 
         <div>
@@ -324,6 +325,19 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
         </div>
 
         <div>
+
+          <div class="row testimonial">
+            <div class="columns medium-2">
+              <img src="../images/paulo.jpg" class="avatar">
+            </div>
+            <div class="columns medium-10">
+              <blockquote>
+                "Here at Chefsclub, we are very happy with Trailblazer. Our application already has 32 concepts, 130+ operations, and Cells surprised us as an awesome feature. We feel pretty safe with it."
+                <cite><strong>Paulo Fabiano Langer</strong>, Chefsclub</cite>
+              </blockquote>
+            </div>
+          </div>
+
           <div class="row testimonial">
             <div class="columns medium-2">
               <img src="../images/nick.jpg" class="avatar">
