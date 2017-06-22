@@ -109,12 +109,10 @@ The purest form of defining validations with this backend is by using a [validat
       end
     end
 
-Custom predicates have to be defined in the validation group. If you need access to your form you must add `option :form` to your configure block.
+Custom predicates have to be defined in the validation group. If you need access to your form you must pass `with: {form: true}` to your validation block.
 
-    validation :default do
+    validation :default, with: {form: true} do
       configure do
-        option :form
-
         def unique?(value)
           Album.where.not(id: form.model.id).find_by(title: value).nil?
         end
@@ -125,10 +123,8 @@ Custom predicates have to be defined in the validation group. If you need access
 
 In addition to dry-validation's API, you have access to the form that contains the group via `form`.
 
-    validation :default do
+    validation :default, with: {form: true} do
       configure do
-        option :form
-
         def same_password?(value)
           value == form.password
         end
@@ -149,6 +145,8 @@ You need to provide custom error messages via dry-validation mechanics.
       end
       # ..
     end
+
+This is automatically configured to use the I18n gem if it's available, which is true in a Rails environment.
 
 A simple error messages file might look as follows.
 
