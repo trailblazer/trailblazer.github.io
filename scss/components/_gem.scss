@@ -1,5 +1,6 @@
 /* Gems colors */
 
+$formular-color: #0da331;
 $cells-color: #CE2458;
 $operation-color: #17C2AA;
 $operation2-color: #af111c;
@@ -54,7 +55,6 @@ $generic-color: #af111c;
   @include gems-color($operation2-color)
 }
 
-
 .reform-body {
   @include gems-color($reform-color)
 }
@@ -66,6 +66,10 @@ $generic-color: #af111c;
 
 .disposable-body {
   @include gems-color($disposable-color)
+}
+
+.formular-body {
+  @include gems-color($formular-color)
 }
 
 .generic-body {
