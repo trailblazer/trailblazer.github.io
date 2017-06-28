@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Operation Model</title>
-<meta name="description" content="Operation Model - Trailblazer">
+<title>Trailblazer: Formular: Bootstrap</title>
+<meta name="description" content="Formular: Bootstrap - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,15 +36,15 @@
 </script>
 
 
-<meta property="og:title" content="Operation Model">
+<meta property="og:title" content="Formular: Bootstrap">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/gems/operation/2.0/model.html">
-<meta property="og:description" content="">
+<meta property="og:url" content="http://trailblazer.to/gems/formular/bootstrap.html">
+<meta property="og:description" content="API for Bootstrap 3/4 in Formular.">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Operation Model">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="Formular: Bootstrap">
+<meta name="twitter:description" content="API for Bootstrap 3/4 in Formular.">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
   </head>
@@ -115,12 +115,12 @@
 
 
     <!-- Hero -->
-<div class="hero gems-hero operation2-hero">
+<div class="hero gems-hero formular-hero">
   <div class="hero-unit">
     <div class="expanded row">
       <div class="columns">
         <h1 id="project_title">
-          Operation
+          Formular
         </h1>
       </div>
     </div>
@@ -130,20 +130,20 @@
 
     <div class="expanded row">
       <div class="medium-9 large-10 medium-push-3 large-push-2 columns">
-        <article class="operation2-body">
+        <article class="formular-body">
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Operation Model</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 November 2016</span>
+  <h1 class="doc-page-title">Formular: Bootstrap</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 28 June 2017</span>
 
   
     <span class="doc-last-updated">
       <i class="fa fa-diamond" aria-hidden="true"></i>
-      <a href="https://github.com/trailblazer/trailblazer-operation">operation</a>
+      <a href="https://github.com/trailblazer/formular">formular</a>
 
-      <a href="/gems/operation/2.0/model.html">
-      <span class="version">v2.0</span>
+      <a href="/gems/formular/bootstrap.html">
+      <span class="version">v0.1</span>
       </a>
 
     
@@ -159,25 +159,60 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h2 id="cheatsheet" data-magellan-target="cheatsheet">Cheatsheet</h2>
+              <p>The <code class="highlighter-rouge">Bootstrap</code> builder can render horizontal forms, and vertical forms, which is the default. Currently, the API for BS3 and BS4 is identical.</p>
 
-<h2 id="result" data-magellan-target="result">Result</h2>
+<p><i class="fa fa-download" aria-hidden="true"></i> Where’s the <a href="https://github.com/apotonick/gemgem-sinatra/blob/formular-slim-bootstrap3/concepts/post/view/new.slim"><strong>EXAMPLE CODE?</strong></a></p>
 
-<p>The operation will store the model retrieval result when used with <code class="highlighter-rouge">find_by</code>.</p>
+<h2 id="vertical-forms" data-magellan-target="vertical-forms">Vertical Forms</h2>
+
+<p>To display form elements from to top to bottom use the vertical form builder.</p>
+
+<pre><code>    = vertical_form(model.contract, url) do |f|
+      .row
+        .col-sm-6
+          = f.input :title, label: "Title"
+        .col-sm-6
+          = f.input_group :title, label: "URL Slug" do |input|
+            = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
+            = input.control
+      = f.input_group :url_slug, label: "URL", left_addon: 'http://', right_addon: '.com'
+      = f.select :select_roles, label: "Roles", collection: roles_array, prompt: 'Choose a role'
+      = f.inline_radio :select_roles, label: "Inline radios", collection: [[1, "Yes"], [2, "No"], [3, "I really don't know"]]
+      = f.inline_checkbox :select_roles, label: "Inline checkboxes", collection: options_array
+</code></pre>
+
+<p>This will render a form as follows. Note how items without <code class="highlighter-rouge">.row</code> are aligned <em>vertically</em> by BS.</p>
+
+<p><img src="/images/formular/bs3-vertical.png"></p>
+
+<h2 id="form" data-magellan-target="form">Form</h2>
+
+<p>As always, the ###fixme needs at least two arguments: <code class="highlighter-rouge">model</code> and <code class="highlighter-rouge">url</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>result = Create.({ id: 1 })
-
-result["result.model"].success? #=&gt; true
+<pre class="highlight"><code>vertical_form(model.contract, url) do |f|
 </code></pre>
 </div>
 
-<p>The model is saved in <code class="highlighter-rouge">["model"]</code>.</p>
+<h2 id="input" data-magellan-target="input">Input</h2>
+
+<p>The <code class="highlighter-rouge">input</code> method receives all Formular options (<code class="highlighter-rouge">:placeholder</code>, <code class="highlighter-rouge">:label</code>).</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>result["model"] #=&gt; &lt;Song id:1&gt;
+<pre class="highlight"><code>= f.input :title, label: "Title"
 </code></pre>
 </div>
+
+<h2 id="group-addon" data-magellan-target="group-addon">Group Addon</h2>
+
+<p>You can render a <a href="http://getbootstrap.com/components/#input-groups-basic">control composition</a> using <code class="highlighter-rouge">input_group</code>.</p>
+
+<pre><code>          = f.input_group :title, label: "URL Slug" do |input|
+            = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
+            = input.control
+</code></pre>
+
+<p>Note that <code class="highlighter-rouge">control</code> allows you to output the actual input control at any point.</p>
 
             </div>
 
@@ -188,8 +223,10 @@ result["result.model"].success? #=&gt; true
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#cheatsheet">Cheatsheet</a></li>
-<li><a href="#result">Result</a></li>
+          <li><a href="#vertical-forms">Vertical Forms</a></li>
+<li><a href="#form">Form</a></li>
+<li><a href="#input">Input</a></li>
+<li><a href="#group-addon">Group Addon</a></li>
         </ul>
       
 </nav>
