@@ -157,7 +157,7 @@ Trailblazer is in use in thousands of production applications. Our patterns have
 ~~~5
     class SongsController < ApplicationController
       def create
-        run Comment::Update do |result|
+        run Song::Create do |result|
           redirect_to songs_path(result["model"])
         end
       end
