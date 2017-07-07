@@ -1049,6 +1049,29 @@ result.success? #=&gt; false
 
 <p>Note that you may also use <code class="highlighter-rouge">:find</code>. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.</p>
 
+<h3 id="model-arbitrary-finder">Model: Arbitrary Finder</h3>
+
+<p>It’s possible to specify any finder method, which is helpful with ROMs such as Sequel.</p>
+
+<pre><code>class Show &lt; Trailblazer::Operation
+  step Model( Song, :[] )
+  # ..
+end
+</code></pre>
+
+<p>The provided method will be invoked and Trailblazer passes it the <code class="highlighter-rouge">params[:id]</code> value.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Song</span><span class="p">[</span> <span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">]</span> <span class="p">]</span>
+</code></pre>
+</div>
+
+<p>Given your database gem provides that finder, it will result in a successful query.</p>
+
+<pre><code>result = Show.({ id: 1 })
+result["model"] #=&gt; #&lt;struct Song id=1, title="Roxanne"&gt;
+</code></pre>
+
 <h2 id="nested" data-magellan-target="nested">Nested</h2>
 
 <p>It is possible to nest operations, as in running an operation in another. This is the common practice for “presenting” operations and “altering” operations, such as <code class="highlighter-rouge">Edit</code> and <code class="highlighter-rouge">Update</code>.</p>

@@ -159,7 +159,7 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>The <code class="highlighter-rouge">Bootstrap</code> builder can render horizontal forms, and vertical forms, which is the default. Currently, the API for BS3 and BS4 is identical.</p>
+              <p>The <code class="highlighter-rouge">Bootstrap</code> builder can render horizontal forms, inline forms, and vertical forms, which is the default. Currently, the API to render elements is identical for BS3 and BS4.</p>
 
 <p><i class="fa fa-download" aria-hidden="true"></i> Where’s the <a href="https://github.com/apotonick/gemgem-sinatra/blob/formular-slim-bootstrap3/concepts/post/view/new.slim"><strong>EXAMPLE CODE?</strong></a></p>
 
@@ -213,6 +213,9 @@
 </code></pre>
 
 <p>Note that <code class="highlighter-rouge">control</code> allows you to output the actual input control at any point.</p>
+
+<p>f.hidden
+ &lt;%= f.textarea :pasteZone, value: “” %&gt;</p>
 
             </div>
 
