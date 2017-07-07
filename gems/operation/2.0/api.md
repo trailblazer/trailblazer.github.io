@@ -573,6 +573,23 @@ If `Song.find_by` returns `nil`, this will deviate to the left track, skipping t
 
 Note that you may also use `:find`. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.
 
+### Model: Arbitrary Finder
+
+It's possible to specify any finder method, which is helpful with ROMs such as Sequel.
+
+{{  "model_test.rb:show" | tsnippet }}
+
+The provided method will be invoked and Trailblazer passes it the `params[:id]` value.
+
+```ruby
+Song[ params[:id] ]
+```
+
+Given your database gem provides that finder, it will result in a successful query.
+
+{{  "model_test.rb:show-ok" | tsnippet }}
+
+
 ## Nested
 
 It is possible to nest operations, as in running an operation in another. This is the common practice for "presenting" operations and "altering" operations, such as `Edit` and `Update`.
