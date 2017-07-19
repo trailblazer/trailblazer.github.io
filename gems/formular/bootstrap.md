@@ -6,7 +6,7 @@ gems:
   - ["formular", "trailblazer/formular", "0.1"]
 ---
 
-The `Bootstrap` builder can render horizontal forms, and vertical forms, which is the default. Currently, the API for BS3 and BS4 is identical.
+The `Bootstrap` builder can render horizontal forms, inline forms, and vertical forms, which is the default. Currently, the API to render elements is identical for BS3 and BS4.
 
 <i class="fa fa-download" aria-hidden="true"></i> Where's the [**EXAMPLE CODE?**](https://github.com/apotonick/gemgem-sinatra/blob/formular-slim-bootstrap3/concepts/post/view/new.slim)
 
@@ -39,3 +39,7 @@ You can render a [control composition](http://getbootstrap.com/components/#input
 {{ "concepts/post/view/new.slim:vertical-inputgroup:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
 
 Note that `control` allows you to output the actual input control at any point.
+
+
+f.hidden
+ <%= f.textarea :pasteZone, value: "" %>
