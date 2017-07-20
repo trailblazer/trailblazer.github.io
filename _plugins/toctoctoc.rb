@@ -34,10 +34,10 @@ module Jekyll
       doc  = Nokogiri::HTML(html)
 
 # sidebar
-      path = page.path.sub("/index.md", "")
+      path = page.path
       path = path.sub(".md", ".html")
       path = "/#{path}"
-      a = doc.css(".side-nav>li>a[href='#{path}']").first and a[:class] = "active"
+      a = doc.css("#sidebar li>a[href='#{path}']").first and a[:class] = "active"
 
 
 # add magellan target
