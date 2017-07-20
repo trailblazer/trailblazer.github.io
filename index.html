@@ -305,7 +305,7 @@
     <div class="column medium-5 ">
         <pre><code>class SongsController &lt; ApplicationController
   def create
-    run Comment::Update do |result|
+    run Song::Create do |result|
       redirect_to songs_path(result["model"])
     end
   end
