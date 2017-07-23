@@ -27,7 +27,7 @@ gem "trailblazer-compat"
 In a Rails application, you also need to pull the 1.x line of the `trailblazer-rails` gem.
 
 ```ruby
-gem "trailblazer-rails", ">= 1.0.0"
+gem "trailblazer-rails", ">= 1.0.3"
 ```
 
 ## Initialization
