@@ -28,6 +28,22 @@ assert_equal "Timebomb", model["title"]
 assert_equal "Rancid",   model["band"]
 ```
 
+Note that `assert_exposes` accepts any object with a `#[]` interface.
+
+### assert_exposes: reader
+
+If the asserted object exposes readers, you need to set `:reader` to `false`.
+
+{{ "test/assertions_test.rb:exp-reader-false:../trailblazer-test:master" | tsnippet }}
+
+This will read values with via the reader, e.g. `model.title`.
+
+If the object has a generic reader, you can pass the name via `:reader`.
+
+{{ "test/assertions_test.rb:exp-reader-get:../trailblazer-test:master" | tsnippet }}
+
+Now the value is read via `model.get(:title)`.
+
 ### assert_exposes: Lambda
 
 You can also pass a lambda to `assert_expose` in order to compute a dynamic value for the test, or for more complex comparisons.
