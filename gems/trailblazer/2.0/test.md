@@ -19,24 +19,24 @@ Pass a hash of key/value tuples to `assert_exposes` to test that all attributes 
 
 {{ "test/assertions_test.rb:exp-eq:../trailblazer-test:master" | tsnippet }}
 
-Per default, this will read the values via `model#[key]` from the asserted object (`model`) and compare it to the expected values.
+Per default, this will read the values via `model.{key}` from the asserted object (`model`) and compare it to the expected values.
 
 This is a short-cut for tests such as the following.
 
 ```ruby
-assert_equal "Timebomb", model["title"]
-assert_equal "Rancid",   model["band"]
+assert_equal "Timebomb", model.title
+assert_equal "Rancid",   model.band
 ```
 
-Note that `assert_exposes` accepts any object with a `#[]` interface.
+Note that `assert_exposes` accepts any object with a reader interface.
 
 ### assert_exposes: reader
 
-If the asserted object exposes readers, you need to set `:reader` to `false`.
+If the asserted object exposes a hash reader interface, use the `:reader` option.
 
-{{ "test/assertions_test.rb:exp-reader-false:../trailblazer-test:master" | tsnippet }}
+{{ "test/assertions_test.rb:exp-reader-hash:../trailblazer-test:master" | tsnippet }}
 
-This will read values with via the reader, e.g. `model.title`.
+This will read values with via `#[]`, e.g. `model[:title]`.
 
 If the object has a generic reader, you can pass the name via `:reader`.
 
