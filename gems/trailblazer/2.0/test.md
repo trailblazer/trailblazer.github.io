@@ -50,7 +50,7 @@ You can also pass a lambda to `assert_expose` in order to compute a dynamic valu
 
 {{ "test/assertions_test.rb:exp-proc:../trailblazer-test:master" | tsnippet }}
 
-The lambda will receive the actual value read from the asserted object and must return a boolean.
+The lambda will receive a hash with the `:actual` value read from the asserted object. It must return a boolean.
 
 ## Operation
 
