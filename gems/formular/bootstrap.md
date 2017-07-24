@@ -24,7 +24,17 @@ This will render a form as follows. Note how items without `.row` are aligned *v
 
 As always, the ###fixme needs at least two arguments: `model` and `url`.
 
-    vertical_form(model.contract, url) do |f|
+    form(model.contract, url) do |f|
+
+## Builder
+
+The default builder needs to be set.
+
+    Formular::Helper.builder = :bootstrap3
+
+This can be overridden in the single form using the option `builder`, for example to have an inline form.
+
+    form(model.contract, url, builder: :bootstrap3_inline)
 
 ## Input
 
@@ -41,5 +51,37 @@ You can render a [control composition](http://getbootstrap.com/components/#input
 Note that `control` allows you to output the actual input control at any point.
 
 
-f.hidden
- <%= f.textarea :pasteZone, value: "" %>
+## Input Options
+
+Here few options that we are going to analyse below.
+
+{{ "concepts/post/view/new.slim:input_options:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
+
+Which will render:
+
+<img src="/images/formular/bs3-input-options.png">
+
+### Type
+Use `type` to have for example `hidden`, `password` or `file` type. [Here](https://v4-alpha.getbootstrap.com/components/forms/#textual-inputs) the list of textual input types.
+
+***Note:*** make sure to add `enctype: 'multipart/form-data'` as argument in the `form` to have the full path from the `file` type input.
+
+### Value
+Use `value` to set the content of an input, in our example above `id` is set as `"some_id"`.
+
+### Help Block
+Use `hint` to have an `help_block` with some useful words.
+
+## Inline Form
+
+To render an inline form you just need to change the builder.
+
+{{ "concepts/post/view/new.slim:inline_form:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
+
+<img src="/images/formular/bs3-inline-form.png">
+
+## Horizontal Form
+
+{{ "concepts/post/view/new.slim:horizontal_form:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
+
+<img src="/images/formular/bs3-horizontal-form.png">
