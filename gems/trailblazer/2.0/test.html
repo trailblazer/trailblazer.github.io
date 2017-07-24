@@ -174,32 +174,32 @@
 <p>Pass a hash of key/value tuples to <code class="highlighter-rouge">assert_exposes</code> to test that all attributes of the asserted object match the provided values.</p>
 
 <pre><code>it do
-  assert_exposes model, title: "Timebomb", band:  "Rancid"
+  assert_exposes model, title: "Timebomb", band: "Rancid"
 end
 </code></pre>
 
-<p>Per default, this will read the values via <code class="highlighter-rouge">model#[key]</code> from the asserted object (<code class="highlighter-rouge">model</code>) and compare it to the expected values.</p>
+<p>Per default, this will read the values via <code class="highlighter-rouge">model.{key}</code> from the asserted object (<code class="highlighter-rouge">model</code>) and compare it to the expected values.</p>
 
 <p>This is a short-cut for tests such as the following.</p>
 
 <div class="language-ruby highlighter-rouge">
-<pre class="highlight"><code><span class="n">assert_equal</span> <span class="s2">"Timebomb"</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span>
-<span class="n">assert_equal</span> <span class="s2">"Rancid"</span><span class="p">,</span>   <span class="n">model</span><span class="p">[</span><span class="s2">"band"</span><span class="p">]</span>
+<pre class="highlight"><code><span class="n">assert_equal</span> <span class="s2">"Timebomb"</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="nf">title</span>
+<span class="n">assert_equal</span> <span class="s2">"Rancid"</span><span class="p">,</span>   <span class="n">model</span><span class="p">.</span><span class="nf">band</span>
 </code></pre>
 </div>
 
-<p>Note that <code class="highlighter-rouge">assert_exposes</code> accepts any object with a <code class="highlighter-rouge">#[]</code> interface.</p>
+<p>Note that <code class="highlighter-rouge">assert_exposes</code> accepts any object with a reader interface.</p>
 
 <h3 id="assertexposes-reader">assert_exposes: reader</h3>
 
-<p>If the asserted object exposes readers, you need to set <code class="highlighter-rouge">:reader</code> to <code class="highlighter-rouge">false</code>.</p>
+<p>If the asserted object exposes a hash reader interface, use the <code class="highlighter-rouge">:reader</code> option.</p>
 
 <pre><code>it do
-  assert_exposes model, { title: "Timebomb", band:  "Rancid" }, reader: false
+  assert_exposes model, { title: "Timebomb", band:  "Rancid" }, reader: :[]
 end
 </code></pre>
 
-<p>This will read values with via the reader, e.g. <code class="highlighter-rouge">model.title</code>.</p>
+<p>This will read values with via <code class="highlighter-rouge">#[]</code>, e.g. <code class="highlighter-rouge">model[:title]</code>.</p>
 
 <p>If the object has a generic reader, you can pass the name via <code class="highlighter-rouge">:reader</code>.</p>
 
