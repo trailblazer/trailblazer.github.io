@@ -217,11 +217,11 @@ end
 <pre><code>it do
   assert_exposes model,
     title: "Timebomb",
-    band:  -&gt;(actual) { actual.size &gt; 3 }
+    band:  -&gt;(actual:, **) { actual.size &gt; 3 }
 end
 </code></pre>
 
-<p>The lambda will receive the actual value read from the asserted object and must return a boolean.</p>
+<p>The lambda will receive a hash with the <code class="highlighter-rouge">:actual</code> value read from the asserted object. It must return a boolean.</p>
 
 <h2 id="operation" data-magellan-target="operation">Operation</h2>
 
