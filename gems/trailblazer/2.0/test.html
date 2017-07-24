@@ -225,6 +225,48 @@ end
 
 <h2 id="operation" data-magellan-target="operation">Operation</h2>
 
+<p>There are several helpers to deal with operation tests and operations used as factories.</p>
+
+<h2 id="call" data-magellan-target="call">call</h2>
+
+<p>Instead of manually invoking an operation, you can use the <code class="highlighter-rouge">call</code> helper.</p>
+
+<pre><code>it do
+  result = call Song::Update, { title: "Shipwreck" }
+end
+</code></pre>
+
+<p>This will <code class="highlighter-rouge">call</code> the operation and passes through all other arguments. It returns the operation’s result object, which allows you to test it.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">result</span><span class="p">.</span><span class="nf">success?</span> <span class="c1">#=&gt; true</span>
+<span class="n">result</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span> <span class="c1">#=&gt; #&lt;Song id=1, ...&gt;</span>
+</code></pre>
+</div>
+
+<h2 id="factory" data-magellan-target="factory">factory</h2>
+
+<p>You should always use operations as factories in tests. The <code class="highlighter-rouge">factory</code> method calls the operation and raises an error should the operation have failed. If successful, it will do the exact same thing <a href="#call"><code class="highlighter-rouge">call</code></a> does.</p>
+
+<pre><code>model = factory( Song::Create, { title: "Shipwreck" } )["model"]
+</code></pre>
+
+<p>If the factory operation fails, for example due to invalid form input, it raises a `` exception.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">factory</span><span class="p">(</span> <span class="no">Song</span><span class="o">::</span><span class="no">Create</span><span class="p">,</span> <span class="p">{</span> <span class="ss">title: </span><span class="s2">""</span> <span class="p">}</span> <span class="p">)[</span><span class="s2">"model"</span><span class="p">]</span>
+<span class="c1">#=&gt; Trailblazer::Test::OperationFailedError: factory( Song::Create ) failed.</span>
+</code></pre>
+</div>
+
+<p>It is absolutely advisable to use <code class="highlighter-rouge">factory</code> in combination with <code class="highlighter-rouge">let</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">let</span><span class="p">(</span><span class="ss">:song</span><span class="p">)</span> <span class="p">{</span> <span class="n">factory</span><span class="p">(</span> <span class="no">Song</span><span class="o">::</span><span class="no">Create</span><span class="p">,</span> <span class="p">{</span> <span class="ss">title: </span><span class="s2">"Timebomb"</span><span class="p">,</span> <span class="ss">band: </span><span class="s2">"Rancid"</span> <span class="p">}</span> <span class="p">)</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Also, you can safely use FactoryGirl’s <code class="highlighter-rouge">attributes_for</code> to generate input.</p>
 
             </div>
 
@@ -238,6 +280,8 @@ end
           <li><a href="#generic-assertions">Generic Assertions</a></li>
 <li><a href="#assertexposes">assert_exposes</a></li>
 <li><a href="#operation">Operation</a></li>
+<li><a href="#call">call</a></li>
+<li><a href="#factory">factory</a></li>
         </ul>
       
 </nav>
