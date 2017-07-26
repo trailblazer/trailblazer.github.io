@@ -72,6 +72,36 @@ Use `value` to set the content of an input, in our example above `id` is set as 
 ### Help Block
 Use `hint` to have an `help_block` with some useful words.
 
+## Select
+
+The `select` method receives the same options of input (not `type` and `prompt` instead of `placeholder`) plus the options for multiple choises: `multiple` and `collection`.
+
+{{ "concepts/post/view/new.slim:select:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
+
+Which will render:
+
+<img src="/images/formular/bs3-select.png">
+
+For multiple choises `multiple: 'multiple'` needs to be one of the options and, of course, `collection` too.
+Here below the arrays used in this example:
+
+    roles_array = [["Admin", 1], ["Owner", 2], ["Maintainer", 3]]
+
+    complex_role = [['Team', [['England', 'e'], %w(Italy i),['Germany', 'g']]],['Roles', [['Fullback', 0], ['Hooker', 1], ['Wing', 2]]]]
+
+## Check and Radio box
+
+The `checkbox` and `radiobox` have the same API
+
+{{ "concepts/post/view/new.slim:check_radio_box:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
+
+Which will render:
+
+<img src="/images/formular/bs3-check-radio.png">
+
+When `value` and the form property (`is_public`) are matching the check/radiobox will be checked so make sure to set it properly.
+It's possible to overriede it using `checked: 'checked'`
+
 ## Inline Form
 
 To render an inline form you just need to change the builder.
