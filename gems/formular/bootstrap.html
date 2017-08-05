@@ -101,6 +101,7 @@
               <li class=""><a href="/gems/reform">REFORM</a></li>
               <li class=""><a href="/gems/representable">REPRESENTABLE</a></li>
               <li class=""><a href="/gems/roar">ROAR</a></li>
+              <li class=""><a href="/gems/formular">FORMULAR</a></li>
               <li class=""><a href="/gems/disposable">DISPOSABLE</a></li>
             </ul>
           </li>
@@ -135,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Formular: Bootstrap</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 July 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 August 2017</span>
 
   
     <span class="doc-last-updated">
@@ -143,7 +144,7 @@
       <a href="https://github.com/trailblazer/formular">formular</a>
 
       <a href="/gems/formular/bootstrap.html">
-      <span class="version">v0.1</span>
+      <span class="version">v0.2</span>
       </a>
 
     
@@ -167,18 +168,16 @@
 
 <p>To display form elements from to top to bottom use the vertical form builder.</p>
 
-<pre><code>    = vertical_form(model.contract, url) do |f|
-      .row
-        .col-sm-6
-          = f.input :title, label: "Title"
-        .col-sm-6
-          = f.input_group :title, label: "URL Slug" do |input|
-            = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
-            = input.control
-      = f.input_group :url_slug, label: "URL", left_addon: 'http://', right_addon: '.com'
-      = f.select :select_roles, label: "Roles", collection: roles_array, prompt: 'Choose a role'
-      = f.inline_radio :select_roles, label: "Inline radios", collection: [[1, "Yes"], [2, "No"], [3, "I really don't know"]]
-      = f.inline_checkbox :select_roles, label: "Inline checkboxes", collection: options_array
+<pre><code>= form(model.contract, url, builder: :bootstrap3) do |f|
+  = f.row
+    = f.input :title, label: "Title", inline_col_class: ['col-md-6']
+    = f.input_group :title, label: "URL Slug", inline_col_class: ['col-md-6'] do |input|
+      = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
+      = input.control
+  = f.input_group :url_slug, label: "URL", left_addon: 'http://', right_addon: '.com'
+  = f.select :select_roles, label: "Roles", collection: roles_array, prompt: 'Choose a role'
+  = f.inline_radio :select_roles, label: "Inline radios", collection: [[1, "Yes"], [2, "No"], [3, "I really don't know"]]
+  = f.inline_checkbox :select_roles, label: "Inline checkboxes", collection: options_array
 </code></pre>
 
 <p>This will render a form as follows. Note how items without <code class="highlighter-rouge">.row</code> are aligned <em>vertically</em> by BS.</p>
@@ -190,7 +189,23 @@
 <p>As always, the ###fixme needs at least two arguments: <code class="highlighter-rouge">model</code> and <code class="highlighter-rouge">url</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>vertical_form(model.contract, url) do |f|
+<pre class="highlight"><code>form(model.contract, url) do |f|
+</code></pre>
+</div>
+
+<h2 id="builder" data-magellan-target="builder">Builder</h2>
+
+<p>The default builder needs to be set.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>Formular::Helper.builder = :bootstrap3
+</code></pre>
+</div>
+
+<p>This can be overridden in the single form using the option <code class="highlighter-rouge">builder</code>, for example to have an inline form.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>form(model.contract, url, builder: :bootstrap3_inline)
 </code></pre>
 </div>
 
@@ -207,15 +222,121 @@
 
 <p>You can render a <a href="http://getbootstrap.com/components/#input-groups-basic">control composition</a> using <code class="highlighter-rouge">input_group</code>.</p>
 
-<pre><code>          = f.input_group :title, label: "URL Slug" do |input|
-            = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
-            = input.control
+<pre><code>= f.input_group :title, label: "URL Slug", inline_col_class: ['col-md-6'] do |input|
+  = input.group_addon('&lt;input type="checkbox" value="1"/&gt;')
+  = input.control
 </code></pre>
 
 <p>Note that <code class="highlighter-rouge">control</code> allows you to output the actual input control at any point.</p>
 
-<p>f.hidden
- &lt;%= f.textarea :pasteZone, value: “” %&gt;</p>
+<h2 id="input-options" data-magellan-target="input-options">Input Options</h2>
+
+<p>The following snippet is an example of available options.</p>
+
+<pre><code>= form(input_options, url, enctype: 'multipart/form-data', builder: :bootstrap3) do |f|
+  = f.input :id, type: 'hidden', value: "some_id"
+  = f.input :email, type: 'email', label: "Email"
+  = f.input :password, type: 'password', label: "Password"
+  = f.input :image, type: 'file', label: "Image"
+  = f.input :background_color, type: 'color', label: "Background Colour", hint: "Select the background colour for your image!"
+  = f.input :number, type: 'number', label:"Number", disabled: true, value: '5'
+  = f.submit content: "Submit!", class: ['btn-lg']
+</code></pre>
+
+<p>Which will render:</p>
+
+<p><img src="/images/formular/bs3-input-options.png"></p>
+
+<h3 id="type">Type</h3>
+<p>Use <code class="highlighter-rouge">type</code> to have for example <code class="highlighter-rouge">hidden</code>, <code class="highlighter-rouge">password</code> or <code class="highlighter-rouge">file</code> type. <a href="https://v4-alpha.getbootstrap.com/components/forms/#textual-inputs">Here</a> the list of textual input types.</p>
+
+<div class="callout">
+  
+<p>Make sure to add <code>enctype: 'multipart/form-data'</code> as argument in the <code>form</code> to have the full path from the <code>file</code> type input.</p>
+
+<p>This might be done automatically in future releases.</p>
+
+</div>
+
+<h3 id="value">Value</h3>
+<p>Use <code class="highlighter-rouge">value</code> to set the content of an input, in our example above <code class="highlighter-rouge">id</code> is set as <code class="highlighter-rouge">"some_id"</code>.</p>
+
+<h3 id="help-block">Help Block</h3>
+<p>Use <code class="highlighter-rouge">hint</code> to have an <code class="highlighter-rouge">help_block</code> with some useful words.</p>
+
+<h2 id="select" data-magellan-target="select">Select</h2>
+
+<p>The <code class="highlighter-rouge">select</code> method receives the same options of input (not <code class="highlighter-rouge">type</code> and <code class="highlighter-rouge">prompt</code> instead of <code class="highlighter-rouge">placeholder</code>) plus the options for multiple choices: <code class="highlighter-rouge">multiple</code> and <code class="highlighter-rouge">collection</code>.</p>
+
+<pre><code>= form(select_box, url, builder: :bootstrap3) do |f|
+  = f.select :select_basic_roles, label: "Basic Roles", collection: roles_array, prompt: 'Choose a role'
+  = f.select :select_roles, label: "Basic Roles with value", collection: roles_array, value: "Admin"
+  = f.select :select_complex_roles, label: "Complex Roles", collection: complex_role, value: "i"
+  = f.select :select_multi_complex_roles, label: "Multiple Complex Roles", collection: complex_role, multiple: 'multiple'
+</code></pre>
+
+<p>Which will render:</p>
+
+<p><img src="/images/formular/bs3-select.png"></p>
+
+<p>For multiple choices <code class="highlighter-rouge">multiple: 'multiple'</code> needs to be one of the options and, of course, <code class="highlighter-rouge">collection</code> too.
+Here below the arrays used in this example:</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>roles_array = [["Admin", 1], ["Owner", 2], ["Maintainer", 3]]
+
+complex_role = [['Team', [['England', 'e'], %w(Italy i),['Germany', 'g']]],['Roles', [['Fullback', 0], ['Hooker', 1], ['Wing', 2]]]]
+</code></pre>
+</div>
+
+<h2 id="check-and-radio-box" data-magellan-target="check-and-radio-box">Check and Radio box</h2>
+
+<p>The <code class="highlighter-rouge">checkbox</code> and <code class="highlighter-rouge">radiobox</code> have the same API</p>
+
+<pre><code>.col-sm-6
+  = f.checkbox :is_public, label: "Basic Checkbox", value: true
+  = f.checkbox :is_not_public, label: "Basic Checked Checkbox", checked: 'checked'
+  = f.checkbox :check_roles, label: "Multiple Checkbox", multiple: 'multiple', collection: roles_array
+.col-sm-6
+  = f.radio :is_public, label: "Basic Radio", value: true
+  = f.radio :is_not_public, label: "Basic Checked Radio", checked: 'checked'
+  = f.radio :check_roles, label: "Multiple Radio", multiple: 'multiple', collection: roles_array
+= f.submit content: "Submit!", class: ['btn-lg']
+</code></pre>
+
+<p>Which will render:</p>
+
+<p><img src="/images/formular/bs3-check-radio.png"></p>
+
+<p>When <code class="highlighter-rouge">value</code> and the form property (<code class="highlighter-rouge">is_public</code>)’s value are matching the check/radiobox will be checked - so make sure to set it properly.</p>
+
+<p>Override the ticked/checked state using <code class="highlighter-rouge">checked: 'checked'</code></p>
+
+<h2 id="inline-form" data-magellan-target="inline-form">Inline Form</h2>
+
+<p>To render an inline form you just need to change the builder.</p>
+
+<pre><code>= form(model.contract, url, builder: :bootstrap3_inline) do |f|
+  = f.input :title
+  = f.input :url_slug, label: 'url slug', placeholder: "URL slug", label_options: { class: ["sr-only"] }
+  =f.submit(content: "Submit!")
+</code></pre>
+
+<p><img src="/images/formular/bs3-inline-form.png"></p>
+
+<h2 id="horizontal-form" data-magellan-target="horizontal-form">Horizontal Form</h2>
+
+<pre><code>= form(model.contract, url, builder: :bootstrap3_horizontal) do |f|
+  = f.input_group :title, label: "Title" do |input|
+    =input.control
+    =input.group_btn("&lt;a class='btn btn-default' href='/'&gt;Suprise Me&lt;/a&gt;")
+  = f.input :url_slug, label: 'URL'
+  = f.textarea :content, placeholder: "And your story...", rows: 9, label: 'Content'
+  = f.select :select_roles, collection: roles_array, label: 'Role', prompt: 'Choose a role'
+  = f.submit content: "Submit!", class: ['btn-lg']
+</code></pre>
+
+<p><img src="/images/formular/bs3-horizontal-form.png"></p>
 
             </div>
 
@@ -228,8 +349,14 @@
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#vertical-forms">Vertical Forms</a></li>
 <li><a href="#form">Form</a></li>
+<li><a href="#builder">Builder</a></li>
 <li><a href="#input">Input</a></li>
 <li><a href="#group-addon">Group Addon</a></li>
+<li><a href="#input-options">Input Options</a></li>
+<li><a href="#select">Select</a></li>
+<li><a href="#check-and-radio-box">Check and Radio box</a></li>
+<li><a href="#inline-form">Inline Form</a></li>
+<li><a href="#horizontal-form">Horizontal Form</a></li>
         </ul>
       
 </nav>
@@ -353,6 +480,19 @@
       <ul class="vertical menu">
         <li><a href="/gems/roar/index.html">Overview</a></li>
         <li><a href="/gems/roar/jsonapi.html">JSON API</a></li>
+      </ul>
+    </div>
+  </li>
+
+  <li class="accordion-item" data-accordion-item>
+    <a href="#" class="accordion-title">
+      <i class="fa fa-caret-square-o-right" aria-hidden="true"></i>
+      <strong>FORMULAR</strong>
+    </a>
+    <div class="accordion-content" data-tab-content>
+      <ul class="vertical menu">
+        <!-- <li><a href="/gems/formular/index.html">Overview</a></li> -->
+        <li><a href="/gems/formular/bootstrap.html" class="active">Bootstrap</a></li>
       </ul>
     </div>
   </li>
