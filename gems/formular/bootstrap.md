@@ -53,7 +53,7 @@ Note that `control` allows you to output the actual input control at any point.
 
 ## Input Options
 
-Here few options that we are going to analyse below.
+The following snippet is an example of available options.
 
 {{ "concepts/post/view/new.slim:input_options:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
 
@@ -64,7 +64,11 @@ Which will render:
 ### Type
 Use `type` to have for example `hidden`, `password` or `file` type. [Here](https://v4-alpha.getbootstrap.com/components/forms/#textual-inputs) the list of textual input types.
 
-***Note:*** make sure to add `enctype: 'multipart/form-data'` as argument in the `form` to have the full path from the `file` type input.
+{% callout %}
+Make sure to add `enctype: 'multipart/form-data'` as argument in the `form` to have the full path from the `file` type input.
+
+This might be done automatically in future releases.
+{% endcallout %}
 
 ### Value
 Use `value` to set the content of an input, in our example above `id` is set as `"some_id"`.
@@ -74,7 +78,7 @@ Use `hint` to have an `help_block` with some useful words.
 
 ## Select
 
-The `select` method receives the same options of input (not `type` and `prompt` instead of `placeholder`) plus the options for multiple choises: `multiple` and `collection`.
+The `select` method receives the same options of input (not `type` and `prompt` instead of `placeholder`) plus the options for multiple choices: `multiple` and `collection`.
 
 {{ "concepts/post/view/new.slim:select:../gemgem-sinatra/:formular-slim-bootstrap3" | tsnippet }}
 
@@ -82,7 +86,7 @@ Which will render:
 
 <img src="/images/formular/bs3-select.png">
 
-For multiple choises `multiple: 'multiple'` needs to be one of the options and, of course, `collection` too.
+For multiple choices `multiple: 'multiple'` needs to be one of the options and, of course, `collection` too.
 Here below the arrays used in this example:
 
     roles_array = [["Admin", 1], ["Owner", 2], ["Maintainer", 3]]
@@ -99,8 +103,9 @@ Which will render:
 
 <img src="/images/formular/bs3-check-radio.png">
 
-When `value` and the form property (`is_public`) are matching the check/radiobox will be checked so make sure to set it properly.
-It's possible to overriede it using `checked: 'checked'`
+When `value` and the form property (`is_public`)'s value are matching the check/radiobox will be checked - so make sure to set it properly.
+
+Override the ticked/checked state using `checked: 'checked'`
 
 ## Inline Form
 
