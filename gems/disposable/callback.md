@@ -7,7 +7,7 @@ gems:
 
 # Disposable: Callback
 
-Callbacks in Disposable implement the [Imperative Callback](/gems/operation/callback.html) pattern.
+Callbacks in Disposable implement the [Imperative Callback](/gems/operation/1.1/callback.html) pattern.
 
 ## Declarative API
 
