@@ -6,6 +6,10 @@ gems:
   - ["formular", "trailblazer/formular", "0.1"]
 ---
 
+WORK IN PROGRESS.
+
+Checkout [bootstrap.html](the Bootstrap docs).
+
 ## Bootstrap 3
 
 ### Inline Forms

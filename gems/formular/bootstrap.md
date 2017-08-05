@@ -3,7 +3,7 @@ layout: formular
 title: "Formular: Bootstrap"
 description: "API for Bootstrap 3/4 in Formular."
 gems:
-  - ["formular", "trailblazer/formular", "0.1"]
+  - ["formular", "trailblazer/formular", "0.2"]
 ---
 
 The `Bootstrap` builder can render horizontal forms, inline forms, and vertical forms, which is the default. Currently, the API to render elements is identical for BS3 and BS4.
