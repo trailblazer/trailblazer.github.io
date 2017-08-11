@@ -8,7 +8,7 @@ gems:
 
 WORK IN PROGRESS.
 
-Checkout [bootstrap.html](the Bootstrap docs).
+Checkout [the Bootstrap docs](bootstrap.html).
 
 ## Bootstrap 3
 
