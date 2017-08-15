@@ -95,7 +95,7 @@ This appends validations to the existing `:email` group.
 
 Dry-validation is the preferred backend for defining and executing validations.
 
-The purest form of defining validations with this backend is by using a [validation group](#validation-group). A group provides the exact same API as a `Dry::Validation::Schema`. You can learn all the details on the [gem's website](https://github.com/dryrb/dry-validation).
+The purest form of defining validations with this backend is by using a [validation group](#validation-groups). A group provides the exact same API as a `Dry::Validation::Schema`. You can learn all the details on the [gem's website](https://github.com/dryrb/dry-validation).
 
     require "reform/form/dry"
 
