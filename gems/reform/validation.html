@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Validation</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 15 August 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 16 August 2017</span>
 
   
     <span class="doc-last-updated">
@@ -287,13 +287,11 @@ end
 </code></pre>
 </div>
 
-<p>Custom predicates have to be defined in the validation group. If you need access to your form you must add <code class="highlighter-rouge">option :form</code> to your configure block.</p>
+<p>Custom predicates have to be defined in the validation group. If you need access to your form you must pass <code class="highlighter-rouge">with: {form: true}</code> to your validation block.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>validation :default do
+<pre class="highlight"><code>validation :default, with: {form: true} do
   configure do
-    option :form
-
     def unique?(value)
       Album.where.not(id: form.model.id).find_by(title: value).nil?
     end
@@ -307,10 +305,8 @@ end
 <p>In addition to dry-validation’s API, you have access to the form that contains the group via <code class="highlighter-rouge">form</code>.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>validation :default do
+<pre class="highlight"><code>validation :default, with: {form: true} do
   configure do
-    option :form
-
     def same_password?(value)
       value == form.password
     end
@@ -336,6 +332,8 @@ end
 end
 </code></pre>
 </div>
+
+<p>This is automatically configured to use the I18n gem if it’s available, which is true in a Rails environment.</p>
 
 <p>A simple error messages file might look as follows.</p>
 
@@ -742,7 +740,7 @@ end
               </a>
             </li>
             <li>
-              <a href="https://twitter.com/trailblazer.to">
+              <a href="https://twitter.com/trailblazer_to">
                 <i class="footer-icon twitter-icon"></i>
               </a>
             </li>
