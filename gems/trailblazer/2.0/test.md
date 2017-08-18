@@ -26,6 +26,10 @@ Good, consistent example:
 
     it { assert_pass Expense::Create, {}, created_at: ->(actual:, **) { actual < Expense::Create.(params_pass)["model"].created_at } }
 
+
+===> block for assert_pass/fail
+
+
 ## Generic Assertions
 
 ## assert_exposes
