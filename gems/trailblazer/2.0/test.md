@@ -17,7 +17,14 @@ The `trailblazer-test` gem provides a bunch of assertions, matchers and helpers 
 
 The idea of operation tests is: always test the entire unit and all of its side-effects. This especially means you do not test if one attribute was changed, only, as it's common in Rails-way tests. You always test the asserted attribute(s) plus all others. Luckily, trailblazer-test makes this very easy and brief.
 
+Verbose, bad example:
 
+    # every timestamp's unique.
+    it { Expense::Create.(params_pass)["model"].created_at < Expense::Create.(params_pass)["model"].created_at }
+
+Good, consistent example:
+
+    it { assert_pass Expense::Create, {}, created_at: ->(actual:, **) { actual < Expense::Create.(params_pass)["model"].created_at } }
 
 ## Generic Assertions
 
