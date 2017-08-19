@@ -23,19 +23,33 @@ Luckily, `trailblazer-test` provides a simple abstraction allowing to run operat
 
 ## assert_pass
 
+Use `assert_pass` to run an operation and assert it was successful, while checking if the attributes of the operation's `model` are what you're expecting.
 
-Verbose, bad example:
+{{ "test/operation_test.rb:pass:../trailblazer-test:master" | tsnippet }}
 
-    # every timestamp's unique.
-    it { Expense::Create.(params_pass)["model"].created_at < Expense::Create.(params_pass)["model"].created_at }
+Both `params_pass` and `attrs_pass` have to be made available via `let` to provide all default data. They will automatically get merged with the data per test-case. `params_pass` will be merged with the params passed into the operation `call`, `attrs_pass` represent your expected outcome.
 
-Good, consistent example:
+The second test case would resolve to this manual test code.
 
-    it { assert_pass Expense::Create, {}, created_at: ->(actual:, **) { actual < Expense::Create.(params_pass)["model"].created_at } }
+    it do
+      result = Comment::Create( band: "Rancid", title: "  Ruby Soho " )
 
+      assert result.success?
+      assert_equal "Rancid",   result["model"].band
+      assert_equal "Timebomb", result["model"].title
+    end
 
-===> block for assert_pass/fail
+As you can see, `assert_pass` drastically reduces the amount of test code.
 
+### assert_pass: Block
+
+If you need more specific assertions, use a block with `assert_pass`.
+
+{{ "test/operation_test.rb:pass-block:../trailblazer-test:master" | tsnippet }}
+
+Here, the only assertion made automatically is whether the operation was run successfully. By yielding the result object in case of success, all other assertions can be made manually.
+
+## assert_fail
 
 ## Generic Assertions
 
