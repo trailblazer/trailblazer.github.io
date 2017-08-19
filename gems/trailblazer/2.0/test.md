@@ -13,9 +13,16 @@ The `trailblazer-test` gem provides a bunch of assertions, matchers and helpers 
 
 ## Operation Tests
 
+In Trailblazer, you write operation and integration tests. Operations encapsulate all business logic and are single-entry points to operate your application. There's no need to test controllers, models, service objects, etc. in isolation - unless you want to do so for a better documentation of your internal APIs.
+
+However, the idea of operation tests is: Run the complete unit with a certain input set, and test the side-effects. This differs to the Rails Way™ testing style, where smaller units of code, such as a specific validation or a callback, are tested in complete isolation. While that might look tempting and clean, it will create a test environment that is not identical to what happens in production.
+
+In production, you will never trigger one specific callback or a particular validation, only. Your application will run all code required to create a `Song` object, for instance. In Trailblazer, this means running the `Song::Create` operation, and testing that very operation with all its side-effects.
+
+Luckily, `trailblazer-test` provides a simple abstraction allowing to run operations and test all side-effects without creating verbose, unmaintable test code.
+
 ## assert_pass
 
-The idea of operation tests is: always test the entire unit and all of its side-effects. This especially means you do not test if one attribute was changed, only, as it's common in Rails-way tests. You always test the asserted attribute(s) plus all others. Luckily, trailblazer-test makes this very easy and brief.
 
 Verbose, bad example:
 
@@ -32,7 +39,19 @@ Good, consistent example:
 
 ## Generic Assertions
 
+As always, the `model` represents any object with readers, such as a `Struct`, or an `ActiveRecord` instance.
+
+```ruby
+Song  = Struct.new(:title, :band)
+
+model = Song.new("Timebomb", "Rancid")
+model.title #=> "Timebomb"
+model.band  #=> "Rancid"
+```
+
 ## assert_exposes
+
+Test attributes of an arbitrary object.
 
 Pass a hash of key/value tuples to `assert_exposes` to test that all attributes of the asserted object match the provided values.
 
