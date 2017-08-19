@@ -51,6 +51,37 @@ Here, the only assertion made automatically is whether the operation was run suc
 
 ## assert_fail
 
+To test an unsuccessful outcome of an operation, use `assert_fail`. This is used for testing all kinds of validations. By passing insufficient or wrong data to the operation, it will fail and mark errors on the errors object.
+
+{{ "test/operation_test.rb:fail:../trailblazer-test:master" | tsnippet }}
+
+Here, your params are merged into `params_pass` and the operation is called. The first assertion is whether `result.failure?` is true.
+
+After that, the operation's error object is grabbed. With an array as the third argument to `assert_fail` this will test if the errors object keys and your expected keys of error messages are equal.
+
+{% callout %}
+In 2.0 and 2.1, the errors object defaults to `result["contract.default"].errors`. In TRB 2.2, there will be an operation-wide errors object decoupled from the contracts.
+{% endcallout %}
+
+This roughly translates to the following manual test case.
+
+    it do
+      result = Comment::Create( band: "  Adolescents", title: "Timebomb" )
+                                            # Timebomb is a Rancid song.
+      assert result.failure?
+      assert_equal [:band], result["contract.default"].errors.messages.keys
+    end
+
+Per default, no assumptions are made on the model.
+
+### assert_fail: Block
+
+You can use a block with `assert_fail`.
+
+{{ "test/operation_test.rb:fail-block:../trailblazer-test:master" | tsnippet }}
+
+Only the `failure?` outcome is asserted here automatically.
+
 ## Generic Assertions
 
 As always, the `model` represents any object with readers, such as a `Struct`, or an `ActiveRecord` instance.
