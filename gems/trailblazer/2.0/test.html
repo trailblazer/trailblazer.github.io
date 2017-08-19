@@ -230,6 +230,58 @@ end
 
 <h2 id="assertfail" data-magellan-target="assertfail">assert_fail</h2>
 
+<p>To test an unsuccessful outcome of an operation, use <code class="highlighter-rouge">assert_fail</code>. This is used for testing all kinds of validations. By passing insufficient or wrong data to the operation, it will fail and mark errors on the errors object.</p>
+
+<pre><code>describe "Create with invalid data" do
+  let(:params_pass) { { band: "Rancid" } }
+  let(:attrs_pass)  { { band: "Rancid", title: "Timebomb" } }
+
+  it { assert_fail Create, { band: "Adolescents" }, [:band] }
+end
+</code></pre>
+
+<p>Here, your params are merged into <code class="highlighter-rouge">params_pass</code> and the operation is called. The first assertion is whether <code class="highlighter-rouge">result.failure?</code> is true.</p>
+
+<p>After that, the operation’s error object is grabbed. With an array as the third argument to <code class="highlighter-rouge">assert_fail</code> this will test if the errors object keys and your expected keys of error messages are equal.</p>
+
+<div class="callout">
+  
+<p>In 2.0 and 2.1, the errors object defaults to <code>result["contract.default"].errors</code>. In TRB 2.2, there will be an operation-wide errors object decoupled from the contracts.</p>
+
+</div>
+
+<p>This roughly translates to the following manual test case.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>it do
+  result = Comment::Create( band: "  Adolescents", title: "Timebomb" )
+                                        # Timebomb is a Rancid song.
+  assert result.failure?
+  assert_equal [:band], result["contract.default"].errors.messages.keys
+end
+</code></pre>
+</div>
+
+<p>Per default, no assumptions are made on the model.</p>
+
+<h3 id="assertfail-block">assert_fail: Block</h3>
+
+<p>You can use a block with <code class="highlighter-rouge">assert_fail</code>.</p>
+
+<pre><code>describe "Create with invalid data" do
+  let(:params_pass) { { band: "Rancid" } }
+  let(:attrs_pass)  { { band: "Rancid", title: "Timebomb" } }
+
+  it do
+    assert_fail Create, { band: " Adolescents" }, {} do |result|
+      assert_equal( {:band=&gt;["must be Rancid"]}, result["contract.default"].errors.messages )
+    end
+  end
+end
+</code></pre>
+
+<p>Only the <code class="highlighter-rouge">failure?</code> outcome is asserted here automatically.</p>
+
 <h2 id="generic-assertions" data-magellan-target="generic-assertions">Generic Assertions</h2>
 
 <p>As always, the <code class="highlighter-rouge">model</code> represents any object with readers, such as a <code class="highlighter-rouge">Struct</code>, or an <code class="highlighter-rouge">ActiveRecord</code> instance.</p>
