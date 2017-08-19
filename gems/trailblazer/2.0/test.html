@@ -168,9 +168,84 @@
 
 <p>The <code class="highlighter-rouge">trailblazer-test</code> gem provides a bunch of assertions, matchers and helpers for writing operation test.</p>
 
+<h2 id="operation-tests" data-magellan-target="operation-tests">Operation Tests</h2>
+
+<p>In Trailblazer, you write operation and integration tests. Operations encapsulate all business logic and are single-entry points to operate your application. There’s no need to test controllers, models, service objects, etc. in isolation - unless you want to do so for a better documentation of your internal APIs.</p>
+
+<p>However, the idea of operation tests is: Run the complete unit with a certain input set, and test the side-effects. This differs to the Rails Way™ testing style, where smaller units of code, such as a specific validation or a callback, are tested in complete isolation. While that might look tempting and clean, it will create a test environment that is not identical to what happens in production.</p>
+
+<p>In production, you will never trigger one specific callback or a particular validation, only. Your application will run all code required to create a <code class="highlighter-rouge">Song</code> object, for instance. In Trailblazer, this means running the <code class="highlighter-rouge">Song::Create</code> operation, and testing that very operation with all its side-effects.</p>
+
+<p>Luckily, <code class="highlighter-rouge">trailblazer-test</code> provides a simple abstraction allowing to run operations and test all side-effects without creating verbose, unmaintable test code.</p>
+
+<h2 id="assertpass" data-magellan-target="assertpass">assert_pass</h2>
+
+<p>Use <code class="highlighter-rouge">assert_pass</code> to run an operation and assert it was successful, while checking if the attributes of the operation’s <code class="highlighter-rouge">model</code> are what you’re expecting.</p>
+
+<pre><code>describe "Create with sane data" do
+  let(:params_pass) { { band: "Rancid" } }
+  let(:attrs_pass)  { { band: "Rancid", title: "Timebomb" } }
+
+  # just works
+  it { assert_pass Create, { title: "Ruby Soho" }, { title: "Ruby Soho" } }
+  # trimming works
+  it { assert_pass Create, { title: "  Ruby Soho " }, { title: "Ruby Soho" } }
+end
+</code></pre>
+
+<p>Both <code class="highlighter-rouge">params_pass</code> and <code class="highlighter-rouge">attrs_pass</code> have to be made available via <code class="highlighter-rouge">let</code> to provide all default data. They will automatically get merged with the data per test-case. <code class="highlighter-rouge">params_pass</code> will be merged with the params passed into the operation <code class="highlighter-rouge">call</code>, <code class="highlighter-rouge">attrs_pass</code> represent your expected outcome.</p>
+
+<p>The second test case would resolve to this manual test code.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>it do
+  result = Comment::Create( band: "Rancid", title: "  Ruby Soho " )
+
+  assert result.success?
+  assert_equal "Rancid",   result["model"].band
+  assert_equal "Timebomb", result["model"].title
+end
+</code></pre>
+</div>
+
+<p>As you can see, <code class="highlighter-rouge">assert_pass</code> drastically reduces the amount of test code.</p>
+
+<h3 id="assertpass-block">assert_pass: Block</h3>
+
+<p>If you need more specific assertions, use a block with <code class="highlighter-rouge">assert_pass</code>.</p>
+
+<pre><code>describe "Create with sane data" do
+  let(:params_pass) { { band: "Rancid" } }
+  let(:attrs_pass)  { { band: "Rancid", title: "Timebomb" } }
+
+  it do
+    assert_pass Create, { title: " Ruby Soho" }, {} do |result|
+      assert_equal "Ruby Soho", result["model"].title
+    end
+  end
+end
+</code></pre>
+
+<p>Here, the only assertion made automatically is whether the operation was run successfully. By yielding the result object in case of success, all other assertions can be made manually.</p>
+
+<h2 id="assertfail" data-magellan-target="assertfail">assert_fail</h2>
+
 <h2 id="generic-assertions" data-magellan-target="generic-assertions">Generic Assertions</h2>
 
+<p>As always, the <code class="highlighter-rouge">model</code> represents any object with readers, such as a <code class="highlighter-rouge">Struct</code>, or an <code class="highlighter-rouge">ActiveRecord</code> instance.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="no">Song</span>  <span class="o">=</span> <span class="no">Struct</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:band</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="no">Song</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Timebomb"</span><span class="p">,</span> <span class="s2">"Rancid"</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">title</span> <span class="c1">#=&gt; "Timebomb"</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">band</span>  <span class="c1">#=&gt; "Rancid"</span>
+</code></pre>
+</div>
+
 <h2 id="assertexposes" data-magellan-target="assertexposes">assert_exposes</h2>
+
+<p>Test attributes of an arbitrary object.</p>
 
 <p>Pass a hash of key/value tuples to <code class="highlighter-rouge">assert_exposes</code> to test that all attributes of the asserted object match the provided values.</p>
 
@@ -278,7 +353,10 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#generic-assertions">Generic Assertions</a></li>
+          <li><a href="#operation-tests">Operation Tests</a></li>
+<li><a href="#assertpass">assert_pass</a></li>
+<li><a href="#assertfail">assert_fail</a></li>
+<li><a href="#generic-assertions">Generic Assertions</a></li>
 <li><a href="#assertexposes">assert_exposes</a></li>
 <li><a href="#operation">Operation</a></li>
 <li><a href="#call">call</a></li>
