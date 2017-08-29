@@ -37,15 +37,15 @@ Running an operation will always return its [→ result object](#result-object).
 
 Dependencies other than the params input, such as a current user, are passed via the second argument.
 
-{{  "operation_test.rb:invocation-dep-call" | tsnippet }}
+{{  "operation_test.rb:invocation-dep-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 External dependencies will be accessible via `options` in every step.
 
-{{  "operation_test.rb:invocation-dep" | tsnippet }}
+{{  "operation_test.rb:invocation-dep:../trailblazer/test/docs:2-0" | tsnippet }}
 
 They are also readable in the result.
 
-{{  "operation_test.rb:invocation-dep-res" | tsnippet }}
+{{  "operation_test.rb:invocation-dep-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Keep in mind that there is **no global state** in Trailblazer, anything you need in the operation has to be injected via the second `call` argument. This also applies to tests.
 
@@ -62,7 +62,7 @@ The flow of an operation is defined by a two-tracked pipeline.
     </div>
 
     <div class="column medium-8">
-      {{  "operation_test.rb:op-api" | tsnippet }}
+      {{  "operation_test.rb:op-api:../trailblazer/test/docs:2-0" | tsnippet }}
     </div>
   </div>
 
@@ -171,21 +171,21 @@ Note that you can add as many error handlers as you want, at any position in the
 
 If you don't want left track steps to be executed after a specific step, use the `:fail_fast` option.
 
-{{  "fast_test.rb:ffopt" | tsnippet }}
+{{  "fast_test.rb:ffopt:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This will **not** execute any `failure` steps after `abort!`.
 
-{{  "fast_test.rb:ffopt-res" | tsnippet }}
+{{  "fast_test.rb:ffopt-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that this option in combination with `failure` will always fail fast once its reached, regardless of the step's return value.
 
 `:fail_fast` also works with `step`.
 
-{{  "fast_test.rb:ffopt-step" | tsnippet }}
+{{  "fast_test.rb:ffopt-step:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Here, if `step` returns a falsey value, the rest of the pipe is skipped, returning a failed result. Again, this will **not** execute any `failure` steps after `:empty_id?`.
 
-{{  "fast_test.rb:ffopt-step-res" | tsnippet }}
+{{  "fast_test.rb:ffopt-step-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 <!-- ### Flow Control: Pass Fast Option
 
@@ -198,11 +198,11 @@ The `:pass_fast` option also works with `success` and will always skip the remai
 
 Instead of [hardcoding the flow behavior](#flow-control-fail-fast-option) you can have a dynamic skipping of left track steps based on some condition. This works with the `fail_fast!` method.
 
-{{  "fast_test.rb:ffmeth" | tsnippet }}
+{{  "fast_test.rb:ffmeth:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This will **not** execute any steps on either track, but will result in a failed operation.
 
-{{  "fast_test.rb:ffmeth-res" | tsnippet }}
+{{  "fast_test.rb:ffmeth-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that you have to **return** `Railway.fail_fast!` from the track. You can use this signal from any step, e.g. `step` or `failure`.
 
@@ -210,11 +210,11 @@ Note that you have to **return** `Railway.fail_fast!` from the track. You can us
 
 Sometimes it might be necessary to skip the rest of the pipe and return a successful result. Use `pass_fast!` for this.
 
-{{  "fast_test.rb:pfmeth" | tsnippet }}
+{{  "fast_test.rb:pfmeth:../trailblazer/test/docs:2-0" | tsnippet }}
 
 After **returning** the signal from a step, the remaining steps will be skipped.
 
-{{  "fast_test.rb:pfmeth-res" | tsnippet }}
+{{  "fast_test.rb:pfmeth-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that this works on both right and left track. -->
 
@@ -294,11 +294,11 @@ Calling an operation returns a `Result` object. Sometimes we also called it a *c
 
 Consider the following operation.
 
-{{  "operation_test.rb:step-options" | tsnippet }}
+{{  "operation_test.rb:step-options:../trailblazer/test/docs:2-0" | tsnippet }}
 
 All three steps add data to the `options` object. That data can be used in the following steps.
 
-{{  "operation_test.rb:step-val" | tsnippet }}
+{{  "operation_test.rb:step-val:../trailblazer/test/docs:2-0" | tsnippet }}
 
 It is a convention to use a `"namespaced.key"` on the result object. This will help you structure and manage the data. It's clever to namespace your data with something like `my.`.
 
@@ -312,19 +312,19 @@ Some steps, such as [`Contract`](contract.html) or [`Policy`](policy.html) will 
 
 After running the operation, the result object can be used for reading state.
 
-{{  "operation_test.rb:step-res" | tsnippet }}
+{{  "operation_test.rb:step-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 You can ask about the outcome of the operation via `success?` and `failure?`.
 
-{{  "operation_test.rb:step-binary" | tsnippet }}
+{{  "operation_test.rb:step-binary:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Please note that the result object is also used to transport externally [injected dependencies and class dependencies.](#dependencies).
 
-{{  "operation_test.rb:step-dep" | tsnippet }}
+{{  "operation_test.rb:step-dep:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Use `Result#inspect` to test a number of dependencies.
 
-{{  "operation_test.rb:step-inspect" | tsnippet }}
+{{  "operation_test.rb:step-inspect:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ### Result: Interpretation
 
@@ -338,29 +338,29 @@ In an operation, there is only one way to manage dependencies and state: the `op
 
 State can be added on the class layer.
 
-{{  "operation_test.rb:dep-op" | tsnippet : "dep-pipe"}}
+{{  "operation_test.rb:dep-op:../trailblazer/test/docs:2-0" | tsnippet : "dep-pipe"}}
 
 Unsurprisingly, this is also readable on the class layer.
 
-{{  "operation_test.rb:dep-op-class" | tsnippet }}
+{{  "operation_test.rb:dep-op-class:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This mechanism is used by all DSL methods such as `contract` and by almost all step macros (e.g. `Contract::Build`) to save and access class-wide data.
 
 Class data is also readable at runtime in steps.
 
-{{  "operation_test.rb:dep-op" | tsnippet }}
+{{  "operation_test.rb:dep-op:../trailblazer/test/docs:2-0" | tsnippet }}
 
 In steps, you can set runtime data (e.g. `my.model`).
 
 After running the operation, this `options` object turns into the [result object](#result-object).
 
-{{  "operation_test.rb:dep-op-res" | tsnippet }}
+{{  "operation_test.rb:dep-op-res:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ## Dependency Injection
 
 Both class data as well as runtime data [described above](#dependencies) can be overridden using dependency injection.
 
-{{  "operation_test.rb:dep-di" | tsnippet }}
+{{  "operation_test.rb:dep-di:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that injected dependencies need to be in the second argument to `Operation::call`.
 
@@ -404,19 +404,19 @@ Try to avoid inheritance and use [composition](#nested) instead.
 
 You can inherit from any kind of operation.
 
-{{  "operation_test.rb:inh-new" | tsnippet }}
+{{  "operation_test.rb:inh-new:../trailblazer/test/docs:2-0" | tsnippet }}
 
 In this example, the `New` class will have a pipe as follows.
 
-{{  "operation_test.rb:inh-new-pipe" | tsnippet }}
+{{  "operation_test.rb:inh-new-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 In addition to Ruby's normal class inheritance semantics, the operation will also copy the pipe. You may then add further steps to the subclass.
 
-{{  "operation_test.rb:inh-create" | tsnippet }}
+{{  "operation_test.rb:inh-create:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This results in the following pipe.
 
-{{  "operation_test.rb:inh-create-pipe" | tsnippet }}
+{{  "operation_test.rb:inh-create-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Inheritance is great to eliminate redundancy. Pipes and step code can easily be shared amongst groups of operations.
 
@@ -428,15 +428,15 @@ When using inheritance, use `:override` to replace existing steps in  subclasses
 
 Consider the following base operation.
 
-{{  "operation_test.rb:override-app" | tsnippet }}
+{{  "operation_test.rb:override-app:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Subclasses can now override predefined steps.
 
-{{  "operation_test.rb:override-new" | tsnippet }}
+{{  "operation_test.rb:override-new:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The pipe flow will remain the same.
 
-{{  "operation_test.rb:override-pipe" | tsnippet }}
+{{  "operation_test.rb:override-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Refrain from using the `:override` option if you want to add steps.
 
@@ -450,20 +450,20 @@ When adding steps using `step`, `failure` and `success`, you may name steps expl
   ~~~6
 A step macro will name itself.
 
-{{  "operation_test.rb:name-auto" | tsnippet }}
+{{  "operation_test.rb:name-auto:../trailblazer/test/docs:2-0" | tsnippet }}
   ~~~6
 You can find out the name by inspecting the pipe.
 
-{{  "operation_test.rb:name-auto-pipe" | tsnippet }}
+{{  "operation_test.rb:name-auto-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 {% endrow %}
 
 For every kind of step, whether it's a macro or a custom step, use `:name` to specify a name.
 
-{{  "operation_test.rb:name-manu" | tsnippet }}
+{{  "operation_test.rb:name-manu:../trailblazer/test/docs:2-0" | tsnippet }}
 
 When inspecting the pipe, you will see your names.
 
-{{  "operation_test.rb:name-manu-pipe" | tsnippet }}
+{{  "operation_test.rb:name-manu-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Assign manual names to steps when using macros multiple times, or when planning to alter the pipe in subclasses.
 
@@ -471,11 +471,11 @@ Assign manual names to steps when using macros multiple times, or when planning 
 
 Whenever inserting a step, you may provide the position in the pipe using `:before` or `:after`.
 
-{{  "operation_test.rb:pos-before" | tsnippet }}
+{{  "operation_test.rb:pos-before:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This will insert the custom step before the model builder.
 
-{{  "operation_test.rb:pos-before-pipe" | tsnippet }}
+{{  "operation_test.rb:pos-before-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 {% callout %}
 Naturally, `:after` will insert the step after an existing one.
@@ -485,21 +485,21 @@ Naturally, `:after` will insert the step after an existing one.
 
 The position options are extremely helpful with inheritance.
 
-{{  "operation_test.rb:pos-inh" | tsnippet }}
+{{  "operation_test.rb:pos-inh:../trailblazer/test/docs:2-0" | tsnippet }}
 
 It allows inserting new steps without repeating the existing pipe.
 
-{{  "operation_test.rb:pos-inh-pipe" | tsnippet }}
+{{  "operation_test.rb:pos-inh-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ### Options: Replace
 
 Replace existing (or inherited) steps using `:replace`.
 
-{{  "operation_test.rb:replace-inh" | tsnippet  }}
+{{  "operation_test.rb:replace-inh:../trailblazer/test/docs:2-0" | tsnippet  }}
 
 The existing step will be discarded with the newly provided one.
 
-{{  "operation_test.rb:replace-inh-pipe" | tsnippet }}
+{{  "operation_test.rb:replace-inh-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ### Options: Delete
 
@@ -519,7 +519,7 @@ Implementing your own macros helps to create reusable code.
 
 It's advised to put macro code into namespaces to not pollute the global namespace.
 
-{{  "macro_test.rb:simple" | tsnippet }}
+{{  "macro_test.rb:simple:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The macro itself is a function. Per convention, the name is capitalized. You can specify any set of arguments (e.g. using kw args), and it returns a 2-element array with the actual step to be inserted into the pipe and default options.
 
@@ -529,11 +529,11 @@ The macro step receives `(input, options)` where `input` is usually the operatio
 
 Operations can then use your macro the way you've done it with our Trailblazer macros.
 
-{{  "macro_test.rb:simple-op" | tsnippet }}
+{{  "macro_test.rb:simple-op:../trailblazer/test/docs:2-0" | tsnippet }}
 
 When looking at the operation's pipe, you can see how, in our example, the default options provide a convenient step name.
 
-{{  "macro_test.rb:simple-pipe" | tsnippet }}
+{{  "macro_test.rb:simple-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 It is not advised to test macros in isolation. Note that it *is* possible by simply calling your macro in a test case. However, macros should be tested via an operation unit test to make sure the wiring is correct.
 
@@ -545,11 +545,11 @@ In future versions (TRB 2.0.2+) we will have public APIs for creating nested pip
 
 An operation can automatically find or create a model for you depending on the input, with the `Model` macro.
 
-{{  "model_test.rb:op" | tsnippet }}
+{{  "model_test.rb:op:../trailblazer/test/docs:2-0" | tsnippet }}
 
 After this step, there is a fresh model instance under `options["model"]` that can be used in all following steps.
 
-{{  "model_test.rb:create" | tsnippet }}
+{{  "model_test.rb:create:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Internally, `Model` macro will simply invoke `Song.new` to populate `"model"`.
 
@@ -557,7 +557,7 @@ Internally, `Model` macro will simply invoke `Song.new` to populate `"model"`.
 
 You can also find models using `:find_by`. This is helpful for `Update` or `Delete` operations.
 
-{{  "model_test.rb:update" | tsnippet }}
+{{  "model_test.rb:update:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The `Model` macro will invoke the following code for you.
 
@@ -565,11 +565,11 @@ The `Model` macro will invoke the following code for you.
 
 This will assign `["model"]` for you by invoking `find_by`.
 
-{{  "model_test.rb:update-ok" | tsnippet }}
+{{  "model_test.rb:update-ok:../trailblazer/test/docs:2-0" | tsnippet }}
 
 If `Song.find_by` returns `nil`, this will deviate to the left track, skipping the rest of the operation.
 
-{{  "model_test.rb:update-fail" | tsnippet }}
+{{  "model_test.rb:update-fail:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that you may also use `:find`. This is not recommended, though, since it raises an exception, which is not the preferred way of flow control in Trailblazer.
 
@@ -577,7 +577,7 @@ Note that you may also use `:find`. This is not recommended, though, since it ra
 
 It's possible to specify any finder method, which is helpful with ROMs such as Sequel.
 
-{{  "model_test.rb:show" | tsnippet }}
+{{  "model_test.rb:show:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The provided method will be invoked and Trailblazer passes it the `params[:id]` value.
 
@@ -587,24 +587,24 @@ Song[ params[:id] ]
 
 Given your database gem provides that finder, it will result in a successful query.
 
-{{  "model_test.rb:show-ok" | tsnippet }}
+{{  "model_test.rb:show-ok:../trailblazer/test/docs:2-0" | tsnippet }}
 
 
 ## Nested
 
 It is possible to nest operations, as in running an operation in another. This is the common practice for "presenting" operations and "altering" operations, such as `Edit` and `Update`.
 
-{{  "nested_test.rb:edit" | tsnippet }}
+{{  "nested_test.rb:edit:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note how `Edit` only defines the model builder (via `:find`) and builds the contract.
 
 Running `Edit` will allow you to grab the model and contract, for presentation and rendering the form.
 
-{{  "nested_test.rb:edit-call" | tsnippet }}
+{{  "nested_test.rb:edit-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This operation could now be leveraged in `Update`.
 
-{{  "nested_test.rb:update" | tsnippet }}
+{{  "nested_test.rb:update:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The `Nested` macro helps you invoking an operation at any point in the pipe.
 
@@ -614,7 +614,7 @@ The nested operation (`Edit`) will, per default, only receive runtime data from 
 
 After running the nested `Edit` operation its runtime data (e.g. `"model"`) is available in the `Update` operation.
 
-{{  "nested_test.rb:update-call" | tsnippet }}
+{{  "nested_test.rb:update-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Should the nested operation fail, for instance because its model couldn't be found, then the outer pipe will also jump to the left track.
 
@@ -622,15 +622,15 @@ Should the nested operation fail, for instance because its model couldn't be fou
 
 If you need to pick the nested operation dynamically at runtime, use a callable object instead.
 
-{{  "nested_test.rb:callable" | tsnippet }}
+{{  "nested_test.rb:callable:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The object's `call` method has the exact same interface as any other step.
 
-{{  "nested_test.rb:callable-builder" | tsnippet }}
+{{  "nested_test.rb:callable-builder:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that `Nested` also works with `:instance_method` and lambdas.
 
-{{  "nested_test.rb:method" | tsnippet }}
+{{  "nested_test.rb:method:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ### Nested: Input
 
@@ -638,15 +638,15 @@ Per default, only the runtime data will be passed into the nested operation. You
 
 The following operation multiplies two factors.
 
-{{  "nested_test.rb:input-multiply" | tsnippet }}
+{{  "nested_test.rb:input-multiply:../trailblazer/test/docs:2-0" | tsnippet }}
 
 It is `Nested` in another operation.
 
-{{  "nested_test.rb:input-pi" | tsnippet }}
+{{  "nested_test.rb:input-pi:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The examplary composing operation uses both runtime and mutable data. Its invocation could look as follows.
 
-{{  "nested_test.rb:input-result" | tsnippet }}
+{{  "nested_test.rb:input-result:../trailblazer/test/docs:2-0" | tsnippet }}
 
 
 The `:input` option for `Nested` allows to specify what options will go into the nested operation. It passes `mutable_data` and `runtime_data` to the option for your convenience.
@@ -655,11 +655,11 @@ While the runtime data normally gets passed on to nested operations automaticall
 
 Use a `Callable` to share mapping code.
 
-{{  "nested_test.rb:input-callable" | tsnippet }}
+{{  "nested_test.rb:input-callable:../trailblazer/test/docs:2-0" | tsnippet }}
 
 It will improve readability.
 
-{{  "nested_test.rb:input-callable-op" | tsnippet }}
+{{  "nested_test.rb:input-callable-op:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ### Nested: Output
 
@@ -667,7 +667,7 @@ After running a nested operation, its mutable data gets copied into the `options
 
 Use `:output` to change that, should you need only specific values.
 
-{{  "nested_test.rb:output" | tsnippet }}
+{{  "nested_test.rb:output:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This works with lambdas, `:method` and `Callable`.
 
@@ -675,11 +675,11 @@ This works with lambdas, `:method` and `Callable`.
 
 Steps can be wrapped by an embracing step. This is necessary when defining a set of steps to be contained in a database transaction or a database lock.
 
-{{  "wrap_test.rb:sequel-transaction" | tsnippet }}
+{{  "wrap_test.rb:sequel-transaction:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The `Wrap` macro helps you to define the wrapping code (such as a `Sequel.transaction` call) and allows you to define the wrapped steps. (Because of the precedence works in Ruby, you need to use `{...}` instead of `do...end`.)
 
-{{  "wrap_test.rb:sequel-transaction" | tsnippet : "wrap-only" }}
+{{  "wrap_test.rb:sequel-transaction:../trailblazer/test/docs:2-0" | tsnippet : "wrap-only" }}
 
 As always, you can have steps before and after `Wrap` in the pipe.
 
@@ -701,23 +701,23 @@ In the above example, regardless of `Sequel.transaction`'s return value, the out
 
 For reusable wrappers, you can also use a `Callable` object.
 
-{{  "wrap_test.rb:callable-t" | tsnippet  }}
+{{  "wrap_test.rb:callable-t:../trailblazer/test/docs:2-0" | tsnippet  }}
 
 This can then be passed to `Wrap`, making the pipe extremely readable.
 
-{{  "wrap_test.rb:sequel-transaction-callable" | tsnippet : "wrap-onlyy" }}
+{{  "wrap_test.rb:sequel-transaction-callable:../trailblazer/test/docs:2-0" | tsnippet : "wrap-onlyy" }}
 
 ## Rescue
 
 While you can write your own `begin/rescue/end` mechanics using [`Wrap`](#wrap), Trailblazer offers you the `Rescue` macro to catch and handle exceptions that might occur while running the pipe.
 
-{{  "rescue_test.rb:simple" | tsnippet  }}
+{{  "rescue_test.rb:simple:../trailblazer/test/docs:2-0" | tsnippet  }}
 
 Any exception raised during a step in the `Rescue` block will stop the nested pipe from being executed, and continue after the block on the left track.
 
 You can specify what exceptions to catch and an optional handler that is called when an exception is encountered.
 
-{{  "rescue_test.rb:name" | tsnippet  }}
+{{  "rescue_test.rb:name:../trailblazer/test/docs:2-0" | tsnippet  }}
 
 Alternatively, you can use a  `Callable` object for `:handler`.
 
@@ -725,4 +725,4 @@ Alternatively, you can use a  `Callable` object for `:handler`.
 
 The  `Nested`, `Wrap` and `Rescue` macros can also be nested, allowing an easily extendable business workflow with error handling along the way.
 
-{{  "rescue_test.rb:example" | tsnippet : "ex" }}
+{{  "rescue_test.rb:example:../trailblazer/test/docs:2-0" | tsnippet : "ex" }}
