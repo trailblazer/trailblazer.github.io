@@ -67,7 +67,7 @@ result = Song::Create.(
     The implementation is a class.
     </p>
 
-{{  "operation_test.rb:op" | tsnippet }}
+{{  "operation_test.rb:op:../trailblazer/test/docs:2-0" | tsnippet }}
     </div>
   </div>
 

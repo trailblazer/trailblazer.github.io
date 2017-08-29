@@ -13,13 +13,13 @@ The `Policy::Pundit` module allows using [Pundit](https://github.com/elabs/pundi
 
 A Pundit policy has various rule methods and a special constructor that receives the current user and the current model.
 
-{{  "pundit_test.rb:policy" | tsnippet }}
+{{  "pundit_test.rb:policy:../trailblazer/test/docs:2-0" | tsnippet }}
 
 In pundit policies, it is a convention to have access to those objects at runtime and build rules on top of those.
 
 You can plug this policy into your pipe at any point. However, this must be inserted after the `"model"` skill is available.
 
-{{  "pundit_test.rb:pundit" | tsnippet }}
+{{  "pundit_test.rb:pundit:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that you don't have to create the model via the `Model` macro - you can use any logic you want. The `Pundit` macro will grab the model from `["model"]`, though.
 
@@ -33,7 +33,7 @@ Any other call will cause a policy breach and stop the pipe from executing after
 
 Add your polices using the `Policy::Pundit` macro. It accepts the policy class name, and the rule method to call.
 
-{{  "pundit_test.rb:pundit" | tsnippet }}
+{{  "pundit_test.rb:pundit:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The step will create the policy instance automatically for you and passes the `"model"` and the `"current_user"` skill into the policies constructor. Just make sure those dependencies are available before the step is executed.
 
@@ -41,7 +41,7 @@ If the policy returns `falsey`, it [deviates to the left track](api.html#flow-co
 
 After running the `Pundit` step, its result is readable from the `Result` object.
 
-{{  "pundit_test.rb:pundit-result" | tsnippet }}
+{{  "pundit_test.rb:pundit-result:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Note that the actual policy instance is available via `["result.policy.#{name}"]["policy"]` to be reinvoked with other rules (e.g. in the view layer).
 
@@ -49,17 +49,17 @@ Note that the actual policy instance is available via `["result.policy.#{name}"]
 
 You can add any number of Pundit policies to your pipe. Make sure to use `name:` to name them, though.
 
-{{  "pundit_test.rb:name" | tsnippet }}
+{{  "pundit_test.rb:name:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The result will be stored in `"result.policy.#{name}"`
 
-{{  "pundit_test.rb:name-call" | tsnippet }}
+{{  "pundit_test.rb:name-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ## Pundit: Dependency Injection
 
 Override a configured policy using dependency injection.
 
-{{  "pundit_test.rb:di-call" | tsnippet }}
+{{  "pundit_test.rb:di-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 You can inject it using `"policy.#{name}.eval"`. It can be any object responding to `call`.
 
@@ -67,7 +67,7 @@ You can inject it using `"policy.#{name}.eval"`. It can be any object responding
 
 A guard is a step that helps you evaluating a condition and writing the result. If the condition was evaluated as `falsey`, the pipe won't be further processed and a policy breach is reported in `Result["result.policy.default"]`.
 
-{{  "guard_test.rb:proc" | tsnippet }}
+{{  "guard_test.rb:proc:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The only way to make the above operation invoke the second step `:process` is as follows.
 
@@ -86,7 +86,7 @@ Learn more about [→ dependency injection](skill.md) to pass params and current
 
 The `Policy::Guard` macro helps you inserting your guard logic. If not defined, it will be evaluated [where you insert](#guard-position) it.
 
-{{  "guard_test.rb:proc" | tsnippet : "pipeonly" }}
+{{  "guard_test.rb:proc:../trailblazer/test/docs:2-0" | tsnippet : "pipeonly" }}
 
 The `options` object is passed into the guard and allows you to read and inspect data like `params` or `current_user`. Please use kw args.
 
@@ -94,33 +94,33 @@ The `options` object is passed into the guard and allows you to read and inspect
 
 As always, the guard can also be a `Callable`-marked object.
 
-{{  "guard_test.rb:callable" | tsnippet }}
+{{  "guard_test.rb:callable:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Insert the object instance via the `Policy::Guard` macro.
 
-{{  "guard_test.rb:callable-op" | tsnippet : "pipe-only" }}
+{{  "guard_test.rb:callable-op:../trailblazer/test/docs:2-0" | tsnippet : "pipe-only" }}
 
 ## Guard: Instance Method
 
 As always, you may also use an instance method to implement a guard.
 
-{{  "guard_test.rb:method" | tsnippet : "pipe-onlyy" }}
+{{  "guard_test.rb:method:../trailblazer/test/docs:2-0" | tsnippet : "pipe-onlyy" }}
 
 ## Guard: Name
 
 The guard name defaults to `default` and can be set via `name:`. This allows having multiple guards.
 
-{{  "guard_test.rb:name" | tsnippet }}
+{{  "guard_test.rb:name:../trailblazer/test/docs:2-0" | tsnippet }}
 
 The result will sit in `result.policy.#{name}`.
 
-{{  "guard_test.rb:name-result" | tsnippet }}
+{{  "guard_test.rb:name-result:../trailblazer/test/docs:2-0" | tsnippet }}
 
 ## Guard: Dependency Injection
 
 Instead of using the configured guard, you can inject any callable object that returns a `Result` object. Do so by overriding the `policy.#{name}.eval` path when calling the operation.
 
-{{  "guard_test.rb:di-call" | tsnippet }}
+{{  "guard_test.rb:di-call:../trailblazer/test/docs:2-0" | tsnippet }}
 
 An easy way to let Trailblazer build a compatible object for you is using `Guard.build`.
 
@@ -130,10 +130,10 @@ This is helpful to override a certain policy for testing, or to invoke it with s
 
 You may specify a position.
 
-{{  "guard_test.rb:before" | tsnippet }}
+{{  "guard_test.rb:before:../trailblazer/test/docs:2-0" | tsnippet }}
 
 Resulting in the guard inserted before `model!`, even though it was added at a later point.
 
-{{  "guard_test.rb:before-pipe" | tsnippet }}
+{{  "guard_test.rb:before-pipe:../trailblazer/test/docs:2-0" | tsnippet }}
 
 This is helpful if you maintain modules for operations with generic steps.
