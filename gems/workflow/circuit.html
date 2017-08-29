@@ -191,15 +191,15 @@
 
 <p>In order to define an activity, you can use the BPMN editor of your choice and run it through the Trailblazer circuit generator, use our online tool (if <a href="http://pro.trailblazer.to">you’re a PRO member</a>) or simply define it using plain Ruby.</p>
 
-<pre><code>activity = Circuit::Activity({id: "Blog/Publish"}) { |evt|
+<pre><code>activity = Activity.from_hash do |start, _end|
   {
-    evt[:Start]      =&gt; { Circuit::Right =&gt; Blog::Write },
+    start            =&gt; { Circuit::Right =&gt; Blog::Write },
     Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
     Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
     Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::Publish    =&gt; { Circuit::Right =&gt; evt[:End] }
+    Blog::Publish    =&gt; { Circuit::Right =&gt; _end }
   }
-}
+end
 </code></pre>
 
 <p>The <code class="highlighter-rouge">Activity</code> function is a convenient tool to create an activity. Note that the yielded object allows to access <em>events</em> from the activity, such as the <code class="highlighter-rouge">Start</code> and <code class="highlighter-rouge">End</code> event that are created per default.</p>
@@ -244,7 +244,7 @@ end
 <p>After defining circuit and implementing the tasks, the circuit can be executed using its very own <code class="highlighter-rouge">call</code> method.</p>
 
 <pre><code>direction, options, flow = activity.(
-  activity[:Start],
+  nil,
   { content: "Let's start writing   " } # gets trimmed in Write.
 )
 </code></pre>
@@ -265,16 +265,16 @@ options   #=&gt; {:content=&gt;"Let's start writing"}
 
 <p>For debugging or simply understanding the flows of circuits, you can use tracing.</p>
 
-<pre><code>activity = Circuit::Activity({id: "Blog/Publish",
-  Blog::Write=&gt;"Blog::Write",Blog::SpellCheck=&gt;"Blog::SpellCheck",Blog::Correct=&gt;"Blog::Correct", Blog::Publish=&gt;"Blog::Publish" }) { |evt|
+<pre><code>activity = Activity.from_hash do |start, _end|
+  # Blog::Write=&gt;"Blog::Write",Blog::SpellCheck=&gt;"Blog::SpellCheck",Blog::Correct=&gt;"Blog::Correct", Blog::Publish=&gt;"Blog::Publish" }) { |evt|
   {
-    evt[:Start]      =&gt; { Circuit::Right =&gt; Blog::Write },
+    start      =&gt; { Circuit::Right =&gt; Blog::Write },
     Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
     Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
     Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::Publish    =&gt; { Circuit::Right =&gt; evt[:End] }
+    Blog::Publish    =&gt; { Circuit::Right =&gt; _end }
   }
-}
+end
 </code></pre>
 
 <p>The second argument to <code class="highlighter-rouge">Activity</code> takes debugging information, so you can set readable names for tasks.</p>
@@ -282,7 +282,7 @@ options   #=&gt; {:content=&gt;"Let's start writing"}
 <p>When invoking the activity, the <code class="highlighter-rouge">:runner</code> option will activate tracing and write debugging information about any executed task onto the <code class="highlighter-rouge">:stack</code> array.</p>
 
 <pre><code>stack, _ = Circuit::Trace.( activity,
-  activity[:Start],
+  nil,
   { content: "Let's start writing" }
 )
 </code></pre>
@@ -326,9 +326,9 @@ options   #=&gt; {:content=&gt;"Let's start writing"}
 
 <p>You can emit any direction signal you want, and even use it to transport additional state. Using <code class="highlighter-rouge">Right</code> and <code class="highlighter-rouge">Left</code> is simply a convention following the mental image of a binary flow.</p>
 
-<pre><code>activity = Circuit::Activity({id: "Blog/Publish"}) { |evt|
+<pre><code>activity = Activity.from_hash do |start, _end|
   {
-    evt[:Start]       =&gt; { Circuit::Right =&gt; Blog::Write },
+    start       =&gt; { Circuit::Right =&gt; Blog::Write },
     Blog::Write       =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
     Blog::SpellCheck3 =&gt; {
       Circuit::Right  =&gt; Blog::Publish,
@@ -337,9 +337,9 @@ options   #=&gt; {:content=&gt;"Let's start writing"}
     },
     Blog::Warn        =&gt; { Circuit::Right =&gt; Blog::Publish },
     Blog::Correct     =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
-    Blog::Publish     =&gt; { Circuit::Right =&gt; evt[:End] }
+    Blog::Publish     =&gt; { Circuit::Right =&gt; _end }
   }
-}
+end
 </code></pre>
 
 <p>For example, the <code class="highlighter-rouge">SpellCheck3</code> task here emits a <code class="highlighter-rouge">:maybe</code> symbol which is then wired to the follow-up task <code class="highlighter-rouge">Warn</code>. Its implementation contains the decider that returns the appropriate direction.</p>
@@ -386,26 +386,24 @@ end
 
 <p>Additional <code class="highlighter-rouge">End</code> events must be defined when creating the <code class="highlighter-rouge">Activity</code>.</p>
 
-<pre><code>activity = Circuit::Activity({id: "Blog/Publish"},
-  end: {
-    default: Circuit::End.new(:published),
-    warn:    Circuit::End.new(:warned),
-    wrong:   Circuit::End.new(:wrong)
-  }
-) { |evt|
+<pre><code>warn    = Circuit::End.new(:warned)
+wrong   = Circuit::End.new(:wrong)
+default = Circuit::End.new(:published)
+
+activity = Activity.from_hash(default) do |start, _end|
   {
-    evt[:Start]       =&gt; { Circuit::Right =&gt; Blog::Write },
+    start       =&gt; { Circuit::Right =&gt; Blog::Write },
     Blog::Write       =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
     Blog::SpellCheck3 =&gt; {
       Circuit::Right  =&gt; Blog::Publish,
-      Circuit::Left   =&gt; evt[:End, :wrong],
+      Circuit::Left   =&gt; wrong,
       :maybe          =&gt; Blog::Warn
     },
-    Blog::Warn        =&gt; { Circuit::Right =&gt; evt[:End, :warn] },
-    Blog::Correct     =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
-    Blog::Publish     =&gt; { Circuit::Right =&gt; evt[:End] }
+    Blog::Warn        =&gt; { Circuit::Right =&gt; warn },
+    # Blog::Correct     =&gt; { Circuit::Right =&gt; Blog::SpellCheck3 },
+    Blog::Publish     =&gt; { Circuit::Right =&gt; _end }
   }
-}
+end
 </code></pre>
 
 <p>Events are provided as the second <code class="highlighter-rouge">Activity</code> argument. All <code class="highlighter-rouge">:end</code> events will be considered stop events that exit the circuit.</p>
@@ -413,7 +411,7 @@ end
 <p>When running the sample activity with toleratable typos in the <code class="highlighter-rouge">content</code> field, this will now result in the circuit stopping on <code class="highlighter-rouge">warned</code> end event.</p>
 
 <pre><code>direction, options, flow = activity.(
-  activity[:Start],
+  nil,
   { content: " Let's sdart" }
 )
 
@@ -431,17 +429,14 @@ options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"
 
 <p>Existing activities can be composed into other activities using <code class="highlighter-rouge">Nested</code>.</p>
 
-<pre><code>complete = Circuit::Activity(
-  {id: "Shop, Blog"},
-  end: { default: Circuit::End.new(:default), error: Circuit::End.new(:error) }
-) do |evt|
+<pre><code>complete = Activity.from_hash(default) do |start, _end|
   {
-    evt[:Start] =&gt; { Circuit::Right =&gt; Shop },
-    Shop        =&gt; { Circuit::Right =&gt; _nested = Circuit::Nested(activity) },
+    start =&gt; { Circuit::Right =&gt; Shop },
+    Shop        =&gt; { Circuit::Right =&gt; _nested = Activity::Nested(activity) },
     _nested     =&gt; {
-      activity[:End, :default] =&gt; evt[:End], # connect published to our End.
-      activity[:End, :wrong]   =&gt; evt[:End, :error],
-      activity[:End, :warn]    =&gt; evt[:End, :error]
+      default   =&gt; _end, # connect published to our End.
+      wrong     =&gt; error = Circuit::End.new(:error),
+      warn      =&gt; error
     }
   }
 end
@@ -452,7 +447,7 @@ end
 <p>When the nested activity is finished, its return value is passed on to the outer activity. This allows to wire specific end events from the nested to different outputs.</p>
 
 <pre><code>direction, options, flow = complete.(
-  complete[:Start],
+  nil,
   { content: " Let's sdart" }
 )
 
