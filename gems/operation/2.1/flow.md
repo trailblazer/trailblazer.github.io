@@ -1,3 +1,10 @@
+---
+layout: operation2
+title: Trailblazer 2.1 API
+gems:
+  - ["trailblazer-operation", "trailblazer/trailblazer-operation", "2.1"]
+---
+
 ## Result
 
 ### Primary Binary State
@@ -11,3 +18,17 @@ You can access the end event the Result wraps via `event`. This allows to interp
     result = Create.( params )
 
     result.event #=> #<Railway::FastTrack::PassFast ...>
+
+## Tracing
+
+For debugging or understanding the flows of activities, you can use tracing.
+
+With operations, the simplest way is to use the `trace` method. It has the exact same signature as `call`.
+
+{{ "test/docs/trace_test.rb:trace:../trailblazer" | tsnippet }}
+
+Use `Result#wtf?` to render a simple view of all steps that were involved in the run.
+
+Tracing starts to make things a lot easier for more complex, nested operations.
+
+{{ "test/docs/trace_test.rb:trace-cpx:../trailblazer" | tsnippet }}
