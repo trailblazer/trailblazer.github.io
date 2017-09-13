@@ -19,7 +19,7 @@ You can access the end event the Result wraps via `event`. This allows to interp
 
     result.event #=> #<Railway::FastTrack::PassFast ...>
 
-## Tracing
+## Trace
 
 For debugging or understanding the flows of activities, you can use tracing.
 
@@ -32,3 +32,11 @@ Use `Result#wtf?` to render a simple view of all steps that were involved in the
 Tracing starts to make things a lot easier for more complex, nested operations.
 
 {{ "test/docs/trace_test.rb:trace-cpx:../trailblazer" | tsnippet }}
+
+Please refer to the activity docs for a [low-level interface tracing](/gems/activity/0.2/flow.html#trace).
+
+{% callout %}
+In future versions, tracing will also display variables with improved configurability. This will be added very very shortly.
+
+Very soon, you can debug your code in real-time visually using the [PRO editor](http://pro.trailblazer.to).
+{% endcallout %}
