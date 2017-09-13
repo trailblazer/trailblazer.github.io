@@ -1,5 +1,5 @@
 ---
-layout: operation2
+layout: operation-2-1
 title: Activity API
 gems:
   - ["trailblazer-activity", "trailblazer/trailblazer-activity", "0.2"]

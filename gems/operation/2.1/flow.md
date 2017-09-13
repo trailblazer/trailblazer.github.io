@@ -1,5 +1,5 @@
 ---
-layout: operation2
+layout: operation-2-1
 title: Trailblazer 2.1 API
 gems:
   - ["trailblazer-operation", "trailblazer/trailblazer-operation", "2.1"]
