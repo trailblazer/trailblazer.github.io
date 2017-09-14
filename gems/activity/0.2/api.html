@@ -148,7 +148,9 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>The Activity API defines interfaces to steps, tasks, circuits and activities.</p>
+              <p>The Activity API defines interfaces for tasks and activities.</p>
+
+<p>An <em>activity</em> is a collection of connected <em>tasks</em> with one <em>start event</em> and one or many <em>end events</em>.</p>
 
 <h2 id="operation-vs-activity" data-magellan-target="operation-vs-activity">Operation vs. Activity</h2>
 
@@ -256,7 +258,49 @@ end
 
 <h2 id="task-interface" data-magellan-target="task-interface">Task Interface</h2>
 
-<h2 id="step" data-magellan-target="step">Step</h2>
+<p>The task interface is the low-level interface for tasks in activities. It is identical to <code class="highlighter-rouge">call</code> in the <a href="##activity-interface-call">Activity interface</a>.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>task = lambda do | signal, options, flow_options, *args |
+  puts "Hey, I was called!"
+
+  options["model"] = Song.new
+
+  [ Trailblazer::Circuit::Right, options, flow_options, *args ]
+end
+</code></pre>
+</div>
+
+<p>While <code class="highlighter-rouge">signal</code> as the emitted signal from the previous task is usually to be ignored, <code class="highlighter-rouge">options</code> represents the incoming run-time data, <code class="highlighter-rouge">flow_options</code> is a library-level data structure, and an arbitrary number of additional incoming arguments need to be accepted <strong>and returned</strong>.</p>
+
+<p>It’s up to the task whether to write to <code class="highlighter-rouge">options</code>, create a new object, etc.</p>
+
+<p>The returned signal (e.g. <code class="highlighter-rouge">Right</code>) is crucial as it is used to determine the next task after this one.</p>
+
+<p>All returned data is directly passed as input arguments to the next task or event.</p>
+
+<div class="callout">
+  
+<p>Always remember that the <strong>task interface</strong> is the pure, low-level form for tasks. It allows to access and return any data that is available and relevant for running activities.</p>
+
+<p>The <strong>step interface</strong> is a higher level interface for “tasks” that is <a href="/gems/operation/2.1/api.html#step-interface">introduced by <code>trailblazer-operation</code></a>. It is more convenient to use for developers but gives you a limited number of run-time arguments, only.</p>
+
+</div>
+
+<p>Tasks can also be any callable object, for example a class with a <code class="highlighter-rouge">call</code> class method.</p>
+
+<div class="highlighter-rouge">
+<pre class="highlight"><code>class MyTask
+  def self.call( signal, options, flow_options, *args )
+    puts "Hey, I was called!"
+
+    options["model"] = Song.new
+
+    [ Trailblazer::Circuit::Right, options, flow_options, *args ]
+  end
+end
+</code></pre>
+</div>
 
 <h2 id="activity-interface" data-magellan-target="activity-interface">Activity Interface</h2>
 
@@ -354,7 +398,6 @@ end
 <li><a href="#signal">Signal</a></li>
 <li><a href="#task">Task</a></li>
 <li><a href="#task-interface">Task Interface</a></li>
-<li><a href="#step">Step</a></li>
 <li><a href="#activity-interface">Activity Interface</a></li>
 <li><a href="#nested">Nested</a></li>
         </ul>
