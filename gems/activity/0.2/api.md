@@ -3,7 +3,9 @@ layout: operation-2-1
 title: "Activity API"
 ---
 
-The Activity API defines interfaces to steps, tasks, circuits and activities.
+The Activity API defines interfaces for tasks and activities.
+
+An _activity_ is a collection of connected _tasks_ with one _start event_ and one or many _end events_.
 
 ## Operation vs. Activity
 
@@ -35,6 +37,10 @@ end
 
 When `call`ing an operation, several transformations on the arguments are applied, and those are passed to the `Activity#call` invocation. After the activity finished, its output is transformed into a `Result` object.
 
+## Activity
+
+To understand how an activity works and what it performs in your application logic, it's easiest to see how activities are defined, and used.
+
 ## Activity: From_Hash
 
 Instead of using an operation, you can manually define activities by using the `Activity.from_hash` builder.
@@ -65,16 +71,57 @@ Note how signals translate to edges (or connections) in the graph, and tasks bec
 
 {% endrow %}
 
+## Activity: From_Wirings
+
+TODO: currently, this is not relevant for normal use cases.
+
 ## Signal
 
-Signals are objects emitted or returned by tasks and activities. Every signal a task returns needs to be wired to a following task or event in the circuit. Otherwise, you will see a `IllegalOutputSignalError` from the circuit at run-time.
+Signals are objects emitted or returned by tasks and activities. Every signal returned by a task needs to be wired to a follow-up task or event in the circuit. Otherwise, you will see a `IllegalOutputSignalError` from the circuit at run-time.
 
 Please note that a signal can be any object, it doesn't necessarily have to be `Circuit::Right` or `Circuit::Left`. These are simple generic library signals, but you can use strings, your own classes or whatever else makes sense for you.
 
 ## Task
 
-## Step
+Every "box" in a circuit is called _task_ in Trailblazer. This is [adopted from the BPMN standard](https://camunda.org/bpmn/reference/#activities-task). A task can be any object with a `call` method: a lambda, a callable object, an operation, an activity, etc. As long as it follows the _task interface_, anything can be plugged into an activity's circuit.
 
+## Task Interface
+
+The task interface is the low-level interface for tasks in activities. It is identical to `call` in the [Activity interface](##activity-interface-call).
+
+    task = lambda do | signal, options, flow_options, *args |
+      puts "Hey, I was called!"
+
+      options["model"] = Song.new
+
+      [ Trailblazer::Circuit::Right, options, flow_options, *args ]
+    end
+
+While `signal` as the emitted signal from the previous task is usually to be ignored, `options` represents the incoming run-time data, `flow_options` is a library-level data structure, and an arbitrary number of additional incoming arguments need to be accepted **and returned**.
+
+It's up to the task whether to write to `options`, create a new object, etc.
+
+The returned signal (e.g. `Right`) is crucial as it is used to determine the next task after this one.
+
+All returned data is directly passed as input arguments to the next task or event.
+
+{% callout %}
+Always remember that the **task interface** is the pure, low-level form for tasks. It allows to access and return any data that is available and relevant for running activities.
+
+The **step interface** is a higher level interface for "tasks" that is [introduced by `trailblazer-operation`](/gems/operation/2.1/api.html#step-interface). It is more convenient to use for developers but gives you a limited number of run-time arguments, only.
+{% endcallout %}
+
+Tasks can also be any callable object, for example a class with a `call` class method.
+
+    class MyTask
+      def self.call( signal, options, flow_options, *args )
+        puts "Hey, I was called!"
+
+        options["model"] = Song.new
+
+        [ Trailblazer::Circuit::Right, options, flow_options, *args ]
+      end
+    end
 
 ## Activity Interface
 
@@ -135,5 +182,5 @@ Currently, only `:success` and `:failure` are canonically understood, but with t
 The `:role` key makes sure that nested activities' ends can automatically be connected in the composing, outer activity.
 
 
-
+## Nested
 
