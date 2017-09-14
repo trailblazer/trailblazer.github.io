@@ -7,7 +7,7 @@ The Activity API defines interfaces to steps, tasks, circuits and activities.
 
 ## Operation vs. Activity
 
-An `Activity` allows to define and maintain a graph, that at runtime will be used as a circuit. It defines the boxes, arrows and signals and makes sure when running the activity, the circuit with your rules will be run.
+An `Activity` allows to define and maintain a graph, that at runtime will be used as a circuit. Or, in other words, it defines the boxes, circles, arrows and signals between them, and makes sure when running the activity, the circuit with your rules will be executed.
 
 Please note that an `Operation` simply provides a neat DSL for creating an `Activity` with a railway-oriented wiring (left and right track). An operation _always_ maintains an activity internally.
 
@@ -35,19 +35,63 @@ end
 
 When `call`ing an operation, several transformations on the arguments are applied, and those are passed to the `Activity#call` invocation. After the activity finished, its output is transformed into a `Result` object.
 
+## Activity: From_Hash
+
+Instead of using an operation, you can manually define activities by using the `Activity.from_hash` builder.
+
+{{ "test/docs/activity_test.rb:basic:../trailblazer-activity:master" | tsnippet }}
+
+The block yields a generic start and end event instance. You then connect every _task_ in that hash (hash keys) to another task or event via the emitted _signal_.
+
+When `call`ing that activity, here's what could happen.
+
+    results = activity.( nil, {}, {} )
+
+1. The `start` event is `call`ed and per default returns the generic _signal_`Trailblazer::Circuit::Right`.
+2. This emitted (or returned) signal is connected to the next task `Blog::Write`, which is now `call`ed.
+3. `Blog::Write` emits another `Right` signal that leads to `Blog::SpellCheck` being `call`ed.
+4. `Blog::SpellCheck` defines two outgoing signals and hence can decide what next task to call by emitting either `Right` if the spell check was ok, or `Left` if the post contains typos.
+5. ...and so on.
+
+{% row %}
+~~~6
+<img src="/images/graph/blogpost-activity.png">
+
+~~~6
+Visualizing an activity as a graph makes it very straight-forward to understanding the mechanics of the flow.
+
+
+Note how signals translate to edges (or connections) in the graph, and tasks become vertices (or nodes).
+
+{% endrow %}
+
+## Signal
+
+Signals are objects emitted or returned by tasks and activities. Every signal a task returns needs to be wired to a following task or event in the circuit. Otherwise, you will see a `IllegalOutputSignalError` from the circuit at run-time.
+
+Please note that a signal can be any object, it doesn't necessarily have to be `Circuit::Right` or `Circuit::Left`. These are simple generic library signals, but you can use strings, your own classes or whatever else makes sense for you.
+
+## Task
+
+## Step
+
+
 ## Activity Interface
 
 The _Activity interface_ allows you to use any kind of object as an activity, as long as it follows this interface. This is especially helpful when composing complex workflows where activities call activities, etc. as it doesn't limit you to operations, only.
 
 You need to expose two public methods, only.
 
+* `Activity#call`
+* `Activity#outputs`
+
 ### Activity Interface: Call
 
-The `call` method runs the instance with a provided set of arguments.
+The `call` method runs the instance's circuit with a provided set of arguments.
 
     results = activity.call( last_signal, options, flow_options, *args )
 
-The ingoing arguments are
+The inbound arguments are
 
 1. `last_signal` The signal emitted from the previous activity/task. Usually, this is ignored, but it allows you to start the activity from some other point, depending on that `last_signal`. Sometimes, that signal is also called _direction_ in the code base.
 2. `options` is runtime data from the caller. Depending on your mutation strategy, this should be treated as immutable.
@@ -89,3 +133,7 @@ Currently, only `:success` and `:failure` are canonically understood, but with t
 {% endcallout %}
 
 The `:role` key makes sure that nested activities' ends can automatically be connected in the composing, outer activity.
+
+
+
+
