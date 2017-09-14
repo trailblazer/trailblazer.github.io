@@ -193,11 +193,12 @@
 
 <pre><code>activity = Activity.from_hash do |start, _end|
   {
-    start            =&gt; { Circuit::Right =&gt; Blog::Write },
-    Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
-    Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::Publish    =&gt; { Circuit::Right =&gt; _end }
+    start            =&gt; { Trailblazer::Circuit::Right =&gt; Blog::Write },
+    Blog::Write      =&gt; { Trailblazer::Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::SpellCheck =&gt; { Trailblazer::Circuit::Right =&gt; Blog::Publish,
+                          Trailblazer::Circuit::Left =&gt; Blog::Correct },
+    Blog::Correct    =&gt; { Trailblazer::Circuit::Right =&gt; Blog::SpellCheck },
+    Blog::Publish    =&gt; { Trailblazer::Circuit::Right =&gt; _end }
   }
 end
 </code></pre>
