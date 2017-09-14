@@ -266,9 +266,8 @@ options   #=&gt; {:content=&gt;"Let's start writing"}
 <p>For debugging or simply understanding the flows of circuits, you can use tracing.</p>
 
 <pre><code>activity = Activity.from_hash do |start, _end|
-  # Blog::Write=&gt;"Blog::Write",Blog::SpellCheck=&gt;"Blog::SpellCheck",Blog::Correct=&gt;"Blog::Correct", Blog::Publish=&gt;"Blog::Publish" }) { |evt|
   {
-    start      =&gt; { Circuit::Right =&gt; Blog::Write },
+    start            =&gt; { Circuit::Right =&gt; Blog::Write },
     Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
     Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
     Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
@@ -281,7 +280,7 @@ end
 
 <p>When invoking the activity, the <code class="highlighter-rouge">:runner</code> option will activate tracing and write debugging information about any executed task onto the <code class="highlighter-rouge">:stack</code> array.</p>
 
-<pre><code>stack, _ = Circuit::Trace.( activity,
+<pre><code>stack, _ = Trailblazer::Activity::Trace.( activity,
   nil,
   { content: "Let's start writing" }
 )
@@ -289,7 +288,7 @@ end
 
 <p>The <code class="highlighter-rouge">stack</code> can then be passed to a presenter.</p>
 
-<pre><code>Circuit::Trace::Present.tree(stack)
+<pre><code>puts Trailblazer::Activity::Trace::Present.tree(stack)
  |--&gt; #&lt;Start: default {}&gt;{:content=&gt;"Let's start writing"}
  |--&gt; Blog::Write{:content=&gt;"Let's start writing"}
  |--&gt; Blog::SpellCheck{:content=&gt;"Let's start writing"}

@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Wiring API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 29 August 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 September 2017</span>
 
   
 
@@ -228,7 +228,8 @@ end
     </a>
     <div class="accordion-content" data-tab-content>
       <ul class="vertical menu">
-        <li><a href="/gems/operation/2.0/index.html">Overview</a></li>
+        <li><a href="/gems/operation/2.1/index.html">Overview</a></li>
+        <li><a href="/gems/operation/2.1/flow.html">Control flow</a></li>
         <li><a href="/gems/operation/2.0/api.html">API</a></li>
         <li><a href="/gems/operation/2.0/contract.html">Contract</a></li>
         <!--<li><a href="/gems/operation/2.0/representer.html">Representer</a></li>-->
@@ -241,6 +242,20 @@ end
             <span class="sidebar-info">→ v1.1</span>
           </a>
         </li>
+      </ul>
+    </div>
+  </li>
+
+  <li class="accordion-item" data-accordion-item>
+    <a href="#" class="accordion-title">
+      <i class="fa fa-caret-square-o-right" aria-hidden="true"></i>
+      <strong>ACTIVITY</strong>
+    </a>
+    <div class="accordion-content" data-tab-content>
+      <ul class="vertical menu">
+        <li><a href="/gems/activity/0.2/index.html">Overview</a></li>
+        <li><a href="/gems/activity/0.2/api.html">API</a></li>
+        <li><a href="/gems/activity/0.2/flow.html">Control flow</a></li>
       </ul>
     </div>
   </li>
@@ -407,7 +422,7 @@ end
         .find('.accordion-content li:first-child a')
         .attr('href')
         .replace('index.html', '');
-
+console.log(linkHref);
       if (currentPath.indexOf(linkHref) !== -1) {
         $elem.addClass('is-active')
       }
