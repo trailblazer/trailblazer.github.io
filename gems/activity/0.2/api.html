@@ -240,13 +240,21 @@ end
       </div>
 </div></section>
 
+<h2 id="activity-fromwirings" data-magellan-target="activity-fromwirings">Activity: From_Wirings</h2>
+
+<p>TODO: currently, this is not relevant for normal use cases.</p>
+
 <h2 id="signal" data-magellan-target="signal">Signal</h2>
 
-<p>Signals are objects emitted or returned by tasks and activities. Every signal a task returns needs to be wired to a following task or event in the circuit. Otherwise, you will see a <code class="highlighter-rouge">IllegalOutputSignalError</code> from the circuit at run-time.</p>
+<p>Signals are objects emitted or returned by tasks and activities. Every signal returned by a task needs to be wired to a follow-up task or event in the circuit. Otherwise, you will see a <code class="highlighter-rouge">IllegalOutputSignalError</code> from the circuit at run-time.</p>
 
 <p>Please note that a signal can be any object, it doesn’t necessarily have to be <code class="highlighter-rouge">Circuit::Right</code> or <code class="highlighter-rouge">Circuit::Left</code>. These are simple generic library signals, but you can use strings, your own classes or whatever else makes sense for you.</p>
 
 <h2 id="task" data-magellan-target="task">Task</h2>
+
+<p>Every “box” in a circuit is called <em>task</em> in Trailblazer. This is <a href="https://camunda.org/bpmn/reference/#activities-task">adopted from the BPMN standard</a>. A task can be any object with a <code class="highlighter-rouge">call</code> method: a lambda, a callable object, an operation, an activity, etc. As long as it follows the <em>task interface</em>, anything can be plugged into an activity’s circuit.</p>
+
+<h2 id="task-interface" data-magellan-target="task-interface">Task Interface</h2>
 
 <h2 id="step" data-magellan-target="step">Step</h2>
 
@@ -327,6 +335,8 @@ end
 
 <p>The <code class="highlighter-rouge">:role</code> key makes sure that nested activities’ ends can automatically be connected in the composing, outer activity.</p>
 
+<h2 id="nested" data-magellan-target="nested">Nested</h2>
+
 
             </div>
 
@@ -340,10 +350,13 @@ end
           <li><a href="#operation-vs-activity">Operation vs. Activity</a></li>
 <li><a href="#activity">Activity</a></li>
 <li><a href="#activity-fromhash">Activity: From_Hash</a></li>
+<li><a href="#activity-fromwirings">Activity: From_Wirings</a></li>
 <li><a href="#signal">Signal</a></li>
 <li><a href="#task">Task</a></li>
+<li><a href="#task-interface">Task Interface</a></li>
 <li><a href="#step">Step</a></li>
 <li><a href="#activity-interface">Activity Interface</a></li>
+<li><a href="#nested">Nested</a></li>
         </ul>
       
 </nav>
