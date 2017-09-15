@@ -3,9 +3,31 @@ layout: operation-2-1
 title: "Activity API"
 ---
 
-The Activity API defines interfaces for tasks and activities.
+An _activity_ is a collection of connected _tasks_ with one _start event_ and one (or many) _end_ events.
 
-An _activity_ is a collection of connected _tasks_ with one _start event_ and one or many _end events_.
+## Overview
+
+{% callout %}
+Since TRB 2.1, we use [BPMN](http://www.bpmn.org/) lingo and concepts for describing processes and activities.
+{% endcallout %}
+
+An activity is a workflow that contains one or several tasks. It is the main concept to organize workflows in Trailblazer.
+
+The following diagram illustrates an exemplary workflow where a user writes and publishes a blog post.
+
+<img src="/images/diagrams/blog-bpmn1.png">
+
+After writing and spell-checking, the author has the chance to publish the post or, in case of typos, go back, correct, and go through the same flow, again. Note that there's only a handful of defined transistions, or connections. An author, for example, is not allowed to jump from "correct" into "publish" without going through the check.
+
+The `activity` gem allows you to define this *activity* and takes care of implementing the control flow, running the activity and making sure no invalid paths are taken.
+
+Your job is solely to implement the tasks and deciders put into this activity - you don't have to take care of executing it in the right order, and so on.
+
+To eventually run this activity, three things have to be done.
+
+1. The activity needs be defined. Easiest is to use the [Activity.from_hash builder](#activity-fromhash).
+2. It's the programmer's job (that's you!) to implement the actual tasks (the "boxes"). Use [tasks for that](#task).
+3. After defining and implementing, you can run the activity with any data [by `call`ing it](#activity-call).
 
 ## Operation vs. Activity
 
@@ -49,9 +71,12 @@ Instead of using an operation, you can manually define activities by using the `
 
 The block yields a generic start and end event instance. You then connect every _task_ in that hash (hash keys) to another task or event via the emitted _signal_.
 
-When `call`ing that activity, here's what could happen.
+## Activity: Call
 
-    results = activity.( nil, {}, {} )
+To run the activity, you want to `call` it.
+
+    my_options = {}
+    last_signal, options, flow_options, _ = activity.( nil, my_options, {} )
 
 1. The `start` event is `call`ed and per default returns the generic _signal_`Trailblazer::Circuit::Right`.
 2. This emitted (or returned) signal is connected to the next task `Blog::Write`, which is now `call`ed.
@@ -68,8 +93,9 @@ Visualizing an activity as a graph makes it very straight-forward to understandi
 
 
 Note how signals translate to edges (or connections) in the graph, and tasks become vertices (or nodes).
-
 {% endrow %}
+
+The return values are the `last_signal`, which is usually the end event (they return themselves as a signal), the last `options` that usually contains all kinds of data from running the activity, and additional args.
 
 ## Activity: From_Wirings
 
