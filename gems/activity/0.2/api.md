@@ -107,6 +107,8 @@ Signals are objects emitted or returned by tasks and activities. Every signal re
 
 Please note that a signal can be any object, it doesn't necessarily have to be `Circuit::Right` or `Circuit::Left`. These are simple generic library signals, but you can use strings, your own classes or whatever else makes sense for you.
 
+The decoupling of return values (signals) and the actual wiring in the activity is by design and allows to reconnect tasks and their outputs without having to change the implementation.
+
 ## Task
 
 Every "box" in a circuit is called _task_ in Trailblazer. This is [adopted from the BPMN standard](https://camunda.org/bpmn/reference/#activities-task). A task can be any object with a `call` method: a lambda, a callable object, an operation, an activity, etc. As long as it follows the _task interface_, anything can be plugged into an activity's circuit.
@@ -207,8 +209,9 @@ Currently, only `:success` and `:failure` are canonically understood, but with t
 
 The `:role` key makes sure that nested activities' ends can automatically be connected in the composing, outer activity.
 
-
 ## Subprocess
+
+A major concept of both BPMN and Trailblazer is to be able to compose activities with activities. What is a function or a method in programming is a _subprocess_ in BPMN: a nested activity.
 
 __call__
 omits start event
