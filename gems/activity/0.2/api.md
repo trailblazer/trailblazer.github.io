@@ -182,5 +182,8 @@ Currently, only `:success` and `:failure` are canonically understood, but with t
 The `:role` key makes sure that nested activities' ends can automatically be connected in the composing, outer activity.
 
 
-## Nested
+## Subprocess
+
+__call__
+omits start event
 
