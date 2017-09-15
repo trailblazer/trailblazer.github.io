@@ -148,9 +148,35 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>The Activity API defines interfaces for tasks and activities.</p>
+              <p>An <em>activity</em> is a collection of connected <em>tasks</em> with one <em>start event</em> and one (or many) <em>end</em> events.</p>
 
-<p>An <em>activity</em> is a collection of connected <em>tasks</em> with one <em>start event</em> and one or many <em>end events</em>.</p>
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
+
+<div class="callout">
+  
+<p>Since TRB 2.1, we use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and activities.</p>
+
+</div>
+
+<p>An activity is a workflow that contains one or several tasks. It is the main concept to organize workflows in Trailblazer.</p>
+
+<p>The following diagram illustrates an exemplary workflow where a user writes and publishes a blog post.</p>
+
+<p><img src="/images/diagrams/blog-bpmn1.png"></p>
+
+<p>After writing and spell-checking, the author has the chance to publish the post or, in case of typos, go back, correct, and go through the same flow, again. Note that there’s only a handful of defined transistions, or connections. An author, for example, is not allowed to jump from “correct” into “publish” without going through the check.</p>
+
+<p>The <code class="highlighter-rouge">activity</code> gem allows you to define this <em>activity</em> and takes care of implementing the control flow, running the activity and making sure no invalid paths are taken.</p>
+
+<p>Your job is solely to implement the tasks and deciders put into this activity - you don’t have to take care of executing it in the right order, and so on.</p>
+
+<p>To eventually run this activity, three things have to be done.</p>
+
+<ol>
+  <li>The activity needs be defined. Easiest is to use the <a href="#activity-fromhash">Activity.from_hash builder</a>.</li>
+  <li>It’s the programmer’s job (that’s you!) to implement the actual tasks (the “boxes”). Use <a href="#task">tasks for that</a>.</li>
+  <li>After defining and implementing, you can run the activity with any data <a href="#activity-call">by <code class="highlighter-rouge">call</code>ing it</a>.</li>
+</ol>
 
 <h2 id="operation-vs-activity" data-magellan-target="operation-vs-activity">Operation vs. Activity</h2>
 
@@ -209,10 +235,13 @@ end
 
 <p>The block yields a generic start and end event instance. You then connect every <em>task</em> in that hash (hash keys) to another task or event via the emitted <em>signal</em>.</p>
 
-<p>When <code class="highlighter-rouge">call</code>ing that activity, here’s what could happen.</p>
+<h2 id="activity-call" data-magellan-target="activity-call">Activity: Call</h2>
+
+<p>To run the activity, you want to <code class="highlighter-rouge">call</code> it.</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code>results = activity.( nil, {}, {} )
+<pre class="highlight"><code>my_options = {}
+last_signal, options, flow_options, _ = activity.( nil, my_options, {} )
 </code></pre>
 </div>
 
@@ -238,9 +267,10 @@ end
 
 <p>Note how signals translate to edges (or connections) in the graph, and tasks become vertices (or nodes).</p>
 
-
       </div>
 </div></section>
+
+<p>The return values are the <code class="highlighter-rouge">last_signal</code>, which is usually the end event (they return themselves as a signal), the last <code class="highlighter-rouge">options</code> that usually contains all kinds of data from running the activity, and additional args.</p>
 
 <h2 id="activity-fromwirings" data-magellan-target="activity-fromwirings">Activity: From_Wirings</h2>
 
@@ -379,7 +409,10 @@ end
 
 <p>The <code class="highlighter-rouge">:role</code> key makes sure that nested activities’ ends can automatically be connected in the composing, outer activity.</p>
 
-<h2 id="nested" data-magellan-target="nested">Nested</h2>
+<h2 id="subprocess" data-magellan-target="subprocess">Subprocess</h2>
+
+<p><strong>call</strong>
+omits start event</p>
 
 
             </div>
@@ -391,15 +424,17 @@ end
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#operation-vs-activity">Operation vs. Activity</a></li>
+          <li><a href="#overview">Overview</a></li>
+<li><a href="#operation-vs-activity">Operation vs. Activity</a></li>
 <li><a href="#activity">Activity</a></li>
 <li><a href="#activity-fromhash">Activity: From_Hash</a></li>
+<li><a href="#activity-call">Activity: Call</a></li>
 <li><a href="#activity-fromwirings">Activity: From_Wirings</a></li>
 <li><a href="#signal">Signal</a></li>
 <li><a href="#task">Task</a></li>
 <li><a href="#task-interface">Task Interface</a></li>
 <li><a href="#activity-interface">Activity Interface</a></li>
-<li><a href="#nested">Nested</a></li>
+<li><a href="#subprocess">Subprocess</a></li>
         </ul>
       
 </nav>
