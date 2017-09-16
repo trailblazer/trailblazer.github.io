@@ -1,6 +1,8 @@
 ---
 layout: operation-2-1
 title: "Activity API"
+gems:
+  - ["trailblazer-activity", "trailblazer/trailblazer-activity", "0.2"]
 ---
 
 An _activity_ is a collection of connected _tasks_ with one _start event_ and one (or many) _end_ events.
@@ -8,10 +10,10 @@ An _activity_ is a collection of connected _tasks_ with one _start event_ and on
 ## Overview
 
 {% callout %}
-Since TRB 2.1, we use [BPMN](http://www.bpmn.org/) lingo and concepts for describing processes and activities.
+Since TRB 2.1, we use [BPMN](http://www.bpmn.org/) lingo and concepts for describing workflows and processes.
 {% endcallout %}
 
-An activity is a workflow that contains one or several tasks. It is the main concept to organize workflows in Trailblazer.
+An activity is a workflow that contains one or several tasks. It is the main concept to organize control flow in Trailblazer.
 
 The following diagram illustrates an exemplary workflow where a user writes and publishes a blog post.
 
@@ -21,7 +23,7 @@ After writing and spell-checking, the author has the chance to publish the post 
 
 The `activity` gem allows you to define this *activity* and takes care of implementing the control flow, running the activity and making sure no invalid paths are taken.
 
-Your job is solely to implement the tasks and deciders put into this activity - you don't have to take care of executing it in the right order, and so on.
+Your job is solely to implement the tasks and deciders put into this activity - Trailblazer makes sure it is executed it in the right order, and so on.
 
 To eventually run this activity, three things have to be done.
 
@@ -31,12 +33,11 @@ To eventually run this activity, three things have to be done.
 
 ## Operation vs. Activity
 
-An `Activity` allows to define and maintain a graph, that at runtime will be used as a circuit. Or, in other words, it defines the boxes, circles, arrows and signals between them, and makes sure when running the activity, the circuit with your rules will be executed.
+An `Activity` allows to define and maintain a graph, that at runtime will be used as a "circuit". Or, in other words, it defines the boxes, circles, arrows and signals between them, and makes sure when running the activity, the circuit with your rules will be executed.
 
 Please note that an `Operation` simply provides a neat DSL for creating an `Activity` with a railway-oriented wiring (left and right track). An operation _always_ maintains an activity internally.
 
-{% row %}
-~~~6
+
 <pre>
   <code>class Create < Trailblazer::Operation
   step :exists?, pass_fast: true
@@ -50,12 +51,10 @@ end
 </code>
 </pre>
 
-~~~6
-  Check the operation to the left. The DSL to create the activity with its graph is very different to `Activity`, but the outcome is a simple activity instance.
+Check the operation above. The DSL to create the activity with its graph is very different to `Activity`, but the outcome is a simple activity instance.
 
-  <img src="/images/graph/op-vs-activity.png">
+<img src="/images/graph/op-vs-activity.png">
 
-{% endrow %}
 
 When `call`ing an operation, several transformations on the arguments are applied, and those are passed to the `Activity#call` invocation. After the activity finished, its output is transformed into a `Result` object.
 
