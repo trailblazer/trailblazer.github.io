@@ -139,6 +139,18 @@
   <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 14 September 2017</span>
 
   
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/trailblazer/trailblazer-activity">trailblazer-activity</a>
+
+      <a href="/gems/activity/0.2/api.html">
+      <span class="version">v0.2</span>
+      </a>
+
+    
+
+    </span>
+  
 
   <hr>
 
@@ -154,11 +166,11 @@
 
 <div class="callout">
   
-<p>Since TRB 2.1, we use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing processes and activities.</p>
+<p>Since TRB 2.1, we use <a href="http://www.bpmn.org/">BPMN</a> lingo and concepts for describing workflows and processes.</p>
 
 </div>
 
-<p>An activity is a workflow that contains one or several tasks. It is the main concept to organize workflows in Trailblazer.</p>
+<p>An activity is a workflow that contains one or several tasks. It is the main concept to organize control flow in Trailblazer.</p>
 
 <p>The following diagram illustrates an exemplary workflow where a user writes and publishes a blog post.</p>
 
@@ -168,7 +180,7 @@
 
 <p>The <code class="highlighter-rouge">activity</code> gem allows you to define this <em>activity</em> and takes care of implementing the control flow, running the activity and making sure no invalid paths are taken.</p>
 
-<p>Your job is solely to implement the tasks and deciders put into this activity - you don’t have to take care of executing it in the right order, and so on.</p>
+<p>Your job is solely to implement the tasks and deciders put into this activity - Trailblazer makes sure it is executed it in the right order, and so on.</p>
 
 <p>To eventually run this activity, three things have to be done.</p>
 
@@ -180,14 +192,11 @@
 
 <h2 id="operation-vs-activity" data-magellan-target="operation-vs-activity">Operation vs. Activity</h2>
 
-<p>An <code class="highlighter-rouge">Activity</code> allows to define and maintain a graph, that at runtime will be used as a circuit. Or, in other words, it defines the boxes, circles, arrows and signals between them, and makes sure when running the activity, the circuit with your rules will be executed.</p>
+<p>An <code class="highlighter-rouge">Activity</code> allows to define and maintain a graph, that at runtime will be used as a “circuit”. Or, in other words, it defines the boxes, circles, arrows and signals between them, and makes sure when running the activity, the circuit with your rules will be executed.</p>
 
 <p>Please note that an <code class="highlighter-rouge">Operation</code> simply provides a neat DSL for creating an <code class="highlighter-rouge">Activity</code> with a railway-oriented wiring (left and right track). An operation <em>always</em> maintains an activity internally.</p>
 
-<section class=" ">
-  <div class="row">
-    <div class="column medium-6 ">
-        <pre>
+<pre>
   <code>class Create &lt; Trailblazer::Operation
   step :exists?, pass_fast: true
   step :policy
@@ -200,16 +209,9 @@ end
 </code>
 </pre>
 
-
-      </div>
-    <div class="column medium-6 ">
-        <p>Check the operation to the left. The DSL to create the activity with its graph is very different to <code>Activity</code>, but the outcome is a simple activity instance.</p>
+<p>Check the operation above. The DSL to create the activity with its graph is very different to <code class="highlighter-rouge">Activity</code>, but the outcome is a simple activity instance.</p>
 
 <p><img src="/images/graph/op-vs-activity.png"></p>
-
-
-      </div>
-</div></section>
 
 <p>When <code class="highlighter-rouge">call</code>ing an operation, several transformations on the arguments are applied, and those are passed to the <code class="highlighter-rouge">Activity#call</code> invocation. After the activity finished, its output is transformed into a <code class="highlighter-rouge">Result</code> object.</p>
 
@@ -281,6 +283,8 @@ last_signal, options, flow_options, _ = activity.( nil, my_options, {} )
 <p>Signals are objects emitted or returned by tasks and activities. Every signal returned by a task needs to be wired to a follow-up task or event in the circuit. Otherwise, you will see a <code class="highlighter-rouge">IllegalOutputSignalError</code> from the circuit at run-time.</p>
 
 <p>Please note that a signal can be any object, it doesn’t necessarily have to be <code class="highlighter-rouge">Circuit::Right</code> or <code class="highlighter-rouge">Circuit::Left</code>. These are simple generic library signals, but you can use strings, your own classes or whatever else makes sense for you.</p>
+
+<p>The decoupling of return values (signals) and the actual wiring in the activity is by design and allows to reconnect tasks and their outputs without having to change the implementation.</p>
 
 <h2 id="task" data-magellan-target="task">Task</h2>
 
@@ -411,6 +415,8 @@ end
 
 <h2 id="subprocess" data-magellan-target="subprocess">Subprocess</h2>
 
+<p>A major concept of both BPMN and Trailblazer is to be able to compose activities with activities. What is a function or a method in programming is a <em>subprocess</em> in BPMN: a nested activity.</p>
+
 <p><strong>call</strong>
 omits start event</p>
 
@@ -480,7 +486,6 @@ omits start event</p>
     </a>
     <div class="accordion-content" data-tab-content>
       <ul class="vertical menu">
-        <li><a href="/gems/activity/0.2/index.html">Overview</a></li>
         <li><a href="/gems/activity/0.2/api.html" class="active">API</a></li>
         <li><a href="/gems/activity/0.2/flow.html">Control flow</a></li>
       </ul>
