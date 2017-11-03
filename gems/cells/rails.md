@@ -206,7 +206,7 @@ You can use the `#t` helper.
 
 	class Admin::Comment::Cell < Cell::Concept
 	  include ActionView::Helpers::TranslationHelper
-	  include Cell::Translation
+	  include ::Cell::Translation
 
 	  def show
 	    t(".greeting")

@@ -179,7 +179,7 @@ Engineering complex business workflows is best done using a BPMN editor and then
 
 ## Operation
 
-If you need a higher abstraction of `circuit`, check out Trailblazer's [operation](localhost:4000/gems/operation/2.0/api.html). An operation is really just a nice API on top of a circuit that provides a linear two-tracked circuit, aka. "railway".
+If you need a higher abstraction of `circuit`, check out Trailblazer's [operation](/gems/operation/2.0/api.html). An operation is really just a nice API on top of a circuit that provides a linear two-tracked circuit, aka. "railway".
 
 <img src="/images/diagrams/bpmn-operation-simplified.png">
 
