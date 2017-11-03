@@ -215,3 +215,10 @@ A major concept of both BPMN and Trailblazer is to be able to compose activities
 __call__
 omits start event
 
+
+
+## bla
+
+circuit.([options, flows], **circuit_args)
+
+  signal, [], __ignored_circuit_args = task.([options, flows],**circuit_args)
