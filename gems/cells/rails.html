@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Cells and Rails</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 05 May 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 18 September 2017</span>
 
   
     <span class="doc-last-updated">
@@ -383,7 +383,7 @@ gem "cells-erb"
 
 class Admin::Comment::Cell &lt; Cell::Concept
   include ActionView::Helpers::TranslationHelper
-  include Cell::Translation
+  include ::Cell::Translation
 
   def show
     t(".greeting")
@@ -740,7 +740,7 @@ end
         </div>
       </div>
       <p class="copyright">
-        Trailblazer is created by <a href="http://www.synergysoft.com.sg/">Synergy Software Solutions Pte Ltd,</a> and awesome friends.
+        Trailblazer is created by <a href="/inc/index.html">Trailblazer GmbH</a> and awesome friends.
       </p>
       <p class="copyright">
         Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>

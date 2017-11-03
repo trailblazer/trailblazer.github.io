@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Workflow: Circuit</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 12 April 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 30 October 2017</span>
 
   
 
@@ -212,9 +212,11 @@ end
 <p>A <em>task</em> usually maps to a particular box in your diagram. Its API is very simple: a task needs to expose a <code class="highlighter-rouge">call</code> method, allowing it to be a lambda or any other callable object.</p>
 
 <pre><code>module Blog
-  Write = -&gt;(direction, options, *flow) do
+  Circuit = Trailblazer::Circuit
+
+  Write = -&gt;((options, *flow), *) do
     options[:content] = options[:content].strip
-    [ Circuit::Right, options, *flow ]
+    [ Circuit::Right, [options, *flow] ]
   end
 </code></pre>
 
@@ -226,9 +228,9 @@ end
 
 <p>For example, the <code class="highlighter-rouge">SpellCheck</code> task needs to decide which route to take.</p>
 
-<pre><code>SpellCheck = -&gt;(direction, options, *flow) do
+<pre><code>SpellCheck = -&gt;((options, *flow), *) do
   direction = SpellChecker.error_count(options[:content]) ? Circuit::Right : Circuit::Left
-  [ direction, options, *flow ]
+  [ Circuit::Right, [options, *flow] ]
 end
 </code></pre>
 
@@ -245,8 +247,9 @@ end
 <p>After defining circuit and implementing the tasks, the circuit can be executed using its very own <code class="highlighter-rouge">call</code> method.</p>
 
 <pre><code>direction, options, flow = activity.(
-  nil,
-  { content: "Let's start writing   " } # gets trimmed in Write.
+  [
+    { content: "Let's start writing   " } # gets trimmed in Write.
+  ]
 )
 </code></pre>
 
@@ -282,8 +285,9 @@ end
 <p>When invoking the activity, the <code class="highlighter-rouge">:runner</code> option will activate tracing and write debugging information about any executed task onto the <code class="highlighter-rouge">:stack</code> array.</p>
 
 <pre><code>stack, _ = Trailblazer::Activity::Trace.( activity,
-  nil,
-  { content: "Let's start writing" }
+  [
+    { content: "Let's start writing" }
+  ]
 )
 </code></pre>
 
@@ -344,7 +348,7 @@ end
 
 <p>For example, the <code class="highlighter-rouge">SpellCheck3</code> task here emits a <code class="highlighter-rouge">:maybe</code> symbol which is then wired to the follow-up task <code class="highlighter-rouge">Warn</code>. Its implementation contains the decider that returns the appropriate direction.</p>
 
-<pre><code>Blog::SpellCheck3 = -&gt;(direction, options, *flow) do
+<pre><code>Blog::SpellCheck3 = -&gt;((options, *flow), *) do
   error_count = SpellChecker.error_count(options[:content])
   direction =
     if error_count &lt;= 2 &amp;&amp; error_count &gt; 0
@@ -355,7 +359,7 @@ end
       Circuit::Right
     end
 
-  [ direction, options, *flow ]
+  [ direction, [options, *flow] ]
 end
 </code></pre>
 
@@ -411,8 +415,7 @@ end
 <p>When running the sample activity with toleratable typos in the <code class="highlighter-rouge">content</code> field, this will now result in the circuit stopping on <code class="highlighter-rouge">warned</code> end event.</p>
 
 <pre><code>direction, options, flow = activity.(
-  nil,
-  { content: " Let's sdart" }
+  [ { content: " Let's sdart" } ]
 )
 
 direction #=&gt; #&lt;End: warned {}&gt;
@@ -432,8 +435,8 @@ options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"
 <pre><code>complete = Activity.from_hash(default) do |start, _end|
   {
     start =&gt; { Circuit::Right =&gt; Shop },
-    Shop        =&gt; { Circuit::Right =&gt; _nested = Activity::Nested(activity) },
-    _nested     =&gt; {
+    Shop        =&gt; { Circuit::Right =&gt; activity },
+    activity    =&gt; {
       default   =&gt; _end, # connect published to our End.
       wrong     =&gt; error = Circuit::End.new(:error),
       warn      =&gt; error
@@ -446,9 +449,8 @@ end
 
 <p>When the nested activity is finished, its return value is passed on to the outer activity. This allows to wire specific end events from the nested to different outputs.</p>
 
-<pre><code>direction, options, flow = complete.(
-  nil,
-  { content: " Let's sdart" }
+<pre><code>direction, (options, flow) = complete.(
+  [ { content: " Let's sdart" } ]
 )
 
 direction #=&gt; #&lt;End: error {}&gt;
@@ -459,7 +461,7 @@ options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"
 
 <h2 id="operation" data-magellan-target="operation">Operation</h2>
 
-<p>If you need a higher abstraction of <code class="highlighter-rouge">circuit</code>, check out Trailblazer’s <a href="localhost:4000/gems/operation/2.0/api.html">operation</a>. An operation is really just a nice API on top of a circuit that provides a linear two-tracked circuit, aka. “railway”.</p>
+<p>If you need a higher abstraction of <code class="highlighter-rouge">circuit</code>, check out Trailblazer’s <a href="/gems/operation/2.0/api.html">operation</a>. An operation is really just a nice API on top of a circuit that provides a linear two-tracked circuit, aka. “railway”.</p>
 
 <p><img src="/images/diagrams/bpmn-operation-simplified.png"></p>
 
@@ -806,7 +808,7 @@ options   #=&gt; {:content=&gt;"Let's sdart", :warning=&gt;"Make less mistakes!"
         </div>
       </div>
       <p class="copyright">
-        Trailblazer is created by <a href="http://www.synergysoft.com.sg/">Synergy Software Solutions Pte Ltd,</a> and awesome friends.
+        Trailblazer is created by <a href="/inc/index.html">Trailblazer GmbH</a> and awesome friends.
       </p>
       <p class="copyright">
         Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>

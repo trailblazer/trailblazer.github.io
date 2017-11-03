@@ -180,8 +180,9 @@ end
 <p>Instead of <code class="highlighter-rouge">call</code>ing the activity directly, let the <code class="highlighter-rouge">Trace</code> module take care of setting up tracing and call the activity via <code class="highlighter-rouge">Trace.call</code>.</p>
 
 <pre><code>stack, _ = Trailblazer::Activity::Trace.( activity,
-  nil,
-  { content: "Let's start writing" }
+  [
+    { content: "Let's start writing" }
+  ]
 )
 </code></pre>
 
@@ -542,7 +543,7 @@ console.log(linkHref);
         </div>
       </div>
       <p class="copyright">
-        Trailblazer is created by <a href="http://www.synergysoft.com.sg/">Synergy Software Solutions Pte Ltd,</a> and awesome friends.
+        Trailblazer is created by <a href="/inc/index.html">Trailblazer GmbH</a> and awesome friends.
       </p>
       <p class="copyright">
         Site designed and handcoded with love by <a href="https://twitter.com/noeliacabane">Noelia Cabane</a>
