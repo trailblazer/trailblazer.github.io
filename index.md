@@ -366,9 +366,9 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
       <a name="users"></a>
 
       <div class="row">
-        <div class="column medium-2 text-center">
-          <a href="http://mitimes.com" target="_blank">
-            <img src="/images/users/mitimes.png" />
+      <div class="column medium-2 text-center logo-leveler">
+          <a href="https://www.luma-institute.com/" target="_blank">
+            <img src="/images/users/luma.png" />
           </a>
         </div>
 
@@ -486,6 +486,13 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
             <img src="/images/users/CompanyMood-Logo-02.png" />
           </a>
         </div>
+
+        <div class="column medium-2 text-center">
+          <a href="http://mitimes.com" target="_blank">
+            <img src="/images/users/mitimes.png" />
+          </a>
+        </div>
+
       </div>
 
     </div>
