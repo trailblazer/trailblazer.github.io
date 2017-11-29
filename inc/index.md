@@ -22,7 +22,7 @@ Nick Sutterer
 * Registernummer: HR B 190776
 
 * Umsatzsteuer-ID:
-* Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz: ---
+* Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz: DE314332049
 
 
 Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
