@@ -6,3 +6,4 @@ git clone https://github.com/trailblazer/trailblazer-circuit ../trailblazer-circ
 git clone https://github.com/trailblazer/representable ../representable
 git clone https://github.com/apotonick/gemgem-sinatra ../gemgem-sinatra
 git clone https://github.com/trailblazer/trailblazer-test ../trailblazer-test
+git clone https://github.com/trailblazer/trailblazer-activity ../trailblazer-activity
