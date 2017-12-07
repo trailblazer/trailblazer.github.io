@@ -1,3 +1,17 @@
+## What is TRB
+
+blabla OPs => run in controller, rake tasks, tests, factories
+
+
+## What are the big changes?
+
+In fact, not too much has changed with this milestone. Internals have been restructured and gems replaced, but the real _change_ is actually a massive extension.
+
+To cut it short, operations can now be wired and nested in bigger compounds and can model anything from simple state machines or business rules to real application-wide workflows.
+
+In order to achieve this, we simplified and decoupled a huge number of parts in 2.1.
+
+DSL vs. runtime
 
 ## Planned
 
@@ -40,3 +54,8 @@ That means, we need to keep a linear data structure with annotations (what is a 
 
   => transform Sequence into graph/circuit
 
+
+
+# More Service Objects, Already
+
+even though overseen by some
