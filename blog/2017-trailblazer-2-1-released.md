@@ -28,6 +28,10 @@ step( Wrap( ->(options, *args, &block) {
       }.merge(fast_track: true))
 ```
 
+
+
+* options/context now simply travels through the graph, no superfluous wrapping
+
 ## Planned
 
 ### Type checking at compile-time.
