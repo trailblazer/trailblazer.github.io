@@ -13,6 +13,21 @@ In order to achieve this, we simplified and decoupled a huge number of parts in 
 
 DSL vs. runtime
 
+Wrap with
+```
+step( Wrap( ->(options, *args, &block) {
+        begin
+          block.call
+        rescue => exception
+          options["result.model.find"] = "argh! because #{exception.class}"
+          [ Railway.fail_fast!, options, *args ]
+        end }) {
+        step ->(options, **) { options["x"] = true }
+        step Model( Song, :find )
+        step Contract::Build( constant: MyContract )
+      }.merge(fast_track: true))
+```
+
 ## Planned
 
 ### Type checking at compile-time.
