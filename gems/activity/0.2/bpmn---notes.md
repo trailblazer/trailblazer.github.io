@@ -9,3 +9,7 @@ Trailblazer 2.1 only allows "sequential events", where a process enters one or m
 What we do not provide, yet, is non-interrupting boundary events. While these are actually quite simple to implement, it would bloat the gems with a "real" event mechanism and increase complexity. Since this is only the beginning of us exploring the world of BPMN, we designed TRB 2.1 to be easily capable of handling those events (for instance, we do have the necessary encapsulation), but leave this open to >=2.2.
 
 page 92 example.
+
+
+############
+the whole idea about abstraction is having to understand it only once
