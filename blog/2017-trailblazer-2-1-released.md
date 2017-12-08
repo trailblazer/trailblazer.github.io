@@ -7,11 +7,23 @@ blabla OPs => run in controller, rake tasks, tests, factories
 
 In fact, not too much has changed with this milestone. Internals have been restructured and gems replaced, but the real _change_ is actually a massive extension.
 
+* get rid of design flaws such as .(params, options)
+
 To cut it short, operations can now be wired and nested in bigger compounds and can model anything from simple state machines or business rules to real application-wide workflows.
 
 In order to achieve this, we simplified and decoupled a huge number of parts in 2.1.
 
 DSL vs. runtime
+
+params: params, ... ===> we need more help (callout)
+  => ClassDependencies
+
+# "Pipetree"
+
+no `operation.new` step anymore.
+groups
+
+# Speed Improvements easily achievable
 
 ## Planned
 
