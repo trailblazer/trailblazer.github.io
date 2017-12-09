@@ -3,6 +3,10 @@
 blabla OPs => run in controller, rake tasks, tests, factories
 
 
+in 2.0 tackling flow control for an operation, in 2.1 for an entire application (theoretically) trb-workflow
+
+gems context/activity/
+
 ## What are the big changes?
 
 In fact, not too much has changed with this milestone. Internals have been restructured and gems replaced, but the real _change_ is actually a massive extension.
