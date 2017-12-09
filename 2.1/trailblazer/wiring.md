@@ -20,6 +20,19 @@ To illustrate this, please take a look at the operation code along with a diagra
 
 {{ "memo-op" | tsnippet : "memo-methods" }}
 
+Ignoring the actual implementation of those steps, here's the corresponding circuit diagram for this operation.
+
+<img src="/images/2.1/trailblazer/memo-basic.png">
+
+If you follow the diagram's flow from left to right, you will see that the order of the DSL calls reflects the order of the tasks (the _boxes_) in the circuit. The three DSL methods have the following characteristics.
+
+* **`step`** always puts the task on the upper, "right" track, but with two outputs per box: one to the next successful step, one to the nearest fail box. The chain of "successful" boxes in the top is the _right track_. The lower chain is the infamous _left track_.
+* **`pass`** is on the right track, but without an outgoing connection to the left track. It is always assumed successful, as seen in the `uuid` task.
+* **`fail`** puts the box on the lower track and doesn't connect it back to the right track.
+
+It becomes obvious that the circuit has well-defined properties. This model is [called a _railway_](https://fsharpforfunandprofit.com/rop/) and we shamelessly stole this concept. The great idea here is that error handling comes for free via the left track since you do not need to orchestrate your code with `if` and `else` but simply **implement the tasks** and **Trailblazer takes over flow control**.
+
+## Task Implementation (?)
 
 ## Terminology
 
