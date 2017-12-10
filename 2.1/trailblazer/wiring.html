@@ -351,9 +351,13 @@ end
 
 <div class="callout">
   
-<p>Note that those signals <strong>must have outputs that are connected to the next task</strong>, otherwise you will get a <code>IllegalOutputSignalError</code> exception. It’s usually easiest to fire up the PRO editor and check outputs visually.</p>
+<p>Note that those signals <strong>must have outputs that are connected to the next task</strong>, otherwise you will get a <code>IllegalOutputSignalError</code> exception. The PRO editor or tracing can help understanding.</p>
+
+<p>Also, keep in mind that the more signals you use, the harder it will be to understand. This is why the operation <a href="#fast-track-fasttrack">enforces the <code>:fast_track</code> option</a> when you want to use <code>pass_fast!</code> and <code>fail_fast!</code> - so both the developer reading your operation and the framework itself know about the implications upfront.</p>
 
 </div>
+
+<h2 id="nested-activities" data-magellan-target="nested-activities">Nested Activities</h2>
 
 <h2 id="custom-connections" data-magellan-target="custom-connections">Custom Connections</h2>
 
@@ -399,6 +403,7 @@ end
           <li><a href="#overview">Overview</a></li>
 <li><a href="#fast-track">Fast Track</a></li>
 <li><a href="#signals">Signals</a></li>
+<li><a href="#nested-activities">Nested Activities</a></li>
 <li><a href="#custom-connections">Custom Connections</a></li>
 <li><a href="#task-implementation-">Task Implementation (?)</a></li>
 <li><a href="#terminology">Terminology</a></li>
