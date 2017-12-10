@@ -96,6 +96,24 @@ Identically, the task on the left track `assign_errors`, could pick what path it
 
 This time, the second error handler `log_errors` won't be hit.
 
+## Signals
+
+A _signal_ is the object that is returned from a task. It can be any kind of object, but per convention, we derive signals from `Trailblazer::Activity::Signal`. When using the wiring API with `step` and friends, your tasks will automatically get wrapped so the returned boolean [gets translated into a signal](https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation/railway/task_builder.rb).
+
+You can bypass this by returning a signal directly.
+
+{{ "signal-index" | tsnippet }}
+
+Historically, the signal name for taking the success track is `Right` whereas the signal for the error track is `Left`. Instead of using the signal constants directly (which some users, for whatever reason, prefer), you may use signal helpers. The following snippet is identical to the one above.
+
+{{ "signalhelper-index" | tsnippet }}
+
+Available signal helpers per default are `Railway.pass!`, `Railway.fail!`, `Railway.pass_fast!` and `Railway.fail_fast!`.
+
+{% callout %}
+Note that those signals **must have outputs that are connected to the next task**, otherwise you will get a `IllegalOutputSignalError` exception. It's usually easiest to fire up the PRO editor and check outputs visually.
+{% endcallout %}
+
 ## Custom Connections
 
 The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.
