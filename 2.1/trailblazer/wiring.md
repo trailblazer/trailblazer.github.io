@@ -180,3 +180,61 @@ Concrete steps are added in the subclass.
 
 
 The resulting `Create`'s activity is identical to the [last example](#doormat-step-before).
+
+## Sequence Options
+
+In addition to wiring options, there are a handful of other options known as _sequence options_. They configure where a task goes when inserted, and helps with introspection and tracing.
+
+### Sequence Options: id
+
+You can name each step using the `:id` option.
+
+{{ "id" | tsnippet : "id-methods" }}
+
+This is advisable when planning to override a step via a module or inheritance or when reconnecting it. Naming also shows up in tracing and introspection. Defaults names are given to steps without the `:id` options, but these might be awkward sometimes.
+
+{{ "id-inspect" | tsnippet }}
+
+### Sequence Options: delete
+
+When it's necessary to remove a task, you can use `:delete`.
+
+{{ "delete" | tsnippet }}
+
+The `:delete` option can be helpful when using modules or inheritance to build concrete operations from base operations. In this example, a very poor one, the `validate` task gets removed, assuming the `Admin` won't need a validation
+
+{{ "delete-inspect" | tsnippet }}
+
+All steps are inherited, then the deletion is applied, as the introspection shows.
+
+<img src="/images/2.1/trailblazer/memo-delete.png">
+
+### Sequence Options: before
+
+To insert a new task before an existing one, for example in a subclass, use `:before`.
+
+{{ "before" | tsnippet : "before-methods"}}
+
+The circuit now yields a new `policy` step before the inherited tasks.
+
+<img src="/images/2.1/trailblazer/memo-before.png">
+
+### Sequence Options: after
+
+To insert after an existing task, you might have guessed it, use the `:after` option with the exact same semantics as `:before`.
+
+{{ "after" | tsnippet : "after-methods" }}
+
+The task is inserted after, as the introspection shows.
+
+{{ "after-inspect" | tsnippet }}
+
+### Sequence Options: replace
+
+Replacing an existing task is done using `:replace`.
+
+{{ "replace" | tsnippet : "replace-methods" }}
+
+Replacing, obviously, only replaces in the applied class, not in the superclass.
+
+{{ "replace-inspect" | tsnippet }}
