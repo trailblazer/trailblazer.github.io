@@ -327,22 +327,22 @@ puts result[:errors].inspect  #=&gt; "Something went wrong!"
 
 <p>You can bypass this by returning a signal directly.</p>
 
-<pre><code>def index(options, model:, **)
-  if ElasticSearch.index( model )
-    Activity::Right #=&gt; right track, success
+<pre><code>def validate(options, params: {}, **)
+  if params[:text].nil?
+    Trailblazer::Activity::Left  #=&gt; left track, failure
   else
-    Activity::Left  #=&gt; left track, failure
+    Trailblazer::Activity::Right #=&gt; right track, success
   end
 end
 </code></pre>
 
 <p>Historically, the signal name for taking the success track is <code class="highlighter-rouge">Right</code> whereas the signal for the error track is <code class="highlighter-rouge">Left</code>. Instead of using the signal constants directly (which some users, for whatever reason, prefer), you may use signal helpers. The following snippet is identical to the one above.</p>
 
-<pre><code>def index(options, model:, **)
-  if ElasticSearch.index( model )
-    Railway.pass! #=&gt; right track, success
-  else
+<pre><code>def validate(options, params: {}, **)
+  if params[:text].nil?
     Railway.fail! #=&gt; left track, failure
+  else
+    Railway.pass! #=&gt; right track, success
   end
 end
 </code></pre>
