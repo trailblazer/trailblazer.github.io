@@ -122,6 +122,34 @@ Also, keep in mind that the more signals you use, the harder it will be to under
 
 The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.
 
+forward-ref
+backward-ref
+
+## Recover
+
+Error handlers on the left track are the perfect place to "fix things". This means you might want to return to the right track. We call this a _recover_ task. For example, if you need to upload a file to S3, if that doesn't work, try with Azure, and if that still doesn't play, with Backblaze. This is a [common pattern when dealing with external APIs](https://github.com/trailblazer/trailblazer/issues/190).
+
+You can simply put recover steps on the left track, and wire their `:success` output back to the right track (which the operation knows as `:success`).
+
+{{ "fail-success" | tsnippet : "fail-success-methods" }}
+
+The resulting circuit looks as follows.
+
+<img src="/images/2.1/trailblazer/recover.png">
+
+The `Output(:success)` DSL call will find the task's `:success`-colored output and connect it to the right (`:success`) track. The recover tasks themselves can now return a boolean to direct the flow.
+
+    class Memo::Upload < Trailblazer::Operation
+      def upload_to_s3(options, s3:, file:, **)
+        s3.upload_file(file) # returns true or false
+      end
+    end
+
+## End
+
+## Path
+
+
 ## Task Implementation (?)
 
 ## Terminology
