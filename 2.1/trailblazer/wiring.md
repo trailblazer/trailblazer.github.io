@@ -102,17 +102,21 @@ A _signal_ is the object that is returned from a task. It can be any kind of obj
 
 You can bypass this by returning a signal directly.
 
-{{ "signal-index" | tsnippet }}
+{{ "signal-validate" | tsnippet }}
 
 Historically, the signal name for taking the success track is `Right` whereas the signal for the error track is `Left`. Instead of using the signal constants directly (which some users, for whatever reason, prefer), you may use signal helpers. The following snippet is identical to the one above.
 
-{{ "signalhelper-index" | tsnippet }}
+{{ "signalhelper-validate" | tsnippet }}
 
 Available signal helpers per default are `Railway.pass!`, `Railway.fail!`, `Railway.pass_fast!` and `Railway.fail_fast!`.
 
 {% callout %}
-Note that those signals **must have outputs that are connected to the next task**, otherwise you will get a `IllegalOutputSignalError` exception. It's usually easiest to fire up the PRO editor and check outputs visually.
+Note that those signals **must have outputs that are connected to the next task**, otherwise you will get a `IllegalOutputSignalError` exception. The PRO editor or tracing can help understanding.
+
+Also, keep in mind that the more signals you use, the harder it will be to understand. This is why the operation [enforces the `:fast_track` option](#fast-track-fasttrack) when you want to use `pass_fast!` and `fail_fast!` - so both the developer reading your operation and the framework itself know about the implications upfront.
 {% endcallout %}
+
+## Nested Activities
 
 ## Custom Connections
 
