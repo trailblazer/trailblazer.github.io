@@ -321,47 +321,6 @@ puts result[:errors].inspect  #=&gt; "Something went wrong!"
 
 <p>This time, the second error handler <code class="highlighter-rouge">log_errors</code> won’t be hit.</p>
 
-<h2 id="sequence-options" data-magellan-target="sequence-options">Sequence Options</h2>
-
-<p>In addition to wiring options, there are a handful of other options known as <em>sequence options</em>. They configure where a task goes when inserted, and helps with introspection and tracing.</p>
-
-<h3 id="sequence-options-id">Sequence Options: ID</h3>
-
-<p>You can name each step using the <code class="highlighter-rouge">:id</code> option.</p>
-
-<pre><code>class Memo::Create &lt; Trailblazer::Operation
-  step :create_model
-  step :validate, id: "validate_params"
-  step :save
-  # ...
-end
-</code></pre>
-
-<p>This is advisable when planning to override a step via a module or inheritance or when reconnecting it. Naming also shows up in tracing and introspection. Defaults names are given to steps without the <code class="highlighter-rouge">:id</code> options, but these might be awkward sometimes.</p>
-
-<pre><code>Trailblazer::Operation.inspect( Memo::Create )
-#=&gt; [&gt;create_model,&gt;validate_params,&gt;save]
-</code></pre>
-
-<h3 id="sequence-options-delete">Sequence Options: Delete</h3>
-
-<p>When it’s necessary to remove a task, you can use <code class="highlighter-rouge">:delete</code>.</p>
-
-<pre><code>class Memo::Create::Admin &lt; Memo::Create
-  step nil, delete: "validate_params", id: ""
-end
-</code></pre>
-
-<p>The <code class="highlighter-rouge">:delete</code> option can be helpful when using modules or inheritance to build concrete operations from base operations. In this example, a very poor one, the <code class="highlighter-rouge">validate</code> task gets removed, assuming the <code class="highlighter-rouge">Admin</code> won’t need a validation</p>
-
-<pre><code>Trailblazer::Operation.inspect( Memo::Create::Admin )
-#=&gt; [&gt;create_model,&gt;save]
-</code></pre>
-
-<p>All steps are inherited, then the deletion is applied, as the introspection shows.</p>
-
-<p><img src="/images/2.1/trailblazer/memo-delete.png"></p>
-
 <h2 id="signals" data-magellan-target="signals">Signals</h2>
 
 <p>A <em>signal</em> is the object that is returned from a task. It can be any kind of object, but per convention, we derive signals from <code class="highlighter-rouge">Trailblazer::Activity::Signal</code>. When using the wiring API with <code class="highlighter-rouge">step</code> and friends, your tasks will automatically get wrapped so the returned boolean <a href="https://github.com/trailblazer/trailblazer-operation/blob/master/lib/trailblazer/operation/railway/task_builder.rb">gets translated into a signal</a>.</p>
@@ -469,6 +428,94 @@ end
 
 <p>The resulting <code class="highlighter-rouge">Create</code>’s activity is identical to the <a href="#doormat-step-before">last example</a>.</p>
 
+<h2 id="sequence-options" data-magellan-target="sequence-options">Sequence Options</h2>
+
+<p>In addition to wiring options, there are a handful of other options known as <em>sequence options</em>. They configure where a task goes when inserted, and helps with introspection and tracing.</p>
+
+<h3 id="sequence-options-id">Sequence Options: id</h3>
+
+<p>You can name each step using the <code class="highlighter-rouge">:id</code> option.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  step :create_model, id: "create_memo"
+  step :validate,     id: "validate_params"
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>This is advisable when planning to override a step via a module or inheritance or when reconnecting it. Naming also shows up in tracing and introspection. Defaults names are given to steps without the <code class="highlighter-rouge">:id</code> options, but these might be awkward sometimes.</p>
+
+<pre><code>Trailblazer::Operation.inspect( Memo::Create )
+#=&gt; [&gt;create_model,&gt;validate_params,&gt;save]
+</code></pre>
+
+<h3 id="sequence-options-delete">Sequence Options: delete</h3>
+
+<p>When it’s necessary to remove a task, you can use <code class="highlighter-rouge">:delete</code>.</p>
+
+<pre><code>class Memo::Create::Admin &lt; Memo::Create
+  step nil, delete: "validate_params", id: ""
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">:delete</code> option can be helpful when using modules or inheritance to build concrete operations from base operations. In this example, a very poor one, the <code class="highlighter-rouge">validate</code> task gets removed, assuming the <code class="highlighter-rouge">Admin</code> won’t need a validation</p>
+
+<pre><code>Trailblazer::Operation.inspect( Memo::Create::Admin )
+#=&gt; [&gt;create_model,&gt;save]
+</code></pre>
+
+<p>All steps are inherited, then the deletion is applied, as the introspection shows.</p>
+
+<p><img src="/images/2.1/trailblazer/memo-delete.png"></p>
+
+<h3 id="sequence-options-before">Sequence Options: before</h3>
+
+<p>To insert a new task before an existing one, for example in a subclass, use <code class="highlighter-rouge">:before</code>.</p>
+
+<pre><code>class Memo::Create::Authorized &lt; Memo::Create
+  step :policy, before: "create_memo"
+  # ...
+end
+</code></pre>
+
+<p>The circuit now yields a new <code class="highlighter-rouge">policy</code> step before the inherited tasks.</p>
+
+<p><img src="/images/2.1/trailblazer/memo-before.png"></p>
+
+<h3 id="sequence-options-after">Sequence Options: after</h3>
+
+<p>To insert after an existing task, you might have guessed it, use the <code class="highlighter-rouge">:after</code> option with the exact same semantics as <code class="highlighter-rouge">:before</code>.</p>
+
+<pre><code>class Memo::Create::Logging &lt; Memo::Create
+  step :logger, after: "validate_params"
+  # ...
+end
+</code></pre>
+
+<p>The task is inserted after, as the introspection shows.</p>
+
+<pre><code>Trailblazer::Operation.inspect( Memo::Create::Logging )
+#=&gt; [&gt;create_memo,&gt;validate_params,&gt;logger,&gt;save]
+</code></pre>
+
+<h3 id="sequence-options-replace">Sequence Options: replace</h3>
+
+<p>Replacing an existing task is done using <code class="highlighter-rouge">:replace</code>.</p>
+
+<pre><code>class Memo::Update &lt; Memo::Create
+  step :find_model, replace: "create_memo", id: "update_memo"
+  # ...
+end
+</code></pre>
+
+<p>Replacing, obviously, only replaces in the applied class, not in the superclass.</p>
+
+<pre><code>Trailblazer::Operation.inspect( Memo::Update )
+#=&gt; [&gt;create_memo,&gt;validate_params,&gt;logger,&gt;save]
+</code></pre>
+
+
             </div>
 
             <div class="large-3 columns sticky-container" data-sticky-container>
@@ -480,7 +527,6 @@ end
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#overview">Overview</a></li>
 <li><a href="#fast-track">Fast Track</a></li>
-<li><a href="#sequence-options">Sequence Options</a></li>
 <li><a href="#signals">Signals</a></li>
 <li><a href="#nested-activities">Nested Activities</a></li>
 <li><a href="#custom-connections">Custom Connections</a></li>
@@ -490,6 +536,7 @@ end
 <li><a href="#task-implementation-">Task Implementation (?)</a></li>
 <li><a href="#terminology">Terminology</a></li>
 <li><a href="#doormat-step">Doormat Step</a></li>
+<li><a href="#sequence-options">Sequence Options</a></li>
         </ul>
       
 </nav>
