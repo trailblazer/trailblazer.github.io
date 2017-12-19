@@ -58,6 +58,9 @@ It will generate hundreds of warnings where you still use string keys but mustn'
 
 Besides the fact that you can now use operations and activities in more complex compounds [to model realistic applications](#application-workflows) and state machines, with 2.1 it's possible to model flows in operations that go beyond the railway. This is often necessary when the control flow needs more than two track, or when extracting more complex flows into new operations is too complicated and thus not desirable.
 
+...
+
+Check the new [→ wiring docs](/2.1/trailblazer/wiring.html).
 
 ## 3. Simpler `Nested`
 
