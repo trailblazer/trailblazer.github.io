@@ -39,7 +39,7 @@ We will provide a soft deprecation soon. Currently, you need to change your call
 
 If you mixed up `:symbol` and `"string"` keys when accessing the `options` context object, there're good news for you: we use symbol keys now wherever possible. Only namespaced keys like `"contract.default.class"` are still strings, but `:model`, `:params` or `:current_user` are all symbols.
 
-    result = Memo::Create( params: params, current_user: current_user )
+    result = Memo::Create.( params: params, current_user: current_user )
 
 As always, you can still access the arguments via keyword arguments, as [shown above](#new-call-api). Nevertheless, these arguments must now be accessed and overridden with symbol.
 
