@@ -120,6 +120,40 @@ Also, keep in mind that the more signals you use, the harder it will be to under
 
 ## Nested Activities
 
+The easiest way to nest operations or activities is to use the `Nested` macro.
+
+{% callout %}
+Note that the `Nested()` macro currently comes with the `trailblazer` gem (**not** the `operation` gem) but its behavior might be moved to the DSL in the future so this macro might become obsolete.
+{% endcallout %}
+
+A nestable object can be anything, for example an `Operation`.
+
+{{ "fast_test.rb:ft-nested:../trailblazer/test/docs:master" | tsnippet : "ign" }}
+
+Note that the first step, if unsuccessful, will error out on the `fail_fast` track and stop in its `End.fail_fast` end.
+
+<img src="/images/2.1/trailblazer/ft-nested.png">
+
+When nesting this operation into another `Memo::Create`, the `Nested` macro helps connecting the nested outputs.
+
+{{ "fast_test.rb:ft-create:../trailblazer/test/docs:master" | tsnippet : "igncr" }}
+
+All ends with known semantics will be automatically connected to its corresponding tracks in the outer operation.
+
+<img src="/images/2.1/trailblazer/ft-create.png">
+
+As you can see, per default, if the nested operation ends on its `End.fail_fast`, it will also skip the rest of the outer operation and error out on the outer fail_fast track.
+
+You can use the wiring API to reconnect outputs of nested activities.
+
+{{ "fast_test.rb:ft-rewire:../trailblazer/test/docs:master" | tsnippet : "ignrw" }}
+
+In this example, we reconnect the inner's `End.fail_fast` to the `failure` track on the outside.
+
+<img src="/images/2.1/trailblazer/ft-rewire.png">
+
+You may use the entire wiring API to connect nested outputs at your convenience.
+
 ## Custom Connections
 
 The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.

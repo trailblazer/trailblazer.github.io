@@ -3,7 +3,7 @@ layout: operation-2-1
 title: "Trailblazer 2.1: What you need to know"
 ---
 
-After almost one year of development, the 2.1 release is very near and we're proud to tell you everything about the new features we were adding, and some internals we changed.
+After almost one year of development, the 2.1 release is very near and we're proud to tell you everything about the new features we were adding, and some internals we've changed.
 
 Overally, the public APIs haven't changed, or there are soft deprecations to explain what you need to do.
 
@@ -14,7 +14,7 @@ In versions before 2.1, the automatic merging of the `params` part and the addit
     # old style
     result = Memo::Create.( params, "current_user" => current_user )
 
-The first argument (`params`) was merged into the second argument using the key `"params"`. You now pass one hash to `call` and do the merging yourself.
+The first argument (`params`) was merged into the second argument using the key `"params"`. You now pass one hash to `call` and hence do the merging yourself.
 
     # new style
     result = Memo::Create( params: params, current_user: current_user )
@@ -63,6 +63,13 @@ Besides the fact that you can now use operations and activities in more complex 
 Check the new [→ wiring docs](/2.1/trailblazer/wiring.html).
 
 ## 3. Simpler `Nested`
+
+in/out
+rewire
+
+## 4. Tracing
+
+The coolest feature.
 
 ## 4. Extended Macro API
 
