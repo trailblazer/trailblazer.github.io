@@ -152,6 +152,8 @@ In this example, we reconnect the inner's `End.fail_fast` to the `failure` track
 
 <img src="/images/2.1/trailblazer/ft-rewire.png">
 
+This wiring will result in the user of `Memo::Create` not "seeing" that the inner operation errored out via fail_fast and will instead use the outer `failure` track that could contain additional error handlers, recover, etc.
+
 You may use the entire wiring API to connect nested outputs at your convenience.
 
 ## Custom Connections
