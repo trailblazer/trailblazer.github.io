@@ -1,15 +1,15 @@
 ---
 layout: operation-2-1
-title: "Trailblazer 2.1: What you need to know"
+title: "Trailblazer 2.1: What you need to know."
 ---
 
-After almost one year of development, the 2.1 release is very near and we're proud to tell you everything about the new features we were adding, and some internals we've changed.
+After almost one year of development, the 2.1 release is very near, and we're proud to tell you everything about the new features we were adding, and some internals we've changed.
 
-Overally, the public APIs haven't changed, or there are soft deprecations to explain what you need to do.
+Overall, the public APIs haven't changed, or there are soft deprecations to explain what you need to do.
 
 ## 1. New `call` API
 
-In versions before 2.1, the automatic merging of the `params` part and the additional options was confusing many new users, and an unnecessary step.
+In versions before 2.1, the automatic merging of the `params` part and the additional options was confusing many new users and an unnecessary step.
 
     # old style
     result = Memo::Create.( params, "current_user" => current_user )
@@ -17,13 +17,13 @@ In versions before 2.1, the automatic merging of the `params` part and the addit
 The first argument (`params`) was merged into the second argument using the key `"params"`. You now pass one hash to `call` and hence do the merging yourself.
 
     # new style
-    result = Memo::Create( params: params, current_user: current_user )
+    result = Memo::Create.( params: params, current_user: current_user )
 
-Your steps use the existing API and everything here is as it used to be before.
+Your steps use the existing API, and everything here is as it used to be before.
 
     class Memo::Create < Trailblazer::Operation
       step :create_model
-
+    
       def create_model(options, params:, **)
         # ..
       end
@@ -37,17 +37,17 @@ We will provide a soft deprecation soon. Currently, you need to change your call
 
 ## 2. Symbol vs. String Keys
 
-If you mixed up `:symbol` and `"string"` keys when accessing the `options` context object, there're good news for you: we use symbol keys now wherever possible. Only namespaced keys like `"contract.default.class"` are still strings, but `:model`, `:params` or `:current_user` are all symbols.
+If you mixed up `:symbol` and `"string"` keys when accessing the `options` context object, there are good news for you: we use symbol keys now wherever possible. Only namespaced keys like `"contract.default.class"` are still strings, but `:model`, `:params` or `:current_user` are all symbols.
 
-    result = Memo::Create( params: params, current_user: current_user )
+    result = Memo::Create.( params: params, current_user: current_user )
 
-As always, you can still access the arguments via keyword arguments, as [shown above](#new-call-api). Nevertheless, these arguments must now be accessed and overridden with symbol.
+As always, you can still access the arguments via keyword arguments, as [shown above](#new-call-api). Nevertheless, these arguments must now be accessed and overridden with a symbol.
 
     def my_step(options, **)
       options[:model] = OpenStruct.new
     end
 
-Nothing has changed in the implementation, we just changed the convention. To seamlessly migrate, use the `Deprecation::Context` module.
+Nothing has changed in the implementation; we just changed the convention. To seamlessly migrate, use the `Deprecation::Context` module.
 
     require "trailblazer/deprecation/context"
 
