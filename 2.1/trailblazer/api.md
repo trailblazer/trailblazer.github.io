@@ -1,10 +1,22 @@
 ---
 layout: operation-2-1
-title: Trailblazer 2.1 API
+title: Operation 2.1 API
 gems:
   - ["trailblazer-operation", "trailblazer/trailblazer-operation", "2.1"]
 code: ../trailblazer/test/docs,trace_test.rb,master
 ---
+
+## Overview
+
+An operation or an activity provides two APIs: The wiring API focuses on defining the tasks and their connections. It is so versatile that it [deserves its own document](wiring.html). The other part is about actually _implementing_ those tasks (or "boxes") and is called the _operation API_, and this document describes it.
+
+## Control Flow
+
+As already discussed briefly, designing connections and tasks happens through the [wiring API](wiring.html). The goal of the separation is that tasks can focus on one thing: implementing the actual business logic without having to worry about the control flow. To do so, they simply emit (or `return`) special objects called _signals_, which are then translated into a connection. After this, the circuit engine will move on to the next task that is targeted by the connection.
+
+## Task API
+
+## Step API
 
 ## Result
 
