@@ -17,7 +17,7 @@ In versions before 2.1, the automatic merging of the `params` part and the addit
 The first argument (`params`) was merged into the second argument using the key `"params"`. You now pass one hash to `call` and hence do the merging yourself.
 
     # new style
-    result = Memo::Create( params: params, current_user: current_user )
+    result = Memo::Create.( params: params, current_user: current_user )
 
 Your steps use the existing API and everything here is as it used to be before.
 
