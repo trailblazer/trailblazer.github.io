@@ -3,6 +3,7 @@ layout: operation2
 title: Operation Representer
 gems:
   - ["trailblazer", "trailblazer/trailblazer", "2.0", "1.1"]
+code: ../trailblazer/test/docs,representer_test.rb,2-0
 ---
 
 Representers help to parse and render documents for JSON or XML APIs.
@@ -172,17 +173,17 @@ Instead of using Reform's automatic representer to deserialize the incoming docu
 
 This requires a representer class.
 
-{{  "representer_test.rb:explicit-rep" | tsnippet }}
+{{  "explicit-rep" | tsnippet }}
 
 While this representer could be used stand-alone, the operation helps you to leverage it for parsing.
 
-{{  "representer_test.rb:explicit-op" | tsnippet }}
+{{  "explicit-op" | tsnippet }}
 
 In the `Validate` macro, the `representer:` option will set the specified representer for deserialization. Note that the contract can also be an inline contract.
 
 You may now pass a JSON document instead of a hash into the operation's call.
 
-{{  "representer_test.rb:explicit-call" | tsnippet }}
+{{  "explicit-call" | tsnippet }}
 
 This parses the JSON document and the representer will assign the property values and objects to the contract. Afterwards, the contract validates itself with the normal mechanics.
 
@@ -192,7 +193,7 @@ In fact, the contract doesn't even know its data was parsed from a JSON or XML d
 
 If you quickly want to try a representer or you're facing a small amount of properties, only, you can use an inline representer.
 
-{{  "representer_test.rb:inline" | tsnippet }}
+{{  "inline" | tsnippet }}
 
 The behavior is identical to referencing the representer class constant.
 
@@ -200,7 +201,7 @@ The behavior is identical to referencing the representer class constant.
 
 A representer can also be inferred from the contract's schema. All you need to do is define the format, e.g. `Representable::JSON`.
 
-{{  "representer_test.rb:infer" | tsnippet }}
+{{  "infer" | tsnippet }}
 
 The `Operation::Representer.infer` method will return a representer class.
 
@@ -208,11 +209,11 @@ The `Operation::Representer.infer` method will return a representer class.
 
 You can override the parsing representer when calling the operation with dependency injection. This allows things like exchanging the representer to parse other document formats, such as XML.
 
-{{  "representer_test.rb:di-rep" | tsnippet }}
+{{  "di-rep" | tsnippet }}
 
 The representer can be injected using Trailblazer's well-defined injection interface.
 
-{{  "representer_test.rb:di-call" | tsnippet }}
+{{  "di-call" | tsnippet }}
 
 Note how the XML representer replaces the built-in JSON representer and can parse the XML document to the contract. The latter doesn't know anything about the swapped documents.
 
@@ -221,7 +222,7 @@ Note how the XML representer replaces the built-in JSON representer and can pars
 Without a name specified, the representer will be named `default`.
 
 
-{{  "representer_test.rb:naming" | tsnippet }}
+{{  "naming" | tsnippet }}
 
 To maintain multiple representers per operation, you may name them.
 
@@ -270,7 +271,7 @@ Rendering a document after the operation finished is part of the presentation la
 
 However, you may use the result object to grab representers and models.
 
-{{  "representer_test.rb:render" | tsnippet }}
+{{  "render" | tsnippet }}
 
 Luckily, [`Endpoint`](endpoint.html) and `respond` in Rails controllers help you with this.
 
@@ -280,17 +281,17 @@ Often, an operation will maintain multiple representers, e.g. for parsing, to re
 
 You could have a generic errors representer.
 
-{{  "representer_test.rb:errors-rep" | tsnippet }}
+{{  "errors-rep" | tsnippet }}
 
 Using naming, the operation may then contain several representers.
 
-{{  "representer_test.rb:full" | tsnippet }}
+{{  "full" | tsnippet }}
 
 Note that you don't even have to hook those representers into the operation class - this is a convention for structuring.
 
 An exemplary controller method to handle both outcomes could look like the following snippet.
 
-{{  "representer_test.rb:full-call" | tsnippet }}
+{{  "full-call" | tsnippet }}
 
 
 Make sure to check out [Endpoint](endpoint.html) which bundles the most common outcomes for you and is easily extendable.

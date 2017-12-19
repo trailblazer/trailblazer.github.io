@@ -4,10 +4,11 @@ require "pp"
 module Torture
   module SnippetFilter
     # {{ "activity_test.rb:trace-act:../trailblazer-activity/test/docs" | tsnippet }}
+
     def tsnippet(section, hide=nil)
       root, file, branch = nil
 
-# pp @context.registers[:page]["code"]
+
       if page_config = @context.registers[:page]["code"]
         root, file, branch = page_config.split(",")
       end
@@ -18,7 +19,8 @@ module Torture
       if segments.size > 1
         file, section, root, branch = section.split(":")
       end
-      # root ||= "../trailblazer/test/docs"
+
+      puts "^^^ tsnippet configuration for #{@context.registers[:page]["path"]}:#{section} = #{root},#{file},#{branch}"
 
       if branch
         original_branch = `cd #{root}; git branch`.match(/\*(.+)\n/)[1]

@@ -59,7 +59,7 @@ Let's say you'd add the `Tyrant::SignOut` operation to your activity which decla
 in 19 out of 20 cases, it sucks to mutate a hash, for example
 tracing still uses it
 
-
+Builder immutable, better maintainable with guilds as an example
 
 
 # Making of: DSL
