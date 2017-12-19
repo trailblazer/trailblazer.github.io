@@ -88,7 +88,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.1 IS COMING!</a></li>
+          <li><a href="/blog/2017-12-trailblazer-2-1-what-you-need-to-know.html">TRB 2.1 IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer 2.1 API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 September 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 December 2017</span>
 
   
     <span class="doc-last-updated">
@@ -183,7 +183,7 @@ result.event #=&gt; #&lt;Railway::FastTrack::PassFast ...&gt;
 
 <p>With operations, the simplest way is to use the <code class="highlighter-rouge">trace</code> method. It has the exact same signature as <code class="highlighter-rouge">call</code>.</p>
 
-<pre><code>result = Create::Present.trace( params, current_user: current_user )
+<pre><code>result = Create::Present.trace( params: params, current_user: current_user )
 puts result.wtf?
 
 # =&gt;
@@ -197,7 +197,7 @@ puts result.wtf?
 
 <p>Tracing starts to make things a lot easier for more complex, nested operations.</p>
 
-<pre><code>result = Create.trace( params, current_user: current_user )
+<pre><code>result = Create.trace( params: params, current_user: current_user )
 puts result.wtf?
 
 # =&gt;

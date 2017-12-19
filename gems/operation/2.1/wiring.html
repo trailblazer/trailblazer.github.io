@@ -88,7 +88,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.1 IS COMING!</a></li>
+          <li><a href="/blog/2017-12-trailblazer-2-1-what-you-need-to-know.html">TRB 2.1 IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Wiring API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 13 September 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 08 December 2017</span>
 
   
 
@@ -158,19 +158,6 @@
 
 <p>The most elementary way to achieve this is using the <code class="highlighter-rouge">:before</code> option.</p>
 
-<pre><code>class Create &lt; Trailblazer::Operation
-  step :first
-  step :log_success!
-
-  step :second, before: :log_success!
-  step :third,  before: :log_success!
-
-  fail :log_errors!, id: "log_errors"
-
-  # ...
-end
-</code></pre>
-
 <p>Note that <code class="highlighter-rouge">:before</code> is a DSL option and not related to the Graph API. It will move up steps using this option before <code class="highlighter-rouge">:log_success!</code>, as if you had actually called it before this step.</p>
 
 <p><img src="/images/graph/doormat-before.png"></p>
@@ -179,22 +166,7 @@ end
 
 <p>The same can be achieved using inheritance. In a generic base operation, you can define concept- or application-wide steps.</p>
 
-<pre><code>class Base &lt; Trailblazer::Operation
-  step :log_success!
-  fail :log_errors!
-  # ...
-end
-</code></pre>
-
 <p>Concrete steps are added in the subclass.</p>
-
-<pre><code>class Create &lt; Base
-  step :first, before: :log_success!
-  step :second, before: :log_success!
-  step :third,  before: :log_success!
-  # ...
-end
-</code></pre>
 
 <p>The resulting <code class="highlighter-rouge">Create</code>’s activity is identical to the <a href="#doormat-step-before">last example</a>.</p>
 

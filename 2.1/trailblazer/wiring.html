@@ -88,7 +88,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.1 IS COMING!</a></li>
+          <li><a href="/blog/2017-12-trailblazer-2-1-what-you-need-to-know.html">TRB 2.1 IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Wiring API</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 09 December 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 December 2017</span>
 
   
     <span class="doc-last-updated">
@@ -160,7 +160,9 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <h2 id="overview" data-magellan-target="overview">Overview</h2>
+              <p><i class="fa fa-download" aria-hidden="true"></i> Where’s the <a href="https://github.com/trailblazer/trailblazer-operation/blob/master/test/docs/wiring_test.rb"><strong>EXAMPLE CODE?</strong></a></p>
+
+<h2 id="overview" data-magellan-target="overview">Overview</h2>
 
 <p>When you run an operation like <code class="highlighter-rouge">Memo::Create.()</code>, it will internally execute its <em>circuit</em>. This simply means the operation will traverse its railway, call the <code class="highlighter-rouge">step</code>s you defined, deviate to different tracks, and so on. This document describes how those <em>circuits</em> are created, the so called <em>wiring API</em>.</p>
 
@@ -416,17 +418,41 @@ end
 
 <p>The most elementary way to achieve this is using the <code class="highlighter-rouge">:before</code> option.</p>
 
-<p>Note that <code class="highlighter-rouge">:before</code> is a DSL option and not related to the Graph API. It will move up steps using this option before <code class="highlighter-rouge">:log_success!</code>, as if you had actually called it before this step.</p>
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  step :create_model
+  step :log_success
 
-<p><img src="/images/graph/doormat-before.png"></p>
+  step :validate, before: :log_success
+  step :save,     before: :log_success
 
-<h3 id="doormat-step-before-with-inheritance">Doormat Step: Before with Inheritance</h3>
+  fail :log_errors
+  # ...
+end
+</code></pre>
 
-<p>The same can be achieved using inheritance. In a generic base operation, you can define concept- or application-wide steps.</p>
+<p>Note that <code class="highlighter-rouge">:before</code> is a DSL option and not exactly related to the wiring API. Using this option, the inserted step will be “moved up” as if you had actually called it before the targeted <code class="highlighter-rouge">:before</code> step.</p>
 
-<p>Concrete steps are added in the subclass.</p>
+<p><img src="/images/2.1/trailblazer/doormat-before.png"></p>
 
-<p>The resulting <code class="highlighter-rouge">Create</code>’s activity is identical to the <a href="#doormat-step-before">last example</a>.</p>
+<h3 id="doormat-step-group">Doormat Step: Group</h3>
+
+<p>An easier way to place particular steps always into the end section is to use the <code class="highlighter-rouge">:group</code> option.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  step :create_model
+  step :log_success,  group: :end, before: "End.success"
+
+  step :validate
+  step :save
+
+  fail :log_errors,   group: :end, before: "End.failure"
+  # ...
+end
+</code></pre>
+
+<p>The resulting <code class="highlighter-rouge">Memo::Create</code>’s circuit is identical to the <a href="#doormat-step-before">last example</a>.</p>
+
+<p>Note how this can be used for <a href="#group">“template operations”</a> where the inherited class really only adds its concrete steps into the existing layout.</p>
 
 <h2 id="sequence-options" data-magellan-target="sequence-options">Sequence Options</h2>
 
@@ -446,7 +472,7 @@ end
 
 <p>This is advisable when planning to override a step via a module or inheritance or when reconnecting it. Naming also shows up in tracing and introspection. Defaults names are given to steps without the <code class="highlighter-rouge">:id</code> options, but these might be awkward sometimes.</p>
 
-<pre><code>Trailblazer::Operation.inspect( Memo::Create )
+<pre><code>Trailblazer::Operation.introspect( Memo::Create )
 #=&gt; [&gt;create_model,&gt;validate_params,&gt;save]
 </code></pre>
 
@@ -461,7 +487,7 @@ end
 
 <p>The <code class="highlighter-rouge">:delete</code> option can be helpful when using modules or inheritance to build concrete operations from base operations. In this example, a very poor one, the <code class="highlighter-rouge">validate</code> task gets removed, assuming the <code class="highlighter-rouge">Admin</code> won’t need a validation</p>
 
-<pre><code>Trailblazer::Operation.inspect( Memo::Create::Admin )
+<pre><code>Trailblazer::Operation.introspect( Memo::Create::Admin )
 #=&gt; [&gt;create_model,&gt;save]
 </code></pre>
 
@@ -495,7 +521,7 @@ end
 
 <p>The task is inserted after, as the introspection shows.</p>
 
-<pre><code>Trailblazer::Operation.inspect( Memo::Create::Logging )
+<pre><code>Trailblazer::Operation.introspect( Memo::Create::Logging )
 #=&gt; [&gt;create_memo,&gt;validate_params,&gt;logger,&gt;save]
 </code></pre>
 
@@ -511,10 +537,41 @@ end
 
 <p>Replacing, obviously, only replaces in the applied class, not in the superclass.</p>
 
-<pre><code>Trailblazer::Operation.inspect( Memo::Update )
-#=&gt; [&gt;create_memo,&gt;validate_params,&gt;logger,&gt;save]
+<pre><code>Trailblazer::Operation.introspect( Memo::Update )
+#=&gt; [&gt;update_memo,&gt;validate_params,&gt;save]
 </code></pre>
 
+<h2 id="group" data-magellan-target="group">Group</h2>
+
+<p>The <code class="highlighter-rouge">:group</code> option is the ideal solution to create template operations, where you declare a basic circuit layout which can then be enriched by subclasses.</p>
+
+<pre><code>class Memo::Operation &lt; Trailblazer::Operation
+  step :log_call,  group: :start
+  step :log_success,  group: :end, before: "End.success"
+  fail :log_errors,   group: :end, before: "End.failure"
+  # ...
+end
+</code></pre>
+
+<p>The resulting circuit, admittedly rather useless, will look as follows.</p>
+
+<p><img src="/images/2.1/trailblazer/group-template.png"></p>
+
+<p>Subclasses can now insert their actual steps without any sequence options needed.</p>
+
+<pre><code>class Memo::Create &lt; Memo::Operation
+  step :create_model
+  step :validate
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>Since all logging steps defined in the template operation are placed into groups, the concrete steps sit in the middle.</p>
+
+<p><img src="/images/2.1/trailblazer/doormat-before.png"></p>
+
+<p>It is perfectly fine to use the <code class="highlighter-rouge">:group</code> and other sequence options again, in subclasses. Also, multiple inheritance levels will work.</p>
 
             </div>
 
@@ -537,6 +594,7 @@ end
 <li><a href="#terminology">Terminology</a></li>
 <li><a href="#doormat-step">Doormat Step</a></li>
 <li><a href="#sequence-options">Sequence Options</a></li>
+<li><a href="#group">Group</a></li>
         </ul>
       
 </nav>

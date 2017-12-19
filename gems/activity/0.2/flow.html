@@ -88,7 +88,7 @@
     <div id="responsive-menu">
       <div class="top-bar-right">
         <ul class="dropdown menu     vertical medium-horizontal" data-dropdown-menu>
-          <li><a href="/gems/operation/2.0/release_notes.html">TRB 2.1 IS COMING!</a></li>
+          <li><a href="/blog/2017-12-trailblazer-2-1-what-you-need-to-know.html">TRB 2.1 IS COMING!</a></li>
           <li><a href="https://trbpro.herokuapp.com/">PREMIUM SUPPORT <img alt="Premium Support" src="/images/pro-white.png"></a></li>
           <li><a href="/newsletter/">NEWSLETTER</a></li>
           <li><a href="https://gitter.im/trailblazer/chat" onclick="trackOutboundLink('https://gitter.im/trailblazer/chat'); return false;">CHAT</a></li>
@@ -168,11 +168,11 @@
 
 <pre><code>activity = Activity.from_hash do |start, _end|
   {
-    start            =&gt; { Circuit::Right =&gt; Blog::Write },
-    Blog::Write      =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::SpellCheck =&gt; { Circuit::Right =&gt; Blog::Publish, Circuit::Left =&gt; Blog::Correct },
-    Blog::Correct    =&gt; { Circuit::Right =&gt; Blog::SpellCheck },
-    Blog::Publish    =&gt; { Circuit::Right =&gt; _end }
+    start            =&gt; { Activity::Right =&gt; Blog::Write },
+    Blog::Write      =&gt; { Activity::Right =&gt; Blog::SpellCheck },
+    Blog::SpellCheck =&gt; { Activity::Right =&gt; Blog::Publish, Activity::Left =&gt; Blog::Correct },
+    Blog::Correct    =&gt; { Activity::Right =&gt; Blog::SpellCheck },
+    Blog::Publish    =&gt; { Activity::Right =&gt; _end }
   }
 end
 </code></pre>
