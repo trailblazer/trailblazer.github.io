@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Trailblazer: Trailblazer 2.1: What you need to know.</title>
-<meta name="description" content="Trailblazer 2.1: What you need to know. - Trailblazer">
+<title>Trailblazer: Operation 2.1 API</title>
+<meta name="description" content="Operation 2.1 API - Trailblazer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content=", ">
 
@@ -36,14 +36,14 @@
 </script>
 
 
-<meta property="og:title" content="Trailblazer 2.1: What you need to know.">
+<meta property="og:title" content="Operation 2.1 API">
 <meta property="og:site_name" content="Trailblazer">
-<meta property="og:url" content="http://trailblazer.to/blog/2017-12-trailblazer-2-1-what-you-need-to-know.html">
+<meta property="og:url" content="http://trailblazer.to/2.1/trailblazer/api.html">
 <meta property="og:description" content="">
 <meta property="og:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@apotonick">
-<meta name="twitter:title" content="Trailblazer 2.1: What you need to know.">
+<meta name="twitter:title" content="Operation 2.1 API">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://trailblazer.to/images/go-trailblazer.jpg">
 
@@ -135,9 +135,21 @@
 
           
             <header id="doc-header">
-  <h1 class="doc-page-title">Trailblazer 2.1: What you need to know.</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 18 December 2017</span>
+  <h1 class="doc-page-title">Operation 2.1 API</h1>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 19 December 2017</span>
 
+  
+    <span class="doc-last-updated">
+      <i class="fa fa-diamond" aria-hidden="true"></i>
+      <a href="https://github.com/trailblazer/trailblazer-operation">trailblazer-operation</a>
+
+      <a href="/2.1/trailblazer/api.html">
+      <span class="version">v2.1</span>
+      </a>
+
+    
+
+    </span>
   
 
   <hr>
@@ -148,112 +160,82 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>After almost one year of development, the 2.1 release is very near, and we’re proud to tell you everything about the new features we were adding, and some internals we’ve changed.</p>
+              <h2 id="overview" data-magellan-target="overview">Overview</h2>
 
-<p>Overall, the public APIs haven’t changed, or there are soft deprecations to explain what you need to do.</p>
+<p>An operation or an activity provides two APIs: The wiring API focuses on defining the tasks and their connections. It is so versatile that it <a href="wiring.html">deserves its own document</a>. The other part is about actually <em>implementing</em> those tasks (or “boxes”) and is called the <em>operation API</em>, and this document describes it.</p>
 
-<h2 id="new-call-api" data-magellan-target="new-call-api">1. New <code class="highlighter-rouge">call</code> API</h2>
+<h2 id="control-flow" data-magellan-target="control-flow">Control Flow</h2>
 
-<p>In versions before 2.1, the automatic merging of the <code class="highlighter-rouge">params</code> part and the additional options was confusing many new users and an unnecessary step.</p>
+<p>As already discussed briefly, designing connections and tasks happens through the <a href="wiring.html">wiring API</a>. The goal of the separation is that tasks can focus on one thing: implementing the actual business logic without having to worry about the control flow. To do so, they simply emit (or <code class="highlighter-rouge">return</code>) special objects called <em>signals</em>, which are then translated into a connection. After this, the circuit engine will move on to the next task that is targeted by the connection.</p>
+
+<h2 id="task-api" data-magellan-target="task-api">Task API</h2>
+
+<h2 id="step-api" data-magellan-target="step-api">Step API</h2>
+
+<h2 id="result" data-magellan-target="result">Result</h2>
+
+<h3 id="primary-binary-state">Primary Binary State</h3>
+
+<p>The primary state is decided by the activity’s end event superclass. If derived from <code class="highlighter-rouge">Railway::End::Success</code>, it will be interpreted as successful, and <code class="highlighter-rouge">result.success?</code> will return true, whereas a subclass of <code class="highlighter-rouge">Railway::End::Failure</code> results in the opposite outcome. Here, <code class="highlighter-rouge">result.failure?</code> is true.</p>
+
+<h3 id="result-end-event">Result: End Event</h3>
+
+<p>You can access the end event the Result wraps via <code class="highlighter-rouge">event</code>. This allows to interpret the outcome on a finer level and without having to guess from data in the options context. (See Endpoint)</p>
 
 <div class="highlighter-rouge">
-<pre class="highlight"><code># old style
-result = Memo::Create.( params, "current_user" =&gt; current_user )
+<pre class="highlight"><code>result = Create.( params )
+
+result.event #=&gt; #&lt;Railway::FastTrack::PassFast ...&gt;
 </code></pre>
 </div>
 
-<p>The first argument (<code class="highlighter-rouge">params</code>) was merged into the second argument using the key <code class="highlighter-rouge">"params"</code>. You now pass one hash to <code class="highlighter-rouge">call</code> and hence do the merging yourself.</p>
+<h2 id="trace" data-magellan-target="trace">Trace</h2>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code># new style
-result = Memo::Create.( params: params, current_user: current_user )
+<p>For debugging or understanding the flows of activities, you can use tracing.</p>
+
+<p>With operations, the simplest way is to use the <code class="highlighter-rouge">trace</code> method. It has the exact same signature as <code class="highlighter-rouge">call</code>.</p>
+
+<pre><code>result = Create::Present.trace( params: params, current_user: current_user )
+puts result.wtf?
+
+# =&gt;
+# |-- Start.default
+# |-- model.build
+# |-- contract.build
+# `-- End.success
 </code></pre>
-</div>
 
-<p>Your steps use the existing API, and everything here is as it used to be before.</p>
+<p>Use <code class="highlighter-rouge">Result#wtf?</code> to render a simple view of all steps that were involved in the run.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>class Memo::Create &lt; Trailblazer::Operation
-  step :create_model
+<p>Tracing starts to make things a lot easier for more complex, nested operations.</p>
 
-  def create_model(options, params:, **)
-    # ..
-  end
-end
+<pre><code>result = Create.trace( params: params, current_user: current_user )
+puts result.wtf?
+
+# =&gt;
+# |-- #&lt;Trailblazer::Activity::Nested:0x000000031960d8&gt;
+# |   |-- Start.default
+# |   |-- model.build
+# |   |-- contract.build
+# |   |-- End.success
+# |   `-- #&lt;Trailblazer::Activity::Nested:0x000000031960d8&gt;
+# |-- #&lt;Trailblazer::Activity::Nested:0x0000000311f3e8&gt;
+# |   |-- Start.default
+# |   |-- contract.default.params
+# |   |-- End.failure
+# |   `-- #&lt;Trailblazer::Activity::Nested:0x0000000311f3e8&gt;
+# `-- #&lt;Trailblazer::Operation::Railway::End::Failure:0x00000003201fb8&gt;
 </code></pre>
-</div>
 
-<p>The new <code class="highlighter-rouge">call</code> API is much more consistent and takes away another thing we kept explaining to new users - an indicator for a flawed API.</p>
+<p>Please refer to the activity docs for a <a href="/gems/activity/0.2/flow.html#trace">low-level interface tracing</a>.</p>
 
 <div class="callout">
   
-<p>We will provide a soft deprecation soon. Currently, you need to change your call and test code.</p>
+<p>In future versions, tracing will also display variables with improved configurability. This will be added very very shortly.</p>
+
+<p>Very soon, you can debug your code in real-time visually using the <a href="http://pro.trailblazer.to">PRO editor</a>.</p>
 
 </div>
-
-<h2 id="symbol-vs-string-keys" data-magellan-target="symbol-vs-string-keys">2. Symbol vs. String Keys</h2>
-
-<p>If you mixed up <code class="highlighter-rouge">:symbol</code> and <code class="highlighter-rouge">"string"</code> keys when accessing the <code class="highlighter-rouge">options</code> context object, there are good news for you: we use symbol keys now wherever possible. Only namespaced keys like <code class="highlighter-rouge">"contract.default.class"</code> are still strings, but <code class="highlighter-rouge">:model</code>, <code class="highlighter-rouge">:params</code> or <code class="highlighter-rouge">:current_user</code> are all symbols.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>result = Memo::Create.( params: params, current_user: current_user )
-</code></pre>
-</div>
-
-<p>As always, you can still access the arguments via keyword arguments, as <a href="#new-call-api">shown above</a>. Nevertheless, these arguments must now be accessed and overridden with a symbol.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>def my_step(options, **)
-  options[:model] = OpenStruct.new
-end
-</code></pre>
-</div>
-
-<p>Nothing has changed in the implementation; we just changed the convention. To seamlessly migrate, use the <code class="highlighter-rouge">Deprecation::Context</code> module.</p>
-
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "trailblazer/deprecation/context"
-</code></pre>
-</div>
-
-<p>It will generate hundreds of warnings where you still use string keys but mustn’t, so change them and then remove the <code class="highlighter-rouge">require</code>.</p>
-
-<h2 id="unlimited-wiring" data-magellan-target="unlimited-wiring">2. Unlimited Wiring</h2>
-
-<p>Besides the fact that you can now use operations and activities in more complex compounds <a href="#application-workflows">to model realistic applications</a> and state machines, with 2.1 it’s possible to model flows in operations that go beyond the railway. This is often necessary when the control flow needs more than two track, or when extracting more complex flows into new operations is too complicated and thus not desirable.</p>
-
-<div class="callout">
-  
-<p>For a more streamlined readability, we aliased the step DSL methods.</p>
-
-<pre><code>step :my_step
-pass :always_success # alias success
-fail :error_handler  # alias failure
-</code></pre>
-
-<p>Looking better, right?</p>
-
-</div>
-
-<p>…</p>
-
-<p>Check the new <a href="/2.1/trailblazer/wiring.html">→ wiring docs</a>.</p>
-
-<h2 id="simpler-nested" data-magellan-target="simpler-nested">3. Simpler <code class="highlighter-rouge">Nested</code>
-</h2>
-
-<p>in/out
-rewire</p>
-
-<h2 id="tracing" data-magellan-target="tracing">4. Tracing</h2>
-
-<p>The coolest feature.</p>
-
-<h2 id="extended-macro-api" data-magellan-target="extended-macro-api">4. Extended Macro API</h2>
-
-<h2 id="application-workflows" data-magellan-target="application-workflows">6. Application Workflows</h2>
-
-<h2 id="new-gems" data-magellan-target="new-gems">10. New Gems</h2>
 
             </div>
 
@@ -264,14 +246,12 @@ rewire</p>
   
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
-          <li><a href="#new-call-api">1. New call API</a></li>
-<li><a href="#symbol-vs-string-keys">2. Symbol vs. String Keys</a></li>
-<li><a href="#unlimited-wiring">2. Unlimited Wiring</a></li>
-<li><a href="#simpler-nested">3. Simpler Nested</a></li>
-<li><a href="#tracing">4. Tracing</a></li>
-<li><a href="#extended-macro-api">4. Extended Macro API</a></li>
-<li><a href="#application-workflows">6. Application Workflows</a></li>
-<li><a href="#new-gems">10. New Gems</a></li>
+          <li><a href="#overview">Overview</a></li>
+<li><a href="#control-flow">Control Flow</a></li>
+<li><a href="#task-api">Task API</a></li>
+<li><a href="#step-api">Step API</a></li>
+<li><a href="#result">Result</a></li>
+<li><a href="#trace">Trace</a></li>
         </ul>
       
 </nav>
@@ -294,7 +274,7 @@ rewire</p>
     <div class="accordion-content" data-tab-content>
       <ul class="vertical menu">
         <li><a href="/2.1/trailblazer/wiring.html">Wiring API</a></li>
-        <li><a href="/2.1/trailblazer/api.html">Operation API</a></li>
+        <li><a href="/2.1/trailblazer/api.html" class="active">Operation API</a></li>
         <li><a href="/gems/operation/2.0/contract.html">Contract</a></li>
         <!--<li><a href="/gems/operation/2.0/representer.html">Representer</a></li>-->
         <li><a href="/gems/operation/2.0/policy.html">Policy</a></li>
