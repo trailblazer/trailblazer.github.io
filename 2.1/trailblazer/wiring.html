@@ -361,6 +361,61 @@ end
 
 <h2 id="nested-activities" data-magellan-target="nested-activities">Nested Activities</h2>
 
+<p>The easiest way to nest operations or activities is to use the <code class="highlighter-rouge">Nested</code> macro.</p>
+
+<div class="callout">
+  
+<p>Note that the <code>Nested()</code> macro currently comes with the <code>trailblazer</code> gem (<strong>not</strong> the <code>operation</code> gem) but its behavior might be moved to the DSL in the future so this macro might become obsolete.</p>
+
+</div>
+
+<p>A nestable object can be anything, for example an <code class="highlighter-rouge">Operation</code>.</p>
+
+<pre><code>class Lib::Authenticate &lt; Trailblazer::Operation
+  step :verify_input, fail_fast: true
+  step :user_ok?
+  # ...
+end
+</code></pre>
+
+<p>Note that the first step, if unsuccessful, will error out on the <code class="highlighter-rouge">fail_fast</code> track and stop in its <code class="highlighter-rouge">End.fail_fast</code> end.</p>
+
+<p><img src="/images/2.1/trailblazer/ft-nested.png"></p>
+
+<p>When nesting this operation into another <code class="highlighter-rouge">Memo::Create</code>, the <code class="highlighter-rouge">Nested</code> macro helps connecting the nested outputs.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  step :validate
+  step Nested( Lib::Authenticate ) # fail_fast goes to End.fail_fast
+  step :create_model
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>All ends with known semantics will be automatically connected to its corresponding tracks in the outer operation.</p>
+
+<p><img src="/images/2.1/trailblazer/ft-create.png"></p>
+
+<p>As you can see, per default, if the nested operation ends on its <code class="highlighter-rouge">End.fail_fast</code>, it will also skip the rest of the outer operation and error out on the outer fail_fast track.</p>
+
+<p>You can use the wiring API to reconnect outputs of nested activities.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  step :validate
+  step Nested( Lib::Authenticate ), Output(:fail_fast) =&gt; :failure
+  step :create_model
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>In this example, we reconnect the inner’s <code class="highlighter-rouge">End.fail_fast</code> to the <code class="highlighter-rouge">failure</code> track on the outside.</p>
+
+<p><img src="/images/2.1/trailblazer/ft-rewire.png"></p>
+
+<p>You may use the entire wiring API to connect nested outputs at your convenience.</p>
+
 <h2 id="custom-connections" data-magellan-target="custom-connections">Custom Connections</h2>
 
 <p>The four standard tracks in an operation represent an <em>extended railway</em>. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.</p>

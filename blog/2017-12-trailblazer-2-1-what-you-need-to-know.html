@@ -148,7 +148,7 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <p>After almost one year of development, the 2.1 release is very near and we’re proud to tell you everything about the new features we were adding, and some internals we changed.</p>
+              <p>After almost one year of development, the 2.1 release is very near and we’re proud to tell you everything about the new features we were adding, and some internals we’ve changed.</p>
 
 <p>Overally, the public APIs haven’t changed, or there are soft deprecations to explain what you need to do.</p>
 
@@ -162,7 +162,7 @@ result = Memo::Create.( params, "current_user" =&gt; current_user )
 </code></pre>
 </div>
 
-<p>The first argument (<code class="highlighter-rouge">params</code>) was merged into the second argument using the key <code class="highlighter-rouge">"params"</code>. You now pass one hash to <code class="highlighter-rouge">call</code> and do the merging yourself.</p>
+<p>The first argument (<code class="highlighter-rouge">params</code>) was merged into the second argument using the key <code class="highlighter-rouge">"params"</code>. You now pass one hash to <code class="highlighter-rouge">call</code> and hence do the merging yourself.</p>
 
 <div class="highlighter-rouge">
 <pre class="highlight"><code># new style
@@ -229,6 +229,13 @@ end
 <h2 id="simpler-nested" data-magellan-target="simpler-nested">3. Simpler <code class="highlighter-rouge">Nested</code>
 </h2>
 
+<p>in/out
+rewire</p>
+
+<h2 id="tracing" data-magellan-target="tracing">4. Tracing</h2>
+
+<p>The coolest feature.</p>
+
 <h2 id="extended-macro-api" data-magellan-target="extended-macro-api">4. Extended Macro API</h2>
 
 <h2 id="application-workflows" data-magellan-target="application-workflows">6. Application Workflows</h2>
@@ -248,6 +255,7 @@ end
 <li><a href="#symbol-vs-string-keys">2. Symbol vs. String Keys</a></li>
 <li><a href="#unlimited-wiring">2. Unlimited Wiring</a></li>
 <li><a href="#simpler-nested">3. Simpler Nested</a></li>
+<li><a href="#tracing">4. Tracing</a></li>
 <li><a href="#extended-macro-api">4. Extended Macro API</a></li>
 <li><a href="#application-workflows">6. Application Workflows</a></li>
 <li><a href="#new-gems">10. New Gems</a></li>
