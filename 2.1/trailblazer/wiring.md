@@ -168,20 +168,22 @@ Very often, you want to have one or multiple "last steps" in an operation, for i
 
 The most elementary way to achieve this is using the `:before` option.
 
+{{ "doormat_test.rb:doormat-before" | tsnippet : "im" }}
 
-Note that `:before` is a DSL option and not related to the Graph API. It will move up steps using this option before `:log_success!`, as if you had actually called it before this step.
+Note that `:before` is a DSL option and not exactly related to the wiring API. Using this option, the inserted step will be "moved up" as if you had actually called it before the targeted `:before` step.
 
-<img src="/images/graph/doormat-before.png">
+<img src="/images/2.1/trailblazer/doormat-before.png">
 
-### Doormat Step: Before with Inheritance
+### Doormat Step: Group
 
-The same can be achieved using inheritance. In a generic base operation, you can define concept- or application-wide steps.
+An easier way to place particular steps always into the end section is to use the `:group` option.
+
+{{ "doormat_test.rb:doormat-group" | tsnippet : "methods" }}
 
 
-Concrete steps are added in the subclass.
+The resulting `Memo::Create`'s circuit is identical to the [last example](#doormat-step-before).
 
-
-The resulting `Create`'s activity is identical to the [last example](#doormat-step-before).
+Note how this can be used for ["template operations"](#group) where the inherited class really only adds its concrete steps into the existing layout.
 
 ## Sequence Options
 

@@ -16,11 +16,14 @@ module Torture
       # all options passed in explicitly, "old style"
       segments = section.split(":")
 
-      if segments.size > 1
+      if segments.size == 2
+        file, section = segments
+
+      elsif segments.size > 2
         file, section, root, branch = section.split(":")
       end
 
-      puts "^^^ tsnippet configuration for #{@context.registers[:page]["path"]}:#{section} = #{root},#{file},#{branch}"
+      puts "^^^ tsnippet configuration for #{@context.registers[:page]["path"]}:#{section} = #{root}/#{file},#{branch}"
 
       if branch
         original_branch = `cd #{root}; git branch`.match(/\*(.+)\n/)[1]
