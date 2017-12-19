@@ -244,3 +244,21 @@ Replacing, obviously, only replaces in the applied class, not in the superclass.
 {{ "replace-inspect" | tsnippet }}
 
 ## Group
+
+The `:group` option is the ideal solution to create template operations, where you declare a basic circuit layout which can then be enriched by subclasses.
+
+{{ "doormat_test.rb:template" | tsnippet : "tmethods" }}
+
+The resulting circuit, admittedly rather useless, will look as follows.
+
+<img src="/images/2.1/trailblazer/group-template.png">
+
+Subclasses can now insert their actual steps without any sequence options needed.
+
+{{ "doormat_test.rb:template-user" | tsnippet : "meths" }}
+
+Since all logging steps defined in the template operation are placed into groups, the concrete steps sit in the middle.
+
+<img src="/images/2.1/trailblazer/doormat-before.png">
+
+It is perfectly fine to use the `:group` and other sequence options again, in subclasses. Also, multiple inheritance levels will work.
