@@ -172,6 +172,39 @@
 
 <h2 id="step-api" data-magellan-target="step-api">Step API</h2>
 
+<h3 id="step-api-kw-only">Step API: KW-only</h3>
+
+<p>Some individuals fancy an alternative signature for steps where <code class="highlighter-rouge">options</code> is not a positional argument, but just another keyword. This is also called the <em>macaroni style</em>.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  # ...
+  def create_model( params:, options:, ** )
+    options[:model] = Memo.new( title: params[:title] )
+  end
+
+  def save( model:, ** )
+    model.save
+  end
+end
+</code></pre>
+
+<p>Here, you don’t have to define <code class="highlighter-rouge">options</code> since it’s just another keyword argument. If you need to set state, you can grab it using the <code class="highlighter-rouge">options:</code> keyword (as done it <code class="highlighter-rouge">#create_model</code>) but in “stateless” steps you can omit it (<code class="highlighter-rouge">#save</code>).</p>
+
+<p>The advantage is that you don’t need to define <code class="highlighter-rouge">options</code> when you don’t need it. The downside is, it might be harder to explain that there’s a special state-transporting keyword argument, whereas it’s relatively easy to grasp this behavior with a positional argument.</p>
+
+<p>You need to configure each step using the macaroni style with a custom normalizer.</p>
+
+<pre><code>class Memo::Create &lt; Trailblazer::Operation
+  Normalizer = Railway::Normalizer.new( task_builder: Railway::KwSignature )
+
+  step :create_model, normalizer: Normalizer
+  step :save,         normalizer: Normalizer
+  # ...
+end
+</code></pre>
+
+<p>This can be easily abstracted into your <code class="highlighter-rouge">Application::Operation</code>.</p>
+
 <h2 id="result" data-magellan-target="result">Result</h2>
 
 <h3 id="primary-binary-state">Primary Binary State</h3>
