@@ -187,7 +187,12 @@ end
 
 <div class="callout">
   
-<p>We will provide a soft deprecation soon. Currently, you need to change your call and test code.</p>
+<p>For a soft deprecation, do this in an initializer:</p>
+
+<pre><code>require "trailblazer/deprecation/call"
+</code></pre>
+
+<p>You will get a bunch of warnings, so fix all <code>Operation.()</code> calls and remove the <code>require</code> again.</p>
 
 </div>
 
@@ -209,18 +214,44 @@ end
 </code></pre>
 </div>
 
-<p>Nothing has changed in the implementation; we just changed the convention. To seamlessly migrate, use the <code class="highlighter-rouge">Deprecation::Context</code> module.</p>
+<p>Nothing has changed in the implementation; we just changed the convention.</p>
 
-<div class="highlighter-rouge">
-<pre class="highlight"><code>require "trailblazer/deprecation/context"
+<div class="callout">
+  
+<p>For a soft deprecation, do this in an initializer:</p>
+
+<pre><code>require "trailblazer/deprecation/context"
 </code></pre>
-</div>
 
-<p>It will generate hundreds of warnings where you still use string keys but mustn’t, so change them and then remove the <code class="highlighter-rouge">require</code>.</p>
+<p>It will generate hundreds of warnings where you still use string keys but mustn’t, so change them and then remove the <code>require</code>.</p>
+
+
+</div>
 
 <h2 id="unlimited-wiring" data-magellan-target="unlimited-wiring">2. Unlimited Wiring</h2>
 
 <p>Besides the fact that you can now use operations and activities in more complex compounds <a href="#application-workflows">to model realistic applications</a> and state machines, with 2.1 it’s possible to model flows in operations that go beyond the railway. This is often necessary when the control flow needs more than two track, or when extracting more complex flows into new operations is too complicated and thus not desirable.</p>
+
+<p>For example, you can now actually <em>use</em> the <code class="highlighter-rouge">failure</code> track for logic, and easily deviate back to the right <code class="highlighter-rouge">success</code> track.</p>
+
+<pre><code>class Memo::Upload &lt; Trailblazer::Operation
+  step :upload_to_s3
+  fail :upload_to_azure,  Output(:success) =&gt; :success
+  fail :upload_to_b2,     Output(:success) =&gt; :success
+  fail :log_problem
+  # ...
+end
+</code></pre>
+
+<p>This will result in the following diagram.</p>
+
+<p><img src="/images/2.1/trailblazer/recover.png"></p>
+
+<p>We call this the <a href="/2.1/trailblazer/wiring.html#recover"><em>recover</em> pattern</a>.</p>
+
+<p>However, you’re not limited to left and right track, you can connect arbitrary tasks, or solve more complex problems with branching circuits.</p>
+
+<p>examples coming</p>
 
 <div class="callout">
   
