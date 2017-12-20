@@ -168,6 +168,8 @@ This operation uploads a file. In the first step, it figures out whether or not 
 
 <img src="/images/2.1/trailblazer/target-id.png">
 
+The existing output can be reconnected by using `Output` and specifying a semantic, only. For a normal `step` task, this means the output supposed to go on the left track will be rewired, or in other words, a falsey value returned from `new?` will go straight to `index`.
+
 Referencing an explicit target must happen by id, and can both point forward or backward.
 
 ## Recover
