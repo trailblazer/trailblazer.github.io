@@ -1,6 +1,7 @@
 ---
 layout: operation-2-1
 title: "Trailblazer 2.1: What you need to know."
+code: ../operation/test/docs,wiring_test.rb,master
 ---
 
 After almost one year of development, the 2.1 release is very near, and we're proud to tell you everything about the new features we were adding, and some internals we've changed.
@@ -32,7 +33,11 @@ Your steps use the existing API, and everything here is as it used to be before.
 The new `call` API is much more consistent and takes away another thing we kept explaining to new users - an indicator for a flawed API.
 
 {% callout %}
-We will provide a soft deprecation soon. Currently, you need to change your call and test code.
+For a soft deprecation, do this in an initializer:
+
+    require "trailblazer/deprecation/call"
+
+You will get a bunch of warnings, so fix all `Operation.()` calls and remove the `require` again.
 {% endcallout %}
 
 ## 2. Symbol vs. String Keys
@@ -47,17 +52,37 @@ As always, you can still access the arguments via keyword arguments, as [shown a
       options[:model] = OpenStruct.new
     end
 
-Nothing has changed in the implementation; we just changed the convention. To seamlessly migrate, use the `Deprecation::Context` module.
+Nothing has changed in the implementation; we just changed the convention.
+
+{% callout %}
+For a soft deprecation, do this in an initializer:
 
     require "trailblazer/deprecation/context"
 
 It will generate hundreds of warnings where you still use string keys but mustn't, so change them and then remove the `require`.
+
+{% endcallout %}
 
 
 ## 2. Unlimited Wiring
 
 Besides the fact that you can now use operations and activities in more complex compounds [to model realistic applications](#application-workflows) and state machines, with 2.1 it's possible to model flows in operations that go beyond the railway. This is often necessary when the control flow needs more than two track, or when extracting more complex flows into new operations is too complicated and thus not desirable.
 
+Check the new [→ wiring docs](/2.1/trailblazer/wiring.html).
+
+For example, you can now actually _use_ the `failure` track for logic, and easily deviate back to the right `success` track.
+
+{{ "fail-success" | tsnippet : "fail-success-methods" }}
+
+This will result in the following diagram.
+
+<img src="/images/2.1/trailblazer/recover.png">
+
+We call this the [_recover_ pattern](/2.1/trailblazer/wiring.html#recover).
+
+However, you're not limited to left and right track, you can connect arbitrary tasks, or solve more complex problems with branching circuits.
+
+examples coming
 
 {% callout %}
   For a more streamlined readability, we aliased the step DSL methods.
@@ -71,7 +96,6 @@ Besides the fact that you can now use operations and activities in more complex 
 
 ...
 
-Check the new [→ wiring docs](/2.1/trailblazer/wiring.html).
 
 ## 3. Simpler `Nested`
 
