@@ -359,8 +359,8 @@ end
 
 <p>When rendering or parsing, the local property will be extended, e.g. <code class="highlighter-rouge">/library/book/isbn</code> will become <code class="highlighter-rouge">/lib:library/lib:book/lib:isbn</code>.</p>
 
-<pre><code>%{&lt;lib:library xmlns:lib="http://eric.van-der-vlist.com/ns/library" xmlns:hr="http://eric.van-der-vlist.com/ns/person"&gt;
-  &lt;lib:book id="1"&gt;
+<pre><code>%{&lt;lib:library xmlns:lib=\"http://eric.van-der-vlist.com/ns/library\" xmlns:hr=\"http://eric.van-der-vlist.com/ns/person\"&gt;
+  &lt;lib:book id=\"1\"&gt;
     &lt;lib:isbn&gt;666&lt;/lib:isbn&gt;
     &lt;hr:author&gt;
       &lt;hr:name&gt;Fowler&lt;/hr:name&gt;
@@ -381,23 +381,22 @@ end
 <p>Namespaces also apply when parsing an XML document to an object structure. When defined, only the known, prefixed tags will be considered.</p>
 
 <pre><code>Library.new(lib).from_xml(%{&lt;lib:library
-  xmlns:lib="http://eric.van-der-vlist.com/ns/library"
-  xmlns:hr="http://eric.van-der-vlist.com/ns/person"
-&gt;
-&lt;lib:book id="1"&gt;
-  &lt;lib:isbn&gt;666&lt;/lib:isbn&gt;
-  &lt;hr:author&gt;
-    &lt;hr:name&gt;Fowler&lt;/hr:name&gt;
-  &lt;/hr:author&gt;
-  &lt;lib:character&gt;
-    &lt;lib:qualification&gt;typed&lt;/lib:qualification&gt;
-    &lt;hr:name&gt;Frau Java&lt;/hr:name&gt;
-    &lt;bogus:name&gt;Mr. Ruby&lt;/hr:name&gt;
-    &lt;name&gt;Dr. Elixir&lt;/hr:name&gt;
-    &lt;hr:born&gt;1991&lt;/hr:born&gt;
-  &lt;/lib:character&gt;
-&lt;/lib:book&gt;
-lib:library&gt;}
+lns:lib="http://eric.van-der-vlist.com/ns/library"
+lns:hr="http://eric.van-der-vlist.com/ns/person"&gt;
+ib:book id="1"&gt;
+&lt;lib:isbn&gt;666&lt;/lib:isbn&gt;
+&lt;hr:author&gt;
+  &lt;hr:name&gt;Fowler&lt;/hr:name&gt;
+&lt;/hr:author&gt;
+&lt;lib:character&gt;
+  &lt;lib:qualification&gt;typed&lt;/lib:qualification&gt;
+  &lt;hr:name&gt;Frau Java&lt;/hr:name&gt;
+  &lt;bogus:name&gt;Mr. Ruby&lt;/hr:name&gt;
+  &lt;name&gt;Dr. Elixir&lt;/hr:name&gt;
+  &lt;hr:born&gt;1991&lt;/hr:born&gt;
+&lt;/lib:character&gt;
+lib:book&gt;
+b:library&gt;}
 </code></pre>
 
 <p>In this example, only the <code class="highlighter-rouge">/lib:library/lib:book/lib:character/hr:name</code> was parsed.</p>
