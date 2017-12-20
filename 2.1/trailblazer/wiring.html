@@ -418,12 +418,27 @@ end
 
 <p>You may use the entire wiring API to connect nested outputs at your convenience.</p>
 
-<h2 id="custom-connections" data-magellan-target="custom-connections">Custom Connections</h2>
+<h2 id="connections" data-magellan-target="connections">Connections</h2>
+
+<h3 id="connections-by-id">Connections: By ID</h3>
 
 <p>The four standard tracks in an operation represent an <em>extended railway</em>. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.</p>
 
-<p>forward-ref
-backward-ref</p>
+<pre><code>class Memo::Upload &lt; Trailblazer::Operation
+  step :new?, Output(:failure) =&gt; "index"
+  step :upload
+  step :validate
+  fail :validation_error
+  step :index, id: "index"
+  # ...
+end
+</code></pre>
+
+<p>This operation uploads a file. In the first step, it figures out whether or not that file already exists, and skips the upload part if it has seen the file before. Here’s the circuit.</p>
+
+<p><img src="/images/2.1/trailblazer/target-id.png"></p>
+
+<p>Referencing an explicit target must happen by id, and can both point forward or backward.</p>
 
 <h2 id="recover" data-magellan-target="recover">Recover</h2>
 
@@ -643,7 +658,7 @@ end
 <li><a href="#fast-track">Fast Track</a></li>
 <li><a href="#signals">Signals</a></li>
 <li><a href="#nested-activities">Nested Activities</a></li>
-<li><a href="#custom-connections">Custom Connections</a></li>
+<li><a href="#connections">Connections</a></li>
 <li><a href="#recover">Recover</a></li>
 <li><a href="#end">End</a></li>
 <li><a href="#path">Path</a></li>
