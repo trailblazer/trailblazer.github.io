@@ -172,6 +172,8 @@ The existing output can be reconnected by using `Output` and specifying a semant
 
 Referencing an explicit target must happen by id, and can both point forward or backward.
 
+Note that you can also reference `Start.default`, and end events like `End.success`.
+
 ## Recover
 
 Error handlers on the left track are the perfect place to "fix things". This means you might want to return to the right track. We call this a _recover_ task. For example, if you need to upload a file to S3, if that doesn't work, try with Azure, and if that still doesn't play, with Backblaze. This is a [common pattern when dealing with external APIs](https://github.com/trailblazer/trailblazer/issues/190).
