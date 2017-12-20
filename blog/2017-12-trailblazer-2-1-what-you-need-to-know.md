@@ -1,7 +1,7 @@
 ---
 layout: operation-2-1
 title: "Trailblazer 2.1: What you need to know."
-code: ../operation/test/docs,wiring_test.rb,master
+code: ../trailblazer-operation/test/docs,wiring_test.rb,master
 ---
 
 After almost one year of development, the 2.1 release is very near, and we're proud to tell you everything about the new features we were adding, and some internals we've changed.
@@ -108,6 +108,20 @@ The coolest feature.
 
 ## 4. Extended Macro API
 
-## 6. Application Workflows
+## 6. Application Workflows and BPMN
+
+Thanks to the refactored circuit engine in Trailblazer 2.1 and the new [https://github.com/trailblazer/trailblazer-activity](`activity`) gem, any business process can be modeled and implemented now. Since we allow unlimited nesting of activities, it's possible to start modeling from the domain level down to super low-level technical details.
+
+Instead of reinventing, we make use of a subset of the [BPMN standard](http://www.bpmn.org/) that defines and structures workflows in hundred-thousands of applications world-wide. And, don't you worry, you do not have to [read 538 pages](http://www.omg.org/spec/BPMN/2.0/PDF) in order to use Trailblazer's BPMN extension.
+
+<img src="/images/2.1/trailblazer/signup-process.png">
+
+In this diagram, you can see a one-time-password signup process where the user needs to change the initial password after the first login, and then must log in again using those new credentials. Our new visual workflow editor and the `trailblazer-workflow` gem will help to plan, implement and maintain diagrams and logic. Both components are part of the new PRO plan launched in early 2018.
+
+While you can model activities purely in Ruby, our editor will take away the pain of setting up application-wide workflows. And, naturally, all those "boxes" will still be Ruby code, exactly the way it is now, allowing you to focus on the implementation and us doing the control flow for you.
+
+{% callout %}
+Once the new PRO version is ready for sign up, we will notify you on our [Facebook page](http://fb.me/trailblazer.to) and link to it here.
+{% endcallout %}
 
 ## 10. New Gems
