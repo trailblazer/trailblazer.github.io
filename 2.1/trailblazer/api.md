@@ -18,6 +18,22 @@ As already discussed briefly, designing connections and tasks happens through th
 
 ## Step API
 
+### Step API: KW-only
+
+Some individuals fancy an alternative signature for steps where `options` is not a positional argument, but just another keyword. This is also called the _macaroni style_.
+
+{{ "macaroni_test.rb:create:../operation/test/docs:master" | tsnippet : "ign" }}
+
+Here, you don't have to define `options` since it's just another keyword argument. If you need to set state, you can grab it using the `options:` keyword (as done it `#create_model`) but in "stateless" steps you can omit it (`#save`).
+
+The advantage is that you don't need to define `options` when you don't need it. The downside is, it might be harder to explain that there's a special state-transporting keyword argument, whereas it's relatively easy to grasp this behavior with a positional argument.
+
+You need to configure each step using the macaroni style with a custom normalizer.
+
+{{ "macaroni_test.rb:create:../operation/test/docs:master" | tsnippet : "methods" }}
+
+This can be easily abstracted into your `Application::Operation`.
+
 ## Result
 
 ### Primary Binary State
