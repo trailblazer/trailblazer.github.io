@@ -3,7 +3,7 @@ layout: operation-2-1
 title: "Wiring API"
 gems:
   - ["trailblazer-operation", "trailblazer/trailblazer-operation", "2.1"]
-code: ../operation/test/docs,wiring_test.rb,master
+code: ../trailblazer-operation/test/docs,wiring_test.rb,master
 ---
 
 <i class="fa fa-download" aria-hidden="true"></i> Where's the [**EXAMPLE CODE?**](https://github.com/trailblazer/trailblazer-operation/blob/master/test/docs/wiring_test.rb)
