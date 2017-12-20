@@ -156,12 +156,19 @@ This wiring will result in the user of `Memo::Create` not "seeing" that the inne
 
 You may use the entire wiring API to connect nested outputs at your convenience.
 
-## Custom Connections
+## Connections
+
+### Connections: By ID
 
 The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.
 
-forward-ref
-backward-ref
+{{ "target-id" | tsnippet : "target-id-methods" }}
+
+This operation uploads a file. In the first step, it figures out whether or not that file already exists, and skips the upload part if it has seen the file before. Here's the circuit.
+
+<img src="/images/2.1/trailblazer/target-id.png">
+
+Referencing an explicit target must happen by id, and can both point forward or backward.
 
 ## Recover
 
