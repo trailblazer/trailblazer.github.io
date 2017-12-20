@@ -136,7 +136,7 @@
           
             <header id="doc-header">
   <h1 class="doc-page-title">Trailblazer 2.1: What you need to know.</h1>
-  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 18 December 2017</span>
+  <span class="doc-last-updated"><i class="fa fa-clock-o" aria-hidden="true"></i> Last updated 20 December 2017</span>
 
   
 
@@ -232,6 +232,8 @@ end
 
 <p>Besides the fact that you can now use operations and activities in more complex compounds <a href="#application-workflows">to model realistic applications</a> and state machines, with 2.1 it’s possible to model flows in operations that go beyond the railway. This is often necessary when the control flow needs more than two track, or when extracting more complex flows into new operations is too complicated and thus not desirable.</p>
 
+<p>Check the new <a href="/2.1/trailblazer/wiring.html">→ wiring docs</a>.</p>
+
 <p>For example, you can now actually <em>use</em> the <code class="highlighter-rouge">failure</code> track for logic, and easily deviate back to the right <code class="highlighter-rouge">success</code> track.</p>
 
 <pre><code>class Memo::Upload &lt; Trailblazer::Operation
@@ -268,8 +270,6 @@ fail :error_handler  # alias failure
 
 <p>…</p>
 
-<p>Check the new <a href="/2.1/trailblazer/wiring.html">→ wiring docs</a>.</p>
-
 <h2 id="simpler-nested" data-magellan-target="simpler-nested">3. Simpler <code class="highlighter-rouge">Nested</code>
 </h2>
 
@@ -282,7 +282,23 @@ rewire</p>
 
 <h2 id="extended-macro-api" data-magellan-target="extended-macro-api">4. Extended Macro API</h2>
 
-<h2 id="application-workflows" data-magellan-target="application-workflows">6. Application Workflows</h2>
+<h2 id="application-workflows-and-bpmn" data-magellan-target="application-workflows-and-bpmn">6. Application Workflows and BPMN</h2>
+
+<p>Thanks to the refactored circuit engine in Trailblazer 2.1 and the new <a href="%60activity%60">https://github.com/trailblazer/trailblazer-activity</a> gem, any business process can be modeled and implemented now. Since we allow unlimited nesting of activities, it’s possible to start modeling from the domain level down to super low-level technical details.</p>
+
+<p>Instead of reinventing, we make use of a subset of the <a href="http://www.bpmn.org/">BPMN standard</a> that defines and structures workflows in hundred-thousands of applications world-wide. And, don’t you worry, you do not have to <a href="http://www.omg.org/spec/BPMN/2.0/PDF">read 538 pages</a> in order to use Trailblazer’s BPMN extension.</p>
+
+<p><img src="/images/2.1/trailblazer/signup-process.png"></p>
+
+<p>In this diagram, you can see a one-time-password signup process where the user needs to change the initial password after the first login, and then must log in again using those new credentials. Our new visual workflow editor and the <code class="highlighter-rouge">trailblazer-workflow</code> gem will help to plan, implement and maintain diagrams and logic. Both components are part of the new PRO plan launched in early 2018.</p>
+
+<p>While you can model activities purely in Ruby, our editor will take away the pain of setting up application-wide workflows. And, naturally, all those “boxes” will still be Ruby code, exactly the way it is now, allowing you to focus on the implementation and us doing the control flow for you.</p>
+
+<div class="callout">
+  
+<p>Once the new PRO version is ready for sign up, we will notify you on our <a href="http://fb.me/trailblazer.to">Facebook page</a> and link to it here.</p>
+
+</div>
 
 <h2 id="new-gems" data-magellan-target="new-gems">10. New Gems</h2>
 
@@ -301,7 +317,7 @@ rewire</p>
 <li><a href="#simpler-nested">3. Simpler Nested</a></li>
 <li><a href="#tracing">4. Tracing</a></li>
 <li><a href="#extended-macro-api">4. Extended Macro API</a></li>
-<li><a href="#application-workflows">6. Application Workflows</a></li>
+<li><a href="#application-workflows-and-bpmn">6. Application Workflows and BPMN</a></li>
 <li><a href="#new-gems">10. New Gems</a></li>
         </ul>
       
