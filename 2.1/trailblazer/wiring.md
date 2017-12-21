@@ -158,9 +158,11 @@ You may use the entire wiring API to connect nested outputs at your convenience.
 
 ## Connections
 
+The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.
+
 ### Connections: By ID
 
-The four standard tracks in an operation represent an _extended railway_. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.
+If you need to connect two tasks or events explicitly, you may do so by defining an `Output` from the outgoing task.
 
 {{ "target-id" | tsnippet : "target-id-methods" }}
 
