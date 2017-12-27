@@ -196,6 +196,20 @@ The `Output(:success)` DSL call will find the task's `:success`-colored output a
       end
     end
 
+## Decider
+
+If you want to stay on one path but need to branch-and-return to model a decision, use the decider pattern.
+
+{{ "decider" | tsnippet : "decm" }}
+
+In this example, the success track from `find_model` will go to `update` whereas the `failure` output gets connected to `create`, giving the circuit a diamond-shaped flow.
+
+<img src="/images/2.1/trailblazer/decider.png">
+
+Note that we're using properties of the _magnetic_ API here: by polarizing (or _coloring_) the `failure` output of `find_model` to `:create_route` (which is a random name we picked), and making `create` being attracted to that very polarization, the failure output "snaps" to that task automatically.
+
+The cool feature with the magnetic API in this example is that you don't need to know what is the specific target of a connection, allowing to push multiple tasks onto that new `:create_route` track, if you needed that.
+
 ## End
 
 ## Path
