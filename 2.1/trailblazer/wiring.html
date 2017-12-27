@@ -420,9 +420,11 @@ end
 
 <h2 id="connections" data-magellan-target="connections">Connections</h2>
 
+<p>The four standard tracks in an operation represent an <em>extended railway</em>. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.</p>
+
 <h3 id="connections-by-id">Connections: By ID</h3>
 
-<p>The four standard tracks in an operation represent an <em>extended railway</em>. While they allow to handle many situations, they sometimes can be confusing as they create hidden semantics. This is why you can also define explicit, custom connections between tasks and even attach task not related to the railway model.</p>
+<p>If you need to connect two tasks or events explicitly, you may do so by defining an <code class="highlighter-rouge">Output</code> from the outgoing task.</p>
 
 <pre><code>class Memo::Upload &lt; Trailblazer::Operation
   step :new?, Output(:failure) =&gt; "index"
@@ -441,6 +443,8 @@ end
 <p>The existing output can be reconnected by using <code class="highlighter-rouge">Output</code> and specifying a semantic, only. For a normal <code class="highlighter-rouge">step</code> task, this means the output supposed to go on the left track will be rewired, or in other words, a falsey value returned from <code class="highlighter-rouge">new?</code> will go straight to <code class="highlighter-rouge">index</code>.</p>
 
 <p>Referencing an explicit target must happen by id, and can both point forward or backward.</p>
+
+<p>Note that you can also reference <code class="highlighter-rouge">Start.default</code>, and end events like <code class="highlighter-rouge">End.success</code>.</p>
 
 <h2 id="recover" data-magellan-target="recover">Recover</h2>
 
@@ -471,6 +475,27 @@ end
 end
 </code></pre>
 </div>
+
+<h2 id="decider" data-magellan-target="decider">Decider</h2>
+
+<p>If you want to stay on one path but need to branch-and-return to model a decision, use the decider pattern.</p>
+
+<pre><code>class Memo::Upsert &lt; Trailblazer::Operation
+  step :find_model, Output(:failure) =&gt; :create_route
+  step :update
+  step :create, magnetic_to: [:create_route]
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>In this example, the success track from <code class="highlighter-rouge">find_model</code> will go to <code class="highlighter-rouge">update</code> whereas the <code class="highlighter-rouge">failure</code> output gets connected to <code class="highlighter-rouge">create</code>, giving the circuit a diamond-shaped flow.</p>
+
+<p><img src="/images/2.1/trailblazer/decider.png"></p>
+
+<p>Note that we’re using properties of the <em>magnetic</em> API here: by polarizing (or <em>coloring</em>) the <code class="highlighter-rouge">failure</code> output of <code class="highlighter-rouge">find_model</code> to <code class="highlighter-rouge">:create_route</code> (which is a random name we picked), and making <code class="highlighter-rouge">create</code> being attracted to that very polarization, the failure output “snaps” to that task automatically.</p>
+
+<p>The cool feature with the magnetic API in this example is that you don’t need to know what is the specific target of a connection, allowing to push multiple tasks onto that new <code class="highlighter-rouge">:create_route</code> track, if you needed that.</p>
 
 <h2 id="end" data-magellan-target="end">End</h2>
 
@@ -662,6 +687,7 @@ end
 <li><a href="#nested-activities">Nested Activities</a></li>
 <li><a href="#connections">Connections</a></li>
 <li><a href="#recover">Recover</a></li>
+<li><a href="#decider">Decider</a></li>
 <li><a href="#end">End</a></li>
 <li><a href="#path">Path</a></li>
 <li><a href="#task-implementation-">Task Implementation (?)</a></li>
