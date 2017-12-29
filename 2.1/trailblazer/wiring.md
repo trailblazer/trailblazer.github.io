@@ -212,6 +212,18 @@ The cool feature with the magnetic API in this example is that you don't need to
 
 ## End
 
+When traversing the railway, per default the circuit will deviate to the error track (`:failure`) when a `step` returns a falsey value. You can also wire the step's error output to a custom end. This is incredibly helpful if your operation needs to communicate what exactly happened inside to the outer world, [a pattern used in Endpoint](endpoint.html).
+
+{{ "end" | tsnippet : "methods" }}
+
+The `End` DSL method will create a new end event, the first argument being the name, the second the semantic.
+
+The diagram now has a new "error track".
+
+<img src="/images/2.1/trailblazer/end.png">
+
+The `find_model` step now has its dedicated failure end. This allows to detect a `404` error without having to guess what might have happened. Please note how that new "error track" does not interfere with other `fail` tasks.
+
 ## Path
 
 

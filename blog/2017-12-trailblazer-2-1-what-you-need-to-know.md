@@ -124,4 +124,8 @@ While you can model activities purely in Ruby, our editor will take away the pai
 Once the new PRO version is ready for sign up, we will notify you on our [Facebook page](http://fb.me/trailblazer.to) and link to it here.
 {% endcallout %}
 
+## New steps
+
+Create.method(:set_user)
+
 ## 10. New Gems

@@ -6,6 +6,9 @@ gems:
 code: ../trailblazer-operation/test/docs,wiring_test.rb,master
 ---
 
+Strictly speaking, we wouldn't need a matcher. Every operation would simply define one specific end for every possible outcome. Those outputs would then be connected to the respective `Action` [diagram].
+Now, this could be a bit awkward, so you have matchers the "find out" what happened (pattern) and then call the respectively mapped _action_.
+
 ## Matcher
 
 Matchers maps a pattern to an action. The action can be an `Option` for dynamic execution or a callable (same).
