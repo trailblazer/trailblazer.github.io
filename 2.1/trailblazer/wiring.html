@@ -499,6 +499,25 @@ end
 
 <h2 id="end" data-magellan-target="end">End</h2>
 
+<p>When traversing the railway, per default the circuit will deviate to the error track (<code class="highlighter-rouge">:failure</code>) when a <code class="highlighter-rouge">step</code> returns a falsey value. You can also wire the step’s error output to a custom end. This is incredibly helpful if your operation needs to communicate what exactly happened inside to the outer world, <a href="endpoint.html">a pattern used in Endpoint</a>.</p>
+
+<pre><code>class Memo::Update &lt; Trailblazer::Operation
+  step :find_model, Output(:failure) =&gt; End("End.model_not_found", :model_not_found)
+  step :update
+  fail :db_error
+  step :save
+  # ...
+end
+</code></pre>
+
+<p>The <code class="highlighter-rouge">End</code> DSL method will create a new end event, the first argument being the name, the second the semantic.</p>
+
+<p>The diagram now has a new “error track”.</p>
+
+<p><img src="/images/2.1/trailblazer/end.png"></p>
+
+<p>The <code class="highlighter-rouge">find_model</code> step now has its dedicated failure end. This allows to detect a <code class="highlighter-rouge">404</code> error without having to guess what might have happened. Please note how that new “error track” does not interfere with other <code class="highlighter-rouge">fail</code> tasks.</p>
+
 <h2 id="path" data-magellan-target="path">Path</h2>
 
 <h2 id="task-implementation-" data-magellan-target="task-implementation-">Task Implementation (?)</h2>
