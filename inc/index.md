@@ -9,9 +9,12 @@ Trailblazer GmbH is the software company behind Trailblazer. Based in Berlin, bu
 
 Angaben gemäß § 5 TMG
 
-Trailblazer GmbH
-Schaperstr. 14
-10719 Berlin
+{% callout %}
+**Trailblazer GmbH**<br>
+Schaperstr. 14<br>
+10719 Berlin<br>
+GERMANY
+{% endcallout %}
 
 Vertreten durch:
 
@@ -27,6 +30,6 @@ Nick Sutterer
 
 Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
 
-Nick Sutterer
-Schaperstr. 14
+Nick Sutterer<br>
+Schaperstr. 14<br>
 10719 Berlin

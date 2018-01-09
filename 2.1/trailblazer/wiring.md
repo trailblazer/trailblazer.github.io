@@ -218,7 +218,7 @@ When traversing the railway, per default the circuit will deviate to the error t
 
 The `End` DSL method will create a new end event, the first argument being the name, the second the semantic.
 
-The diagram now has a new "error track".
+The diagram now has a new "error" track.
 
 <img src="/images/2.1/trailblazer/end.png">
 
