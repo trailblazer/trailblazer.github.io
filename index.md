@@ -78,7 +78,7 @@ The Trailblazer gems work with any Ruby framework. We provide glue code for Rail
   Legacy-ready
 </h4>
 
-You can start using Trailblazer in existing, massive applications today. Refactorings can be applied step-wise, legacy code can be minimized as you go. Remember: Rome wasn't build in one day, either.
+You can start using Trailblazer in existing, massive applications today. Refactorings can be applied step-wise, legacy code can be minimized as you go. Remember: Rome wasn't built in one day, either.
 
 ~~~4
 <h4>
