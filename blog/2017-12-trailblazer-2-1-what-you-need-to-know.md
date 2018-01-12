@@ -8,6 +8,12 @@ After almost one year of development, the 2.1 release is very near, and we're pr
 
 Overall, the public APIs haven't changed, or there are soft deprecations to explain what you need to do.
 
+## Functional
+
+All of Trailblazer's internals have been refactored to a more functional, stateless architecture, where only a handful of mutable objects are left. This is not due to us jumping any the hipster band-wagon, or just for the sake of "being functional", it's because we need it.
+
+extend for tracing? no!
+
 ## 1. New `call` API
 
 In versions before 2.1, the automatic merging of the `params` part and the additional options was confusing many new users and an unnecessary step.
@@ -105,6 +111,23 @@ rewire
 ## 4. Tracing
 
 The coolest feature.
+
+    |-- #<Workflow::Admin::Resume:0x0000000006ad8b20>
+    |-- >ready_for_user_create
+    |   |-- #<Trailblazer::Activity::Start:0x0000000006c3a248>
+    |   |-- Nested(Root::Admin::Prepare::Present)
+    |   |   |-- #<Trailblazer::Activity::Start:0x0000000006c37700>
+    |   |   |-- model.build
+    |   |   |-- contract.build
+    |   |   `-- #<Trailblazer::Operation::Railway::End::Success:0x0000000006c64250>
+    |   |-- contract.default.validate
+    |   |   |-- #<Trailblazer::Activity::Start:0x0000000006bd7850>
+    |   |   |-- contract.default.params_extract
+    |   |   |-- contract.default.call
+    |   |   `-- #<Trailblazer::Operation::Railway::End::Failure:0x0000000006bd7e40>
+    |   `-- #<Trailblazer::Operation::Railway::End::Failure:0x0000000006c3a8b0>
+    `-- ready_for_user_create
+
 
 ## 4. Extended Macro API
 
