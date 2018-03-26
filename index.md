@@ -493,6 +493,12 @@ Trailblazer supports Reform and `Dry::Schema` validations in any number.
           </a>
         </div>
 
+        <div class="column medium-2 text-center">
+          <a href="https://stuart.com" target="_blank">
+            <img src="/images/users/stuart.png" />
+          </a>
+        </div>
+
       </div>
 
     </div>
