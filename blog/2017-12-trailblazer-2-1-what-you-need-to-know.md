@@ -133,7 +133,7 @@ The coolest feature.
 
 ## 6. Application Workflows and BPMN
 
-Thanks to the refactored circuit engine in Trailblazer 2.1 and the new [https://github.com/trailblazer/trailblazer-activity](`activity`) gem, any business process can be modeled and implemented now. Since we allow unlimited nesting of activities, it's possible to start modeling from the domain level down to super low-level technical details.
+Thanks to the refactored circuit engine in Trailblazer 2.1 and the new (`activity`)[https://github.com/trailblazer/trailblazer-activity] gem, any business process can be modeled and implemented now. Since we allow unlimited nesting of activities, it's possible to start modeling from the domain level down to super low-level technical details.
 
 Instead of reinventing, we make use of a subset of the [BPMN standard](http://www.bpmn.org/) that defines and structures workflows in hundred-thousands of applications world-wide. And, don't you worry, you do not have to [read 538 pages](http://www.omg.org/spec/BPMN/2.0/PDF) in order to use Trailblazer's BPMN extension.
 
