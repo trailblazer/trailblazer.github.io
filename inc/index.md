@@ -27,6 +27,7 @@ Nick Sutterer
 * Umsatzsteuer-ID:
 * Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz: DE314332049
 
+* Steuernummer: 27/563/50103
 
 Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:
 
