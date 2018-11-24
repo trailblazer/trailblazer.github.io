@@ -28,8 +28,8 @@ class Snippets < Trailblazer::Cell
   self.view_paths = ["./2.1"]
   include Cell::Erb
 
-  def extract(section, root:, file:, collapse:nil)
-    Torture::Snippet.extract_from(file: File.join(root, file), marker: section, collapse: collapse)
+  def extract(section, root:, file:, collapse: nil, unindent: true)
+    Torture::Snippet.extract_from(file: File.join(root, file), marker: section, collapse: collapse, unindent: unindent)
   end
 
   def code(*args)

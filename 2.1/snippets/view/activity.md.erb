@@ -1,3 +1,57 @@
 ## Activity
 
-### Circuit Interface
+<!-- @activity-circuit-interface <trailblazer-activity[1.0] activity, circuit interface, low level -->
+
+### Circuit Interface        <%= anchor "activity-circuit-interface" %>
+
+Activities and all tasks (or "steps") are required to expose a _circuit interface_. This is the low-level interface. Most of the times it is hidden behind the [task interface](#FIXME) that you're probably used to from your operations when using `step`. Under the hood, however, all callable circuit elements operate through that very interface.
+
+The circuit interface consists of three things.
+
+* A circuit element has to expose a `call` method.
+* The signature of the `call` method is `call((ctx, flow_options), **circuit_options)`.
+*  Return value of the call method is an array of format `[signal, [new_ctx, new_flow_options]]`.
+
+Do not fear those syntactical finesses unfamiliar to you, young padawan.
+
+<%= code "circuit-interface-create", collapse: "method", root:"../trailblazer-activity/test/docs", file: "activity_test.rb" %>
+
+Both the `Create` activity itself and the `validate` step expose the circuit interface. Note that the `:task` option for `step` configures this element as a low-level circuit interface, or in other words, it will skip the wrapping with the task interface.
+
+Maybe it makes more sense now when you see how an activity is called manually? Here's how to invoke `Create`.
+
+<%= code "circuit-interface-call", collapse: "method", root:"../trailblazer-activity/test/docs", file: "activity_test.rb" %>
+
+Note that both `ctx` and `flow_options` can be just anything. Per convention, they respond to a hash interface, but theoretically it's up to you how your network of activities and tasks communicates.
+
+Check the implementation of `validate` to understand how you return a different signal or a changed `ctx`.
+
+<%= code "circuit-interface-validate", root:"../trailblazer-activity/test/docs", file: "activity_test.rb" %>
+
+Make sure to always stick to the `return` signature on the circuit interface level.
+
+#### Signature    <%= anchor "circuit-interface-signature" %>
+
+The circuit interface is a bit more clumsy but it gives you unlimited power over the way the activity will be run. And trust us, we've been playing with different APIs for two years and this was the easiest and fastest outcome.
+
+<%= code "circuit-interface-validate", collapse: :method, root:"../trailblazer-activity/test/docs", file: "activity_test.rb" %>
+
+The alienating signature uses [Ruby's decomposition](https://docs.ruby-lang.org/en/2.1.0/syntax/methods_rdoc.html#label-Array+Decomposition) feature. This only works because the first argument for `call` is actually an array.
+
+Using this interface empowers you to fully take _control of the flow™_.
+
+* You can return any `signal` you want, not only the binary style in _steps_.
+* If needed, the `ctx` object might be mutated or, better, replaced and a new version returned. This is the place where you'd start implementing an immutable version of Trailblazer's `ctx`, for instance.
+* Advanced features like tracing, input/output filters or type checking leverage the framework argument `flow_options`, which will be passed onwards through the entire activities flow. Know what you're doing when using `flow_options` and **always return it** even if you're not changing it.
+* The `circuit_options` is another framework argument needed to control the start task and more. It is immutable and you don't have to return it. The same `circuit_options` are guaranteed to be passed to all invoked tasks in one activity.
+
+Since in 99% the `circuit_options` are irrelevant, it's nicer and faster to discard them instantly.
+
+```ruby
+def validate((ctx, flow_options), *)
+  # ...
+end
+```
+
+Use the lonely `*` squat asterisk to do so.
+
