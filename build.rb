@@ -38,6 +38,15 @@ class Snippets < Trailblazer::Cell
 }
   end
 
+  def anchor(unique_name)
+    # TODO: register that name in a "global" registry
+    %{<a name="#{unique_name}" />
+
+}
+
+    "{##{unique_name}}\n\n" # return Kramdown's {#anchor-name}, see https://kramdown.gettalong.org/syntax.html#specifying-a-header-id
+  end
+
   def show(snippet:)
     render view: "#{snippet}.md"
   end

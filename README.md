@@ -1,5 +1,9 @@
 # Trailblazer Documentation
 
+guard
+be jekyll serve -I
+localhost:4000/
+
 ## Install
 
 Make sure you have [bundle](http://bundler.io/) and [node](https://nodejs.org/en/) installed in your machine and:

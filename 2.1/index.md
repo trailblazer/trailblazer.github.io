@@ -19,7 +19,9 @@ hallo from cells!
 ```
 explain
 
-## Trailblazer in Rails
+<!-- @trailblazer-rails loader, trailblazer-loader, rails support, -->
+
+## Trailblazer in Rails            {#trailblazer-rails}
 
 Trailblazer runs with any Ruby web framework. However, if you're using Rails, you're lucky since we provide convenient glue code in the `trailblazer-rails` gem.
 
@@ -34,7 +36,9 @@ todo: add versioning information
 The `trailblazer-loader` gem implements a very simple way to load all files in your `concepts` directory in a heuristically meaningful order. It can be used in any environment.
 
 
-#### Loader with Rails
+<!-- @trailblazer-loader, disable loader, file structure -->
+
+#### Loader with Rails {#trailblazer-rails-loader}
 
 The `trailblazer-loader` gem comes pre-bundled with `trailblazer-rails` for historical reasons: in the early days of Trailblazer, the conventional file name `concepts/product/operation/create.rb` didn't match the short operation name, such as `Product::Create`.
 
