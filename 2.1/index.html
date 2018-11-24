@@ -160,17 +160,7 @@
 
           <div class="row"> <!-- nach doc header -->
             <div class="large-9 columns" id="docs">   <!-- actual docs -->
-              <table>
-  <tbody>
-    <tr>
-      <td>“macaroni_test.rb:create:../trailblazer-operation/test/docs:master”</td>
-      <td>tsnippet : “ign” }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>hallo from cells!
- und bitte</p>
+              <p><em>THIS IS A FIRST VERSION OF ALL AVAILABLE DOCUMENTATION SNIPPETS. IT WILL BE RESTRUCTURED, DO NOT WORRY!</em></p>
 
 <h2 id="yo" data-magellan-target="yo">yo</h2>
 
@@ -181,7 +171,105 @@
 </div>
 <p>explain</p>
 
-<h2 id="trailblazer-in-rails" data-magellan-target="trailblazer-in-rails">Trailblazer in Rails</h2>
+<h2 id="activity" data-magellan-target="activity">Activity</h2>
+
+<!-- @activity-circuit-interface <trailblazer-activity[1.0] activity, circuit interface, low level -->
+
+<h3 id="activity-circuit-interface">Circuit Interface</h3>
+
+<p>Activities and all tasks (or “steps”) are required to expose a <em>circuit interface</em>. This is the low-level interface. Most of the times it is hidden behind the <a href="#FIXME">task interface</a> that you’re probably used to from your operations when using <code class="highlighter-rouge">step</code>. Under the hood, however, all callable circuit elements operate through that very interface.</p>
+
+<p>The circuit interface consists of three things.</p>
+
+<ul>
+  <li>A circuit element has to expose a <code class="highlighter-rouge">call</code> method.</li>
+  <li>The signature of the <code class="highlighter-rouge">call</code> method is <code class="highlighter-rouge">call((ctx, flow_options), **circuit_options)</code>.</li>
+  <li>Return value of the call method is an array of format <code class="highlighter-rouge">[signal, [new_ctx, new_flow_options]]</code>.</li>
+</ul>
+
+<p>Do not fear those syntactical finesses unfamiliar to you, young padawan.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">module</span> <span class="nn">Create</span>
+  <span class="kp">extend</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Activity</span><span class="o">::</span><span class="no">Railway</span><span class="p">()</span>
+  <span class="kp">module_function</span>
+
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">((</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">),</span> <span class="o">**</span><span class="n">circuit_options</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+    <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="p">[</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="n">step</span> <span class="ss">task: </span><span class="nb">method</span><span class="p">(</span><span class="ss">:validate</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+<p>Both the <code class="highlighter-rouge">Create</code> activity itself and the <code class="highlighter-rouge">validate</code> step expose the circuit interface. Note that the <code class="highlighter-rouge">:task</code> option for <code class="highlighter-rouge">step</code> configures this element as a low-level circuit interface, or in other words, it will skip the wrapping with the task interface.</p>
+
+<p>Maybe it makes more sense now when you see how an activity is called manually? Here’s how to invoke <code class="highlighter-rouge">Create</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="n">ctx</span>          <span class="o">=</span> <span class="p">{</span><span class="ss">name: </span><span class="s2">"Face to Face"</span><span class="p">}</span>
+<span class="n">flow_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">)</span> <span class="o">=</span> <span class="no">Create</span><span class="o">.</span><span class="p">([</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">],</span> <span class="p">{})</span>
+
+<span class="n">signal</span> <span class="c1">#=&gt; #&lt;Trailblazer::Activity::End semantic=:success&gt;</span>
+<span class="n">ctx</span>    <span class="c1">#=&gt; {:name=&gt;\"Face to Face\", :validate_outcome=&gt;true}</span>
+</code></pre>
+</div>
+<p>Note that both <code class="highlighter-rouge">ctx</code> and <code class="highlighter-rouge">flow_options</code> can be just anything. Per convention, they respond to a hash interface, but theoretically it’s up to you how your network of activities and tasks communicates.</p>
+
+<p>Check the implementation of <code class="highlighter-rouge">validate</code> to understand how you return a different signal or a changed <code class="highlighter-rouge">ctx</code>.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">validate</span><span class="p">((</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">),</span> <span class="o">**</span><span class="n">circuit_options</span><span class="p">)</span>
+  <span class="n">is_valid</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">[</span><span class="ss">:name</span><span class="p">].</span><span class="nf">nil?</span> <span class="p">?</span> <span class="kp">false</span> <span class="p">:</span> <span class="kp">true</span>
+
+  <span class="n">ctx</span>    <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="ss">validate_outcome: </span><span class="n">is_valid</span><span class="p">)</span> <span class="c1"># you can change ctx</span>
+  <span class="n">signal</span> <span class="o">=</span> <span class="n">is_valid</span> <span class="p">?</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Activity</span><span class="o">::</span><span class="no">Right</span> <span class="p">:</span> <span class="no">Trailblazer</span><span class="o">::</span><span class="no">Activity</span><span class="o">::</span><span class="no">Left</span>
+
+  <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="p">[</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+<p>Make sure to always stick to the <code class="highlighter-rouge">return</code> signature on the circuit interface level.</p>
+
+<h4 id="circuit-interface-signature">Signature</h4>
+
+<p>The circuit interface is a bit more clumsy but it gives you unlimited power over the way the activity will be run. And trust us, we’ve been playing with different APIs for two years and this was the easiest and fastest outcome.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">validate</span><span class="p">((</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">),</span> <span class="o">**</span><span class="n">circuit_options</span><span class="p">)</span>
+  <span class="c1"># ...</span>
+  <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="p">[</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+<p>The alienating signature uses <a href="https://docs.ruby-lang.org/en/2.1.0/syntax/methods_rdoc.html#label-Array+Decomposition">Ruby’s decomposition</a> feature. This only works because the first argument for <code class="highlighter-rouge">call</code> is actually an array.</p>
+
+<p>Using this interface empowers you to fully take <em>control of the flow™</em>.</p>
+
+<ul>
+  <li>You can return any <code class="highlighter-rouge">signal</code> you want, not only the binary style in <em>steps</em>.</li>
+  <li>If needed, the <code class="highlighter-rouge">ctx</code> object might be mutated or, better, replaced and a new version returned. This is the place where you’d start implementing an immutable version of Trailblazer’s <code class="highlighter-rouge">ctx</code>, for instance.</li>
+  <li>Advanced features like tracing, input/output filters or type checking leverage the framework argument <code class="highlighter-rouge">flow_options</code>, which will be passed onwards through the entire activities flow. Know what you’re doing when using <code class="highlighter-rouge">flow_options</code> and <strong>always return it</strong> even if you’re not changing it.</li>
+  <li>The <code class="highlighter-rouge">circuit_options</code> is another framework argument needed to control the start task and more. It is immutable and you don’t have to return it. The same <code class="highlighter-rouge">circuit_options</code> are guaranteed to be passed to all invoked tasks in one activity.</li>
+</ul>
+
+<p>Since in 99% the <code class="highlighter-rouge">circuit_options</code> are irrelevant, it’s nicer and faster to discard them instantly.</p>
+
+<div class="language-ruby highlighter-rouge">
+<pre class="highlight"><code><span class="k">def</span> <span class="nf">validate</span><span class="p">((</span><span class="n">ctx</span><span class="p">,</span> <span class="n">flow_options</span><span class="p">),</span> <span class="o">*</span><span class="p">)</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>Use the lonely <code class="highlighter-rouge">*</code> squat asterisk to do so.</p>
+
+<!-- @trailblazer-rails <trailblazer-rails[] loader, trailblazer-loader, rails support, -->
+
+<h2 id="trailblazer-rails" data-magellan-target="trailblazer-rails">Trailblazer in Rails</h2>
 
 <p>Trailblazer runs with any Ruby web framework. However, if you’re using Rails, you’re lucky since we provide convenient glue code in the <code class="highlighter-rouge">trailblazer-rails</code> gem.</p>
 
@@ -196,7 +284,9 @@
 
 <p>The <code class="highlighter-rouge">trailblazer-loader</code> gem implements a very simple way to load all files in your <code class="highlighter-rouge">concepts</code> directory in a heuristically meaningful order. It can be used in any environment.</p>
 
-<h4 id="loader-with-rails">Loader with Rails</h4>
+<!-- @trailblazer-loader, <trailblazer-loader[] disable loader, file structure -->
+
+<h4 id="trailblazer-rails-loader">Loader with Rails</h4>
 
 <p>The <code class="highlighter-rouge">trailblazer-loader</code> gem comes pre-bundled with <code class="highlighter-rouge">trailblazer-rails</code> for historical reasons: in the early days of Trailblazer, the conventional file name <code class="highlighter-rouge">concepts/product/operation/create.rb</code> didn’t match the short operation name, such as <code class="highlighter-rouge">Product::Create</code>.</p>
 
@@ -244,7 +334,8 @@
         <ul class="vertical menu" data-magellan id="page-toc">
           <li class="page-toc-heading">ON THIS PAGE:</li>
           <li><a href="#yo">yo</a></li>
-<li><a href="#trailblazer-in-rails">Trailblazer in Rails</a></li>
+<li><a href="#activity">Activity</a></li>
+<li><a href="#trailblazer-rails">Trailblazer in Rails</a></li>
         </ul>
       
 </nav>
