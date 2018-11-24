@@ -10,7 +10,7 @@ The circuit interface consists of three things.
 
 * A circuit element has to expose a `call` method.
 * The signature of the `call` method is `call((ctx, flow_options), **circuit_options)`.
-*  Return value of the call method is an array of format `[signal, [new_ctx, new_flow_options]]`.
+*  Return value of the `call` method is an array of format `[signal, [new_ctx, new_flow_options]]`.
 
 Do not fear those syntactical finesses unfamiliar to you, young padawan.
 
@@ -40,10 +40,10 @@ The alienating signature uses [Ruby's decomposition](https://docs.ruby-lang.org/
 
 Using this interface empowers you to fully take _control of the flow™_.
 
-* You can return any `signal` you want, not only the binary style in _steps_.
+* You can return any `signal` you want, not only the binary style in _steps_. Do not forget to wire that signal appropriately to the next task, though.
 * If needed, the `ctx` object might be mutated or, better, replaced and a new version returned. This is the place where you'd start implementing an immutable version of Trailblazer's `ctx`, for instance.
 * Advanced features like tracing, input/output filters or type checking leverage the framework argument `flow_options`, which will be passed onwards through the entire activities flow. Know what you're doing when using `flow_options` and **always return it** even if you're not changing it.
-* The `circuit_options` is another framework argument needed to control the start task and more. It is immutable and you don't have to return it. The same `circuit_options` are guaranteed to be passed to all invoked tasks in one activity.
+* The `circuit_options` is another framework argument needed to control the start task and more. It is immutable and you don't have to return it. The same `circuit_options` are guaranteed to be passed to all invoked tasks within one activity.
 
 Since in 99% the `circuit_options` are irrelevant, it's nicer and faster to discard them instantly.
 
